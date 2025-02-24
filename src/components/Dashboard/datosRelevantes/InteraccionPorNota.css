@@ -1,0 +1,107 @@
+#titulo_relevantes{
+    border-bottom: 1px solid black;
+    font-size: 20px;
+    font-weight: 600;
+    color: #292929;
+}
+
+.nombre_plataforma{
+    font-weight: 550;
+    font-size: 14px;
+}
+
+.linkPlataforma{
+    padding: 0px 0px !important;
+    color: grey;
+    text-decoration: none;
+}
+.imagenWidwet{
+    width: 40px;
+    align-items: center;
+    padding-top: 8px;
+}
+.imagenWidwetInteracciones{
+    width: 50px;
+    align-items: center;
+    padding-top: 8px;
+    object-fit:contain;
+    height: 50px;
+    border-radius: 10px;
+}
+
+.imagenWidwetInteracciones2{
+    display: flex;
+    width: 50px;
+    height: 50px;
+    border-radius: 10px; /* Ajustar a 10px para que el radio sea el 20% de la altura/ancho */
+    object-fit: cover; /* Asegura que la imagen se ajuste bien */
+    display: block; /* Para evitar posibles problemas de alineación */
+    justify-content: center;
+
+}
+
+.totales_widget{
+    float: right;
+    text-align: end;
+    padding-right: 20px;
+    padding-top: 15px;
+    color: #667085;
+    font-weight: 600;
+    font-size: 18px;
+    
+}
+
+.publicada{
+    width: 60px;
+} 
+.columna_interaccion{
+    padding-left: 30px;
+    margin-right: 70px;
+    width: 420px;
+}
+.nombre_categoria{
+    font-size: 18px !important;
+}
+
+
+/* Seccion acordion INTERACCION POR NOTA */
+
+.accordion-item{
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    padding-bottom: 0px;
+
+}
+.accordion-button {
+    background-color: transparent !important;
+    outline: none;
+    box-shadow: none !important;
+    border: none;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: transparent !important;
+    border-color: none;
+}
+
+
+.collapsed{
+    background-color: none;
+}
+.show{
+    background-color: none;
+}
+
+.medioRowNota{
+    border-bottom: 1px solid #d1d5dd;
+    padding-bottom: 25px;
+    margin-bottom: 0px;
+    height: 98px;
+    padding: 16px 20px;
+}
+.medioRowNota2{
+    height: 116px;
+    justify-content: center;
+    padding-top: 30px !important;
+}

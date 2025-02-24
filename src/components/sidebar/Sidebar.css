@@ -1,0 +1,202 @@
+
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow: auto; /* Permite el scroll solo en el contenido principal */
+  }
+.container-with-sidebar {
+    position: relative; /* Asegura que los elementos posicionados absolutamente se alineen con este contenedor */
+}
+/* Estilos básicos para el Sidebar */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0; /* Barra a la izquierda */
+    width: 250px;
+    height: 100vh;
+    background-color: #ffffff;
+    transition: width 0.3s ease-in-out, transform 0.3s ease-in-out;
+    z-index: 1000; /* Para que siempre esté encima del contenido */
+    overflow-y: auto;
+    overflow: visible;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+}
+
+/* Estado cerrado de la barra lateral (solo iconos visibles) */
+.sidebar.closed {
+    width: 55px; /* Solo mostrar los iconos */
+}
+
+.descripcion_boton.closed{
+    display: none;
+}
+
+/* Botón cuadrado con forma de flecha */
+/* Botón cuadrado con forma de flecha */
+.sidebar-toggle {
+    position: absolute; /* Cambia a absolute para que se mueva respecto al contenedor del sidebar */
+    top: 5px;
+    left: 220px; /* Inicialmente alineado con el borde del sidebar abierto */
+    width: 70px;
+    height: auto;
+    background-color: none;
+    border: none;
+    cursor: pointer;
+    z-index: 1100;
+    transition: transform 0.3s ease-in-out, background-color 0.3s ease, left 0.3s ease-in-out;
+}
+
+
+/* Flecha derecha cuando la barra está cerrada */
+.sidebar-toggle::before {
+    content: "";
+    position: relative;
+    display:  inline-block;
+    top: 5px;
+    left: 0px;
+    width: 70px;
+    height: auto;
+    /* border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent; */
+    /* border-left: 10px solid rgb(41, 11, 11); */
+    background-color: black;
+    
+}
+
+/* Flecha izquierda cuando la barra está abierta */
+.sidebar.open .sidebar-toggle::before {
+    border-left: none;
+    border-right: 10px solid rgb(109, 43, 43);
+}
+
+.sidebar.closed .sidebar-toggle {
+    left: 25px; /* Ajusta la posición del botón según el ancho de la barra cerrada */
+}
+
+/* Botón cambia de color al pasar el ratón */
+.sidebar-toggle:hover {
+    background-color: none;
+}
+
+/* Estilo para los elementos dentro del Sidebar */
+.sidebar ul {
+    padding-left: 0;
+    margin-top: 20px;
+}
+
+.sidebar .list-group-item {
+    border: none;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    transition: padding 0.3s ease-in-out;
+}
+
+.sidebar.closed .list-group-item {
+    padding: 10px 10px; /* Reducir el espacio para los íconos al cerrarse */
+    justify-content: center;
+}
+
+/* Estilos para el texto de los botones del Sidebar */
+.sidebar .list-group-item span {
+    margin-left: 10px;
+    font-size: 16px;
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Ocultar el texto cuando la barra está cerrada */
+.sidebar.closed .list-group-item span {
+    opacity: 0; /* Ocultar texto */
+    visibility: hidden;
+}
+
+/* Estilos para los iconos */
+.sidebar .list-group-item .icon {
+    width: 24px;
+    height: 24px;
+    transition: width 0.3s ease-in-out, height 0.3s ease-in-out;
+}
+
+/* Imagen del logo */
+#logo-nd-sidebar {
+    position: relative;
+    height: 26px;
+    width: 102px;
+    transition: width 0.3s ease-in-out;
+    margin: 20px 20px 10px 30px !important;
+    object-fit: contain;
+}
+
+.sidebar.closed #logo-nd {
+    width: auto; /* Achicar logo al cerrar */
+}
+
+/* Estilos para los botones dentro de la barra */
+.sidebar .list-group-item button {
+    background: none;
+    border: none;
+    color: #333;
+    text-align: left;
+    width: 100%;
+    font-size: 16px;
+    padding: 0;
+}
+
+.sidebar .list-group-item button:hover {
+    color: #007bff;
+}
+
+#logo-nd-miniatura{
+    width: auto;
+    margin: 10px;
+    margin-top: 25px;
+}
+
+.boton_sidebar_clickeado{
+    background-color: #EAECF5;
+    border-radius: 10px;
+    height: 40px;
+    width: 214px;
+    text-align: center;
+    margin: 0px auto;
+    
+}
+.boton_sidebar_clickeado:hover{
+    background-color: #eaecf5de;
+    
+}
+.boton_sidebar_Noclickeado{
+    background-color: none;
+    border-radius: 10px;
+    height: 40px;
+    width: 214px;
+    text-align: center;
+    margin: 0px auto;
+}
+
+.boton_sidebar_Noclickeado:hover{
+    background-color: #edeef3;
+}
+
+.botones_inferiories{
+    position: absolute !important;
+    bottom: 0 !important;
+    width: 100% !important; /* Asegúrate de que la lista abarque todo el ancho del contenedor */
+
+}
+
+.closedBoton{
+    width: 40px; 
+    background-color: none !important;
+}
+.botonSidebar{
+    display: flex;
+    text-align: start;
+    justify-content: flex-start;
+    padding-left: 8px;
+}
+
+
+

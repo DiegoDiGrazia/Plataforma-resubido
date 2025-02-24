@@ -1,0 +1,204 @@
+.miPerfilContainer{
+    width: auto;
+    margin-left: 60px;
+    margin-top: 50px;
+    border-bottom: 1px solid #EAECF0;
+    padding-bottom: 25px;
+    margin-right: 100px;
+}
+
+
+.miPerfilContainer .headerTusNotas {
+    margin-left: 0px !important;
+}
+
+.miPerfilContainer .infoCuenta {
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 25px;
+    margin-bottom: 3px;
+}
+
+.miPerfilContainer .abajoDeTusNotas{
+    font-size: 14px;
+    margin-left: 0px;
+    padding-left: 0px;
+}
+
+.miPerfilContainer .textAreaComentarios{
+    height: 44px;
+    overflow-y: hidden;
+    margin-top: 3px;
+    width: 400px;
+    float: right;
+}
+.informacionCuentaSeccion{
+    margin-top: 0px;
+    padding-bottom: 20px;
+}
+
+.informacionCuentaSeccion .infoCuenta{
+    margin-top: 15px;
+    padding: 25px auto !important;
+    font-size: 16px;
+    color: #344054;
+}
+
+.informacionCuentaSeccion .textAreaContainer{
+    padding-left: 90px;
+    float: right;
+}
+
+.informacionCuentaSeccion .upload-block{
+    width: 90%;
+    margin-top: 20px;
+    border-color: rgb(204, 204, 204)
+}
+
+.miPerfilContainer .botonCerrarSesion{
+    background-color: none !important;
+    color: #344054;
+    font-size: 16px;
+    font-weight: bold;
+    border: 1px solid rgb(204, 204, 204);
+    padding: 10px 15px;
+    border-radius: 10px;
+}
+
+.miPerfilContainer .guardar{
+    background-color: #FF653B;
+    margin-left: 15px;
+    color: white;
+
+}
+
+
+.informacionCuentaSeccion .dropdown-toggle{
+    color: #344054;
+}
+
+/* Seccion soporte.jsx */
+
+.miPerfilContainer .todasLasNotas{
+    font-size: 18px;
+}
+
+.soporteContainer{
+    border-bottom: none;
+}
+
+.miPerfilContainer .card-title{
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.miPerfilContainer .iframeTutorial{
+    margin: 0px 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+}
+.miPerfilContainer .card-body{
+    padding-bottom: 0px;
+}
+.miPerfilContainer .card{
+    border-radius: 10px;
+    margin-bottom: 40px;
+}
+
+.miPerfilContainer .boton_filtro_notas{
+    margin-left: 0px;
+    margin-right: 30px;
+}
+
+.containerNotificaciones{
+    padding-bottom: 0px;
+    border: none;
+}
+
+.miPerfilContainer .abajoDeTusNotas2{
+    font-size: 16px;
+}
+
+.miPerfilContainer .colFelicitaciones{
+    width: auto;
+    padding-left: 0px;
+}
+.miPerfilContainer .felicitacionesRow{
+    font-size: 18px;
+    font-weight: bold;
+    padding-top: 0px;
+}
+
+.miPerfilContainer .bolder{
+    color: black;
+    font-weight: bold;
+}
+
+.miPerfilContainer .botonActualizar{
+    background-color: #FF653B;
+    color: white;
+}
+
+.miPerfilContainer .crearCuentaNueva{
+    border: none;
+    color: #E65B35;
+}
+
+.notificacionContainer{
+    height: 200px;
+    background-color: white;
+    border-radius: 15px;
+    padding: 20px;
+}
+
+.notificacionContainer:hover{
+    height: 200px;
+    background-color: #F5FAFF;
+    border-radius: 15px;
+    padding: 20px;
+}
+
+.sinborde{
+    border: none;
+}
+
+/* AutoEntrevistas */
+
+li::marker {
+    display: none;
+}
+
+li {
+    list-style-type: none;
+}
+
+.bi-caret-left-fil {
+    color: black; /* Cambia el color del ícono a negro */
+}
+.bi-caret-right-fil {
+    color: black; /* Cambia el color del ícono a negro */
+}
+.carousel-control-next-icon{
+    color: black; /* Cambia el color del ícono a negro */
+
+}
+
+.carousel-item.active{
+    border: none;
+}
+.carousel-inner{
+    margin-top: 15px;
+}
+.carousel-item{
+    height: 300px;
+}
+.botonCerrarSesion:hover {
+    background-color: #e2e0e0 !important; /* Color de fondo cuando se pasa el mouse */
+    transform: scale(1.05); /* Efecto de agrandar el botón */
+}
+
+/* Estilo cuando se hace clic */
+.botonCerrarSesion:active {
+    background-color: #e2e0e0 !important; /* Color de fondo cuando se hace clic */
+    transform: scale(0.95); /* Efecto de reducir el tamaño del botón */
+}

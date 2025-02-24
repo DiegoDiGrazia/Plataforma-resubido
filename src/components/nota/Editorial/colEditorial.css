@@ -1,0 +1,12 @@
+.col_editorial input{
+    border: 1px solid #EAECF0 !important;
+    border-radius: 10px;
+
+} 
+.form_editorial{
+    padding-left: 15px;
+}
+.form_editorial .form-check-input{
+    margin: 0px;
+    margin-bottom: 10px;
+}

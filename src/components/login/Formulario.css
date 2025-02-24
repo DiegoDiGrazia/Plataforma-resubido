@@ -1,0 +1,192 @@
+*{
+    font-family: 'Aeonik', sans-serif;
+    
+}
+
+h2{
+    
+    font-weight: bold;
+    margin-bottom: 20px;
+    margin-top: 30px;
+    font-size: 35px;
+    color: black;
+}
+
+h3{
+    font-size:medium;
+    color: black;
+    font-size: 20px;
+    width: 80%;
+    align-items: center;
+    margin-left: 40px;
+    margin-top: 30px;
+}
+
+.mb-3 label{
+    font-size: 12px;
+    font-weight: bold;
+    
+}
+.mb3 input{
+    padding: 10px;
+    border-radius:20px;
+}
+.mb-3 ::placeholder{
+    font-size: 12px
+
+}
+
+#formulario{
+    margin-top: 50px;
+    margin-left: 50px;
+    
+} 
+
+#imagen{    
+    margin-right: 50px;
+}
+
+ .row{
+  margin: 0; /* Elimina el margen alrededor del contenedor raíz */
+  padding: 0; /* Elimina el padding si es necesario */
+  width: 100%; /* Asegura que ocupe el ancho completo del viewport */
+  height: 100vh; /* Asegura que ocupe el alto completo del viewport */
+} 
+
+#imagen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90vh; /* La imagen ocupará el 100% de la altura de la ventana */
+  }
+  
+  .image-container img {
+    height: 100%;
+    width: auto;
+    max-height: 100%;
+    padding-bottom: 30px;
+  }
+
+  #logo-nd{
+    width: 33% !important;
+  }
+
+  #iniciar_sesion {
+    background-color: rgba(255, 102, 0, 0.548); /* Naranja medio transparente */
+    border: 0px solid  rgba(255, 102, 0, 0.548); /* Borde negro */
+    border-radius: 12px; /* Bordes redondeados */
+    color: white; /* Color del texto */
+    display: flex;
+    align-items: center; /* Centra el contenido verticalmente */
+    justify-content: center; /* Centra el contenido horizontalmente */
+    height: 50px; /* Altura del botón */
+    width: 100%; /* Ocupa todo el ancho disponible */
+    font-size: 16px; /* Tamaño de fuente */
+    font-weight: bold; /* Fuente en negrita */
+    text-align: center; /* Centra el texto */
+    text-decoration: none; /* Elimina subrayado si es un enlace */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    box-sizing: border-box; /* Incluye padding y border en el ancho y alto del elemento */
+  }
+
+  #iniciar_sesion_google{
+    margin: 20px 0px;
+    background-color: rgba(255, 255, 255, 0); /* Naranja medio transparente */
+    border: 1px solid  rgba(119, 112, 112, 0.548); 
+    border-radius: 12px; /* Bordes redondeados */
+    color: rgb(24, 24, 24); /* Color del texto */
+    display: flex;
+    align-items: center; /* Centra el contenido verticalmente */
+    justify-content: center; /* Centra el contenido horizontalmente */
+    height: 50px; /* Altura del botón */
+    width: 100%; /* Ocupa todo el ancho disponible */
+    font-size: 16px; /* Tamaño de fuente */
+    font-weight: bold; /* Fuente en negrita */
+    text-align: center; /* Centra el texto */
+    text-decoration: none; /* Elimina subrayado si es un enlace */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    box-sizing: border-box; /* Incluye padding y border en el ancho y alto del elemento */
+    
+}
+
+@keyframes inicio{
+    0%{
+        top: 100vh;
+    }
+    100%{
+        top: 0vh;
+    }
+}
+  #olvide_contraseña{
+    color: orangered;
+    text-align: center;
+    justify-content: center;
+    align-content: center;
+    display: flex;
+    width: 100%;
+    position: relative;
+    animation:  inicio 1s; 
+  }
+    .emailbox{
+        position: relative;
+        animation:  inicio 1s; 
+        
+    }
+    .contraseña{    
+        position: relative;
+        animation:  inicio 1s; 
+        animation-delay: initial;
+        animation-delay: 0.5s;
+
+    }
+
+    .cartel {
+        position: relative;
+        width: auto; /* Ajusta el tamaño del ancho */
+        height: 70px; /* Ajusta automáticamente el alto */
+        background-color: rgb(24, 124, 24);
+        color: white;
+        text-align: left;
+        padding: 10px 40px 10px 10px; /* Espaciado interno y margen para el botón de cerrar */
+        z-index: 3;
+        top: 13px;
+        left: auto;
+        border-radius: 10px;
+    }
+    
+    .cartel .actualizaste {
+        position: absolute;
+        display: block; /* Hace que los spans se muestren en bloque (uno debajo del otro) */
+        top:10px;
+        left: 50px;
+        font-size: 20px;
+    }
+    .cartel .cartel_actualizaste {
+        position: absolute;
+        display: block; /* Hace que los spans se muestren en bloque (uno debajo del otro) */
+        top: 35px;
+        left: 50px;
+        
+    }
+    
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: transparent;
+        border: none;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    
+    .img-check {
+        position: absolute;
+        margin-bottom: 20px; /* Para crear un espacio entre la imagen y el texto */
+        left: 10px;
+        top:20px;
+    }
+
+
+
+    

@@ -1,0 +1,14 @@
+# Dependencias de Node.js
+node_modules
+.env
+dist
+build
+
+# Archivos del editor
+*.log
+.vscode
+.idea
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db

@@ -1,0 +1,816 @@
+.app-container {
+    display: flex;
+}
+.content {
+    overflow-y: auto; /* Permitir scroll en el contenido */
+    height: 100vh; /* Asegurarse de que el contenido ocupe toda la altura de la vista */
+}
+
+
+#nota{
+    font-size: 18px;
+    font-weight: 600;
+    padding-left: 30px;
+    padding-top: 20px;
+}
+
+.col.boton{
+    padding-top: 10px;
+}
+
+.header_dash{
+    border-bottom: none !important;
+    padding-left: 20px !important;
+    height: 80px; 
+}
+.abajoDeTusNotas{
+    font-size: 16px;
+    color: #667085 ;
+    padding-left: 20px;
+}
+.icono_tusNotas{
+    padding-right: 0px !important;
+    margin-right: 0px !important;
+}
+
+.boton_filtro_notas {
+    border: none;
+    background-color:#fbfcfc;
+    font-size: 16px;
+    color: #667085 !important;
+    font-weight: 700;
+    padding: 0px; /* Ajustar el padding */
+    padding-left: 0px;
+    display: inline-block; /* Para que el borde se ajuste al tamaño del texto */
+    width: auto;
+    text-align: center; /* Centrar el texto */
+    margin-left: 30px;
+    padding-bottom: 15px;
+} 
+.boton_filtro_notas:active {
+    color: #303238 !important; /* Color más oscuro mientras se presiona */
+}
+
+.active{
+    color: #FB6514 !important;
+    border-bottom: 3px solid #FB6514;
+}
+.todasLasNotas{
+ font-size: 18px;
+ font-weight: bold; 
+ color: #101828;
+ align-items: center;
+}
+
+.buscadorNotasForm {
+    display: flex;
+    width: 400px;
+    height: 44px;
+    float: right;
+    margin-right: 0px;
+}
+
+.inputBuscadorNotas {
+    width: 100%; /* Asegura que el input use todo el ancho del contenedor */
+    padding: 10px; /* Mantiene el padding */
+    font-size: 16px;
+    border: 1px solid #EAECF0;
+    border-radius: 10px;
+    outline: none;
+    color: #050505;
+    background-image: url('../../../public/images/search.png'); /* Ruta de la imagen */
+    background-repeat: no-repeat;
+    background-position: 10px center; /* Posiciona la imagen dentro del input */
+    background-size: 20px 20px; /* Tamaño de la imagen */
+    box-sizing: border-box; /* Asegura que el padding y el borde se incluyan en el ancho total */
+}
+.inputBuscadorNotas:focus:not(:placeholder-shown) {
+    background-color: transparent; /* Hace el fondo transparente al escribir */
+    background-image:none;
+}
+.inputBuscadorNotas:focus() {
+    background-color: transparent; /* Hace el fondo transparente al escribir */
+    background-image:none;
+}
+
+.categoriasNotas{
+    font-size: 12px ;
+    color: #667085 ;
+    font-weight: 600;
+    margin-top: 10px;
+
+}
+
+.icono_Estado{
+    padding-left: 0px;
+    margin-bottom: 2px;
+    
+}
+
+.container-notas{
+    flex: 1;
+    margin-left: 70px;
+    margin-right: 50px;
+    border: 1px solid #EAECF0 ;
+    border-radius: 10px;
+}
+
+.borderNotas{
+    border-top: 1px solid #EAECF0 ;
+    border-bottom: 1px solid #EAECF0 ;
+    color: #101828;
+}
+.FechaPubNota{
+    font-size: 14px;
+    color: #667085;
+    padding-left: 0px;
+}
+
+.nuevoFont{
+    font-style: normal ;
+}
+
+.vn_titulo{ 
+    font-size: 22px;
+    font-weight: 550;
+    padding-top: 0px;
+    text-align: left;
+    position: relative;
+    top: 0;
+    left: 0;    
+    max-width: 800px;
+    padding-left: 12px;
+}
+
+.vn_fecha{
+    font-size: 14px;
+    color:#667085;
+    text-align: left;
+    position: relative;
+    top: 0;
+    left: 0;
+    padding-top: 0px;
+    padding-left: 12px;
+    margin-top: 5px;
+}
+.margin_vn{
+    padding: 0px 20px;
+    max-height: 300px;
+}
+.vn_estado{
+    text-align: left;
+    position: relative;
+    top: 0;
+    left: 0;
+    padding-top: 0px;
+
+}
+.ml-5{
+    margin-left: 30px !important;
+}
+
+
+.imagen_nota{
+    width: 300px;
+    height: 200px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+.boton_nota{
+    position: relative;
+    float: right;
+}
+.imagen_col{
+    max-width: 310px !important;
+
+}
+.boton_compartir{
+    border: none;
+    background-color: #fbfcfc !important;
+    font-size: 16px;
+    font-weight: 600;
+    color: #667085;
+    margin-top: 5px;
+}
+.ver_nota_boton{
+    background-color: none !important;
+    border: none;
+    margin: 0px !important;
+    top: 30px
+}
+
+.link-sin-estilos {
+    color: inherit;      /* Usa el color del texto del contenedor */
+    text-decoration: none; /* Elimina el subrayado */
+    cursor: pointer;       /* Muestra el cursor de pointer para indicar que es clickeable */
+}
+
+#botonPublicar{
+    background-color: #FF653B;
+    color: #EAECF0;
+    font-size: 16px;
+    float: right;
+    margin-right: 30px;
+    width: auto;
+    height: 48px;
+    font-weight: 600;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+.headerCrearNota{
+    font-size: 28px;
+    font-weight:200;
+    margin-top: 0px;
+}
+#nota{
+    font-size: 18px;
+}
+
+
+.upload-block {
+    width: 613px;
+    height: 182px;
+    border: 2px dashed black;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: #fcfffc    ;
+    margin-left: 50px;
+    
+}
+.crearNotaGlobal{
+    background-color: white !important;
+}
+
+.notaTutorial{
+padding-top: 0px !important;
+}
+
+.upload-block {
+    border: 2px dashed black;
+    padding: 20px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+.upload-block.dragover {
+    background-color: #f0f0f0;
+}
+
+.custom-file-upload {
+    color: orangered;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    background-color: none;
+    transition: background-color 0.3s ease;
+    width: auto;
+    font-weight: 600;
+}
+
+.custom-file-upload:hover {
+    color: rgb(146, 42, 5);
+}
+.displayFlex{
+    display: flex !important;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+}
+.fontGrisImagen{
+    font-size: 14px;
+    color: #667085;
+}
+
+.custom-modal{
+    width: auto;
+    height: 485px;
+    color: #667085;
+
+}
+.custom_image_modal{
+    width: 463px !important;
+    height: 265px !important;
+    border-radius: 10px !important;
+    contain: content !important;
+}
+
+.subtitulo-modal{
+    color: #667085;
+    font-size: 16px;
+}
+.tituloModal{
+    color: #101828;
+    font-size: 24px;
+    font-weight: 600;
+}
+.modalBody{
+    padding-top: 5px;
+}
+
+.modalHeader{
+    border: none !important;
+    padding-bottom: 0px !important;
+}
+
+.botonModalVolver{
+    text-align: center;
+    border: 1px solid #c1c3c7;
+    width: 100%;
+    display: block;
+    margin: 0 auto;
+    font-weight: 600;
+}   
+.botonModalContinuar{
+    text-align: center;
+    border: 1px solid #c1c3c7;
+    width: 100%;
+    display: block;
+    margin: 0 auto;
+    background-color: #FF653B;
+    font-weight: 600;
+}
+.botonModalContinuar:hover{
+    text-align: center;
+    border: 1px solid #c1c3c7;
+    width: 100%;
+    display: block;
+    margin: 0 auto;
+    background-color: #ff6236;
+    font-weight: 600;
+}
+.modalFooter{
+    border: none !important;
+    padding-top: 0px;
+}
+.rowModalFooter{
+    padding-top: 15px;
+    padding-bottom: 10px; 
+}
+
+.imagenRecortadaContenedor {
+    position: relative; /* Permite posicionar elementos dentro de este contenedor */
+    display: inline-block; /* Para ajustar el tamaño al de la imagen */
+    width: 800px;
+    height: auto;
+    border-radius: 15px !important;
+    margin-left: 30px;
+}
+
+.imagenRecortada {
+    width: 100%; /* Asegura que la imagen ocupe todo el espacio del contenedor */
+    height: auto; /* Mantiene la relación de aspecto de la imagen */
+    border-radius: 15px !important;
+
+}
+
+.boton-superior-izquierda {
+    position: absolute;
+    top: 10px; /* Ajusta este valor para controlar la distancia desde el borde superior */
+    right: 10px; /* Ajusta este valor para controlar la distancia desde el borde izquierdo */
+    z-index: 10; /* Asegura que el botón esté por encima de la imagen */
+    border: none; /* Sin bordes */
+    padding: 0px; /* Espaciado interno del botón */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    background-color: transparent;
+    padding: 10px 10px;
+}
+
+.inputTituloNota{
+    border: none;
+    display: block;
+    width: 90%;
+    color: black;
+    font-size: 28px;
+    font-weight: 600;
+    resize: none;
+    overflow-wrap: break-word;
+    padding-right: 10px;
+    margin-left: 20px;
+}
+textarea.inputTituloNota {
+    width: 810px !important;
+}
+.marginTitulo{
+    margin-left: 65px;
+    margin-top: 10px;
+}
+.inputTituloNota::placeholder{
+    border: none;
+    display: block;
+    width: 100%;
+    color: #D0D5DD;
+    font-size: 28px;
+    font-weight: 600;
+    margin-left: 38px; 
+}
+.inputTituloNota:focus{
+    display: block;
+    outline: none;
+
+}
+
+.buttons-container {
+    display: flex; /* Mostramos los botones en una fila */
+    flex-direction: row;
+  }
+  
+  .botones-nota {
+    margin: 5px;
+    border: none;
+    cursor: pointer;
+    background-color: white;
+  }
+
+  .boton-plus{
+    border-right: 3px solid rgb(31, 31, 31);
+  }
+  
+  .button:hover {
+    background-color: deepskyblue;
+  }
+.containerButton{
+    display: flex;
+    align-items: center;
+    margin-bottom: 40px;
+    margin-top: 20px;
+    padding-left: 0px;
+    
+}
+
+.categoria_notas{
+    display:inline-block;
+    background-color: #c4d4f4;  
+    color: #2164d5;
+    border-radius: 15px;
+    justify-content: center;
+    margin-top: 10px;
+    font-size: 16px !important;
+
+    padding: 5px 10px;
+}
+.colImgNota{
+    width: 45px;
+    justify-content: center;
+
+}
+
+.publicada {
+    width: 140px;
+    height: auto;
+    margin-top: 10px;
+    padding-top: 0px;
+}
+
+.order-last {
+    margin-top: auto; /* No es necesario el !important a menos que haya conflictos */
+    display: flex; /* Asegúrate de que sea un contenedor flex */
+    justify-content: flex-start; /* Alinea el contenido hacia la izquierda */
+    vertical-align: bottom;
+}
+.vn_categoria {
+    background-color: #FFF6ED;
+    color: #FB6514;
+    padding: 5px 10px; /* Ajusta el padding a tu gusto */
+    display: inline-block; /* Cambiar a inline-block */
+    border-radius: 5px; /* Opcional: para bordes redondeados */
+    height: 40px;
+    vertical-align: bottom;
+
+}
+
+.subtituloNota{
+    font-size: 24px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+.subtituloNota::placeholder{
+    font-size: 24px;
+    margin-left: 15px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+.parrafoNota{
+    font-size: 20px !important;
+    font-weight: 500;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    font-weight:lighter;
+}
+.parrafoNota::placeholder{
+    font-size: 20px;
+    font-weight: 500;
+    margin-left: 15px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+.columnaTutorial {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}   
+.float-right {
+    float: right !important;
+    vertical-align: top !important;
+    padding-right: 30px;
+}
+
+.breadcrumb-item{
+    color: #344054;
+    border:none;
+    text-decoration: none;
+}
+
+.blackActive{
+    color: #050505;
+}
+
+.botonEliminarContenido{
+    padding: 0px;
+}
+.spanContainer {
+    display: flex;
+    align-items: center; /* Alinea verticalmente al centro */
+    padding-left: 0px;
+    padding-right: 10px;
+  } 
+.imagenNotaContenido{
+    margin-left: 15px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-radius: 15px !important;
+
+}
+.abajoDeAgregarCategoria{
+    font-size: 16px;
+    color:#667085;
+    margin-top: 10px;
+    opacity: 0.8;
+
+}
+.headerPublicarNota{
+    font-size: 24px;
+    color: #101828;
+    font-weight: 500;
+}
+.categorias {
+    background-color: #F2F4F7;
+    margin:10px 5px;
+    font-size: 16px;
+    color: #344054;
+    padding: 10px;
+    border-radius: 27px;
+    display: inline-block ;
+    border: none;
+    font-weight: bold;
+}
+.categorias:hover {
+    background-color: #153f7d62;
+    margin:10px 5px;
+    font-size: 16px;
+    color: #344054;
+    padding: 10px;
+    border-radius: 27px;
+    display: inline-block ;
+    border: none;
+}
+.categoriaActiva{
+    background-color: #FFF6ED;
+    margin:10px 5px;
+    font-size: 16px;
+    color: #FB6514;
+    padding: 10px;
+    border-radius: 27px;
+    display: inline-block ;
+    border: none;
+    font-weight: bold;
+
+}
+
+.categoriaActiva:hover{
+    background-color: #fed3a7;
+
+}
+  
+.filaCategorias{
+    margin: 0px 40px;
+
+}
+
+.imagenParaRRSSHeader{
+    font-size: 24px;
+
+}
+.seccionImagenRecorteRRSS{
+    margin-left: 35px;
+}
+
+.imagenRRSS {
+    width: 700px !important;
+    height: 400px !important;
+    border-radius: 10px !important;
+    contain: content !important;
+    margin-top: 10px; 
+  }
+  .imagenRRSS img {
+    width: 100%;              /* Imagen rellena el ancho disponible */
+    height: 100%;             /* Imagen rellena el alto disponible */
+    object-fit: cover;        /* Ajusta la imagen para rellenar sin perder proporción */
+  }
+  
+
+.cropper-wrap-box{
+    border-radius: 10px !important;
+
+}
+.hDistribucionContenido{
+    margin-top: 10px;
+    font-weight: bold;
+    font-size: 20px;
+}
+.containerFormCheck{
+    border: 1px solid #EAECF0;
+    border-radius: 10px;
+    padding: 5px;
+    margin: 10px 0px;
+    height: 82px;
+    
+}
+.containerFormCheckActive{
+    border: 1px solid #FFE0D8;
+    background-color: #FFF6ED;
+    border-radius: 10px;
+    padding: 5px;
+    margin: 10px 0px;
+    height: 82px;
+    
+    
+}
+.distribuirNotaP{
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-size: 18px;
+}
+
+.form-check-input {
+    accent-color: #FF653B; /* Cambia a tu color deseado */
+    margin-top: 10px;
+    padding: 10px;
+    margin-left: -15px !important;
+    margin-right: 15px;
+
+
+  }
+
+.form-check-input:checked {
+    background-color: #FF653B; /* Color de fondo al estar seleccionado */
+    border-color: #FF653B ;
+    box-shadow: none; /* Eliminar la sombra */
+}
+.textAreaComentarios {
+    width: 100%;         /* Ocupa todo el ancho del contenedor */
+    height: 150px;       /* Ajusta la altura a tu preferencia */
+    resize: none;        /* Elimina las "rayitas" de redimensionamiento */
+    padding: 10px;       /* Añade espacio interno para mejor apariencia */
+    font-size: 16px;     /* Tamaño de fuente */
+    border: 1px solid #ccc; /* Personaliza el borde */
+    border-radius: 5px;  /* Bordes redondeados */
+    box-sizing: border-box; /* Incluye padding y border en el tamaño total */
+    border-radius: 10px;
+    outline: none; 
+  }
+  .textAreaComentarios:focus {
+    border: 1px solid #ccc; /* Personaliza el borde */
+  }
+  .textAreaComentarios::placeholder {
+    font-size: 16px;
+    color:#667085;
+    margin-top: 10px;
+    opacity: 0.8;    /* Asegura que el color se vea bien */
+  }
+
+#botonVolver{
+    font-size: 16px;
+    float: right;
+    margin-right: 30px;
+    width: 128px;
+    height: 48px;
+    font-weight: 600;
+    margin-bottom: 50px;
+    padding-top: 21px;
+
+}
+
+.col-2 .publicada{
+    background-color: #ECFDF3;
+    height: 30px;
+    color: #027A48;
+    padding: 0px;
+    margin-top: 0px;
+    border-radius: 15px;
+    padding-top: 3px;
+    padding-left: 13px;
+}
+
+.BotonUbicacion{
+    width: 150px !important;
+    padding: 5px !important;
+    height: 70px !important;
+    float: right !important;
+    justify-content: end;
+}
+
+.mapa{
+    width: 90%;
+}
+
+.centradoContenido{
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center;    /* Centra verticalmente */
+    text-align: center;     /* Centra texto (si aplica) */
+    height: 100%;           /* Asegura el alto del contenedor */
+    width: 100% !important;
+    border-radius: 15px;
+    padding-bottom: 20px;
+  
+}
+
+.quill-editor {
+    display: flex;
+    flex-direction: column-reverse; /* Invierte el orden de los hijos */
+    width: 850px;
+  }
+
+
+  .ql-editor.ql-blank::before {
+    content: attr(data-placeholder);
+    font-weight: 600;
+
+    opacity: 0.3;
+    font-style: normal !important;
+    pointer-events: none; /* Evita que el placeholder sea seleccionable */
+  }
+  
+  .quill-editor .ql-toolbar {
+    margin-top: 0px; /* Espaciado opcional entre el editor y la barra */
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    width:240px !important;
+    justify-content: center;
+    text-align: center;
+    margin: 0 auto;
+    display: none;
+  }
+  
+  .quill-editor .ql-container {
+    border-top: none; /* Quita el borde superior para integrarlo mejor */
+
+  }
+  .quill-editor .ql-toolbar {
+    display: none; /* Oculto por defecto */
+  }
+  
+  .quill-editor.focused .ql-toolbar {
+    display: flex; /* Muestra el toolbar cuando está enfocado */
+  }
+
+@media print {
+    /* Ocultar ciertos componentes */
+    .no-print {
+      display: none !important;
+    }
+  
+    /* Mostrar una imagen al inicio */
+    #print-header {
+      display: block !important;
+      margin-bottom: 20px;
+    }
+  }
+  
+  /* Imagen oculta normalmente */
+  #print-header {
+    display: none;
+  }
+
+  .ql-editor img{
+    border-radius: 15px;
+
+  }
+
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+

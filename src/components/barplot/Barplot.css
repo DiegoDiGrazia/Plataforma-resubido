@@ -1,0 +1,67 @@
+.leyenda_barplot{
+    display: inline-block;
+    font-size: 20px;
+}
+.usuarios_totales{
+    display: inline-block;
+    flex-direction: column;
+    max-width: 300px;
+    margin-top: 30px;
+    max-height: 100px;
+}
+
+.blue-dot-user, .blue-dot-impresiones {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: blue;
+    border-radius: 50%;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+.blue-dot-impresiones {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: #666CFF;
+    border-radius: 50%;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+.barplot{
+    width: 100px;
+    height: 200px;
+}
+.row{
+    height: auto;
+    padding-top: 20px;
+}
+.barra_lateral{
+    border-right: 1px solid #e7dfdf; 
+    margin-right: 30px;
+    padding-left: 30px;
+}
+
+.totales{
+    font-size: 32px;
+    font-weight: 600;
+}
+
+.leyenda_barplot {
+    position: relative; /* Para posicionar el tooltip */
+    display: flex; /* Alinear el texto y la imagen */
+    align-items: center; /* Centrar verticalmente */
+    font-size: 20px;
+    font-weight: 600;
+    color: #292929
+}
+
+.info-icon{
+    margin-left: 10px;
+}
+
+.col-2{
+    width: 300px;
+}
