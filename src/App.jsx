@@ -18,6 +18,7 @@ import Notificaciones from './components/miPerfil/Notificaciones';
 import AutoEntrevistas from './components/miPerfil/AutoEntrevistas';
 import NotasParaEditorial from './components/nota/NotasParaEditorial';
 
+
 const inlineStyles = {
   marginRight: '10px'
 };

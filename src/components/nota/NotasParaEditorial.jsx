@@ -27,16 +27,13 @@ const NotasParaEditorial = () => {
     const [numeroDePagina, setNumeroDePagina] = useState(1); /// para los botones de la paginacion
     const [todasLasNotas2, setTodasLasNotas2] = useState([])
     const [verMasUltimo, setVerMasUltimo] = useState(2)
-    const verMasCantidadPaginacion = 6
+    const verMasCantidadPaginacion = 15
     const [traerNotas, setTraerNotas] = useState(true)
     const [cargandoNotas, setCargandoNotas] = useState(true)
 
 
-    let CantidadDeNotasPorPagina = 15;
-    if(filtroSeleccionado == 1){
-        CantidadDeNotasPorPagina= 1000
-    }else{
-        CantidadDeNotasPorPagina = 15}
+    let CantidadDeNotasPorPagina = 200;
+
 
     const botones = [
         { id: 1, nombre: 'Todas las notas' },
@@ -55,19 +52,6 @@ const NotasParaEditorial = () => {
         5: "ELIMINADAS"
     };
     
-    // Mapeo de dispatch
-    const dispatchMap = {
-        1: (data) => {
-            if (traerNotas) {
-                setTodasLasNotas2((prev) => [...prev, ...data]);
-                setTraerNotas(false);
-            }
-            dispatch(setTodasLasNotas(data));
-        },
-        2: setNotasPublicadas,
-        3: setNotasEnRevision,
-        4: setNotasBorrador
-    };
     
     const handleFiltroClick = useCallback((id, verMas = false) => {
         setFiltroSeleccionado(id);
@@ -145,37 +129,10 @@ const NotasParaEditorial = () => {
     const TOKEN = useSelector((state) => state.formulario.token);
     const CLIENTE = useSelector((state) => state.formulario.cliente);
 
-    const todasLasNotas = todasLasNotas2;
-    const notasPublicadas = useSelector((state) => state.notas.notasPublicadas);
-    const notasEnBorrador = useSelector((state) => state.notas.notasEnBorrador);
-    const notasEnRevision = useSelector((state) => state.notas.notasEnRevision);
-    const notasEliminadas = useSelector((state) => state.notas.notasEliminadas);
-
-
-    let TodasLasNotass = [];
-
-    switch (filtroSeleccionado) {
-        case 2:
-            TodasLasNotass = notasPublicadas || [];
-            break;
-        case 4:
-            TodasLasNotass = notasEnBorrador || [];
-            break;
-        case 3:
-            TodasLasNotass = notasEnRevision || [];
-            break;
-        case 5:
-            TodasLasNotass = notasEliminadas || [];
-            break;
-        default:
-            TodasLasNotass = todasLasNotas || [];
-            break;
-    }
-    
         
 
         
-    const notasFiltradas = TodasLasNotass.filter(nota =>
+    const notasFiltradas = todasLasNotas2.filter(nota =>
         nota.titulo.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
@@ -326,20 +283,6 @@ const NotasParaEditorial = () => {
                             <div className='row'>
                                 <div className="container">
                                 <div className="row justify-content-center">
-                                    {filtroSeleccionado != 1 && listaBotonesPagina.map((boton, index) => (
-                                    <div key={index} className="col-auto">
-                                        {boton === '...' ? (
-                                        <span className="puntos">...</span>
-                                        ) : (
-                                        <button
-                                            className={`boton_filtro_notas ${numeroDePagina === boton ? 'active' : ''}`}
-                                            onClick={() => handleBotonPaginaClick(boton)}
-                                        >
-                                            {boton}
-                                        </button>
-                                        )}
-                                    </div>
-                                    ))}
                                     <div className="col-auto text-center my-4">
                                         <button
                                             className="boton_filtro_notas"
