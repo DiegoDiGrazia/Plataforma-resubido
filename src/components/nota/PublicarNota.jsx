@@ -19,13 +19,28 @@ const PublicarNota = () => {
     const dispatch = useDispatch();
     const notaCargada = useSelector((state) => state.crearNota)
     const [isLoading, setIsLoading] = useState(false);
-
     const TOKEN = useSelector((state) => state.formulario.token);
     const imageRef = useRef(null);
     const [cropper, setCropper] = useState(null);
     const [croppedImage, setCroppedImage] = useState(null); // Estado para la imagen recortada
     const es_editor = useSelector((state) => state.formulario.es_editor);
     const [estadoPublicar, setEstadoPublicar]= useState('EN REVISION');
+    const itemsEtiquetas = useSelector((state) => state.crearNota.etiquetas)
+    const isCheckedDemo = useSelector((state) => state.crearNota.es_demo)
+    const isCheckedDistribucionPrioritaria = useSelector((state) => state.crearNota.distribucion_prioritaria)
+    const isCheckedNoHome = useSelector((state) => state.crearNota.es_home)
+    const tipoContenido = useSelector((state) => state.crearNota.tipoContenido); // Verifica si este es el nombre correcto
+    const fecha = useSelector((state) => state.crearNota.f_vence)
+    const id_noti = useSelector((state) => state.crearNota.id_noti)
+    const engagementText = useSelector((state) => state.crearNota.engagement) || "";
+    const bajadaText = useSelector((state) => state.crearNota.bajada) || "";
+    const tipoAutor = useSelector((state) => state.crearNota.autor); 
+    const provincia = useSelector((state) => state.crearNota.provincia);
+    const municipio = useSelector((state) => state.crearNota.municipio);
+    
+
+    
+    
 
     const [comentario, setComentario] = useState('');
 
@@ -38,9 +53,12 @@ const PublicarNota = () => {
 
 
     useEffect(() => {
-        // Hacer la solicitud cuando el componente se monta o 'desde'/'hasta' cambian
+        // if(es_editor == true){
+        //     setStatus("publish")
+        // }
         axios.post(
             "https://panel.serviciosd.com/app_obtener_listado_categorias",
+            
             {
                 token: TOKEN,          
                 dimension: "categorias",
@@ -85,33 +103,40 @@ const PublicarNota = () => {
     const titulo = useSelector((state) => state.crearNota.tituloNota);
     const contenidoNota = useSelector((state) => state.crearNota.contenidoNota)
     const datosUsuario =useSelector((state) => state.formulario)
-    const clickear_en_publicar_nota = () => {
+    const clickear_en_publicar_nota = (status) => {
         setIsLoading(true); // Muestra el overlay
         const contenidoHTMLSTR = transformarContenidoAHTML(contenidoNota);
+        console.log(itemsEtiquetas, "ETIQUETAS")
     
         axios.post(
             "https://panel.serviciosd.com/app_subir_nota",
             {
-                token: TOKEN,
-                id: "0",
-                titulo: titulo,
-                categorias: categoriasActivas,
-                copete: notaCargada.copete,
-                parrafo: contenidoHTMLSTR,
-                estado: estadoPublicar,
-                cliente: datosUsuario.cliente,
-                email: datosUsuario.email,
-                base_principal: image,
-                base_feed: image,
-                comentarios: comentario,
-                autor_cliente: datosUsuario.email,
-                conDistribucion: "0",
-                distribucion: "ninguna",
-                es_demo: "0",
-                es_home: "0",
-                tipo_contenido: 'gestion',
-                fecha_vencimiento: "2024-10-10",
-                etiquetas: ["ninguna"],
+                token: TOKEN, // CARGADO
+                status: status, // Es el que decide si la notas e publica en wp"" CARGADO
+                id: "0",  
+                titulo: titulo,// CARGADO
+                categorias: categoriasActivas, //CARGADO
+                copete: notaCargada.copete, //CARGADO
+                parrafo: contenidoHTMLSTR, //CARGADO
+                estado: estadoPublicar, //CARGADO
+                cliente: datosUsuario.cliente, //CARGADO
+                email: datosUsuario.email, //CARGADO
+                base_principal: image, //CARGADO
+                base_feed: imagefeed, //CARGADO
+                comentarios: comentario, //CARGADO
+                autor_cliente: datosUsuario.email, //CARGADO
+                conDistribucion: selectedOptionDistribucion === 'normal' ? "1" : "0", //Cargado
+                distribucion: selectedOptionDistribucion === 'normal' ? isCheckedDistribucionPrioritaria ? "prioritaria" : "normal" : "ninguna", //Cargado
+                es_demo: isCheckedDemo ? "1" : "0", //Cargado
+                es_home: isCheckedNoHome ? "1" : "0", //Cargado
+                tipo_contenido: tipoContenido, //Cargado
+                fecha_vencimiento: fecha, //Cargado
+                etiquetas: itemsEtiquetas,  //CARGADO
+                engagement : engagementText,
+                bajada: bajadaText,
+                autor: tipoAutor,
+                provincia: provincia.nombre,
+                municipio: municipio.nombre
             },
             {
                 headers: {
@@ -178,7 +203,7 @@ const PublicarNota = () => {
         }
 
     };
-    const [selectedOption, setSelectedOption] = useState('ninguna');
+    const [selectedOptionDistribucion, setSelectedOption] = useState('ninguna');
 
     // Función para manejar el cambio de opción seleccionada
     const handleChange = (event) => {
@@ -244,14 +269,14 @@ const PublicarNota = () => {
                                 <div className='abajoDeAgregarCategoria mlRRSS'>Selecciona el recorte de tu imagen</div>
 
                                 <div>
-                                    <div className= {selectedOption === 'normal' ? 'containerFormCheckActive' : 'containerFormCheck'}>
+                                    <div className= {selectedOptionDistribucion === 'normal' ? 'containerFormCheckActive' : 'containerFormCheck'}>
                                         <div className="form-check">
                                             <input
                                             className="form-check-input"
                                             type="radio"
                                             name="flexRadioDefault"
                                             id="normal"
-                                            checked={selectedOption === 'normal'}
+                                            checked={selectedOptionDistribucion === 'normal'}
                                             onChange={handleChange}
                                             />
                                             <label className="form-check-label" htmlFor="normal">
@@ -261,7 +286,7 @@ const PublicarNota = () => {
                                             </label>
                                         </div>
                                     </div>
-                                    <div className={selectedOption === 'ninguna' ? 'containerFormCheckActive' : 'containerFormCheck'}>
+                                    <div className={selectedOptionDistribucion === 'ninguna' ? 'containerFormCheckActive' : 'containerFormCheck'}>
                                         <div className="form-check">
                                             <div className='inputRadioContainer'>
                                                 <input
@@ -269,7 +294,7 @@ const PublicarNota = () => {
                                                 type="radio"
                                                 name="flexRadioDefault"
                                                 id="ninguna"
-                                                checked={selectedOption === 'ninguna'}
+                                                checked={selectedOptionDistribucion === 'ninguna'}
                                                 onChange={handleChange}
                                                 />
                                             </div>
@@ -301,8 +326,20 @@ const PublicarNota = () => {
                                         variant="none"
                                         disabled={isLoading} // Deshabilitar el botón mientras se carga
                                     >
-                                        <img src="/images/send.png" alt="Icono 1" className="icon me-2 icono_tusNotas" />{" Enviar"}
+                                        <img src="/images/send.png" alt="Icono 1" className="icon me-2 icono_tusNotas" />{" Enviar a revision"}
                                     </Button>
+                                    
+                                    {es_editor &&
+                                    <Button
+                                        onClick={() => clickear_en_publicar_nota("publish")}
+                                        id="botonPublicar"
+                                        variant="none"
+                                        disabled={isLoading} // Deshabilitar el botón mientras se carga
+                                    >
+                                        <img src="/images/send.png" alt="Icono 1" className="icon me-2 icono_tusNotas" />{" Publicar"}
+                                    </Button>
+                                    }
+                                    
                                     {!isLoading &&
                                     <Button
                                         onClick={() => navigate('/crearNota')}
@@ -321,9 +358,6 @@ const PublicarNota = () => {
                                         </div>
                                     </div>
                                 )}
-
-
-
 
                             </div>
                             

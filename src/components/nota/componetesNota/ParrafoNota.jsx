@@ -39,7 +39,7 @@ const ParrafoNota = ({ indice }) => {
       const editorRoot = quillInstanceRef.current.root;
       editorRoot.addEventListener('focus', () => setIsFocused(true));
       editorRoot.addEventListener('blur', () => setIsFocused(false));
-  
+      
       // Prevenir que el foco se pierda al hacer clic en los botones del toolbar
       const toolbar = quillInstanceRef.current.getModule('toolbar').container;
       toolbar.addEventListener('mousedown', (e) => {

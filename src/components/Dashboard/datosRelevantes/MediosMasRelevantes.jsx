@@ -169,7 +169,7 @@ const MediosMasRelevantes = () => {
     return (
         <div className="container-fluid">
             <div className='row'>
-                <p id= "titulo_relevantes">Medios mas relevantes
+                <p id= "titulo_relevantes">Impresiones en medios mas relevantes
                 <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "aca va el texto"/>  
                 </p>
             </div>

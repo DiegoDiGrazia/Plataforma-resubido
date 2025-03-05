@@ -44,13 +44,13 @@ const Formulario = () => {
                 dispatch(updateIdCliente(response.data.item.id_cliente))
                 dispatch(updateEsEditor(false))
                 dispatch(updateUsuario(response.data.item))
-                if(response.data.item.cliente === ""){
+                if(!response.data.item.cliente){
                     console.log("entre porque no tiene cliente")
                     dispatch(updateCliente(CLIENTE_DEFAULT))
                     dispatch(updateIdCliente(ID_CLIENTE_DEFAULT))
                     dispatch(updateEsEditor(true))
                 }
-                if(response.data.item.cliente === ""){
+                if(!response.data.item.cliente){
                     navigate('/notasEditorial'); // Redirige al Dashboard
                 }else{
                 navigate('/dashboard'); // Redirige al Dashboard

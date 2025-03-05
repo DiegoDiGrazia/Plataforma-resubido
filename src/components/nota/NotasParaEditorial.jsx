@@ -16,12 +16,30 @@ import { Spinner } from 'react-bootstrap';
 import { left } from '@popperjs/core';
 import SelectorCliente from '../Dashboard/SelectorCliente';
 import { useCallback } from 'react';
+import { editarNota } from './VerNota';
+import { analizarHTML, convertirImagenBase64, setContenidoAEditar, setContenidoNota, setImagenPrincipal, setImagenRRSS, setNotaAEditar } from '../../redux/crearNotaSlice';
+
 
 
 
 
 const NotasParaEditorial = () => {
 
+
+
+    const editarNota = async (notaABM) => {
+        dispatch(setNotaAEditar(notaABM))
+        const contenidoNota = await(analizarHTML(notaABM.parrafo))
+        dispatch(setContenidoAEditar(contenidoNota))
+        const base64PPAL = await convertirImagenBase64("https://panel.serviciosd.com/img" + notaABM.imagen_principal);
+        dispatch(setImagenPrincipal(base64PPAL))
+        const base64RRSS = await convertirImagenBase64("https://panel.serviciosd.com/img" + notaABM.imagen_feed);
+        dispatch(setImagenRRSS(base64RRSS))
+        navigate("/crearNota"); 
+    };
+
+
+    const CLIENTE = useSelector((state) => state.formulario.cliente);
     const navigate = useNavigate()
     const [filtroSeleccionado, setFiltroSeleccionado] = useState(2); /// botones TODAS LAS NOTAS; EN PROGRESO; FINALIZADAS
     const [numeroDePagina, setNumeroDePagina] = useState(1); /// para los botones de la paginacion
@@ -36,7 +54,6 @@ const NotasParaEditorial = () => {
 
 
     const botones = [
-        { id: 1, nombre: 'Todas las notas' },
         { id: 2, nombre: 'Publicadas' },
         { id: 3, nombre: 'En revision' },
         { id: 4, nombre: 'Borradores' },
@@ -127,7 +144,6 @@ const NotasParaEditorial = () => {
     const dispatch = useDispatch();
 
     const TOKEN = useSelector((state) => state.formulario.token);
-    const CLIENTE = useSelector((state) => state.formulario.cliente);
 
         
 
@@ -239,11 +255,20 @@ const NotasParaEditorial = () => {
                                             )}
                                         </div>
                                         <div className='col-4 pt-1 columna_interaccion nuevoFont'>
+                                            {filtroSeleccionado === 1 || filtroSeleccionado === 2  ? 
                                             <Link className="link-sin-estilos" to={`/verNota`} state={{ id: nota.id_noti ? nota.id_noti : nota.term_id, notaABM: nota }}>
                                                 <div className='row p-0 nombre_plataforma'>
                                                     {formatearTitulo(nota.titulo, 45)}
                                                 </div>
                                             </Link>
+                                            :
+                                            <Link className="link-sin-estilos" onClick={(e) => {e.preventDefault();editarNota(nota);}}>
+                                                <div className='row p-0 nombre_plataforma'>
+                                                    {formatearTitulo(nota.titulo, 45)}
+                                                </div>
+                                            </Link>
+                                            }
+
                                             <div className='row p-0'>
                                                 <span className='FechaPubNota'>{nota.f_pub ? formatearFecha(nota.f_pub) : formatearFecha(nota.update_date)}</span>
                                             </div>

@@ -25,7 +25,6 @@ const CrearNota = () => {
     const [image, setImage] = useState(null);
     const croppedImage = useSelector((state) => state.crearNota.imagenPrincipal);
     const navigate = useNavigate();
-    const esEditorial = true;
 
     const [cropper, setCropper] = useState(null);
     const [showModal, setShowModal] = useState(false);
@@ -108,6 +107,7 @@ const CrearNota = () => {
 
     
 
+    const esEditor = useSelector((state) =>state.formulario.es_editor)
 
     const contenidoNota = useSelector((state) => state.crearNota.contenidoNota)
     return (
@@ -120,7 +120,11 @@ const CrearNota = () => {
                                 <h4 id="nota">
                                 <nav aria-label="breadcrumb">
                                     <ol className="breadcrumb">
+                                        {esEditor ?
+                                        <li className="breadcrumb-item"><Link to="/notasEditorial" className='breadcrumb-item'>{'< '} Notas</Link></li>
+                                        :
                                         <li className="breadcrumb-item"><Link to="/notas" className='breadcrumb-item'>{'< '} Notas</Link></li>
+                                        }
                                         <li className="breadcrumb-item blackActive" aria-current="page">Crear Nota</li>
                                     </ol>
                                 </nav>
@@ -200,7 +204,6 @@ const CrearNota = () => {
                             <img src="/images/tutorialvideo.png" alt="Icono 1" className="float-right" />
                         </div>
                         {/* fin seccion columna izquierda */}
-
                     </div>
 
                     {/* Modal para la imagen */}

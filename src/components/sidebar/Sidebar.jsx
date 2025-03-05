@@ -16,8 +16,9 @@ const Sidebar = ({estadoActual}) => {
         console.log("aca me redirigi")
         navigate(`/${url}`); // Usa template literals para insertar la URL
     };
-    const esEditor = useSelector((state) => state.formulario.esEditor)
+    const esEditor = useSelector((state) => state.formulario.es_editor)
     const cliente = useSelector((state) => state.formulario.cliente)
+    console.log(esEditor)
 
     
 
@@ -38,7 +39,7 @@ const Sidebar = ({estadoActual}) => {
 
                         <ul className="list-group list-group-flush no-border list-unstyled">
 
-                        {cliente != "" &&
+                        {cliente &&
                         <li className={`${
                                             estadoActual === "dashboard" ? "boton_sidebar_clickeado" : "boton_sidebar_Noclickeado"
                                         } ${
@@ -52,7 +53,7 @@ const Sidebar = ({estadoActual}) => {
                             </li>
                         }
 
-                            {esEditor ? 
+                            {esEditor == false ? 
                             <li className={`${
                                             estadoActual === "notas" ? "boton_sidebar_clickeado" : "boton_sidebar_Noclickeado"
                                         } ${

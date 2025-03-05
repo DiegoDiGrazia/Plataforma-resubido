@@ -25,17 +25,13 @@ const Notas = () => {
     const [numeroDePagina, setNumeroDePagina] = useState(1); /// para los botones de la paginacion
     const [todasLasNotas2, setTodasLasNotas2] = useState([])
     const [verMasUltimo, setVerMasUltimo] = useState(2)
-    const verMasCantidadPaginacion = 6
+    const verMasCantidadPaginacion = 15
     const [traerNotas, setTraerNotas] = useState(true)
     const [cargandoNotas, setCargandoNotas] = useState(true)
 
 
-    let CantidadDeNotasPorPagina = 15;
-    if(filtroSeleccionado == 1){
-        CantidadDeNotasPorPagina= 1000
+    let CantidadDeNotasPorPagina = 50;
 
-    }else{
-        CantidadDeNotasPorPagina = 15}
 
     const botones = [
         { id: 1, nombre: 'Todas las notas' },
@@ -53,22 +49,8 @@ const Notas = () => {
         4: "BORRADOR",
         5: "BORRADOR"
     };
-    
-    // Mapeo de dispatch
-    const dispatchMap = {
-        1: (data) => {
-            if (traerNotas) {
-                setTodasLasNotas2((prev) => [...prev, ...data]);
-                setTraerNotas(false);
-            }
-            dispatch(setTodasLasNotas(data));
-        },
-        2: setNotasPublicadas,
-        3: setNotasEnRevision,
-        4: setNotasBorrador
-    };
-    
     const handleFiltroClick = (id, verMas = false) => {
+        console.log(id, "id_del_filtro")
         setFiltroSeleccionado(id);
         setCargandoNotas(true);
     
@@ -80,49 +62,79 @@ const Notas = () => {
             setTraerNotas(true);
             desdeLimite = verMasUltimo * verMasCantidadPaginacion;
             setVerMasUltimo((prev) => prev + 1);
+        }else{
+            setTodasLasNotas2([])
         }
-    
-        axios.post(
-            id === 1 
-                ? "https://panel.serviciosd.com/app_obtener_noticias" 
-                : "https://panel.serviciosd.com/app_obtener_noticias_abm",
-            {
-                cliente: CLIENTE,
-                desde: `${DESDE}`,
-                hasta: `${HASTA}`,
-                token: TOKEN,
-                categoria: categoria,
-                limite: limite,
-                desde_limite: desdeLimite,
-                ...(id === 1 ? { titulo: "", id: "" } : {}),
-            },
-            { headers: { 'Content-Type': 'multipart/form-data' } }
-        )
-        .then((response) => {
-            if (response.data.message === "Token Invalido") {
-                navigate("/");
-                return;
-            }
-    
-            if (response.data.status === "true") {
-                console.log(`Datos cargados para el filtro: ${categoria}`);
-                console.log(response.data.item);
-    
-                const dispatchFunction = dispatchMap[id];
-                if (dispatchFunction) {
-                    dispatchFunction(response.data.item);
+        
+        if (id == 1){
+            axios.post(
+                "https://panel.serviciosd.com/app_obtener_noticias" ,
+                {
+                    cliente: CLIENTE,
+                    desde: `${DESDE}`,
+                    hasta: `${HASTA}`,
+                    token: TOKEN,
+                    categoria: categoria,
+                    limite: limite,
+                    desde_limite: desdeLimite,
+                    titulo : "",
+                    id: ""
+                },
+                { headers: { 'Content-Type': 'multipart/form-data' } }
+            )
+            .then((response) => {
+                if (response.data.message === "Token Invalido") {
+                    navigate("/");
+                    return;
                 }
-            } else {
-                console.error('Error en la respuesta de la API:', response.data.message);
-            }
-        })
-        .catch((error) => {
-            console.error('Error al hacer la solicitud:', error);
-        })
-        .finally(() => {
-            setCargandoNotas(false);
-        });
-    };
+        
+                if (response.data.status === "true") {
+                    setTodasLasNotas2((prev) => [...prev, ...response.data.item]);
+
+                } else {
+                    console.error('Error en la respuesta de la API:', response.data.message);
+                }
+            })
+            .catch((error) => {
+                console.error('Error al hacer la solicitud:', error);
+            })
+            .finally(() => {
+                setCargandoNotas(false);
+            });
+        }else{
+            axios.post(
+                "https://panel.serviciosd.com/app_obtener_noticias_abm",
+                {
+                    cliente: CLIENTE,
+                    desde: "",
+                    hasta: "",
+                    token: TOKEN,
+                    categoria: categoria,
+                    limit: limite,
+                    offset: desdeLimite,
+                },
+                { headers: { 'Content-Type': 'multipart/form-data' } }
+            )
+            .then((response) => {
+                if (response.data.message === "Token Invalido") {
+                    navigate("/");
+                    return;
+                }
+        
+                if (response.data.status === "true") {
+                    setTodasLasNotas2((prev) => [...prev, ...response.data.item]);
+                } else {
+                    console.error('Error en la respuesta de la API:', response.data.message);
+                }
+            })
+            .catch((error) => {
+                console.error('Error al hacer la solicitud:', error);
+            })
+            .finally(() => {
+                setCargandoNotas(false);
+            });
+        };
+        }
     
 
     const handleBotonPaginaClick = (id) => {
@@ -156,41 +168,11 @@ const Notas = () => {
     const dispatch = useDispatch();
     ///api///
     const DESDE = "2023-01-01"
-    const HASTA = "2024-12-28"
+    const HASTA = "2026-12-28"
     const TOKEN = useSelector((state) => state.formulario.token);
     const CLIENTE = useSelector((state) => state.formulario.cliente);
-
-    const todasLasNotas = todasLasNotas2;
-    const notasPublicadas = useSelector((state) => state.notas.notasPublicadas);
-    const notasEnBorrador = useSelector((state) => state.notas.notasEnBorrador);
-    const notasEnRevision = useSelector((state) => state.notas.notasEnRevision);
-    const notasEliminadas = useSelector((state) => state.notas.notasEliminadas);
-
-
-    let TodasLasNotass = [];
-
-    switch (filtroSeleccionado) {
-        case 2:
-            TodasLasNotass = notasPublicadas || [];
-            break;
-        case 4:
-            TodasLasNotass = notasEnBorrador || [];
-            break;
-        case 3:
-            TodasLasNotass = notasEnRevision || [];
-            break;
-        case 5:
-            TodasLasNotass = notasEliminadas || [];
-            break;
-        default:
-            TodasLasNotass = todasLasNotas || [];
-            break;
-    }
-    
-        
-
-        
-    const notasFiltradas = TodasLasNotass.filter(nota =>
+     
+    const notasFiltradas = todasLasNotas2.filter(nota =>
         nota.titulo.toLowerCase().includes(searchQuery.toLowerCase())
     );
 

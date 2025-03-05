@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import 'cropperjs/dist/cropper.css';
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import "cropperjs/dist/cropper.css";
+import { setItemsEtiquetas } from "../../../redux/crearNotaSlice";
 
 const Etiquetas = () => {
+  const dispatch = useDispatch();
   const [inputValue, setInputValue] = useState("");
-  const [items, setItems] = useState([]);
+  const itemsEtiquetas = useSelector((state) => state.crearNota.etiquetas) || [];
+
 
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
@@ -13,19 +17,17 @@ const Etiquetas = () => {
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && inputValue.trim()) {
-      setItems((prevItems) => [inputValue, ...prevItems]); // Agrega el valor al inicio
-      setInputValue(""); // Limpia el input
+      dispatch(setItemsEtiquetas([inputValue, ...itemsEtiquetas])); // Usar dispatch
+      setInputValue("");
     }
   };
 
   const handleDelete = (indexToDelete) => {
-    setItems((prevItems) =>
-      prevItems.filter((_, index) => index !== indexToDelete)
-    );
+    dispatch(setItemsEtiquetas(itemsEtiquetas.filter((_, index) => index !== indexToDelete)));
   };
 
   return (
-    <div >
+    <div>
       <input
         type="text"
         value={inputValue}
@@ -35,34 +37,35 @@ const Etiquetas = () => {
         style={{ padding: "10px", width: "100%", fontSize: "16px" }}
       />
       <div style={{ marginTop: "20px" }}>
-        {items.map((item, index) => (
-          <div
-            key={index}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              background: "#f0f0f0",
-              padding: "2px",
-              marginBottom: "5px",
-              borderRadius: "5px",
-            }}
-          >
-            <span>{item}</span>
-            <button
-              onClick={() => handleDelete(index)}
+        {itemsEtiquetas &&
+          itemsEtiquetas.map((item, index) => (
+            <div
+              key={index}
               style={{
-                color: "black",
-                border: "none",
-                borderRadius: "0px",
-                padding: "2px 2px",
-                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                background: "#f0f0f0",
+                padding: "2px",
+                marginBottom: "5px",
+                borderRadius: "5px",
               }}
             >
-              X
-            </button>
-          </div>
-        ))}
+              <span>{item}</span>
+              <button
+                onClick={() => handleDelete(index)}
+                style={{
+                  color: "black",
+                  border: "none",
+                  borderRadius: "0px",
+                  padding: "2px 2px",
+                  cursor: "pointer",
+                }}
+              >
+                X
+              </button>
+            </div>
+          ))}
       </div>
     </div>
   );

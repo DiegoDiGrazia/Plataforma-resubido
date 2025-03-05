@@ -20,8 +20,6 @@ import { analizarHTML, convertirImagenBase64, setContenidoAEditar, setContenidoN
 export const RUTA = "http://localhost:4000/"
 const VerNota = () => {
 
-    const EMAIL_DEFAULT = "diego.digrazia@noticiasd.com"
-    const CONTRASENIA_DEFAULT = "123"
     const [cargando, setCargando] = useState(true)
     const location = useLocation();
     const { id, notaABM } = location.state || {};
@@ -57,7 +55,7 @@ const VerNota = () => {
         if (!id_para_api) return;
     
         // Lógica para obtener el token en modo demo
-        if (es_demo && !isTokenLoaded) {
+        if (!isTokenLoaded) {
             axios.post("https://builder.ntcias.de/public/index.php", {
             }, {
                 headers: { 'Content-Type': 'multipart/form-data' }
@@ -105,6 +103,10 @@ const VerNota = () => {
     console.log(Nota)
 
     const id_noti = id_para_api
+
+    if(!Nota){
+        return <div>Cargando...</div>
+    }
     return (
         <div className="container-fluid  sinPadding">
             {!cargando && 

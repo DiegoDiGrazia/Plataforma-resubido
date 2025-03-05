@@ -9,19 +9,23 @@ import SelectorTipoContenido from './SelectorContenido';
 import TextareaWithCounter from './textAreaConContador';
 import SelectorAutor from './SelectorAutor';
 import "./colEditorial.css"
+import { useDispatch, useSelector } from 'react-redux';
+import { setEsDemo, setDistribucionProioritaria,setNoHome, setFechaVencimiento} from '../../../redux/crearNotaSlice';
+
+
 
 const ColumnaEditorial = ({ indice }) => {
-    const [isChecked, setIsChecked] = useState(true); // Track the state of the checkbox
 
-    const handleCheckboxChange = () => {
-        setIsChecked(!isChecked); // Toggle the state when the checkbox is clicked
-    };
+    const isCheckedDemo = useSelector((state) => state.crearNota.es_demo)
+    const isCheckedDistribucionPrioritaria = useSelector((state) => state.crearNota.distribucion_prioritaria)
+    const isCheckedNoHome = useSelector((state) => state.crearNota.es_home)
+    const fecha = useSelector((state) => state.crearNota.f_vence)
 
-    /// FECHA SECCION
-    const [fecha, setFecha] = useState("");
+    const dispatch = useDispatch();
+
 
     const handleChange = (e) => {
-      setFecha(e.target.value);
+      dispatch(setFechaVencimiento(e.target.value)); 
     };
 
     return (
@@ -42,9 +46,10 @@ const ColumnaEditorial = ({ indice }) => {
                 <input 
                     className="form-check-input" 
                     type="checkbox" 
-                    value="" 
-                    id="flexCheckDefault" 
-                />
+                    id="flexCheckChecked1" 
+                    checked={isCheckedNoHome} 
+                    onChange={() => dispatch(setNoHome(!isCheckedNoHome))} 
+                    />
             </div>
 
             <div 
@@ -61,11 +66,11 @@ const ColumnaEditorial = ({ indice }) => {
                 <input 
                     className="form-check-input" 
                     type="checkbox" 
-                    value="" 
                     id="flexCheckChecked1" 
-                    checked={isChecked} 
-                    onChange={handleCheckboxChange} 
-                />
+                    checked={isCheckedDemo} 
+                    onChange={() => dispatch(setEsDemo(!isCheckedDemo))} 
+                    />
+
             </div>
 
         <div 
@@ -82,11 +87,10 @@ const ColumnaEditorial = ({ indice }) => {
             <input 
                 className="form-check-input" 
                 type="checkbox" 
-                value="" 
                 id="flexCheckChecked2" 
-                checked={isChecked} 
-                onChange={handleCheckboxChange} 
-            />
+                checked={isCheckedDistribucionPrioritaria} 
+                onChange={() => dispatch(setDistribucionProioritaria(!isCheckedDistribucionPrioritaria))} 
+                />
         </div>
                     <SelectorAutor/>
                     <ArbolDistribucion/>

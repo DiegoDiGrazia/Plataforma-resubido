@@ -56,19 +56,36 @@ const crearNotaSlice = createSlice({
     contenidoNota :[],
     categorias: [], 
     categoriasNombres: "", ///listo
-    imagenPrincipal: null,
-    imagenRRSS: null,
+    imagenPrincipal: null,///listo
+    imagenRRSS: null,///listo
     copete : "", ///listo
     comentarios: "", /// listo
     conDistribucion: "0",/// listo
-    distribucion_prioritaria: "0",/// listo
+    distribucion_prioritaria: false,/// listo
     engagement: "", /// listo
     autor: "", /// listo 
     autor_cliente: "",/// listo
-    es_demo: "0", /// listo
-    es_home: "0", /// listo
+    es_demo: false, /// listo
+    es_home: false, /// listo
+    etiquetas : [],
     estado: "", /// listo
     id_noti: "",
+    tipoContenido: "gestion",
+    f_vence: "",
+    engagement: "", 
+    bajada: "",
+    provincia: {"provincia_id":"54","nombre":"Misiones","iso_nombre":"Misiones","categoria":"Provincia","centroide_lat":"-26.8753965086829","centroide_lon":"-54.6516966230371","iso_id":"AR-N","nombre_completo":"Provincia de Misiones","Poblacion":"0"},
+    municipio: {
+      "municipio_id": "746252",
+      "nombre": "Beazley",
+      "nombre_completo": "Comisión Municipal Beazley",
+      "provincia_id": "74",
+      "centroide_lat": "-33.7572721991329",
+      "centroide_lon": "-66.6446207562444",
+      "categoria": "Comisión Municipal",
+      "poblacion": "0"
+    }
+    
 
   },
   reducers: {
@@ -144,11 +161,46 @@ const crearNotaSlice = createSlice({
     setContenidoAEditar: (state, action) =>{
       state.contenidoNota= action.payload;
     },
+    setItemsEtiquetas: (state,action)=>{
+      state.etiquetas = action.payload;
+    },
+    setEsDemo: (state,action)=>{
+      state.es_demo = action.payload;
+    },
+    setNoHome: (state,action)=>{
+      state.es_home= action.payload;
+    },
+    setDistribucionProioritaria : (state,action)=>{
+    state.distribucion_prioritaria = action.payload;
+    },
+    setTipoContenido : (state,action) => {
+      state.tipoContenido = action.payload;
+    },
+    setFechaVencimiento : (state,action) => {
+      state.f_vence = action.payload;
+    },
+    setEngagement: (state, action) => {
+      state.engagement = action.payload;
+    },
+    setBajada: (state, action) => {
+      state.bajada = action.payload;
+    },
+    setAutor: (state, action) => {
+      state.autor = action.payload;
+    },
+    setProvincia: (state, action) => {
+        state.provincia = action.payload;
+    },
+    setMunicipio: (state, action) => {
+        state.municipio = action.payload;
+    },
     }
 });
 
 export const { setTituloNota, setContenidoNota, DeleteContenidoPorIndice, setContenidoPorIndice,
                 SubirContenidoPorIndice, BajarContenidoPorIndice, setCategorias, setImagenPrincipal, setImagenRRSS,
-                setCopete, setNotaAEditar, setContenidoAEditar
+                setCopete, setNotaAEditar, setContenidoAEditar,setItemsEtiquetas,setEsDemo,setNoHome, 
+                setDistribucionProioritaria, setTipoContenido,setFechaVencimiento, setBajada, setEngagement, 
+                setAutor, setMunicipio, setMunicipios,setProvincia,setProvincias,
  } = crearNotaSlice.actions;
 export default crearNotaSlice.reducer;
