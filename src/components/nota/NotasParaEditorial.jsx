@@ -247,7 +247,7 @@ const NotasParaEditorial = () => {
 
                                 {notasEnPaginaActual.map((nota, index) => (
                                         <div key={nota.id_noti || nota.term_id || `nota-${index}`} className='row pt-1 borderNotas'>
-                                        <div className='col-1 colImgNota'>
+                                        <div className='col-auto'>
                                             {nota.imagen ? (
                                                 <img src={nota.imagen} alt="Icono Nota" className='imagenWidwetInteracciones2' />
                                             ) : (

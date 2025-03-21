@@ -67,16 +67,16 @@ const MediosMasRelevantesNotas = ({ id_noti, TOKEN, cliente, fpub }) => {
 
     const renderMedio = (medio, index) => (
         <div key={index} className={`row pt-3 medioRowNota ${index > 0 ? 'medioRowNota2' : ''}`}>
-            <div className='col-1'>
+            <div className='col-auto mr-2'>
                 <img src={`https://panel.serviciosd.com${medio.imagen}`} alt="Icono" className='imagenWidwetInteracciones' />
             </div>
-            <div className='col-4 pt-1 columna_interaccion'>
+            <div className='col-auto pt-1'>
                 <div className='row p-0 nombre_plataforma'>{formatearTextoNombre(medio.sitio)}</div>
                 <div className='row p-0'>
                     <a href="https://www.facebook.com" className='linkPlataforma'>{medio.sitio}</a>
                 </div>
             </div>
-            <div className='col totales_widget'>
+            <div className='col totales_widget impresionesWidget'>
                 <p>{formatNumberMiles(medio.impresiones)}</p>
             </div>
         </div>
@@ -87,7 +87,7 @@ const MediosMasRelevantesNotas = ({ id_noti, TOKEN, cliente, fpub }) => {
             <div className='row'>
                 <p id="titulo_relevantes">
                     Medios más relevantes
-                    <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title="aca va el texto" />
+                    <img src="/images/help-circle.png" alt="Descripción" className="info-icon no-print" title="aca va el texto" />
                 </p>
             </div>
             {listaTresMedios.map(renderMedio)}

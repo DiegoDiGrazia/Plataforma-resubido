@@ -16,7 +16,15 @@ export function formatearFecha(fechaStr) {
     const fecha = new Date(fechaStr);
     const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
     return `${fecha.getDate()} de ${meses[fecha.getMonth()]} de ${fecha.getFullYear()}`;
+    
 }
+function reemplazarUrl(url) {
+    console.log("Original URL:", url); // Agrega este registro
+    const nuevaUrl = url.replace("https://www.noticiasd.com/wp-content/uploads/", "https://diego.serviciosd.com/uploads/");
+    console.log("Reemplazada URL:", nuevaUrl); // Agrega este registro
+    return nuevaUrl;
+}
+
 
 const InteraccionPorNota = () => {
     const dispatch = useDispatch();
@@ -48,16 +56,16 @@ const InteraccionPorNota = () => {
     return (
         <div className="container-fluid">
             <div className='row'>
-                <p id="titulo_relevantes">Interacciones por nota
-                    <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title="aca va el texto" />  
+                <p id="titulo_relevantes">Notas con mayor interacción
+                    <img src="/images/help-circle.png" alt="Descripción" className="info-icon no-print" title="aca va el texto" />  
                 </p>
             </div>
             {listaTresNotas.map((nota, index) => (
-                <div className='row pt-1' key={index}>
-                    <div className='col-1'>
+                <div className='row seccionInteracciones pt-1' key={index}>
+                    <div className='col-auto mr-2'>
                         <img src={nota.imagen} alt="Icono" className='imagenWidwetInteracciones2' />
                     </div>
-                    <div className='col-8 pt-1 columna_interaccion'>
+                    <div className='col-auto pt-1'>
                         <Link className="link-sin-estilos" to={`/verNota`} state={{ id: nota.id_noti ? nota.id_noti : nota.term_id, notaABM: nota }}>
                             <div className='row p-0 nombre_plataforma'>{formatearTitulo(nota.titulo)}</div>
                         </Link>

@@ -9,6 +9,7 @@ import { combineReducers } from 'redux';
 import notasSlice from "./notasSlice.js";
 import crearNotaSlice from "./crearNotaSlice.js";
 import cargadoSlice from "./cargadosSlice.js"
+import datospdfSlice from "./datospdfSlice.js";
 
 // Combina todos los slices en un rootReducer
 const rootReducer = combineReducers({
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
     notas: notasSlice,
     crearNota: crearNotaSlice,
     cargado: cargadoSlice,
+    datospdf: datospdfSlice,
 });
 
 // Configuración de Redux Persist

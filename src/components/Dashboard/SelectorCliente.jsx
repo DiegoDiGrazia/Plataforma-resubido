@@ -86,7 +86,7 @@ const SelectorCliente= () => {
 
 
     return (
-        <div className="dropdown">
+        <div className="dropdown no-print">
             
             {esEditor === false &&
             <h4 id="saludo">Hola</h4>

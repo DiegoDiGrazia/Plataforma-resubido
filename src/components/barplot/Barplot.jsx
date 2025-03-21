@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Spinner } from 'react-bootstrap';
 import { Bar } from 'react-chartjs-2';
@@ -8,11 +8,20 @@ import "./Barplot.css";
 import { setImpresionesTotalesInstagram, setImpresionesTotalesGoogle, setImpresionesTotalesFacebook, 
     setUsuariosTotales, setUsuariosTotalesGoogle, setUsuariosTotalesMeta, setFechas, 
     setultimaFechaCargadaBarplot,
-    setUltimoClienteCargadoBarplot} from '../../redux/barplotSlice.js';
+    setUltimoClienteCargadoBarplot,
+    setComentariosFacebook,
+    setComentariosInstagram,
+    setLikesFacebook,
+    setLikesInstagram,
+    setCompartidosFacebook,
+    setCompartidosInstagram,
+    setReaccionesFacebook, setReaccionesInstagram } from '../../redux/barplotSlice.js';
 import axios from 'axios';
 import { formatNumberMiles } from '../Dashboard/Dashboard.jsx';
 import { useNavigate } from 'react-router-dom';
-
+import html2canvas from 'html2canvas';
+import { setBarplot } from '../../redux/datospdfSlice.js';
+import Barplot_Carga from './Barplot_mejorado_carga.jsx';
 
 ///Recibe una fecha del tipo "2024-08" y te devuelve  "jun 24"
 export function formatDate(dateStr) {
@@ -55,114 +64,80 @@ const Barplot = () => {
     const nombreCliente = useSelector((state) => state.formulario.cliente);
     const ultimo_cliente_cargado = useSelector((state) => state.barplot.ultimoClienteCargadoBarplot);
     const ultima_fecha_cargada = useSelector((state) => state.barplot.ultimaFechaCargadaBarplot);
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const captureRef = useRef(null);  // Definir el ref para capturar la imagen
 
-
-    
-    
     const [loading, setLoading] = useState(true); // Estado de carga
-    const [simulatedData, setSimulatedData] = useState(generateRandomData()); // Estado para los datos animados
-    
-    const interval = setInterval(() => {
-        setSimulatedData(generateRandomData());
-    }, 800); // Actualiza los datos simulados cada 500 ms
+
     useEffect(() => {
         setLoading(true);
         const fecha = new Date();
         const diaMes = fecha.getDate();
 
-        if(nombreCliente != ultimo_cliente_cargado  || diaMes != ultima_fecha_cargada ){
+        if (nombreCliente !== ultimo_cliente_cargado || diaMes !== ultima_fecha_cargada) {
             dispatch(setultimaFechaCargadaBarplot(diaMes));
             dispatch(setUltimoClienteCargadoBarplot(nombreCliente));
 
-
-
-
-        axios.post(
-            "https://panel.serviciosd.com/app_obtener_usuarios",
-            {
-                cliente: nombreCliente,
-                periodos: periodoUltimoAño(),
-                token: token
-            },
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            }
-        )
-        .then((response) => {
-            if(response.data.message === "Token Invalido"){
-                navigate("/")
-            }
-            if (response.data.status === "true") {
-                let datos = response.data.item;
-                for (let datoMensual of datos) {
-                    if (!fechas.includes(datoMensual.periodo)) {
-                        dispatch(setFechas(formatDate(datoMensual.periodo)));
-                        dispatch(setUsuariosTotales(Number(datoMensual.usuarios_total)));
-                        dispatch(setUsuariosTotalesMeta(Number(datoMensual.usuarios_redes)));
-                        dispatch(setUsuariosTotalesGoogle(Number(datoMensual.usuarios_medios)));
-                        dispatch(setImpresionesTotalesInstagram(Number(datoMensual.impresiones_instagram)));
-                        dispatch(setImpresionesTotalesGoogle(Number(datoMensual.impresiones_busqueda)));
-                        dispatch(setImpresionesTotalesFacebook(Number(datoMensual.impresiones_facebook)));
-                        dispatch(setultimaFechaCargadaBarplot(fecha.getDate()))
+            axios.post(
+                "https://panel.serviciosd.com/app_obtener_usuarios",
+                {
+                    cliente: nombreCliente,
+                    periodos: periodoUltimoAño(),
+                    token: token
+                },
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
                     }
                 }
-            } else {
-                console.error('Error en la respuesta de la API:', response.data.message);
-            }
-        })
-        .catch((error) => {
-            console.error('Error al hacer la solicitud:', error);
-        })
-        .finally(() => {
-            clearInterval(interval); // Detén la animación cuando los datos reales estén cargados
+            )
+            .then((response) => {
+                if (response.data.message === "Token Invalido") {
+                    navigate("/");
+                }
+                if (response.data.status === "true") {
+                    let datos = response.data.item;
+                    for (let datoMensual of datos) {
+                        if (!fechas.includes(datoMensual.periodo)) {
+                            dispatch(setFechas(formatDate(datoMensual.periodo)));
+                            dispatch(setUsuariosTotales(Number(datoMensual.usuarios_total)));
+                            dispatch(setUsuariosTotalesMeta(Number(datoMensual.usuarios_redes)));
+                            dispatch(setUsuariosTotalesGoogle(Number(datoMensual.usuarios_medios)));
+                            dispatch(setImpresionesTotalesInstagram(Number(datoMensual.impresiones_instagram)));
+                            dispatch(setImpresionesTotalesGoogle(Number(datoMensual.impresiones_busqueda)));
+                            dispatch(setImpresionesTotalesFacebook(Number(datoMensual.impresiones_facebook)));
+                            dispatch(setultimaFechaCargadaBarplot(fecha.getDate()));
+                            dispatch(setComentariosFacebook(Number(datoMensual.comentarios_facebook)));
+                            dispatch(setComentariosInstagram(Number(datoMensual.comentarios_instagram)));   
+                            dispatch(setCompartidosFacebook(Number(datoMensual.compartidos_facebook)));
+                            dispatch(setCompartidosInstagram(Number(datoMensual.compartidos_instagram)));
+                            dispatch(setLikesFacebook(Number(datoMensual.likes_facebook)));
+                            dispatch(setLikesInstagram(Number(datoMensual.likes_instagram)));
+                            dispatch(setReaccionesFacebook(Number(datoMensual.reacciones_facebook)));
+                            dispatch(setReaccionesInstagram(Number(datoMensual.reacciones_instagram)));
+                        }
+                    }
+                } else {
+                    console.error('Error en la respuesta de la API:', response.data.message);
+                }
+            })
+            .catch((error) => {
+                console.error('Error al hacer la solicitud:', error);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+        } else {
             setLoading(false);
-        });
-    }else{
-        setLoading(false);
-    }
+        }
 
-    return () => clearInterval(interval); // Limpia el intervalo si el componente se desmonta
+        ; // Limpia el intervalo si el componente se desmonta
     }, [nombreCliente]);
 
     // Función para generar datos aleatorios
     function generateRandomData() {
         return Array.from({ length: 12 }, () => Math.floor(Math.random() * 100) + 1);
     }
-
-    const dataSimulated = {
-        labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
-        datasets: [
-            {
-                label: 'Cargando...',
-                data: simulatedData,
-                backgroundColor: "grey",
-                barPercentage: 1.0,
-                categoryPercentage: 0.7,
-            }
-        ],
-    };
-
-    const optionsSimulated = {
-        responsive: true,
-        maintainAspectRatio: false,
-        animation: {
-            duration: 500, // Controla la velocidad de la animación
-        },
-        plugins: {
-            legend: {
-                display: false,
-            },
-        },
-        scales: {
-            y: {
-                beginAtZero: true,
-            },
-        },
-    };
-
     // Aquí están tus datos reales
     let cantidad_meses = seleccionPorFiltro(FiltroActual);
     const usuariosPorMesmeta = (useSelector((state) => state.barplot.usuariosTotalesMeta)).slice(cantidad_meses);
@@ -236,45 +211,20 @@ const Barplot = () => {
     // Mostrar gráfico de barras animado mientras carga
     if (loading) {
         return (
-            <div className="container-fluid sinPadding">
-                <div className="row cantidades mt-3 back-white">
-                    <div className='col-2 barra_lateral'>
-                        <p className='leyenda_barplot'>
-                            <span className="blue-dot-user"></span> Cargando usuarios
-                            <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "aca va el texto"/>  
-                        </p>
-                        <div className='totales'><Spinner color='blue'/></div> {/* Cambiado a div */}
-                    </div>
-                    <div className='col' style={{ paddingLeft: '20px' }}>
-                        <p className='leyenda_barplot'>
-                            <span className="blue-dot-impresiones"></span> Cargando usuarios
-                            <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "aca va el texto"/>  
-                        </p>
-                        <div className='totales'><Spinner color='primary'/></div> {/* Cambiado a div */}
-                    </div>
-                </div>
-                <div className="row back-white">
-                    <div className="col barplot">
-                        <div style={{ height: '100%' }}>
-                            <Bar data={dataSimulated} options={optionsSimulated} />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
+            <Barplot_Carga />)
     }
     
     // Mostrar el gráfico real una vez cargados los datos
     return (
-        <div className="container-fluid sinPadding">
+        <div className="container-fluid sinPadding" ref={captureRef}>
             <div className="row cantidades mt-3 back-white">
-            <div className='col-4 barra_lateral'>
-                <p className='leyenda_barplot'>
-                    <span className="blue-dot-user"></span> Usuarios Redes Sociales
-                    <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "aca va el texto"/>  
-                </p>
-                <p className='totales'>{formatNumberMiles(totalUsuariosMeta)}</p>
-            </div>
+                <div className='col-4 barra_lateral'>
+                    <p className='leyenda_barplot'>
+                        <span className="blue-dot-user"></span> Usuarios Redes Sociales
+                        <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "aca va el texto"/>  
+                    </p>
+                    <p className='totales'>{formatNumberMiles(totalUsuariosMeta)}</p>
+                </div>
                 <div className='col' style={{ paddingLeft: '20px' }}>
                     <p className='leyenda_barplot'>
                         <span className="blue-dot-impresiones"></span>Usuarios Medios
@@ -284,7 +234,7 @@ const Barplot = () => {
                 </div>
             </div>
             <div className="row back-white">
-                <div className="col barplot">
+                <div className="col barplot" >
                     <div style={{ height: '100%' }}>
                         <Bar data={dataReal} options={optionsReal} />
                     </div>

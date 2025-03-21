@@ -13,6 +13,15 @@ const barplotSlice = createSlice({
     usuariosTotalesMeta: [],
     usuariosTotalesGoogle: [],
     usuariosTotales: [],
+    
+    comentarios_facebook : [],  
+    comentarios_instagram : [],
+    likes_facebook: [],
+    likes_instagram: [],
+    reacciones_facebook: [],
+    reacciones_instagram: [],
+    compartidos_facebook: [],
+    compartidos_instagram: [],
 
     impresionesTotalesFacebook: [],
     impresionesTotalesGoogle: [],
@@ -53,12 +62,37 @@ const barplotSlice = createSlice({
     },
     setUltimoClienteCargadoBarplot: (state,action) => {
       state.ultimoClienteCargadoBarplot = action.payload
-    }
+    },
+    setComentariosFacebook: (state, action) => {
+      state.comentarios_facebook.push(action.payload);
+    },
+    setComentariosInstagram: (state, action) => {
+      state.comentarios_instagram.push(action.payload);
+    },
+    setLikesFacebook: (state, action) => {
+      state.likes_facebook.push(action.payload);
+    },
+    setLikesInstagram: (state, action) => {
+      state.likes_instagram.push(action.payload);
+    },
+    setReaccionesFacebook: (state, action) => {
+      state.reacciones_facebook.push(action.payload);
+    },
+    setReaccionesInstagram: (state, action) => {
+      state.reacciones_instagram.push(action.payload);
+    },
+    setCompartidosFacebook: (state, action) => {
+      state.compartidos_facebook.push(action.payload);
+    },
+    setCompartidosInstagram: (state, action) => {
+      state.compartidos_instagram.push(action.payload);
+    },
   },
 });
 
 export const { setDesde, setHasta, setImpresiones,
               setUsuariosTotales,setImpresionesTotalesGoogle, setUsuariosTotalesMeta,
               setImpresionesTotalesInstagram, setImpresionesTotalesFacebook,setUsuariosTotalesGoogle, setFechas,
-            setultimaFechaCargadaBarplot, setUltimoClienteCargadoBarplot } = barplotSlice.actions;
+            setultimaFechaCargadaBarplot, setUltimoClienteCargadoBarplot, setComentariosFacebook, setComentariosInstagram,
+            setLikesFacebook,setLikesInstagram,setCompartidosFacebook,setCompartidosInstagram,setReaccionesFacebook,setReaccionesInstagram} = barplotSlice.actions;
 export default barplotSlice.reducer;

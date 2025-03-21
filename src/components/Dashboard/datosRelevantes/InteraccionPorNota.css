@@ -42,23 +42,18 @@
 
 .totales_widget{
     float: right;
-    text-align: end;
-    padding-right: 20px;
     padding-top: 15px;
     color: #667085;
     font-weight: 600;
+    justify-content: end;
     font-size: 18px;
+    text-align: right;
     
 }
 
 .publicada{
     width: 60px;
 } 
-.columna_interaccion{
-    padding-left: 30px;
-    margin-right: 70px;
-    width: 420px;
-}
 .nombre_categoria{
     font-size: 18px !important;
 }
@@ -88,6 +83,7 @@
 
 .collapsed{
     background-color: none;
+    padding-left: 0px;
 }
 .show{
     background-color: none;
@@ -105,3 +101,8 @@
     justify-content: center;
     padding-top: 30px !important;
 }
+
+.accordion .col-1{
+    width: auto !important;
+}
+

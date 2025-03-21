@@ -118,3 +118,85 @@
 .dropdown-search{
     width: 470px !important;
 }
+
+@media print {
+    body, html {
+      width: 100%;
+      height: auto;
+      overflow: visible !important;
+      -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      
+      
+    }
+    * {
+      overflow: visible !important;
+      position: static !important;
+    }
+    .content .flex-grow-1{
+        width: 100%;
+        height: auto;
+        overflow: visible !important;
+    }
+    .no-print {
+        display: none !important;
+    }
+    #print-header img{
+        width: 100%;
+    }
+
+    /* PARA QUE LAS COLUMNAS TENGAN */
+    .row {
+        display: flex !important;
+        flex-wrap: nowrap !important; /* Evita que las columnas se apilen */
+    }
+
+    .g-1 .col {
+        flex: 0 0 43% !important; /* Fuerza 50% de ancho */
+        max-width: 43% !important;
+    }
+
+    /* Opcional: Ajusta márgenes y padding para evitar espacios no deseados */
+    .col.m-2 {
+        margin: 0 !important;
+    }
+
+    .col.p-3 {
+        padding: 5px !important; /* Ajusta si es necesario */
+    }
+    canvas{
+        width: 1050px !important;
+    }
+    .imagenWidwetInteracciones2{
+        overflow: hidden !important;
+        object-fit: cover !important;
+    }
+    .totales_widget{
+        margin-right: 350px;
+    }
+    .impresionesWidget{
+        text-align: center !important;
+        margin-right: 350px;
+    }
+    .columnaInteraccion{
+        margin-left: 10px !important;
+    }
+    .impresionesCategorias123{
+        margin-left: 20px;
+    }
+    .nombreReporteEncabezado{
+        margin-top: 20px !important;
+
+    }
+    .resenaReporte{
+        color:#667085; 
+        margin-left: 12px;
+        font-size: 16px !important;
+    }
+
+}
+
+@page {
+    margin: 10px;
+}
+

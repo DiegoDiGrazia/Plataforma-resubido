@@ -25,7 +25,7 @@ const Sidebar = ({estadoActual}) => {
     return (
         <>
 
-                <div className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
+                <div className={`sidebar no-print ${isOpen ? 'open' : 'closed'}`}>
                     <div className=" flex-grow-1">
                         {isOpen ? <img src="/images/noticiasdlogo.png" alt="Imagen de ejemplo" className="img-fluid" id="logo-nd-sidebar" />:
                         <img src="/images/logo_nd_miniatura.png" alt="Imagen de ejemplo" className="img-fluid" id="logo-nd-miniatura" />

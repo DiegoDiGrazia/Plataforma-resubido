@@ -61,7 +61,7 @@ const PlataformaMasImpresionesNota = ({id_noti, TOKEN, cliente, fpub}) => {
         <div className="">
             <div className='row '>
                 <p id="titulo_relevantes">Plataforma con más impresiones
-                    <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title="aca va el texto"/>
+                    <img src="/images/help-circle.png" alt="Descripción" className="info-icon no-print" title="aca va el texto"/>
                 </p>
             </div>
             {/* FACEBOOK */}
