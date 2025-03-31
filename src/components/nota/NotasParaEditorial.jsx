@@ -8,7 +8,6 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { useEffect } from 'react';
-import { setTodasLasNotas, setNotasEnRevision, setNotasBorrador, setNotasPublicadas } from '../../redux/notasSlice';
 import { Link, useNavigate } from 'react-router-dom';
 import { formatearFecha } from '../Dashboard/datosRelevantes/InteraccionPorNota';
 import { formatearTitulo } from '../Dashboard/datosRelevantes/InteraccionPorNota';
@@ -17,6 +16,7 @@ import { left } from '@popperjs/core';
 import SelectorCliente from '../Dashboard/SelectorCliente';
 import { useCallback } from 'react';
 import { editarNota } from './VerNota';
+import { resetCrearNota } from '../../redux/crearNotaSlice';
 import { analizarHTML, convertirImagenBase64, setContenidoAEditar, setContenidoNota, setImagenPrincipal, setImagenRRSS, setNotaAEditar } from '../../redux/crearNotaSlice';
 
 
@@ -121,10 +121,9 @@ const NotasParaEditorial = () => {
     }, [CLIENTE, TOKEN, navigate, verMasUltimo]);
     
     
-
-    const handleBotonPaginaClick = (id) => {
-        setNumeroDePagina(id);
-
+    const ClickearEnCrearNota = () => {
+        dispatch(resetCrearNota());
+        navigate("/crearNota");
     };
     
     const [searchQuery, setSearchQuery] = useState('');
@@ -189,7 +188,7 @@ const NotasParaEditorial = () => {
                                     <div className='abajoDeTusNotas'> Crea, gestiona y monitorea tus notas</div>
                                 </div>
                                 <div className='col boton'>
-                                    <Button onClick = {()=> navigate('/crearNota') } id="botonPublicar" variant="none">{"Crear nota "}
+                                    <Button onClick = {()=> ClickearEnCrearNota() } id="botonPublicar" variant="none">{"Crear nota "}
                                         {CLIENTE ?  "de " + CLIENTE : "sin cliente"}
                                     </Button>
                                 </div>
@@ -237,11 +236,11 @@ const NotasParaEditorial = () => {
                                     </div>
                                 </div>
                                 <div className='row'>
-                                    <div className='col-1 colImgNota'></div> {/* Imagen placeholder para alineación */}
+                                    <div className='col-auto' style={{width: "70px"}}></div>
                                     <div className='col-4 columna_interaccion' style={{fontSize: "12px", color: "#667085", fontWeight: "bold"}}>Título de la Nota</div>
-                                    <div className='col-2 categoriasNotas'>Estado</div>
-                                    <div className='col categoriasNotas'>Categorías</div>
-                                    <div className='col categoriasNotas text-end'>Cliente</div>
+                                    <div className='col-1 categoriasNotas text-aling-center'>Estado</div>
+                                    <div className='col categoriasNotas d-flex align-items-center justify-content-center'>Categorías</div> 
+                                    <div className='col categoriasNotas text-end'>Interacciones</div>
                                 </div>
                                 {/* aca va la nota */}
 
@@ -255,7 +254,7 @@ const NotasParaEditorial = () => {
                                             )}
                                         </div>
                                         <div className='col-4 pt-1 columna_interaccion nuevoFont'>
-                                            {filtroSeleccionado === 1 || filtroSeleccionado === 2  ? 
+                                            {filtroSeleccionado === 2  ? 
                                             <Link className="link-sin-estilos" to={`/verNota`} state={{ id: nota.id_noti ? nota.id_noti : nota.term_id, notaABM: nota }}>
                                                 <div className='row p-0 nombre_plataforma'>
                                                     {formatearTitulo(nota.titulo, 45)}
@@ -273,7 +272,7 @@ const NotasParaEditorial = () => {
                                                 <span className='FechaPubNota'>{nota.f_pub ? formatearFecha(nota.f_pub) : formatearFecha(nota.update_date)}</span>
                                             </div>
                                         </div>
-                                        <div className='col-2 d-flex align-items-center'>
+                                        <div className='col-auto d-flex align-items-center'>
                                             <span className="publicada">
                                                 <img src="./images/puntoVerde.png" alt="Icono Nota" className='' />
                                                 {nota.estado ? " " + nota.estado : " Publicada"}

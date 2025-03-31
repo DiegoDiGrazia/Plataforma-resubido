@@ -38,6 +38,10 @@ import { createSlice } from '@reduxjs/toolkit';
 
 // Función para convertir imágenes a Base64
 export async function convertirImagenBase64(url) {
+  console.log("URL DE LA IMAGEN VIEJA", url);
+
+  url = url.replace("https://panel.serviciosd.com/img/", "https://diego.serviciosd.com/oldpanel/");
+  console.log("URL DE LA IMAGEN", url);
   const response = await fetch(url);
   const blob = await response.blob();
 
@@ -49,99 +53,102 @@ export async function convertirImagenBase64(url) {
   });
 }
 
+
+const initialState = {
+  tituloNota: "", ///listo
+  contenidoNota: [],
+  categorias: [],
+  categoriasNombres: "", ///listo
+  imagenPrincipal: null, ///listo
+  imagenRRSS: null, ///listo
+  copete: "", ///listo
+  comentarios: "", /// listo
+  conDistribucion: "0", /// listo
+  distribucion_prioritaria: false, /// listo
+  engagement: "", /// listo
+  autor: "", /// listo
+  autor_cliente: "", /// listo
+  es_demo: false, /// listo
+  es_home: false, /// listo
+  etiquetas: [],
+  estado: "", /// listo
+  id_noti: "",
+  tipoContenido: "gestion",
+  f_vence: "",
+  engagement: "",
+  bajada: "",
+  provincia: {
+    "provincia_id": "54",
+    "nombre": "Misiones",
+    "iso_nombre": "Misiones",
+    "categoria": "Provincia",
+    "centroide_lat": "-26.8753965086829",
+    "centroide_lon": "-54.6516966230371",
+    "iso_id": "AR-N",
+    "nombre_completo": "Provincia de Misiones",
+    "Poblacion": "0"
+  },
+  municipio: {
+    "municipio_id": "746252",
+    "nombre": "Beazley",
+    "nombre_completo": "Comisión Municipal Beazley",
+    "provincia_id": "74",
+    "centroide_lat": "-33.7572721991329",
+    "centroide_lon": "-66.6446207562444",
+    "categoria": "Comisión Municipal",
+    "poblacion": "0"
+  }
+};
+
 const crearNotaSlice = createSlice({
   name: 'crearNota',
-  initialState: {
-    tituloNota : "", ///listo
-    contenidoNota :[],
-    categorias: [], 
-    categoriasNombres: "", ///listo
-    imagenPrincipal: null,///listo
-    imagenRRSS: null,///listo
-    copete : "", ///listo
-    comentarios: "", /// listo
-    conDistribucion: "0",/// listo
-    distribucion_prioritaria: false,/// listo
-    engagement: "", /// listo
-    autor: "", /// listo 
-    autor_cliente: "",/// listo
-    es_demo: false, /// listo
-    es_home: false, /// listo
-    etiquetas : [],
-    estado: "", /// listo
-    id_noti: "",
-    tipoContenido: "gestion",
-    f_vence: "",
-    engagement: "", 
-    bajada: "",
-    provincia: {"provincia_id":"54","nombre":"Misiones","iso_nombre":"Misiones","categoria":"Provincia","centroide_lat":"-26.8753965086829","centroide_lon":"-54.6516966230371","iso_id":"AR-N","nombre_completo":"Provincia de Misiones","Poblacion":"0"},
-    municipio: {
-      "municipio_id": "746252",
-      "nombre": "Beazley",
-      "nombre_completo": "Comisión Municipal Beazley",
-      "provincia_id": "74",
-      "centroide_lat": "-33.7572721991329",
-      "centroide_lon": "-66.6446207562444",
-      "categoria": "Comisión Municipal",
-      "poblacion": "0"
-    }
-    
-
-  },
+  initialState,
   reducers: {
     setCopete: (state, action) => {
       state.copete = action.payload;
-    },  
+    },
     setTituloNota: (state, action) => {
       state.tituloNota = action.payload;
-    },  
+    },
     setImagenPrincipal: (state, action) => {
       state.imagenPrincipal = action.payload;
-    },  
-    setImagenRRSS: (state, action) => {
-      state.imagenRRSS = action.payload;
     },
     setImagenRRSS: (state, action) => {
       state.imagenRRSS = action.payload;
-    },  
-    setContenidoNota: (state, action) => { /// aca guardo las imagenes, subtitulos y parrafos
-        state.contenidoNota.push(action.payload)
     },
-    DeleteContenidoPorIndice: (state, action) =>{ /// action payload
-        state.contenidoNota.splice(action.payload, 1)
+    setContenidoNota: (state, action) => {
+      state.contenidoNota.push(action.payload);
     },
-    SubirContenidoPorIndice: (state, action) => { 
+    DeleteContenidoPorIndice: (state, action) => {
+      state.contenidoNota.splice(action.payload, 1);
+    },
+    SubirContenidoPorIndice: (state, action) => {
       const index = action.payload;
       if (index >= 0 && index < state.contenidoNota.length - 1) {
-        // Realiza el swap entre el elemento actual y el siguiente
         const temp = state.contenidoNota[index];
         state.contenidoNota[index] = state.contenidoNota[index + 1];
         state.contenidoNota[index + 1] = temp;
       }
     },
-    BajarContenidoPorIndice: (state, action) => { 
+    BajarContenidoPorIndice: (state, action) => {
       const index = action.payload;
       if (index > 0 && index < state.contenidoNota.length) {
-        // Realiza el swap entre el elemento actual y el anterior
         const temp = state.contenidoNota[index];
         state.contenidoNota[index] = state.contenidoNota[index - 1];
         state.contenidoNota[index - 1] = temp;
       }
     },
-    ///en action.payload, se aloja contenido el indice
-    /// y el contenido con este formato [indice, contenido]
-    setContenidoPorIndice: (state, action) =>{
+    setContenidoPorIndice: (state, action) => {
       const indice = action.payload[0];
       const contenido = action.payload[1];
       state.contenidoNota[indice][1] = contenido;
-      state.contenidoNota[indice][2] = action.payload[2]
-      state.contenidoNota[indice][3] = action.payload[3]
-
+      state.contenidoNota[indice][2] = action.payload[2];
+      state.contenidoNota[indice][3] = action.payload[3];
     },
-    setCategorias: (state, action) =>{
+    setCategorias: (state, action) => {
       state.categorias = action.payload;
     },
-    setNotaAEditar:(state, action) =>{
+    setNotaAEditar: (state, action) => {
       const nota = action.payload;
       state.tituloNota = nota.titulo;
       state.copete = nota.copete;
@@ -156,27 +163,26 @@ const crearNotaSlice = createSlice({
       state.distribucion_prioritaria = nota.distribucion_prioritaria;
       state.estado = nota.estado;
       state.id_noti = nota.term_id;
-
     },
-    setContenidoAEditar: (state, action) =>{
-      state.contenidoNota= action.payload;
+    setContenidoAEditar: (state, action) => {
+      state.contenidoNota = action.payload;
     },
-    setItemsEtiquetas: (state,action)=>{
+    setItemsEtiquetas: (state, action) => {
       state.etiquetas = action.payload;
     },
-    setEsDemo: (state,action)=>{
+    setEsDemo: (state, action) => {
       state.es_demo = action.payload;
     },
-    setNoHome: (state,action)=>{
-      state.es_home= action.payload;
+    setNoHome: (state, action) => {
+      state.es_home = action.payload;
     },
-    setDistribucionProioritaria : (state,action)=>{
-    state.distribucion_prioritaria = action.payload;
+    setDistribucionProioritaria: (state, action) => {
+      state.distribucion_prioritaria = action.payload;
     },
-    setTipoContenido : (state,action) => {
+    setTipoContenido: (state, action) => {
       state.tipoContenido = action.payload;
     },
-    setFechaVencimiento : (state,action) => {
+    setFechaVencimiento: (state, action) => {
       state.f_vence = action.payload;
     },
     setEngagement: (state, action) => {
@@ -189,18 +195,21 @@ const crearNotaSlice = createSlice({
       state.autor = action.payload;
     },
     setProvincia: (state, action) => {
-        state.provincia = action.payload;
+      state.provincia = action.payload;
     },
     setMunicipio: (state, action) => {
-        state.municipio = action.payload;
+      state.municipio = action.payload;
     },
-    }
+    resetCrearNota: () => initialState
+  }
 });
 
-export const { setTituloNota, setContenidoNota, DeleteContenidoPorIndice, setContenidoPorIndice,
-                SubirContenidoPorIndice, BajarContenidoPorIndice, setCategorias, setImagenPrincipal, setImagenRRSS,
-                setCopete, setNotaAEditar, setContenidoAEditar,setItemsEtiquetas,setEsDemo,setNoHome, 
-                setDistribucionProioritaria, setTipoContenido,setFechaVencimiento, setBajada, setEngagement, 
-                setAutor, setMunicipio, setMunicipios,setProvincia,setProvincias,
- } = crearNotaSlice.actions;
+export const {
+  setTituloNota, setContenidoNota, DeleteContenidoPorIndice, setContenidoPorIndice,
+  SubirContenidoPorIndice, BajarContenidoPorIndice, setCategorias, setImagenPrincipal, setImagenRRSS,
+  setCopete, setNotaAEditar, setContenidoAEditar, setItemsEtiquetas, setEsDemo, setNoHome,
+  setDistribucionProioritaria, setTipoContenido, setFechaVencimiento, setBajada, setEngagement,
+  setAutor, setMunicipio, setMunicipios, setProvincia, setProvincias, resetCrearNota
+} = crearNotaSlice.actions;
+
 export default crearNotaSlice.reducer;

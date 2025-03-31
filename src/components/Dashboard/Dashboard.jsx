@@ -15,6 +15,7 @@ import { seleccionPorFiltro } from '../barplot/Barplot.jsx';
 import { setFechaActual } from '../../redux/cargadosSlice.js';
 import { useNavigate } from 'react-router-dom';
 import SelectorCliente from './SelectorCliente.jsx';
+import { resetCrearNota } from '../../redux/crearNotaSlice.js';
 
 export function formatNumberMiles(num) {
     if (num === null || num === undefined || num === "") {
@@ -57,6 +58,11 @@ const Dashboard = () => {
         year: 'numeric'
     });
 
+    const ClickearEnCrearNota = () => {
+        dispatch(resetCrearNota());
+        navigate("/crearNota");
+    };
+
     return (
         <div className="container-fluid sinPadding">
             <div className="d-flex h-100">
@@ -77,7 +83,7 @@ const Dashboard = () => {
                                     <h3 id="nombre_municipio">{nombreCliente}</h3>
                                 </>
                             )}
-                            <Button id="botonCrearNota" className='no-print' variant="none" onClick={() => navigate("/crearNota")}>
+                            <Button id="botonCrearNota" className='no-print' variant="none" onClick={() => ClickearEnCrearNota()}>
                                 <img src="/images/boton_crear_nota.png" alt="Icono 1" className="icon me-2" />
                             </Button>
                         </header>
@@ -117,18 +123,18 @@ const Dashboard = () => {
                             <Barplot />
                         </div>
                         <div className='row g-1'>
-                            <div className='col m-2 p-3 back-white'>
+                            <div className='col-lg-12 col-xl m-2  back-white'>
                                 <InteraccionPorNota />
                             </div>
-                            <div className='col m-2 p-3 back-white'>
+                            <div className='col-lg-12 col-xl m-2  back-white'>
                                 <MediosMasRelevantes />
                             </div>
                         </div>
                         <div className='row g-1'>
-                            <div className='col m-2 p-3 back-white'>
+                            <div className='col-lg-12 col-xl m-2 p-3 back-white'>
                                 <PlataformaMasImpresiones />
                             </div>
-                            <div className='col m-2 p-3 back-white'>
+                            <div className='col-lg-12 col-xl m-2 p-3 back-white'>
                                 <CategoriasMasRelevantes />
                             </div>
                         </div>

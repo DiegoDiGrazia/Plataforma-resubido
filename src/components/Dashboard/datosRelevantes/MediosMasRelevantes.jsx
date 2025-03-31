@@ -78,7 +78,7 @@ const MediosMasRelevantes = () => {
 
     const renderMedio = (medio) => (
         <div className='row pt-1' key={medio.sitio}>
-            <div className='col-1'>
+            <div className='col-auto'>
                 <img src={`https://panel.serviciosd.com${medio.imagen}`} alt="Icono 1" className='imagenWidwetInteracciones' />
             </div>
             <div className='col-7 pt-1 ml-2 columnaInteraccion'>

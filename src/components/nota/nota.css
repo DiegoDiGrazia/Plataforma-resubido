@@ -452,7 +452,7 @@ textarea.inputTituloNota {
     padding: 5px 10px;
 }
 .colImgNota{
-    width: 45px;
+    width: auto;
     justify-content: center;
 
 }

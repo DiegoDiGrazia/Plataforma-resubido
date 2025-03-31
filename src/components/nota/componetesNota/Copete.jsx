@@ -40,7 +40,7 @@ const CopeteNota = ({ indice }) => {
                 ref={tituloRef}
                 className="inputTituloNota marginTitulo"
                 type="text"
-                placeholder="BAJADA"
+                placeholder="Bajada de la nota"
                 value={tituloGlobalNota}
                 onChange={handleInputChange}
                 rows="1"

@@ -14,6 +14,7 @@ import { formatearFecha } from '../Dashboard/datosRelevantes/InteraccionPorNota'
 import { formatearTitulo } from '../Dashboard/datosRelevantes/InteraccionPorNota';
 import { Spinner } from 'react-bootstrap';
 import { left } from '@popperjs/core';
+import { resetCrearNota } from '../../redux/crearNotaSlice';
 
 
 
@@ -168,7 +169,7 @@ const Notas = () => {
     const dispatch = useDispatch();
     ///api///
     const DESDE = "2023-01-01"
-    const HASTA = "2026-12-28"
+    const HASTA = new Date().toISOString().split('T')[0]; // Fecha actual en formato YYYY-MM-DD
     const TOKEN = useSelector((state) => state.formulario.token);
     const CLIENTE = useSelector((state) => state.formulario.cliente);
      
@@ -191,7 +192,10 @@ const Notas = () => {
       }
 
     
-    console.log(notasEnPaginaActual)
+    const ClickearEnCrearNota = () => {
+        dispatch(resetCrearNota());
+        navigate("/crearNota");
+    };
     
 
     ///Chat gpt
@@ -215,7 +219,7 @@ const Notas = () => {
                                     <div className='abajoDeTusNotas'> Crea, gestiona y monitorea tus notas</div>
                                 </div>
                                 <div className='col boton'>
-                                <Button id="botonCrearNota" variant="none" onClick={() => navigate("/crearNota")}>
+                                <Button id="botonCrearNota" variant="none" onClick={() => ClickearEnCrearNota()}>
                                     <img src="/images/boton_crear_nota.png" alt="Icono 1" className="icon me-2" /> 
                                 </Button>
                                 </div>
@@ -261,17 +265,17 @@ const Notas = () => {
                                     </div>
                                 </div>
                                 <div className='row'>
-                                    <div className='col-1 colImgNota'></div> {/* Imagen placeholder para alineación */}
+                                    <div className='col-auto' style={{width: "70px"}}></div>
                                     <div className='col-4 columna_interaccion' style={{fontSize: "12px", color: "#667085", fontWeight: "bold"}}>Título de la Nota</div>
-                                    <div className='col-2 categoriasNotas'>Estado</div>
-                                    <div className='col categoriasNotas'>Categorías</div>
+                                    <div className='col-1 categoriasNotas text-aling-center'>Estado</div>
+                                    <div className='col categoriasNotas d-flex align-items-center justify-content-center'>Categorías</div> 
                                     <div className='col categoriasNotas text-end'>Interacciones</div>
                                 </div>
                                 {/* aca va la nota */}
 
                                 {notasEnPaginaActual.map((nota, index) => (
                                         <div key={nota.id_noti || nota.term_id || `nota-${index}`} className='row pt-1 borderNotas'>
-                                        <div className='col-1 colImgNota'>
+                                        <div className='col-auto colImgNota'>
                                             {nota.imagen ? (
                                                 <img src={nota.imagen} alt="Icono Nota" className='imagenWidwetInteracciones2' />
                                             ) : (
@@ -288,7 +292,7 @@ const Notas = () => {
                                                 <span className='FechaPubNota'>{nota.f_pub ? formatearFecha(nota.f_pub) : formatearFecha(nota.update_date)}</span>
                                             </div>
                                         </div>
-                                        <div className='col-2 d-flex align-items-center'>
+                                        <div className='col-auto d-flex align-items-center'>
                                             <span className="publicada">
                                                 <img src="./images/puntoVerde.png" alt="Icono Nota" className='' />
                                                 {nota.estado ? " " + nota.estado : " Publicada"}

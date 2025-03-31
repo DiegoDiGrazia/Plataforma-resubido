@@ -27,16 +27,33 @@ const Embebido = ({ indice }) => {
         const iframe = container.querySelector('iframe');
         if (iframe) {
           iframe.style.width = '100%';
-          iframe.style.height = '100%';
+          iframe.style.height = 'auto'; // Ajusta dinámicamente la altura
           iframe.style.borderRadius = '15px';
           iframe.style.padding = '0px';
-
-
         }
       }
     };
 
-    adjustIframeSize(); // Ajusta al cargar
+    const loadInstagramScript = () => {
+      if (!window.instgrm) {
+        // Si el script de Instagram no está cargado, agrégalo dinámicamente
+        const script = document.createElement('script');
+        script.src = 'https://www.instagram.com/embed.js';
+        script.async = true;
+        script.onload = () => {
+          if (window.instgrm) {
+            window.instgrm.Embeds.process();
+          }
+        };
+        document.body.appendChild(script);
+      } else {
+        // Si el script ya está cargado, procesa los embebidos
+        window.instgrm.Embeds.process();
+      }
+    };
+
+    adjustIframeSize(); // Ajusta el tamaño del iframe
+    loadInstagramScript(); // Carga y ejecuta el script de Instagram
     window.addEventListener('resize', adjustIframeSize); // Ajusta al redimensionar
 
     return () => {
@@ -64,12 +81,10 @@ const Embebido = ({ indice }) => {
           <div
             style={{
               width: '100%',
-              maxWidth: '850px',
-              aspectRatio: '16 / 9',
               position: 'relative',
-              borderRadius: "15px"
+              height: '100%', // Altura inicial para que el contenido sea visible
+              borderRadius: '15px',
             }}
-            className='imagenRecortada imagenNotaContenido mapa'
           >
             <div
               dangerouslySetInnerHTML={{ __html: embebido }}

@@ -88,7 +88,7 @@ const Formulario = () => {
 
                 <div className="col-4" id='formulario'>
                     <div className="text-center mb-4">
-                        <img src="/images/noticiasdlogo.png" alt="Imagen de ejemplo" className="img-fluid mb-4" id='logo-nd'/>
+                        <img src="/images/logoNdNegroNaranja.png" alt="Imagen de ejemplo" className="img-fluid mb-4" id='logo-nd'/>
                         <h2>Bienvenidos</h2>
                         <h3>Ingresa tus datos para acceder a la plataforma</h3>
                     </div>

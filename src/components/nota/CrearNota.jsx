@@ -20,6 +20,7 @@ import Embebido from './componetesNota/Embebidos';
 import { useLocation } from 'react-router-dom';
 import ImagenPrincipal from './componetesNota/ImagenPrincipal';
 import CopeteNota from './componetesNota/Copete';
+
 const CrearNota = () => {
     const dispatch = useDispatch();
     const [image, setImage] = useState(null);
@@ -36,37 +37,30 @@ const CrearNota = () => {
     const toggleButtons = () => {
       setShowButtons(!showButtons);
     };
+
     const handleClickEnNota = () => {
-        // Simula un clic en el input de archivo
         inputFileRef.current.click();
-      };
+    };
 
     const handleFileChangeEnNota = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        agregarImagen(file);
-    }};
-    
-    const agregarSubtitulo = () => {
-        dispatch(setContenidoNota(["subtitulo", ""]))
-      };
-    const agregarParrafo = () => {
-        console.log("entra al parrafo")
-        dispatch(setContenidoNota( ["parrafo", ""]));
+        const file = event.target.files[0];
+        if (file) {
+            agregarContenido("imagen", file);
+        }
     };
-    const agregarUbicacion = () => {
-        dispatch(setContenidoNota( ["ubicacion", ""]));
+
+    const agregarContenido = (tipo, contenido = "") => {
+        if (tipo === "imagen") {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                dispatch(setContenidoNota([tipo, reader.result])); // Almacena la imagen en base64
+            };
+            reader.readAsDataURL(contenido); // Convierte el archivo a base64
+        } else {
+            dispatch(setContenidoNota([tipo, contenido]));
+        }
     };
-    const agregarEmbebido = () => {
-        dispatch(setContenidoNota( ["embebido", ""]));
-    };
-    const agregarImagen = (file) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            dispatch(setContenidoNota(["imagen", reader.result])); // Almacena la imagen en base64
-        };
-        reader.readAsDataURL(file); // Convierte el archivo a base64
-    };
+
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file) {
@@ -95,110 +89,105 @@ const CrearNota = () => {
     const handleCrop = () => {
         if (cropper) {
             const canvas = cropper.getCroppedCanvas();
-            dispatch(setImagenPrincipal(canvas.toDataURL()))
+            dispatch(setImagenPrincipal(canvas.toDataURL()));
             setShowModal(false); // Cierra el modal después de recortar
             setImage(null); // Oculta la imagen original
             cropper.destroy(); // Destruye el cropper
         }
     };
+
     const eliminarImagenPrincipal = () => {
-        dispatch(setImagenPrincipal(null))
+        dispatch(setImagenPrincipal(null));
     };
 
-    
+    const esEditor = useSelector((state) => state.formulario.es_editor);
+    const contenidoNota = useSelector((state) => state.crearNota.contenidoNota);
 
-    const esEditor = useSelector((state) =>state.formulario.es_editor)
-
-    const contenidoNota = useSelector((state) => state.crearNota.contenidoNota)
     return (
         <div className="container-fluid sinPadding crearNotaGlobal">
             <div className="d-flex h-100">
                 <Sidebar estadoActual={"notas"} />
                 <div className="content flex-grow-1 crearNotaGlobal">
-                        <div className='row'>
-                            <div className='col'>
-                                <h4 id="nota">
+                    <div className='row'>
+                        <div className='col'>
+                            <h4 id="nota">
                                 <nav aria-label="breadcrumb">
                                     <ol className="breadcrumb">
                                         {esEditor ?
-                                        <li className="breadcrumb-item"><Link to="/notasEditorial" className='breadcrumb-item'>{'< '} Notas</Link></li>
-                                        :
-                                        <li className="breadcrumb-item"><Link to="/notas" className='breadcrumb-item'>{'< '} Notas</Link></li>
+                                            <li className="breadcrumb-item"><Link to="/notasEditorial" className='breadcrumb-item'>{'< '} Notas</Link></li>
+                                            :
+                                            <li className="breadcrumb-item"><Link to="/notas" className='breadcrumb-item'>{'< '} Notas</Link></li>
                                         }
                                         <li className="breadcrumb-item blackActive" aria-current="page">Crear Nota</li>
                                     </ol>
                                 </nav>
-                                </h4>
-                            </div>
-                            <div className='col'>
-                                <Button onClick = {()=> navigate('/publicarNota') } id="botonPublicar" variant="none">
-                                     <img src="/images/send.png" alt="Icono 1" className="icon me-2 icono_tusNotas" />{" Publicar"}
-                                </Button>
-                            </div>
+                            </h4>
                         </div>
-                        <div className='row'>
-                            <div className='col mt-0'>
-                                <h3 className='headerCrearNota'>Crear nota</h3>
-                            </div>
+                        <div className='col'>
+                            <Button onClick={() => navigate('/publicarNota')} id="botonPublicar" variant="none">
+                                <img src="/images/send.png" alt="Icono 1" className="icon me-2 icono_tusNotas" />{" Publicar"}
+                            </Button>
                         </div>
+                    </div>
+                    <div className='row'>
+                        <div className='col mt-0'>
+                            <h3 className='headerCrearNota'>Crear nota</h3>
+                        </div>
+                    </div>
                     {/* SECCION NOTA */}
                     <div className='row notaTutorial'>
                         <div className='col-8 columnaNota'>
-                            <ImagenPrincipal/>
+                            <ImagenPrincipal />
                             <div className='row'>
-                            <TituloNota/>
-                            <CopeteNota/>
+                                <TituloNota />
+                                <CopeteNota />
 
-                            {contenidoNota && contenidoNota.map((contenido, index) => {
-                            if (contenido[0] === "subtitulo") {
-                                return <SubtituloNota key={index} indice={index}/>;
-                            } else if(contenido[0] === "parrafo") {
-                                return <ParrafoNota key={index} indice={index}/>;}
-                            else if(contenido[0] === "imagen") {
-                                return <ImagenDeParrafo key={index} indice={index} />;}
-                            else if(contenido[0] === "videoYoutube") {
-                                return <YoutubeNota key={index} indice={index} />;}
-                            else if(contenido[0] === "ubicacion") {
-                                return <Ubicacion key={index} indice={index} />;}
-                                else if(contenido[0] === "embebido") {
-                                    return <Embebido key={index} indice={index} />;}
-                            return null; // Esto te permite agregar otros tipos de contenido en el futuro
-                            })}
+                                {contenidoNota && contenidoNota.map((contenido, index) => {
+                                    if (contenido[0] === "subtitulo") {
+                                        return <SubtituloNota key={index} indice={index} />;
+                                    } else if (contenido[0] === "parrafo") {
+                                        return <ParrafoNota key={index} indice={index} />;
+                                    } else if (contenido[0] === "imagen") {
+                                        return <ImagenDeParrafo key={index} indice={index} />;
+                                    } else if (contenido[0] === "videoYoutube") {
+                                        return <YoutubeNota key={index} indice={index} />;
+                                    } else if (contenido[0] === "ubicacion") {
+                                        return <Ubicacion key={index} indice={index} />;
+                                    } else if (contenido[0] === "embebido") {
+                                        return <Embebido key={index} indice={index} />;
+                                    }
+                                    return null; // Esto te permite agregar otros tipos de contenido en el futuro
+                                })}
 
-                            {/* BOTONERA AGREGAR CONTENIDO */}
-                            <div className="containerButton">
-                                <button onClick={toggleButtons} className={`botones-nota ${showButtons ? 'boton-plus' : ''}`}>
-                                    {showButtons ?  <img src="images/plus-circle-x.png" alt="" />:  <img src="images/plus-circle-+.png" alt="" /> }
-                                </button>
-
-
-                                {showButtons && (
-                                    <div className="buttons-container">
-                                    <button onClick={agregarSubtitulo} className="botones-nota" title='Subtítulo'><img src="images/t-botton.png" alt="" /></button>
-                                    <button onClick={agregarParrafo} className="botones-nota" title='Párrafo'><img src="images/Aa-botton.png" alt="" /></button>
-                                    <button onClick={handleClickEnNota} className="botones-nota">
-                                    <img src="images/image-icon-botton.png" alt="Subir Imagen" />
+                                {/* BOTONERA AGREGAR CONTENIDO */}
+                                <div className="containerButton">
+                                    <button onClick={toggleButtons} className={`botones-nota ${showButtons ? 'boton-plus' : ''}`}>
+                                        {showButtons ? <img src="images/plus-circle-x.png" alt="" /> : <img src="images/plus-circle-+.png" alt="" />}
                                     </button>
-                                    {/* Input file oculto */}
-                                    <input
-                                    type="file"
-                                    ref={inputFileRef}
-                                    style={{ display: 'none' }}
-                                    onChange={handleFileChangeEnNota}
-                                    accept="image/*"  // Acepta solo archivos de imagen
-                                    />
-                                    <button onClick={agregarUbicacion} className="botones-nota"><img src="images/mapaIcon.png" alt="" /></button>
-                                    <button onClick={agregarEmbebido} className="botones-nota"><img src="images/embebidoImagen.png" alt="" /></button>
 
-
-                                    </div>
-                                )}
+                                    {showButtons && (
+                                        <div className="buttons-container">
+                                            <button onClick={() => agregarContenido("subtitulo")} className="botones-nota" title='Subtítulo'><img src="images/t-botton.png" alt="" /></button>
+                                            <button onClick={() => agregarContenido("parrafo")} className="botones-nota" title='Párrafo'><img src="images/Aa-botton.png" alt="" /></button>
+                                            <button onClick={handleClickEnNota} className="botones-nota">
+                                                <img src="images/image-icon-botton.png" alt="Subir Imagen" />
+                                            </button>
+                                            {/* Input file oculto */}
+                                            <input
+                                                type="file"
+                                                ref={inputFileRef}
+                                                style={{ display: 'none' }}
+                                                onChange={handleFileChangeEnNota}
+                                                accept="image/*"  // Acepta solo archivos de imagen
+                                            />
+                                            <button onClick={() => agregarContenido("ubicacion")} className="botones-nota"><img src="images/mapaIcon.png" alt="" /></button>
+                                            <button onClick={() => agregarContenido("embebido")} className="botones-nota"><img src="images/embebidoImagen.png" alt="" /></button>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
 
-
-                        </div> 
-                       
                         {/* Seccion columna izquierda del tutorial */}
                         <div className='col-4 columnaTutorial align-self-start'>
                             <img src="/images/tutorialvideo.png" alt="Icono 1" className="float-right" />
@@ -211,27 +200,27 @@ const CrearNota = () => {
                         <Modal.Header className='modalHeader'>
                             <Modal.Title>
                                 <div className='tituloModal'>Selecciona la posicion de la imagen</div>
-                                </Modal.Title>
+                            </Modal.Title>
                         </Modal.Header>
                         <Modal.Body className='modalBody'>
                             <div className='subtitulo-modal'>Selecciona el recorte que se utilizara para los canales donde la imagen deba ser adaptada</div>
                             <div className='custom_image_modal'>
-                            {image && (
-                                <img
-                                    ref={imageRef}
-                                    src={image}
-                                    alt="Imagen seleccionada"
-                                    className='custom_image_modal'
-                                />
-                            )}
+                                {image && (
+                                    <img
+                                        ref={imageRef}
+                                        src={image}
+                                        alt="Imagen seleccionada"
+                                        className='custom_image_modal'
+                                    />
+                                )}
                             </div>
                         </Modal.Body>
                         <Modal.Footer className='modalFooter'>
                             <div className='row rowModalFooter'>
                                 <div className='col text-align-center'>
-                                <Button variant="none" onClick={() => setShowModal(false)} className='botonModalVolver'>
-                                    Volver
-                                </Button>
+                                    <Button variant="none" onClick={() => setShowModal(false)} className='botonModalVolver'>
+                                        Volver
+                                    </Button>
                                 </div>
                                 <div className='col text-align-center'>
                                     <Button variant="none" onClick={handleCrop} className='botonModalContinuar'>

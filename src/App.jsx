@@ -17,6 +17,7 @@ import Soporte from './components/miPerfil/soporte';
 import Notificaciones from './components/miPerfil/Notificaciones';
 import AutoEntrevistas from './components/miPerfil/AutoEntrevistas';
 import NotasParaEditorial from './components/nota/NotasParaEditorial';
+import AutoEntrevistasVideoAsk from './components/miPerfil/AutoEntrevistasVideoAsk';
 
 
 const inlineStyles = {
@@ -35,10 +36,10 @@ function App() {
         <Route path="/crearNota/" element={<CrearNota/>} />
         <Route path="/publicarNota/" element={<PublicarNota/>} />
         <Route path="/mi-perfil/" element={<Perfil/>} />
-        <Route path="/autoEntrevistas/" element={<AutoEntrevistas/>} />
+        <Route path="/autoEntrevistas/" element={<AutoEntrevistasVideoAsk/>} />
 
         <Route path="/soporte-y-ayuda/" element={<Soporte/>} />
-        <Route path="/notificaciones/" element={<Notificaciones/>} />
+        {/* <Route path="/notificaciones/" element={<Notificaciones/>} /> */}
         <Route path="/verNota/:id_ruta?" element={<VerNota/>} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/notas" element={<Notas/>} />
