@@ -41,7 +41,7 @@ const SubtituloNota= ({indice}) => {
           ref={tituloRef}
           className="inputTituloNota subtituloNota"
           type="text"
-          placeholder="un subtitulo"
+          placeholder="Escribe un subtitulo..."
           value={tituloGlobalNota}
           onChange={handleInputChange}
           rows="1" // Empieza con una sola fila

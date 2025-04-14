@@ -19,8 +19,11 @@ import { editarNota } from './VerNota';
 import { resetCrearNota } from '../../redux/crearNotaSlice';
 import { analizarHTML, convertirImagenBase64, setContenidoAEditar, setContenidoNota, setImagenPrincipal, setImagenRRSS, setNotaAEditar } from '../../redux/crearNotaSlice';
 
-
-
+function unescapeHtml(escapedStr) {
+    const temp = document.createElement('textarea');
+    temp.innerHTML = escapedStr;
+    return temp.value;
+  }
 
 
 const NotasParaEditorial = () => {
@@ -28,14 +31,31 @@ const NotasParaEditorial = () => {
 
 
     const editarNota = async (notaABM) => {
-        dispatch(setNotaAEditar(notaABM))
-        const contenidoNota = await(analizarHTML(notaABM.parrafo))
-        dispatch(setContenidoAEditar(contenidoNota))
-        const base64PPAL = await convertirImagenBase64("https://panel.serviciosd.com/img" + notaABM.imagen_principal);
-        dispatch(setImagenPrincipal(base64PPAL))
-        const base64RRSS = await convertirImagenBase64("https://panel.serviciosd.com/img" + notaABM.imagen_feed);
-        dispatch(setImagenRRSS(base64RRSS))
-        navigate("/crearNota"); 
+        console.log("entro a editarNota");
+        dispatch(resetCrearNota());
+        dispatch(setNotaAEditar(notaABM));
+
+        // const contenidoNota = await analizarHTML(notaABM.parrafo);
+        dispatch(setContenidoAEditar([["parrafo", notaABM.parrafo ]]));
+    
+        try {
+            const base64PPAL = await convertirImagenBase64("https://panel.serviciosd.com/img" + notaABM.imagen_principal);
+            dispatch(setImagenPrincipal(base64PPAL));
+        } catch (error) {
+            console.error("Error al convertir la imagen principal a Base64:", error);
+            dispatch(setImagenPrincipal(null)); // Opcional: establece un valor por defecto
+        }
+    
+        try {
+            const base64RRSS = await convertirImagenBase64("https://panel.serviciosd.com/img" + notaABM.imagen_feed);
+            dispatch(setImagenRRSS(base64RRSS));
+        } catch (error) {
+            console.error("Error al convertir la imagen de RRSS a Base64:", error);
+            dispatch(setImagenRRSS(null)); // Opcional: establece un valor por defecto
+        }
+    
+        navigate("/crearNota");
+        
     };
 
 
@@ -254,19 +274,12 @@ const NotasParaEditorial = () => {
                                             )}
                                         </div>
                                         <div className='col-4 pt-1 columna_interaccion nuevoFont'>
-                                            {filtroSeleccionado === 2  ? 
-                                            <Link className="link-sin-estilos" to={`/verNota`} state={{ id: nota.id_noti ? nota.id_noti : nota.term_id, notaABM: nota }}>
-                                                <div className='row p-0 nombre_plataforma'>
-                                                    {formatearTitulo(nota.titulo, 45)}
-                                                </div>
-                                            </Link>
-                                            :
+                                            
                                             <Link className="link-sin-estilos" onClick={(e) => {e.preventDefault();editarNota(nota);}}>
                                                 <div className='row p-0 nombre_plataforma'>
                                                     {formatearTitulo(nota.titulo, 45)}
                                                 </div>
                                             </Link>
-                                            }
 
                                             <div className='row p-0'>
                                                 <span className='FechaPubNota'>{nota.f_pub ? formatearFecha(nota.f_pub) : formatearFecha(nota.update_date)}</span>

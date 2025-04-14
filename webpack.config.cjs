@@ -43,7 +43,7 @@ module.exports = {
     historyApiFallback: true, // Permite manejar rutas en una SPA
     compress: true,
     hot: true,
-    port: 4000, // Puerto para el servidor de desarrollo
+    port: 4001, // Puerto para el servidor de desarrollo
     proxy: [
       {
         context: [

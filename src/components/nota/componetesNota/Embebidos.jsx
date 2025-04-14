@@ -70,35 +70,22 @@ const Embebido = ({ indice }) => {
             type="text"
             value={embebido || ''}
             onChange={handleInputChange}
-            placeholder="Pega aquí tu embebido"
-            className="inputTituloNota parrafoNota ml-3"
+            placeholder="Pega tu embebido          "
+            className="inputTituloNota parrafoNota"
           />
         )}
       </div>
 
-      <div className="centradoContenido" ref={containerRef}>
+      <div className="centradoContenido align-item-center" ref={containerRef}>
         {embebido && (
-          <div
-            style={{
-              width: '100%',
-              position: 'relative',
-              height: '100%', // Altura inicial para que el contenido sea visible
-              borderRadius: '15px',
-            }}
-          >
             <div
               dangerouslySetInnerHTML={{ __html: embebido }}
               style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
                 width: '100%',
-                height: '100%',
+                height: '100%', // Ajusta automáticamente la altura al contenido
+                minHeight: '400px', // Altura mínima para el iframe
               }}
             ></div>
-          </div>
         )}
       </div>
     </span>

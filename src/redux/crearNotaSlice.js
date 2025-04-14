@@ -38,10 +38,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 // Función para convertir imágenes a Base64
 export async function convertirImagenBase64(url) {
-  console.log("URL DE LA IMAGEN VIEJA", url);
-
   url = url.replace("https://panel.serviciosd.com/img/", "https://diego.serviciosd.com/oldpanel/");
-  console.log("URL DE LA IMAGEN", url);
   const response = await fetch(url);
   const blob = await response.blob();
 
@@ -55,8 +52,9 @@ export async function convertirImagenBase64(url) {
 
 
 const initialState = {
+  listaDeImagenesContenidoEnBase64: "", ///listo
   tituloNota: "", ///listo
-  contenidoNota: [],
+  contenidoNota: [], // [[tipo, contenido, abre etiqueta, cierra etiqueta ]]
   categorias: [],
   categoriasNombres: "", ///listo
   imagenPrincipal: null, ///listo
@@ -97,7 +95,24 @@ const initialState = {
     "centroide_lon": "-66.6446207562444",
     "categoria": "Comisión Municipal",
     "poblacion": "0"
-  }
+  },
+  pais: {
+    "nombre": "Argentina",
+  },
+  atachments: {
+    attachment_1: null,
+    attachment_2: null,
+    attachment_3: null,
+    attachment_4: null,
+    attachment_5: null,
+    attachment_6: null,
+    attachment_7: null,
+    attachment_8: null,
+    attachment_9: null,
+    attachment_10: null,
+  },
+  numeroDeAtachment: 2,
+  id_att: "",
 };
 
 const crearNotaSlice = createSlice({
@@ -162,7 +177,7 @@ const crearNotaSlice = createSlice({
       state.conDistribucion = nota.conDistribucion;
       state.distribucion_prioritaria = nota.distribucion_prioritaria;
       state.estado = nota.estado;
-      state.id_noti = nota.term_id;
+      state.id_noti = nota.id;
     },
     setContenidoAEditar: (state, action) => {
       state.contenidoNota = action.payload;
@@ -200,6 +215,32 @@ const crearNotaSlice = createSlice({
     setMunicipio: (state, action) => {
       state.municipio = action.payload;
     },
+    setPais: (state, action) => {
+      state.pais = action.payload;
+    },
+    setListaImagenesContenidoEnBase64: (state, action) => {
+      state.listaDeImagenesContenidoEnBase64 = action.payload;
+    },
+
+    ///ejemplo dispatch(setAtachment({ key, value }));
+    setAtachment: (state, action) => {
+      const { key, value } = action.payload; // Extraer valores del payload
+      if (state.atachments.hasOwnProperty(key)) {
+        state.atachments[key] = value; // Actualizar el attachment correspondiente
+      }
+    },
+    setNumeroDeAtachment: (state, action) => {
+      state.numeroDeAtachment = action.payload
+    },
+    setSumarUnoAlNumeroDeAtachment: (state, action) => {
+      console.log("Se ejecuta")
+      state.numeroDeAtachment = state.numeroDeAtachment + 1
+    },
+    setIdAtt: (state, action) => {
+      state.id_att = action.payload
+    },
+    
+
     resetCrearNota: () => initialState
   }
 });
@@ -209,7 +250,7 @@ export const {
   SubirContenidoPorIndice, BajarContenidoPorIndice, setCategorias, setImagenPrincipal, setImagenRRSS,
   setCopete, setNotaAEditar, setContenidoAEditar, setItemsEtiquetas, setEsDemo, setNoHome,
   setDistribucionProioritaria, setTipoContenido, setFechaVencimiento, setBajada, setEngagement,
-  setAutor, setMunicipio, setMunicipios, setProvincia, setProvincias, resetCrearNota
+  setAutor, setMunicipio, setMunicipios, setProvincia,setPais, setIdAtt,setProvincias, resetCrearNota, setListaImagenesContenidoEnBase64, setAtachment, setSumarUnoAlNumeroDeAtachment
 } = crearNotaSlice.actions;
 
 export default crearNotaSlice.reducer;

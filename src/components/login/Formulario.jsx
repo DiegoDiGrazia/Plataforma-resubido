@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Formulario.css';
-import { updateEmail, updateContraseña, updateToken, updateCliente, updateIdCliente, updateEsEditor, updateUsuario } from '../../redux/formularioSlice';
+import { updateEmail, updateContraseña, updateToken, updateCliente, updateIdCliente, updateEsEditor, updateUsuario, updateIdUsuario } from '../../redux/formularioSlice';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -44,6 +44,8 @@ const Formulario = () => {
                 dispatch(updateIdCliente(response.data.item.id_cliente))
                 dispatch(updateEsEditor(false))
                 dispatch(updateUsuario(response.data.item))
+                dispatch(updateIdUsuario(response.data.id))
+
                 if(!response.data.item.cliente){
                     console.log("entre porque no tiene cliente")
                     dispatch(updateCliente(CLIENTE_DEFAULT))

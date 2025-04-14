@@ -7,12 +7,13 @@ import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
 import "./nota.css";
 import { useDispatch, useSelector } from 'react-redux';
-import ImagenDeParrafo from './componetesNota/ImagenDeParrafo';
-import { Link, Navigate } from 'react-router-dom';
-import axios from 'axios';
-import { DeleteContenidoPorIndice, setCategorias, setContenidoNota, setImagenPrincipal, setImagenRRSS } from '../../redux/crearNotaSlice'; // Asegúrate de importar setImagenPrincipal
+import { Link} from 'react-router-dom';
+import {setImagenRRSS } from '../../redux/crearNotaSlice'; // Asegúrate de importar setImagenPrincipal
 import { useNavigate } from 'react-router-dom';
 import ColumnaEditorial from './Editorial/ColumnaEditorial';
+import { clickearEnPublicarNota } from '../../utils/publicarNotaHelper';
+import useCategorias from '../../hooks/useCategorias';
+import { use } from 'react';
 
 const PublicarNota = () => {
     const navigate = useNavigate()
@@ -37,63 +38,49 @@ const PublicarNota = () => {
     const tipoAutor = useSelector((state) => state.crearNota.autor); 
     const provincia = useSelector((state) => state.crearNota.provincia);
     const municipio = useSelector((state) => state.crearNota.municipio);
-    
+    const pais = useSelector((state) => state.crearNota.pais);
 
-    
-    
+    const image = useSelector((state) => state.crearNota.imagenPrincipal); // Imagen seleccionada
+    const imagefeed = useSelector((state) => state.crearNota.imagenRRSS); // Imagen seleccionada
+    const idUsuario = useSelector((state) => state.formulario.usuario.id); 
+    const attachments = useSelector((state) => state.crearNota.atachments); 
+    const id_att = useSelector((state) => state.crearNota.id_att); 
 
+    const atachmentsValidos = Object.entries(attachments)
+    .filter(([key, value]) => value !== null) // Filtrar los que no son null
+    .reduce((obj, [key, value]) => {
+        obj[key] = value; // Construir un nuevo objeto con los valores válidos
+        return obj;
+    }, {});
+
+
+
+    const { categorias, categoriasActivas, setCategoriasActivas } = useCategorias(TOKEN);
+    
+    
+    const [isClickedRecorte, setIsClickedRecorte] = useState(false);
+    const [showModal, setShowModal] = useState(false); // Estado para mostrar el modal
     const [comentario, setComentario] = useState('');
 
     const manejarCambioComentarios = (e) => {
         setComentario(e.target.value);
     };
 
-    const image = useSelector((state) => state.crearNota.imagenPrincipal); // Imagen seleccionada
-    const imagefeed = useSelector((state) => state.crearNota.imagenRRSS); // Imagen seleccionada
-
-
-    useEffect(() => {
-        // if(es_editor == true){
-        //     setStatus("publish")
-        // }
-        axios.post(
-            "https://panel.serviciosd.com/app_obtener_listado_categorias",
-            
-            {
-                token: TOKEN,          
-                dimension: "categorias",
-            },
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data' // Asegúrate de que el tipo de contenido sea correcto
-                }
-            }
-        )
-        .then((response) => {
-            if (response.data.status === "true") {
-                console.log(response.data.item)
-                dispatch(setCategorias(response.data.item));
-            } else {
-                console.error('Error en la respuesta de la API:', response.data.message);
-            }
-
-        })
-        .catch((error) => {
-            console.error('Error al hacer la solicitud:', error);
-        });
-
-    },[]); // Dependencias del useEffect
 
     const transformarContenidoAHTML = (contenidos) => {
         if (!contenidos || !Array.isArray(contenidos)) {
-            return ''; // Si no hay contenidos, devuelve un string vacío
+            return ''; 
         }
     
         // Construimos el HTML concatenando las etiquetas y el contenido
         const contenidoEnHTML = contenidos.reduce((html, contenido) => {
             const etiquetaAbrir = contenido[2];
             const etiquetaCerrar = contenido[3];
+            if(contenido[0] == "imagen"){
+                return html + etiquetaAbrir + etiquetaCerrar;
+            }
             return html + etiquetaAbrir + contenido[1] + etiquetaCerrar;
+
         }, '');
     
         return contenidoEnHTML; // Retorna el HTML como un string
@@ -103,59 +90,41 @@ const PublicarNota = () => {
     const titulo = useSelector((state) => state.crearNota.tituloNota);
     const contenidoNota = useSelector((state) => state.crearNota.contenidoNota)
     const datosUsuario =useSelector((state) => state.formulario)
-    const clickear_en_publicar_nota = (status) => {
-        setIsLoading(true); // Muestra el overlay
+       const clickear_en_publicar_nota = (status) => {
+        setEstadoPublicar(status)
         const contenidoHTMLSTR = transformarContenidoAHTML(contenidoNota);
-        console.log(itemsEtiquetas, "ETIQUETAS")
-    
-        axios.post(
-            "https://panel.serviciosd.com/app_subir_nota",
-            {
-                token: TOKEN, // CARGADO
-                status: status, // Es el que decide si la notas e publica en wp"" CARGADO
-                id: "0",  
-                titulo: titulo,// CARGADO
-                categorias: categoriasActivas, //CARGADO
-                copete: notaCargada.copete, //CARGADO
-                parrafo: contenidoHTMLSTR, //CARGADO
-                estado: estadoPublicar, //CARGADO
-                cliente: datosUsuario.cliente, //CARGADO
-                email: datosUsuario.email, //CARGADO
-                base_principal: image, //CARGADO
-                base_feed: imagefeed, //CARGADO
-                comentarios: comentario, //CARGADO
-                autor_cliente: datosUsuario.email, //CARGADO
-                conDistribucion: selectedOptionDistribucion === 'normal' ? "1" : "0", //Cargado
-                distribucion: selectedOptionDistribucion === 'normal' ? isCheckedDistribucionPrioritaria ? "prioritaria" : "normal" : "ninguna", //Cargado
-                es_demo: isCheckedDemo ? "1" : "0", //Cargado
-                es_home: isCheckedNoHome ? "1" : "0", //Cargado
-                tipo_contenido: tipoContenido, //Cargado
-                fecha_vencimiento: fecha, //Cargado
-                etiquetas: itemsEtiquetas,  //CARGADO
-                engagement : engagementText,
-                bajada: bajadaText,
-                autor: tipoAutor,
-                provincia: provincia.nombre,
-                municipio: municipio.nombre
-            },
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            }
-        )
-        .then((response) => {
-            if (response.data.status === "true") {
-                navigate('/notas');
-            } else {
-                console.error('Error en la respuesta de la API:', response.data.message);
-            }
-        })
-        .catch((error) => {
-            console.error('Error al hacer la solicitud:', error);
-        })
-        .finally(() => {
-            setIsLoading(false); // Oculta el overlay al terminar
+
+        clickearEnPublicarNota({
+            status,
+            TOKEN,
+            titulo,
+            categoriasActivas,
+            notaCargada,
+            contenidoHTMLSTR,
+            estadoPublicar,
+            datosUsuario,
+            image,
+            imagefeed,
+            comentario,
+            selectedOptionDistribucion,
+            isCheckedDistribucionPrioritaria,
+            isCheckedDemo,
+            isCheckedNoHome,
+            tipoContenido,
+            fecha,
+            itemsEtiquetas,
+            engagementText,
+            bajadaText,
+            tipoAutor,
+            provincia,
+            municipio,
+            pais,
+            id_noti,
+            id_att,
+            ...atachmentsValidos,
+            setIsLoading,
+            setShowModal,
+            navigate,
         });
     };
 
@@ -178,11 +147,10 @@ const PublicarNota = () => {
             const canvas = cropper.getCroppedCanvas();
             const croppedBase64 = canvas.toDataURL(); // Obtiene la imagen recortada en base64
             dispatch(setImagenRRSS(croppedBase64)); // Guarda la imagen recortada en el estado global
+            setIsClickedRecorte(true); // Cambia el estado a "clicked"
         }
     };
-    
-    const categorias = useSelector((state) => state.crearNota.categorias) || [];
-    const [categoriasActivas, setCategoriasActivas] = useState([]);
+
     const categoriasPorNombre = useSelector((state) => state.crearNota.categoriasNombres) || [];
 
     useEffect(() => {
@@ -250,8 +218,17 @@ const PublicarNota = () => {
                                 <h4 className='imagenParaRRSSHeader fw-bold'>Imagen para redes sociales</h4>
                                 <h4 className='abajoDeAgregarCategoria mlRRSS'>Selecciona el recorte de tu imagen de portada para que podamos ajustarlo en redes sociales</h4>
 
-                                {image && (
-                                    <div className='imagenRRSS'>
+
+                                {(imagefeed && es_editor) && (
+                                    <div>                                        
+                                    <img
+                                    src={imagefeed}
+                                    alt="Imagen seleccionada"
+                                    className='imagenRRSS'
+                                /></div>
+                                )}
+                                {(image && !(imagefeed && es_editor)) && (
+                                    <div className=''>
                                         <img
 
                                             ref={imageRef}
@@ -259,10 +236,9 @@ const PublicarNota = () => {
                                             alt="Imagen seleccionada"
                                             className='imagenRRSS'
                                         />
-                                        {/* ESTE HANDLE CROP LO TENGO QUE HACER AL CLICKEAR EN EL BOTON PUBLICAR */}
-                                        {/* <Button onClick={handleCrop} className='botonModalContinuar'>
-                                            Recortar Imagen
-                                        </Button> */}
+                                       <Button onClick={handleCrop} variant= "none" id= "botonPublicar" className={(isClickedRecorte == false  ?  "recorteSinSeleccionar" :"recorteSeleccionado")}>
+                                            {isClickedRecorte == false ? "Seleccionar área de recorte" : "Área recortada para redes"}
+                                        </Button> 
                                     </div>
                                 )}
                                 <div className='hDistribucionContenido'>Distribucion de contenido</div>
@@ -321,20 +297,28 @@ const PublicarNota = () => {
                                 <p className='abajoDeAgregarCategoria' >Max 300 caracteres</p>
                                 <div className='mb-5'>
                                     <Button
-                                        onClick={() => clickear_en_publicar_nota()}
+                                        onClick={() => clickear_en_publicar_nota("EN REVISION")}
                                         id="botonPublicar"
                                         variant="none"
-                                        disabled={isLoading} // Deshabilitar el botón mientras se carga
+                                        disabled={isLoading || !imagefeed || !image} // Deshabilitar el botón mientras se carga
                                     >
                                         <img src="/images/send.png" alt="Icono 1" className="icon me-2 icono_tusNotas" />{" Enviar a revision"}
+                                    </Button>
+                                    <Button
+                                        onClick={() => clickear_en_publicar_nota("BORRADOR")}
+                                        id="botonPublicar"
+                                        variant="none"
+                                        disabled={isLoading || !imagefeed || !image} // Deshabilitar el botón mientras se carga
+                                    >
+                                        <img src="/images/send.png" alt="Icono 1" className="icon me-2 icono_tusNotas" />{" Guardar borrador"}
                                     </Button>
                                     
                                     {es_editor &&
                                     <Button
-                                        onClick={() => clickear_en_publicar_nota("publish")}
-                                        id="botonPublicar"
+                                        onClick={() => clickear_en_publicar_nota("PUBLICADO")}
+                                        id= {"botonPublicar"}
                                         variant="none"
-                                        disabled={isLoading} // Deshabilitar el botón mientras se carga
+                                        disabled={isLoading || !imagefeed || !image} // Deshabilitar el botón mientras se carga
                                     >
                                         <img src="/images/send.png" alt="Icono 1" className="icon me-2 icono_tusNotas" />{" Publicar"}
                                     </Button>
@@ -345,7 +329,7 @@ const PublicarNota = () => {
                                         onClick={() => navigate('/crearNota')}
                                         id="botonVolver"
                                         variant="none"
-                                        disabled={isLoading} // Deshabilitar el botón mientras se carga
+                                        disabled={isLoading } // Deshabilitar el botón mientras se carga
                                     >
                                         {" Volver"}
                                     </Button>
@@ -367,6 +351,31 @@ const PublicarNota = () => {
                         {es_editor && <ColumnaEditorial/>}
                     </div>
                 </div>
+                <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+                <Modal.Header>
+                    <Modal.Title>{isLoading ? "Estamos enviando la nota" : "Nota enviada con éxito"}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {isLoading ? (
+                        <div className="text-center">
+                            <p className="mt-3">Por favor, espera mientras enviamos tu nota.</p>
+                        </div>
+                    ) : (
+                        <div className="text-center">
+                            <p>Tu nota ha sido enviada correctamente.</p>
+                            <Button
+                                variant="primary"
+                                onClick={() => {
+                                    setShowModal(false);
+                                    navigate(`/notas${es_editor ? "Editorial": ""}`); // Redirige a la página de notas// Redirige a la página de notas
+                                }}
+                            >
+                                Ir a Notas
+                            </Button>
+                        </div>
+                    )}
+                </Modal.Body>
+            </Modal>
             </div>
     );
 };

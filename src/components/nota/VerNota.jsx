@@ -85,7 +85,7 @@ const VerNota = () => {
                 if (response.data.status === "true") {
                     console.log(response.data);
                     setNota(response.data.item[0]);
-                    setFPUB(response.data.item[0].f_pub);
+                    setFPUB(response.data.item[0].f_pub || "");
                     setCLIENTE(response.data.item[0].cliente);
                 } else {
                     console.error('Error en la API:', response.data.message);

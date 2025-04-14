@@ -217,6 +217,12 @@
     border-radius: 10px;
     margin-top: 10px;
 }
+.recorteSinSeleccionar{
+    background-color: rgb(179, 53, 53) !important;
+}
+.recorteSeleccionado{
+    background-color: rgb(53, 179, 53) !important;
+}
 .headerCrearNota{
     font-size: 28px;
     font-weight:200;
@@ -502,9 +508,10 @@ textarea.inputTituloNota {
 .parrafoNota::placeholder{
     font-size: 20px;
     font-weight: 500;
-    margin-left: 15px;
     margin-bottom: 10px;
     margin-top: 10px;
+    width: 600px !important;
+    min-width: 300px !important;
 }
 .columnaTutorial {
     display: flex;
@@ -537,10 +544,11 @@ textarea.inputTituloNota {
     padding-right: 10px;
   } 
 .imagenNotaContenido{
-    margin-left: 15px;
     margin-top: 20px;
     margin-bottom: 20px;
     border-radius: 15px !important;
+    height: auto !important;
+    max-height: 600px !important;
 
 }
 .abajoDeAgregarCategoria{
@@ -608,17 +616,26 @@ textarea.inputTituloNota {
 }
 
 .imagenRRSS {
-    width: 700px !important;
-    height: 400px !important;
+    width: auto !important;
+    height: 500px !important;
     border-radius: 10px !important;
-    contain: content !important;
+    contain: contain !important;
     margin-top: 10px; 
   }
-  .imagenRRSS img {
-    width: 100%;              /* Imagen rellena el ancho disponible */
-    height: 100%;             /* Imagen rellena el alto disponible */
-    object-fit: cover;        /* Ajusta la imagen para rellenar sin perder proporción */
-  }
+  .cropper-hidden {
+    width: 100% !important; /* Ocupa todo el ancho del contenedor */
+    height: auto !important; /* Ajusta la altura automáticamente */
+    object-fit: contain !important; /* Asegura que toda la imagen sea visible */
+    border-radius: 10px !important;
+
+}
+.cropper-modal {
+    object-fit: contain !important;
+}
+
+.cropper-crop-box {
+    object-fit: contain !important;
+}
   
 
 .cropper-wrap-box{
@@ -723,7 +740,7 @@ textarea.inputTituloNota {
 }
 
 .mapa{
-    width: 90%;
+    width: 100%;
 }
 
 .centradoContenido{
@@ -731,12 +748,16 @@ textarea.inputTituloNota {
     justify-content: center; /* Centra horizontalmente */
     align-items: center;    /* Centra verticalmente */
     text-align: center;     /* Centra texto (si aplica) */
-    height: 100%;           /* Asegura el alto del contenedor */
     width: 100% !important;
     border-radius: 15px;
     padding-bottom: 20px;
+    height: 100% !important;
   
 }
+.centradoContenido iframe{
+    height: 100% !important;
+}
+
 
 .quill-editor {
     display: flex;

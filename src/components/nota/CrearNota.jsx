@@ -9,7 +9,7 @@ import "./nota.css";
 import SubtituloNota from './componetesNota/SubtituloNota';
 import ParrafoNota from './componetesNota/ParrafoNota';
 import TituloNota from './componetesNota/TituloNota';
-import { setTituloNota, setContenidoNota, setImagenPrincipal } from '../../redux/crearNotaSlice';
+import { setTituloNota, setContenidoNota, setImagenPrincipal, setIdAtt } from '../../redux/crearNotaSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import ImagenDeParrafo from './componetesNota/ImagenDeParrafo';
 import { Link, Navigate } from 'react-router-dom';
@@ -21,16 +21,17 @@ import { useLocation } from 'react-router-dom';
 import ImagenPrincipal from './componetesNota/ImagenPrincipal';
 import CopeteNota from './componetesNota/Copete';
 
+
 const CrearNota = () => {
+    const idUsuario = useSelector((state) => state.formulario.usuario.id); 
+    
     const dispatch = useDispatch();
     const [image, setImage] = useState(null);
-    const croppedImage = useSelector((state) => state.crearNota.imagenPrincipal);
     const navigate = useNavigate();
 
     const [cropper, setCropper] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const imageRef = useRef(null);
-    const fileInputRef = useRef(null);
     const [showButtons, setShowButtons] = useState(false);
     const inputFileRef = useRef(null);
 
@@ -49,6 +50,11 @@ const CrearNota = () => {
         }
     };
 
+    useEffect(() => {
+        const timestamp = Date.now(); // Obtiene el timestamp actual
+        dispatch(setIdAtt(idUsuario + "_" + timestamp));
+    }, [idUsuario]);
+
     const agregarContenido = (tipo, contenido = "") => {
         if (tipo === "imagen") {
             const reader = new FileReader();
@@ -58,18 +64,6 @@ const CrearNota = () => {
             reader.readAsDataURL(contenido); // Convierte el archivo a base64
         } else {
             dispatch(setContenidoNota([tipo, contenido]));
-        }
-    };
-
-    const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                setImage(e.target.result);
-                setShowModal(true); // Abre el modal cuando se carga la imagen
-            };
-            reader.readAsDataURL(file);
         }
     };
 
@@ -96,12 +90,12 @@ const CrearNota = () => {
         }
     };
 
-    const eliminarImagenPrincipal = () => {
-        dispatch(setImagenPrincipal(null));
-    };
 
     const esEditor = useSelector((state) => state.formulario.es_editor);
     const contenidoNota = useSelector((state) => state.crearNota.contenidoNota);
+    const numeroDeAtachmentAUsar= useSelector((state) => state.crearNota.numeroDeAtachment);
+    const id_att = useSelector((state) => state.crearNota.id_att);
+
 
     return (
         <div className="container-fluid sinPadding crearNotaGlobal">
@@ -142,21 +136,20 @@ const CrearNota = () => {
                                 <TituloNota />
                                 <CopeteNota />
 
-                                {contenidoNota && contenidoNota.map((contenido, index) => {
-                                    if (contenido[0] === "subtitulo") {
-                                        return <SubtituloNota key={index} indice={index} />;
-                                    } else if (contenido[0] === "parrafo") {
-                                        return <ParrafoNota key={index} indice={index} />;
-                                    } else if (contenido[0] === "imagen") {
-                                        return <ImagenDeParrafo key={index} indice={index} />;
-                                    } else if (contenido[0] === "videoYoutube") {
-                                        return <YoutubeNota key={index} indice={index} />;
-                                    } else if (contenido[0] === "ubicacion") {
-                                        return <Ubicacion key={index} indice={index} />;
-                                    } else if (contenido[0] === "embebido") {
-                                        return <Embebido key={index} indice={index} />;
-                                    }
-                                    return null; // Esto te permite agregar otros tipos de contenido en el futuro
+                                {contenidoNota &&
+                                    contenidoNota.map((contenido, index) => {
+                                        const componentes = {
+                                        subtitulo: SubtituloNota,
+                                        parrafo: ParrafoNota,
+                                        imagen: ImagenDeParrafo,
+                                        videoYoutube: YoutubeNota,
+                                        ubicacion: Ubicacion,
+                                        embebido: Embebido,
+                                        };
+
+                                    const Componente = componentes[contenido[0]]; // Obtiene el componente correspondiente
+
+                                    return Componente ? <Componente key={index} indice={index} numeroDeAtachmentAUsar = {numeroDeAtachmentAUsar} /> : null; // Renderiza el componente si existe
                                 })}
 
                                 {/* BOTONERA AGREGAR CONTENIDO */}
@@ -172,7 +165,7 @@ const CrearNota = () => {
                                             <button onClick={handleClickEnNota} className="botones-nota">
                                                 <img src="images/image-icon-botton.png" alt="Subir Imagen" />
                                             </button>
-                                            {/* Input file oculto */}
+        
                                             <input
                                                 type="file"
                                                 ref={inputFileRef}

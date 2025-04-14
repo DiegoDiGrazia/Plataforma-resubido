@@ -39,21 +39,19 @@ const ParrafoNota = ({ indice }) => {
       const editorRoot = quillInstanceRef.current.root;
       editorRoot.addEventListener('focus', () => setIsFocused(true));
       editorRoot.addEventListener('blur', () => setIsFocused(false));
-      
+  
       // Prevenir que el foco se pierda al hacer clic en los botones del toolbar
       const toolbar = quillInstanceRef.current.getModule('toolbar').container;
       toolbar.addEventListener('mousedown', (e) => {
-        e.preventDefault();  // Prevenir la pérdida de foco al hacer clic en el toolbar
-        editorRoot.focus();  // Mantener el foco en el editor
+        e.preventDefault(); // Prevenir la pérdida de foco al hacer clic en el toolbar
+        editorRoot.focus(); // Mantener el foco en el editor
       });
   
-      // Interceptar evento de pegar para asegurar que solo se pegue texto plano
-      const editor = quillInstanceRef.current;
-      editor.root.addEventListener('paste', (e) => {
-        e.preventDefault(); // Prevenir el comportamiento por defecto de pegar con formato
-        const text = e.clipboardData.getData('text/plain'); // Obtener solo el texto plano
-        const cursorPosition = editor.getSelection()?.index || 0;
-        editor.clipboard.dangerouslyPasteHTML(cursorPosition, text); // Pegar solo texto plano en la posición del cursor
+      // Personalizar el módulo clipboard para manejar el evento paste
+      const clipboard = quillInstanceRef.current.getModule('clipboard');
+      clipboard.addMatcher(Node.ELEMENT_NODE, (node, delta) => {
+        const text = node.innerText || node.textContent; // Obtener solo el texto plano
+        return new Quill.imports.delta().insert(text); // Insertar el texto plano
       });
     }
   
