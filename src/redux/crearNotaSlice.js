@@ -113,6 +113,7 @@ const initialState = {
   },
   numeroDeAtachment: 2,
   id_att: "",
+  cliente: "",
 };
 
 const crearNotaSlice = createSlice({
@@ -178,6 +179,16 @@ const crearNotaSlice = createSlice({
       state.distribucion_prioritaria = nota.distribucion_prioritaria;
       state.estado = nota.estado;
       state.id_noti = nota.id;
+      state.etiquetas = nota.etiquetas;
+      state.f_vence = nota.fecha_vencimiento;
+      state.autor = nota.autor;
+      state.pais = nota.pais;
+      state.provincia = nota.provincia;
+      state.municipio = nota.municipio;
+      state.cliente = nota.cliente;
+      state.engagement = nota.engagement;
+      state.bajada = nota.bajada;
+      state.tipoContenido = nota.tipo_contenido;
     },
     setContenidoAEditar: (state, action) => {
       state.contenidoNota = action.payload;

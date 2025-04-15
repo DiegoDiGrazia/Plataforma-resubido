@@ -38,21 +38,21 @@ const NotasParaEditorial = () => {
         // const contenidoNota = await analizarHTML(notaABM.parrafo);
         dispatch(setContenidoAEditar([["parrafo", notaABM.parrafo ]]));
     
-        try {
-            const base64PPAL = await convertirImagenBase64("https://panel.serviciosd.com/img" + notaABM.imagen_principal);
-            dispatch(setImagenPrincipal(base64PPAL));
-        } catch (error) {
-            console.error("Error al convertir la imagen principal a Base64:", error);
-            dispatch(setImagenPrincipal(null)); // Opcional: establece un valor por defecto
-        }
+        // try {
+        //     const base64PPAL = await convertirImagenBase64("https://panel.serviciosd.com/img" + notaABM.imagen_principal);
+        //     dispatch(setImagenPrincipal(base64PPAL));
+        // } catch (error) {
+        //     console.error("Error al convertir la imagen principal a Base64:", error);
+        //     dispatch(setImagenPrincipal(null)); // Opcional: establece un valor por defecto
+        // }
     
-        try {
-            const base64RRSS = await convertirImagenBase64("https://panel.serviciosd.com/img" + notaABM.imagen_feed);
-            dispatch(setImagenRRSS(base64RRSS));
-        } catch (error) {
-            console.error("Error al convertir la imagen de RRSS a Base64:", error);
-            dispatch(setImagenRRSS(null)); // Opcional: establece un valor por defecto
-        }
+        // try {
+        //     const base64RRSS = await convertirImagenBase64("https://panel.serviciosd.com/img" + notaABM.imagen_feed);
+        //     dispatch(setImagenRRSS(base64RRSS));
+        // } catch (error) {
+        //     console.error("Error al convertir la imagen de RRSS a Base64:", error);
+        //     dispatch(setImagenRRSS(null)); // Opcional: establece un valor por defecto
+        // }
     
         navigate("/crearNota");
         
@@ -260,7 +260,9 @@ const NotasParaEditorial = () => {
                                     <div className='col-4 columna_interaccion' style={{fontSize: "12px", color: "#667085", fontWeight: "bold"}}>Título de la Nota</div>
                                     <div className='col-1 categoriasNotas text-aling-center'>Estado</div>
                                     <div className='col categoriasNotas d-flex align-items-center justify-content-center'>Categorías</div> 
-                                    <div className='col categoriasNotas text-end'>Interacciones</div>
+                                    <div className='col categoriasNotas text-end'>Cliente</div>
+                                    <div className='col categoriasNotas text-end'>Ver Nota</div>
+
                                 </div>
                                 {/* aca va la nota */}
 
@@ -291,12 +293,18 @@ const NotasParaEditorial = () => {
                                                 {nota.estado ? " " + nota.estado : " Publicada"}
                                             </span>
                                         </div>
-                                        <div className='col'>
+                                        <div className='col-2'>
                                             <span className="categoria_notas">{nota.categorias}</span>
                                         </div>
                                         <div className='col totales_widget'>
                                             <p>{nota.cliente}</p>
                                         </div>
+                                        {nota.estado === "PUBLICADO" && (
+                                            <div className='col totales_widget' style={{ color: "#007bff"}}>
+                                                <a href={`http://noticiasd.com/nota/${nota.term_id}`} target="_blank" rel="noopener noreferrer">VER NOTA</a>
+                                            </div>
+                                        )}
+
                                     </div>
                                 ))}
                                 {cargandoNotas && 
