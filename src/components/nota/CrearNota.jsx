@@ -160,7 +160,7 @@ const CrearNota = () => {
 
                                     {showButtons && (
                                         <div className="buttons-container">
-                                            <button onClick={() => agregarContenido("subtitulo")} className="botones-nota" title='Subtítulo'><img src="images/t-botton.png" alt="" /></button>
+                                            {/* <button onClick={() => agregarContenido("subtitulo")} className="botones-nota" title='Subtítulo'><img src="images/t-botton.png" alt="" /></button> */}
                                             <button onClick={() => agregarContenido("parrafo")} className="botones-nota" title='Párrafo'><img src="images/Aa-botton.png" alt="" /></button>
                                             <button onClick={handleClickEnNota} className="botones-nota">
                                                 <img src="images/image-icon-botton.png" alt="Subir Imagen" />

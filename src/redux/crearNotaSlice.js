@@ -186,8 +186,8 @@ const crearNotaSlice = createSlice({
       state.provincia = nota.provincia;
       state.municipio = nota.municipio;
       state.cliente = nota.cliente;
-      state.engagement = nota.engagement;
-      state.bajada = nota.bajada;
+      state.engagement = nota.engagement || nota.titulo;
+      state.bajada = nota.bajada || nota.copete;
       state.tipoContenido = nota.tipo_contenido;
     },
     setContenidoAEditar: (state, action) => {

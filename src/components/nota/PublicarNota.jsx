@@ -38,6 +38,8 @@ const PublicarNota = () => {
     const tipoAutor = useSelector((state) => state.crearNota.autor); 
     const provincia = useSelector((state) => state.crearNota.provincia);
     const municipio = useSelector((state) => state.crearNota.municipio);
+    const cliente = useSelector((state) => state.crearNota.cliente);
+    
     const pais = useSelector((state) => state.crearNota.pais);
 
     const image = useSelector((state) => state.crearNota.imagenPrincipal); // Imagen seleccionada
@@ -121,6 +123,7 @@ const PublicarNota = () => {
             pais,
             id_noti,
             id_att,
+            cliente,
             ...atachmentsValidos,
             setIsLoading,
             setShowModal,

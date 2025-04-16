@@ -35,7 +35,7 @@ const barplotSlice = createSlice({
       state.hasta = action.payload;
     },
     setFechas: (state, action) => {
-      state.fechas.push(action.payload)
+      state.fechas = action.payload
     },
 
     setUsuariosTotalesMeta: (state, action) => {

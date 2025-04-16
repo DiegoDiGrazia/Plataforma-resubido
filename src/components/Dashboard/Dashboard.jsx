@@ -16,6 +16,11 @@ import { setFechaActual } from '../../redux/cargadosSlice.js';
 import { useNavigate } from 'react-router-dom';
 import SelectorCliente from './SelectorCliente.jsx';
 import { resetCrearNota } from '../../redux/crearNotaSlice.js';
+import { generarPeriodosDesde } from '../barplot/BarplotNota.jsx';
+import { periodoUltimoAnio } from '../barplot/Barplot.jsx';
+import { setPeriodoApi } from '../../redux/dashboardSlice.js';
+import { setFechas } from '../../redux/barplotSlice.js';
+import { formatDate } from '../barplot/Barplot.jsx';
 
 export function formatNumberMiles(num) {
     if (num === null || num === undefined || num === "") {
@@ -41,7 +46,19 @@ const Dashboard = () => {
     const handleClickFiltro = (nuevoFiltro) => {
         dispatch(setFiltro(nuevoFiltro));
     };
+    dispatch(setPeriodoApi(periodoUltimoAnio()));
+    useEffect(() => {
+        // Genera los periodos del último año
+        const fechasFormateadas = periodoUltimoAnio()
+            .split(",") // Divide las fechas en un array
+            .map((fecha) => formatDate(fecha)); // Convierte cada fecha al formato deseado
+    
+        // Guarda las fechas formateadas en el estado
+        dispatch(setFechas(fechasFormateadas));
+        dispatch(setPeriodoApi(periodoUltimoAnio())); // Guarda los periodos originales en el estado
+    }, [dispatch]);
 
+    
     const handlePrint = () => {
         window.print();
     };

@@ -38,21 +38,21 @@ const NotasParaEditorial = () => {
         // const contenidoNota = await analizarHTML(notaABM.parrafo);
         dispatch(setContenidoAEditar([["parrafo", notaABM.parrafo ]]));
     
-        // try {
-        //     const base64PPAL = await convertirImagenBase64("https://panel.serviciosd.com/img" + notaABM.imagen_principal);
-        //     dispatch(setImagenPrincipal(base64PPAL));
-        // } catch (error) {
-        //     console.error("Error al convertir la imagen principal a Base64:", error);
-        //     dispatch(setImagenPrincipal(null)); // Opcional: establece un valor por defecto
-        // }
+        try {
+            const base64PPAL = await convertirImagenBase64("https://panel.serviciosd.com/img" + notaABM.imagen_principal);
+            dispatch(setImagenPrincipal(base64PPAL));
+        } catch (error) {
+            console.error("Error al convertir la imagen principal a Base64:", error);
+            dispatch(setImagenPrincipal(null)); // Opcional: establece un valor por defecto
+        }
     
-        // try {
-        //     const base64RRSS = await convertirImagenBase64("https://panel.serviciosd.com/img" + notaABM.imagen_feed);
-        //     dispatch(setImagenRRSS(base64RRSS));
-        // } catch (error) {
-        //     console.error("Error al convertir la imagen de RRSS a Base64:", error);
-        //     dispatch(setImagenRRSS(null)); // Opcional: establece un valor por defecto
-        // }
+        try {
+            const base64RRSS = await convertirImagenBase64("https://panel.serviciosd.com/img" + notaABM.imagen_feed);
+            dispatch(setImagenRRSS(base64RRSS));
+        } catch (error) {
+            console.error("Error al convertir la imagen de RRSS a Base64:", error);
+            dispatch(setImagenRRSS(null)); // Opcional: establece un valor por defecto
+        }
     
         navigate("/crearNota");
         

@@ -762,7 +762,7 @@ textarea.inputTituloNota {
 .quill-editor {
     display: flex;
     flex-direction: column-reverse; /* Invierte el orden de los hijos */
-    width: 850px;
+    width: 100%;
   }
 
 
@@ -779,11 +779,12 @@ textarea.inputTituloNota {
     margin-top: 0px; /* Espaciado opcional entre el editor y la barra */
     border: 1px solid #ccc;
     border-radius: 10px;
-    width:240px !important;
+    width:auto !important;
     justify-content: center;
     text-align: center;
     margin: 0 auto;
     display: none;
+    position: fixed
   }
   
   .quill-editor .ql-container {
@@ -796,7 +797,16 @@ textarea.inputTituloNota {
   
   .quill-editor.focused .ql-toolbar {
     display: flex; /* Muestra el toolbar cuando está enfocado */
-  }
+    position: fixed !important; /* Fija el toolbar en la pantalla */
+    top: 20px; /* Posiciona la barra en la parte inferior */
+    left: 45%; /* Asegura que esté alineada al borde izquierdo */
+    width: 100%; /* Asegura que ocupe todo el ancho de la pantalla */
+    background-color: #fff; /* Fondo blanco para que sea visible */
+    z-index: 1000; /* Asegura que esté por encima de otros elementos */
+    border-top: 1px solid #ccc; /* Línea superior para separar del contenido */
+    padding: 10px; /* Espaciado interno opcional */
+    transform: translateX(-50%)
+}
 
 @media print {
     /* Ocultar ciertos componentes */

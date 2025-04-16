@@ -26,40 +26,35 @@ const ParrafoNota = ({ indice }) => {
             ['bold', 'italic', 'underline'], // Opciones de formato
             [{ list: 'ordered' }, { list: 'bullet' }], // Listas
             ['link'], // Enlaces
+            [{ header: [1, 2, 3, false] }], // Encabezados (h1, h2, h3, texto normal)
           ],
         },
       });
-  
+
       // Manejar cambios en el editor
       quillInstanceRef.current.on('text-change', () => {
         dispatch(setContenidoPorIndice([indice, quillInstanceRef.current.root.innerHTML, '', '']));
       });
-  
+
       // Manejar el foco y desenfoque del editor
       const editorRoot = quillInstanceRef.current.root;
       editorRoot.addEventListener('focus', () => setIsFocused(true));
       editorRoot.addEventListener('blur', () => setIsFocused(false));
-  
+
       // Prevenir que el foco se pierda al hacer clic en los botones del toolbar
       const toolbar = quillInstanceRef.current.getModule('toolbar').container;
       toolbar.addEventListener('mousedown', (e) => {
         e.preventDefault(); // Prevenir la pérdida de foco al hacer clic en el toolbar
         editorRoot.focus(); // Mantener el foco en el editor
       });
-  
-      // Personalizar el módulo clipboard para manejar el evento paste
-      const clipboard = quillInstanceRef.current.getModule('clipboard');
-      clipboard.addMatcher(Node.ELEMENT_NODE, (node, delta) => {
-        const text = node.innerText || node.textContent; // Obtener solo el texto plano
-        return new Quill.imports.delta().insert(text); // Insertar el texto plano
-      });
     }
-  
+
     // Establecer el contenido inicial
     if (quillInstanceRef.current.root.innerHTML !== tituloGlobalNota) {
       quillInstanceRef.current.root.innerHTML = tituloGlobalNota;
     }
   }, [dispatch, indice, tituloGlobalNota]);
+
   return (
     <span className="p-0" style={{ display: 'flex', alignItems: 'center' }}>
       <BotoneraContenido indice={indice} />
@@ -72,7 +67,6 @@ const ParrafoNota = ({ indice }) => {
             border: 'none',
             borderRadius: '15px',
             padding: '5px',
-            fontSize: '20px',
           }}
         ></div>
       </div>

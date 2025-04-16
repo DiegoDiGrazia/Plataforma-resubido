@@ -14,19 +14,6 @@ import { formatNumberMiles } from '../Dashboard/Dashboard.jsx';
 
 /// devuelve todos los periodos para la api con este formato 
 /// "2023-10,2023-11,2023-12,2024-01,2024-02,2024-03,2024-04,2024-05,2024-06,2024-07,2024-08,2024-09"
-export function periodoUltimoAño() {
-    const months = [];
-    const currentDate = new Date();
-
-    for (let i = 0; i < 12; i++) {
-        const year = currentDate.getFullYear();
-        const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-        months.unshift(`${year}-${month}`);
-        currentDate.setMonth(currentDate.getMonth() - 1);
-    }
-
-    return months.join(',');
-}
 ///Recibe un filtro, y devuelve como se debe seleccionar el dato con un slice
 export function seleccionPorFiltro(filtro) {
     if (filtro === "Ultimos 3 meses") return -3;

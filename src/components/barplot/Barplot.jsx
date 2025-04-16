@@ -34,16 +34,21 @@ export function formatDate(dateStr) {
 
 /// devuelve todos los periodos para la api con este formato 
 /// "2023-10,2023-11,2023-12,2024-01,2024-02,2024-03,2024-04,2024-05,2024-06,2024-07,2024-08,2024-09"
-export function periodoUltimoAño() {
+export function periodoUltimoAnio() {
     const months = [];
     const currentDate = new Date();
 
     for (let i = 0; i < 12; i++) {
         const year = currentDate.getFullYear();
-        const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+        const month = String(currentDate.getMonth() + 1 ).padStart(2, '0');
+        console.log(" mes:", month, " año:" + year);
         months.unshift(`${year}-${month}`);
+        
+        // Retrocede un mes y ajusta el año si es necesario
+        currentDate.setDate(1); // Evita problemas con días fuera de rango
         currentDate.setMonth(currentDate.getMonth() - 1);
     }
+    console.log("periodoUltimoAño", months, months.join(','));
 
     return months.join(',');
 }
@@ -82,7 +87,7 @@ const Barplot = () => {
                 "https://panel.serviciosd.com/app_obtener_usuarios",
                 {
                     cliente: nombreCliente,
-                    periodos: periodoUltimoAño(),
+                    periodos: periodoUltimoAnio(),
                     token: token
                 },
                 {
@@ -99,7 +104,6 @@ const Barplot = () => {
                     let datos = response.data.item;
                     for (let datoMensual of datos) {
                         if (!fechas.includes(datoMensual.periodo)) {
-                            dispatch(setFechas(formatDate(datoMensual.periodo)));
                             dispatch(setUsuariosTotales(Number(datoMensual.usuarios_total)));
                             dispatch(setUsuariosTotalesMeta(Number(datoMensual.usuarios_redes)));
                             dispatch(setUsuariosTotalesGoogle(Number(datoMensual.usuarios_medios)));
@@ -134,10 +138,6 @@ const Barplot = () => {
         ; // Limpia el intervalo si el componente se desmonta
     }, [nombreCliente]);
 
-    // Función para generar datos aleatorios
-    function generateRandomData() {
-        return Array.from({ length: 12 }, () => Math.floor(Math.random() * 100) + 1);
-    }
     // Aquí están tus datos reales
     let cantidad_meses = seleccionPorFiltro(FiltroActual);
     const usuariosPorMesmeta = (useSelector((state) => state.barplot.usuariosTotalesMeta)).slice(cantidad_meses);
