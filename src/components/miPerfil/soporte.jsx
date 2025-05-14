@@ -1,36 +1,43 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Sidebar from '../sidebar/Sidebar';
 import "./miPerfil.css";
+import CardTutorial from './CardTutorial'; // Importa el nuevo componente
 
-const videos = [
-    {
-        title: "Imagen de portada",
-        description: "Mira el tutorial y los tips clave para seleccionar y subir la imagen perfecta de portada.",
-        src: "https://www.youtube.com/embed/3ekZv0f2sxU?si=nhgAc_Y1rvtZ5TA2",
+// Diccionario de videos
+export const videos = {
+    "tituloYBajada": {
+        title: "¿Cómo cargar el título y la bajada de la nota?",
+        description: "Mira el tutorial y los tips clave para elegir el título y bajada de la nota.",
+        src: "/videosTutoriales/tituloYBajada.mp4",
     },
-    {
-        title: "Imagen de portada",
-        description: "Mira el tutorial y los tips clave para seleccionar y subir la imagen perfecta de portada.",
-        src: "https://www.youtube.com/embed/3ekZv0f2sxU?si=nhgAc_Y1rvtZ5TA2",
+    "cuerpoNota": {
+        title: "¿Cómo hacer el texto general de la nota?",
+        description: "Mira el tutorial para crear el cuerpo de la nota.",
+        src: "/videosTutoriales/cuerpoNota.mp4",
     },
-    {
-        title: "Titulos",
-        description: "Mira el tutorial y los tips clave para seleccionar y subir la imagen perfecta de portada.",
-        src: "https://www.youtube.com/embed/3ekZv0f2sxU?si=nhgAc_Y1rvtZ5TA2",
+    "fotoCuerpoNota": {
+        title: "¿Cómo cargar las imágenes del cuerpo de la nota?",
+        description: "Mira el tutorial para ver como agregar una imagen al cuerpo de la nota.",
+        src: "/videosTutoriales/fotoCuerpoNota.mp4",
     },
-    {
-        title: "Parrafos",
-        description: "Mira el tutorial y los tips clave para seleccionar y subir la imagen perfecta de portada.",
-        src: "https://www.youtube.com/embed/3ekZv0f2sxU?si=nhgAc_Y1rvtZ5TA2",
+    "publicarNota": {
+        title: "¿Cómo publicar la nota?",
+        description: "Mira el tutorial para ver como publicar una nota correctamente.",
+        src: "/videosTutoriales/publicarNota.mp4",
     },
-    {
-        title: "Categorias",
-        description: "Mira el tutorial y los tips clave para seleccionar y subir la imagen perfecta de portada.",
-        src: "https://www.youtube.com/embed/3ekZv0f2sxU?si=nhgAc_Y1rvtZ5TA2",
+    "embebidos": {
+        title: "Como insertar un posteo de Redes Sociales",
+        description: "Mira el tutorial para como insertar un posteo de redes sociales.",
+        src: "/videosTutoriales/embebidos.mp4",
     },
-];
+    "portada": {
+        title: "¿Cómo cargar la imagen de portada?",
+        description: "Mira el tutorial para como insertar un posteo de redes sociales.",
+        src: "/videosTutoriales/portadaImagen.mp4",
+    },
+};
 
 const Soporte = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -39,8 +46,9 @@ const Soporte = () => {
         setSearchQuery(e.target.value);
     };
 
-    const filteredVideos = videos.filter(video =>
-        video.title.toLowerCase().includes(searchQuery.toLowerCase()) 
+    // Filtrar videos por título
+    const filteredVideos = Object.values(videos).filter(video =>
+        video.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     return (
@@ -81,23 +89,11 @@ const Soporte = () => {
                     <div className='row miPerfilContainer soporteContainer mt-4 p-0'>
                         {filteredVideos.map((video, index) => (
                             <div key={index} className='col-4'>
-                                <div className="card" style={{ width: "auto", height: "350px" }}>
-                                    <div className="card-body">
-                                        <h5 className="card-title">{video.title}</h5>
-                                        <p className="abajoDeTusNotas">{video.description}</p>
-                                    </div>
-                                    <iframe
-                                        width="auto"
-                                        height="250px"
-                                        src={video.src}
-                                        title="YouTube video player"
-                                        frameBorder="0"
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                        allowFullScreen
-                                        referrerPolicy="strict-origin-when-cross-origin"
-                                        className="iframeTutorial"
-                                    ></iframe>
-                                </div>
+                                <CardTutorial
+                                    title={video.title}
+                                    description={video.description}
+                                    src={video.src}
+                                />
                             </div>
                         ))}
                     </div>

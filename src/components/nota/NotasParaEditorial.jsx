@@ -18,15 +18,20 @@ import { useCallback } from 'react';
 import { editarNota } from './VerNota';
 import { resetCrearNota } from '../../redux/crearNotaSlice';
 import { analizarHTML, convertirImagenBase64, setContenidoAEditar, setContenidoNota, setImagenPrincipal, setImagenRRSS, setNotaAEditar } from '../../redux/crearNotaSlice';
+import BotonEliminarNota from './Editorial/botonEliminarNota';
 
-function unescapeHtml(escapedStr) {
-    const temp = document.createElement('textarea');
-    temp.innerHTML = escapedStr;
-    return temp.value;
-  }
+  function obtenerFechaDeManana() {
+    const hoy = new Date();
+    hoy.setDate(hoy.getDate() + 1); // Incrementa el día en 1
+    const año = hoy.getFullYear();
+    const mes = String(hoy.getMonth() + 1).padStart(2, '0'); // Meses de 0 a 11, sumamos 1
+    const dia = String(hoy.getDate()).padStart(2, '0'); // Día con 2 dígitos
+    return `${año}-${mes}-${dia}`;
+}
 
 
 const NotasParaEditorial = () => {
+    const [searchQuery, setSearchQuery] = useState('');
 
 
 
@@ -35,11 +40,29 @@ const NotasParaEditorial = () => {
         dispatch(resetCrearNota());
         dispatch(setNotaAEditar(notaABM));
 
-        // const contenidoNota = await analizarHTML(notaABM.parrafo);
-        dispatch(setContenidoAEditar([["parrafo", notaABM.parrafo ]]));
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(notaABM.parrafo, 'text/html'); // Aquí usas tu contenido HTML
+
+        // Obtener todos los elementos hijos del body del documento parseado
+        const children = doc.body.children;
+
+        // Recorrer los elementos
+        for (let i = 0; i < children.length; i++) {
+        const element = children[i];
+
+        // Mostrar el tipo de etiqueta (p, h2, iframe, etc.)
+        console.log('Etiqueta:', element.tagName);
+        
+        // Extraer el contenido de las etiquetas
+        if (element.tagName == 'IFRAME' || element.tagName == 'BLOCKQUOTE') {
+            dispatch(setContenidoAEditar([["embebido", element.outerHTML, "", ""]]));
+        } else 
+            dispatch(setContenidoAEditar([["parrafo", element.outerHTML, "", ""]]));
+        }
+        
     
         try {
-            const base64PPAL = await convertirImagenBase64("https://panel.serviciosd.com/img" + notaABM.imagen_principal);
+            const base64PPAL = await convertirImagenBase64("https://static.noticiasd.com/img" + notaABM.imagen_principal);
             dispatch(setImagenPrincipal(base64PPAL));
         } catch (error) {
             console.error("Error al convertir la imagen principal a Base64:", error);
@@ -47,7 +70,7 @@ const NotasParaEditorial = () => {
         }
     
         try {
-            const base64RRSS = await convertirImagenBase64("https://panel.serviciosd.com/img" + notaABM.imagen_feed);
+            const base64RRSS = await convertirImagenBase64("https://static.noticiasd.com/img" + notaABM.imagen_feed);
             dispatch(setImagenRRSS(base64RRSS));
         } catch (error) {
             console.error("Error al convertir la imagen de RRSS a Base64:", error);
@@ -64,17 +87,19 @@ const NotasParaEditorial = () => {
     const [filtroSeleccionado, setFiltroSeleccionado] = useState(2); /// botones TODAS LAS NOTAS; EN PROGRESO; FINALIZADAS
     const [numeroDePagina, setNumeroDePagina] = useState(1); /// para los botones de la paginacion
     const [todasLasNotas2, setTodasLasNotas2] = useState([])
-    const [verMasUltimo, setVerMasUltimo] = useState(2)
+    const [verMasUltimo, setVerMasUltimo] = useState(1)
     const verMasCantidadPaginacion = 15
     const [traerNotas, setTraerNotas] = useState(true)
     const [cargandoNotas, setCargandoNotas] = useState(true)
+    const es_editor = useSelector((state) => state.formulario.es_editor);
 
 
     let CantidadDeNotasPorPagina = 200;
 
 
     const botones = [
-        { id: 2, nombre: 'Publicadas' },
+        { id: 1, nombre: 'Todas las notas (Dashboards)' },
+        { id: 2, nombre: 'Publicadas (Edición)' },
         { id: 3, nombre: 'En revision' },
         { id: 4, nombre: 'Borradores' },
         { id: 5, nombre: 'Eliminadas' },
@@ -86,11 +111,11 @@ const NotasParaEditorial = () => {
         2: "PUBLICADO",
         3: "EN REVISION",
         4: "BORRADOR",
-        5: "ELIMINADAS"
+        5: "ELIMINADO"
     };
     
-    
-    const handleFiltroClick = useCallback((id, verMas = false) => {
+    const fechaDeMañana = obtenerFechaDeManana(); // Obtener la fecha de mañana al cargar el componente
+    const handleFiltroClick_todasLasNotas = useCallback((id, verMas = false) => {
         setFiltroSeleccionado(id);
         setCargandoNotas(true);
     
@@ -99,24 +124,23 @@ const NotasParaEditorial = () => {
         let limite = verMasCantidadPaginacion;
     
         if (verMas) {
+            const siguientePagina = verMasUltimo + 1;
             desdeLimite = verMasUltimo * verMasCantidadPaginacion;
-            setVerMasUltimo((prev) => prev + 1);
-        } else {
-            // Reiniciar lista y contador si se cambia de filtro
-            setTodasLasNotas2([]);
-            setVerMasUltimo(1);
+            setVerMasUltimo(siguientePagina);
         }
     
         axios.post(
-            "https://panel.serviciosd.com/app_obtener_noticias_abm",
+            "https://panel.serviciosd.com/app_obtener_noticias",
             {
                 cliente: CLIENTE,
-                desde: "",
-                hasta: "",
+                desde: "2020-01-01",
+                hasta: fechaDeMañana,
                 token: TOKEN,
                 categoria: categoria,
-                limit: limite,
-                offset: desdeLimite,
+                limite: limite,
+                desde_limite: desdeLimite,
+                titulo: "",
+                id: "",
             },
             { headers: { 'Content-Type': 'multipart/form-data' } }
         )
@@ -140,24 +164,85 @@ const NotasParaEditorial = () => {
         });
     }, [CLIENTE, TOKEN, navigate, verMasUltimo]);
     
+    const handleFiltroClick = useCallback((id, verMas = false) => {
+        console.log("searchQuery", searchQuery);
+        setFiltroSeleccionado(id);
+        setCargandoNotas(true);
+    
+        const categoria = categorias[id] || "";
+        const limite = verMasCantidadPaginacion;
+    
+        // IMPORTANTE: usar una variable local para calcular offset
+        let nuevoOffset = 0;
+        let nuevoVerMasUltimo = verMasUltimo;
+    
+        if (verMas) {
+            nuevoOffset = verMasUltimo * verMasCantidadPaginacion;
+            nuevoVerMasUltimo = verMasUltimo + 1;
+            setVerMasUltimo(nuevoVerMasUltimo); // esto actualiza el estado para la próxima vez
+        } else {
+            setTodasLasNotas2([]);
+            nuevoVerMasUltimo = 1;
+            setVerMasUltimo(1);
+        }
+    
+        axios.post(
+            "https://panel.serviciosd.com/app_obtener_noticias_abm",
+            {
+                cliente: CLIENTE,
+                desde: "",
+                hasta: "",
+                token: TOKEN,
+                categoria: categoria,
+                limit: limite,
+                offset: verMas ? nuevoOffset : 0,  // este es el valor real que irá a la API
+                titulo: searchQuery,
+            },
+            { headers: { 'Content-Type': 'multipart/form-data' } }
+        )
+        .then((response) => {
+            if (response.data.message === "Token Invalido") {
+                navigate("/");
+                return;
+            }
+    
+            if (response.data.status === "true") {
+                setTodasLasNotas2((prev) => [...prev, ...response.data.item]);
+            } else {
+                console.error('Error en la respuesta de la API:', response.data.message);
+            }
+        })
+        .catch((error) => {
+            console.error('Error al hacer la solicitud:', error);
+        })
+        .finally(() => {
+            setCargandoNotas(false);
+        });
+    }, [CLIENTE, TOKEN, categorias, verMasUltimo, verMasCantidadPaginacion]);
+    
     
     const ClickearEnCrearNota = () => {
         dispatch(resetCrearNota());
         navigate("/crearNota");
     };
     
-    const [searchQuery, setSearchQuery] = useState('');
+
     
     const handleInputChange = (e) => {
-        setSearchQuery(e.target.value);
-        setNumeroDePagina(1);
+    setSearchQuery(e.target.value);
+    setNumeroDePagina(1);
     };
 
+    const handleKeyPress = (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault(); // Evita el comportamiento predeterminado del formulario
+            handleFiltroClick(filtroSeleccionado); // Llama a handleFiltroClick con el filtro seleccionado
+        }
+    };
     const handleSearch = (e) => {
-        e.preventDefault();
-        // Aquí puedes manejar la búsqueda, por ejemplo, enviar el query a una API
-        console.log('Buscando:', searchQuery);
-        };
+    e.preventDefault(); // Evita el comportamiento predeterminado del formulario
+    handleFiltroClick(filtroSeleccionado); // Llama a handleFiltroClick con el filtro seleccionado
+    };
     
 
     const dispatch = useDispatch();
@@ -188,8 +273,12 @@ const NotasParaEditorial = () => {
 
     ///Chat gpt
     useEffect(() => {
-        handleFiltroClick(filtroSeleccionado); // Ejecuta la función con el filtro inicial
-    }, [filtroSeleccionado, CLIENTE]); // Solo se ejecuta al montar el componente
+        if (filtroSeleccionado !== 1) {
+            handleFiltroClick(filtroSeleccionado); // Ejecuta la función solo si filtroSeleccionado no es 1
+        } else {
+            handleFiltroClick_todasLasNotas(filtroSeleccionado); // Llama a la función específica para el caso de id = 1
+        }
+    }, [CLIENTE]);
 
     return (
         <div className="container-fluid  sinPadding">
@@ -204,7 +293,9 @@ const NotasParaEditorial = () => {
                                     <h3 id="saludo" className='headerTusNotas'>
                                         <img src="/images/tusNotasIcon.png" alt="Icono 1" className="icon me-2 icono_tusNotas" /> Tus Notas
                                     </h3>
-                                    <SelectorCliente/>
+                                    {es_editor &&
+                                    <SelectorCliente/> 
+                                    }          
                                     <div className='abajoDeTusNotas'> Crea, gestiona y monitorea tus notas</div>
                                 </div>
                                 <div className='col boton'>
@@ -225,7 +316,7 @@ const NotasParaEditorial = () => {
                                             className={`boton_filtro_notas ${
                                                 filtroSeleccionado === boton.id ? 'active' : ''
                                             }`}
-                                            onClick={() => handleFiltroClick(boton.id)}
+                                            onClick={() => boton.id != 1 ? handleFiltroClick(boton.id) : handleFiltroClick_todasLasNotas(boton.id)}
                                         >
                                             {boton.nombre}
                                         </button>
@@ -249,8 +340,10 @@ const NotasParaEditorial = () => {
                                                 value={searchQuery}
                                                 onChange={handleInputChange}
                                                 placeholder="      Buscar por titulo de la nota"
-                                                
                                             />
+                                            <Button type="submit" className="btn btn-danger ml-3">
+                                                Buscar
+                                            </Button>
                                         </form>
                                         
                                     </div>
@@ -260,14 +353,28 @@ const NotasParaEditorial = () => {
                                     <div className='col-4 columna_interaccion' style={{fontSize: "12px", color: "#667085", fontWeight: "bold"}}>Título de la Nota</div>
                                     <div className='col-1 categoriasNotas text-aling-center'>Estado</div>
                                     <div className='col categoriasNotas d-flex align-items-center justify-content-center'>Categorías</div> 
-                                    <div className='col categoriasNotas text-end'>Cliente</div>
-                                    <div className='col categoriasNotas text-end'>Ver Nota</div>
+                                    { (filtroSeleccionado != 1) ?
+                                        <>
+                                            <div className='col categoriasNotas text-end'>Cliente</div>
+                                            <div className='col categoriasNotas text-end'>Ver Nota</div>
+                                        </>
+                                        :
+                                        <>
+                                            <div className='col categoriasNotas text-end'>Interacciones Totales</div>
+                                        </>
+                                    }
 
                                 </div>
                                 {/* aca va la nota */}
 
                                 {notasEnPaginaActual.map((nota, index) => (
                                         <div key={nota.id_noti || nota.term_id || `nota-${index}`} className='row pt-1 borderNotas'>
+                                            {((filtroSeleccionado == 2 || filtroSeleccionado == 3) && ///SOlO EN BOTONES 1 y 2
+                                                !(filtroSeleccionado == 2 && !es_editor))   &&        /// SI NO ES EDITOR NO PUEDE BORRAR NOTAS PUBLICADAS
+                                            <div className='col-auto'>
+                                                <BotonEliminarNota id={nota.id} token={TOKEN} />
+                                            </div>
+                                            }
                                         <div className='col-auto'>
                                             {nota.imagen ? (
                                                 <img src={nota.imagen} alt="Icono Nota" className='imagenWidwetInteracciones2' />
@@ -277,11 +384,29 @@ const NotasParaEditorial = () => {
                                         </div>
                                         <div className='col-4 pt-1 columna_interaccion nuevoFont'>
                                             
-                                            <Link className="link-sin-estilos" onClick={(e) => {e.preventDefault();editarNota(nota);}}>
+                                        {filtroSeleccionado === 1 ? (
+                                            <Link
+                                                className="link-sin-estilos"
+                                                to={`/verNota`}
+                                                state={{ id: nota.id_noti ? nota.id_noti : nota.term_id, notaABM: nota }}
+                                            >
                                                 <div className='row p-0 nombre_plataforma'>
                                                     {formatearTitulo(nota.titulo, 45)}
                                                 </div>
                                             </Link>
+                                        ) : (
+                                            <Link
+                                                className="link-sin-estilos"
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    editarNota(nota);
+                                                }}
+                                            >
+                                                <div className='row p-0 nombre_plataforma'>
+                                                    {formatearTitulo(nota.titulo, 45)}
+                                                </div>
+                                            </Link>
+                                        )}
 
                                             <div className='row p-0'>
                                                 <span className='FechaPubNota'>{nota.f_pub ? formatearFecha(nota.f_pub) : formatearFecha(nota.update_date)}</span>
@@ -296,14 +421,24 @@ const NotasParaEditorial = () => {
                                         <div className='col-2'>
                                             <span className="categoria_notas">{nota.categorias}</span>
                                         </div>
-                                        <div className='col totales_widget'>
-                                            <p>{nota.cliente}</p>
-                                        </div>
-                                        {nota.estado === "PUBLICADO" && (
-                                            <div className='col totales_widget' style={{ color: "#007bff"}}>
-                                                <a href={`http://noticiasd.com/nota/${nota.term_id}`} target="_blank" rel="noopener noreferrer">VER NOTA</a>
+
+                                        {filtroSeleccionado != 1 ? (
+                                        <>
+                                            <div className='col totales_widget'>
+                                                <p>{nota.cliente}</p>
                                             </div>
-                                        )}
+                                            {nota.estado === "PUBLICADO" && (
+                                                <div className='col totales_widget' style={{ color: "#007bff"}}>
+                                                    <a href={`http://noticiasd.com/nota/${nota.term_id}`} target="_blank" rel="noopener noreferrer">VER NOTA</a>
+                                                </div>
+                                            )}
+                                        </>
+                                        ) : (
+                                        <div className='col totales_widget'>
+                                            <p>{nota.total}</p>
+                                        </div>
+                                        )
+                                        }
 
                                     </div>
                                 ))}
@@ -331,7 +466,7 @@ const NotasParaEditorial = () => {
                                     <div className="col-auto text-center my-4">
                                         <button
                                             className="boton_filtro_notas"
-                                            onClick={() => handleFiltroClick(filtroSeleccionado, true)}
+                                            onClick={() => filtroSeleccionado != 1 ?  handleFiltroClick(filtroSeleccionado, true) : handleFiltroClick_todasLasNotas(filtroSeleccionado, true)}
                                         >
                                             Ver más
                                         </button>

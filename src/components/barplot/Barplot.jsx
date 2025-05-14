@@ -15,7 +15,8 @@ import { setImpresionesTotalesInstagram, setImpresionesTotalesGoogle, setImpresi
     setLikesInstagram,
     setCompartidosFacebook,
     setCompartidosInstagram,
-    setReaccionesFacebook, setReaccionesInstagram } from '../../redux/barplotSlice.js';
+    setReaccionesFacebook, setReaccionesInstagram, 
+    resetBarplot} from '../../redux/barplotSlice.js';
 import axios from 'axios';
 import { formatNumberMiles } from '../Dashboard/Dashboard.jsx';
 import { useNavigate } from 'react-router-dom';
@@ -79,7 +80,9 @@ const Barplot = () => {
         const fecha = new Date();
         const diaMes = fecha.getDate();
 
-        if (nombreCliente !== ultimo_cliente_cargado || diaMes !== ultima_fecha_cargada) {
+        // if (nombreCliente !== ultimo_cliente_cargado || diaMes !== ultima_fecha_cargada) {
+        if (true) {
+
             dispatch(setultimaFechaCargadaBarplot(diaMes));
             dispatch(setUltimoClienteCargadoBarplot(nombreCliente));
 
@@ -101,9 +104,10 @@ const Barplot = () => {
                     navigate("/");
                 }
                 if (response.data.status === "true") {
+                    dispatch(resetBarplot()); // Reinicia el estado del barplot al cargar el componente
                     let datos = response.data.item;
                     for (let datoMensual of datos) {
-                        if (!fechas.includes(datoMensual.periodo)) {
+                        if (true) {
                             dispatch(setUsuariosTotales(Number(datoMensual.usuarios_total)));
                             dispatch(setUsuariosTotalesMeta(Number(datoMensual.usuarios_redes)));
                             dispatch(setUsuariosTotalesGoogle(Number(datoMensual.usuarios_medios)));

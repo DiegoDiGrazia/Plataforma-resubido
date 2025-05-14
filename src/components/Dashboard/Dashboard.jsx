@@ -140,18 +140,18 @@ const Dashboard = () => {
                             <Barplot />
                         </div>
                         <div className='row g-1'>
-                            <div className='col-lg-12 col-xl m-2  back-white'>
+                            <div className='col-lg-12 col-xl col-6 m-2 back-white'>
                                 <InteraccionPorNota />
                             </div>
-                            <div className='col-lg-12 col-xl m-2  back-white'>
+                            <div className='col-lg-12 col-xl col-6 m-2 back-white'>
                                 <MediosMasRelevantes />
                             </div>
                         </div>
                         <div className='row g-1'>
-                            <div className='col-lg-12 col-xl m-2 p-3 back-white'>
+                            <div className='col-lg-12 col-xl col-6 m-2 p-3 back-white'>
                                 <PlataformaMasImpresiones />
                             </div>
-                            <div className='col-lg-12 col-xl m-2 p-3 back-white'>
+                            <div className='col-lg-12 col-xl col-6 m-2 p-3 back-white'>
                                 <CategoriasMasRelevantes />
                             </div>
                         </div>

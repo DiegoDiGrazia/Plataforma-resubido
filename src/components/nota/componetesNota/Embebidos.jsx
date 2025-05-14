@@ -5,6 +5,40 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setContenidoPorIndice } from '../../../redux/crearNotaSlice';
 import BotoneraContenido from './botoneraContenido';
 
+const loadEmbedScripts = () => {
+  // Cargar y procesar el script de Instagram
+  if (!window.instgrm) {
+    const instagramScript = document.createElement('script');
+    instagramScript.src = 'https://www.instagram.com/embed.js';
+    instagramScript.async = true;
+    instagramScript.onload = () => {
+      if (window.instgrm) {
+        window.instgrm.Embeds.process();
+      }
+    };
+    document.body.appendChild(instagramScript);
+  } else {
+    window.instgrm.Embeds.process();
+  }
+
+  // Cargar y procesar el script de Twitter
+  if (!window.twttr) {
+    const twitterScript = document.createElement('script');
+    twitterScript.src = 'https://platform.twitter.com/widgets.js';
+    twitterScript.async = true;
+    twitterScript.onload = () => {
+      if (window.twttr && window.twttr.widgets) {
+        window.twttr.widgets.load();
+      }
+    };
+    document.body.appendChild(twitterScript);
+  } else {
+    if (window.twttr && window.twttr.widgets) {
+      window.twttr.widgets.load();
+    }
+  }
+};
+
 const Embebido = ({ indice }) => {
   const dispatch = useDispatch();
   const containerRef = useRef(null); // Referencia al contenedor
@@ -21,46 +55,32 @@ const Embebido = ({ indice }) => {
   );
 
   useEffect(() => {
-    const adjustIframeSize = () => {
-      const container = containerRef.current;
-      if (container) {
-        const iframe = container.querySelector('iframe');
-        if (iframe) {
-          iframe.style.width = '100%';
-          iframe.style.height = 'auto'; // Ajusta dinámicamente la altura
-          iframe.style.borderRadius = '15px';
-          iframe.style.padding = '0px';
-        }
+  const adjustIframeSize = () => {
+    const container = containerRef.current;
+    if (container) {
+      const iframe = container.querySelector('iframe');
+      if (iframe) {
+        iframe.style.width = '100%';
+        iframe.style.height = 'auto'; // Ajusta dinámicamente la altura
+        iframe.style.borderRadius = '15px';
+        iframe.style.padding = '0px';
       }
-    };
+    }
+  };
 
-    const loadInstagramScript = () => {
-      if (!window.instgrm) {
-        // Si el script de Instagram no está cargado, agrégalo dinámicamente
-        const script = document.createElement('script');
-        script.src = 'https://www.instagram.com/embed.js';
-        script.async = true;
-        script.onload = () => {
-          if (window.instgrm) {
-            window.instgrm.Embeds.process();
-          }
-        };
-        document.body.appendChild(script);
-      } else {
-        // Si el script ya está cargado, procesa los embebidos
-        window.instgrm.Embeds.process();
-      }
-    };
+  adjustIframeSize(); // Ajusta el tamaño del iframe
+  loadEmbedScripts(); // Carga y ejecuta los scripts de Instagram y Twitter
+  window.addEventListener('resize', adjustIframeSize); // Ajusta al redimensionar
 
-    adjustIframeSize(); // Ajusta el tamaño del iframe
-    loadInstagramScript(); // Carga y ejecuta el script de Instagram
-    window.addEventListener('resize', adjustIframeSize); // Ajusta al redimensionar
+  return () => {
+    window.removeEventListener('resize', adjustIframeSize);
+  };
+}, [embebido]);
 
-    return () => {
-      window.removeEventListener('resize', adjustIframeSize);
-    };
-  }, [embebido]);
-
+const embebidoConEstilo = embebido.replace(
+  /<iframe(.*?)>/,
+  '<iframe$1 style="width: 100% !important; height: 100% !important; maxWidth: 100% !important; display: block;">'
+);
   return (
     <span className="spanContainer">
       <div className="d-flex align-items-center mb-3 justify-content-start">
@@ -83,7 +103,8 @@ const Embebido = ({ indice }) => {
               style={{
                 width: '100%',
                 height: '100%', // Ajusta automáticamente la altura al contenido
-                minHeight: '400px', // Altura mínima para el iframe
+                minHeight: '600px', // Altura mínima para el iframe
+                maxHeight: '100%',
               }}
             ></div>
         )}

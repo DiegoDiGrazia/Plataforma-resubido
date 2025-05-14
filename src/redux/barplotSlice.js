@@ -1,32 +1,31 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+// Define el estado inicial como una constante
+const initialState = {
+  desde: "",
+  hasta: "",
+  fechas: [],
+  ultimaFechaCargadaBarplot: "",
+  ultimoClienteCargadoBarplot: "",
+  usuariosTotalesMeta: [],
+  usuariosTotalesGoogle: [],
+  usuariosTotales: [],
+  comentarios_facebook: [],
+  comentarios_instagram: [],
+  likes_facebook: [],
+  likes_instagram: [],
+  reacciones_facebook: [],
+  reacciones_instagram: [],
+  compartidos_facebook: [],
+  compartidos_instagram: [],
+  impresionesTotalesFacebook: [],
+  impresionesTotalesGoogle: [],
+  impresionesTotalesInstagram: [],
+};
+
 const barplotSlice = createSlice({
   name: 'barplot',
-  initialState: {
-    desde: "",
-    hasta: "",
-    fechas: [],
-    ultimaFechaCargadaBarplot : "",
-    ultimoClienteCargadoBarplot : "",
-
-
-    usuariosTotalesMeta: [],
-    usuariosTotalesGoogle: [],
-    usuariosTotales: [],
-    
-    comentarios_facebook : [],  
-    comentarios_instagram : [],
-    likes_facebook: [],
-    likes_instagram: [],
-    reacciones_facebook: [],
-    reacciones_instagram: [],
-    compartidos_facebook: [],
-    compartidos_instagram: [],
-
-    impresionesTotalesFacebook: [],
-    impresionesTotalesGoogle: [],
-    impresionesTotalesInstagram: [],
-  },
+  initialState, // Usa la constante `initialState`
   reducers: {
     setDesde: (state, action) => {
       state.desde = action.payload;
@@ -35,11 +34,10 @@ const barplotSlice = createSlice({
       state.hasta = action.payload;
     },
     setFechas: (state, action) => {
-      state.fechas = action.payload
+      state.fechas = action.payload;
     },
-
     setUsuariosTotalesMeta: (state, action) => {
-        state.usuariosTotalesMeta.push(action.payload);
+      state.usuariosTotalesMeta.push(action.payload);
     },
     setUsuariosTotalesGoogle: (state, action) => {
       state.usuariosTotalesGoogle.push(action.payload);
@@ -47,9 +45,8 @@ const barplotSlice = createSlice({
     setUsuariosTotales: (state, action) => {
       state.usuariosTotales.push(action.payload);
     },
-
     setImpresionesTotalesFacebook: (state, action) => {
-        state.impresionesTotalesFacebook.push(action.payload);
+      state.impresionesTotalesFacebook.push(action.payload);
     },
     setImpresionesTotalesGoogle: (state, action) => {
       state.impresionesTotalesGoogle.push(action.payload);
@@ -57,11 +54,11 @@ const barplotSlice = createSlice({
     setImpresionesTotalesInstagram: (state, action) => {
       state.impresionesTotalesInstagram.push(action.payload);
     },
-    setultimaFechaCargadaBarplot: (state,action) => {
-      state.ultimaFechaCargadaBarplot = action.payload
+    setultimaFechaCargadaBarplot: (state, action) => {
+      state.ultimaFechaCargadaBarplot = action.payload;
     },
-    setUltimoClienteCargadoBarplot: (state,action) => {
-      state.ultimoClienteCargadoBarplot = action.payload
+    setUltimoClienteCargadoBarplot: (state, action) => {
+      state.ultimoClienteCargadoBarplot = action.payload;
     },
     setComentariosFacebook: (state, action) => {
       state.comentarios_facebook.push(action.payload);
@@ -87,12 +84,47 @@ const barplotSlice = createSlice({
     setCompartidosInstagram: (state, action) => {
       state.compartidos_instagram.push(action.payload);
     },
+    resetBarplot: (state) => {
+      state.usuariosTotalesMeta = [];
+      state.usuariosTotalesGoogle = [];
+      state.usuariosTotales = [];
+      state.comentarios_facebook = [];
+      state.comentarios_instagram = [];
+      state.likes_facebook = [];
+      state.likes_instagram = [];
+      state.reacciones_facebook = [];
+      state.reacciones_instagram = [];
+      state.compartidos_facebook = [];
+      state.compartidos_instagram = [];
+      state.impresionesTotalesFacebook = [];
+      state.impresionesTotalesGoogle = [];
+      state.impresionesTotalesInstagram = [];
+    },
   },
 });
 
-export const { setDesde, setHasta, setImpresiones,
-              setUsuariosTotales,setImpresionesTotalesGoogle, setUsuariosTotalesMeta,
-              setImpresionesTotalesInstagram, setImpresionesTotalesFacebook,setUsuariosTotalesGoogle, setFechas,
-            setultimaFechaCargadaBarplot, setUltimoClienteCargadoBarplot, setComentariosFacebook, setComentariosInstagram,
-            setLikesFacebook,setLikesInstagram,setCompartidosFacebook,setCompartidosInstagram,setReaccionesFacebook,setReaccionesInstagram} = barplotSlice.actions;
+export const {
+  setDesde,
+  setHasta,
+  setImpresiones,
+  setUsuariosTotales,
+  setImpresionesTotalesGoogle,
+  setUsuariosTotalesMeta,
+  resetBarplot,
+  setImpresionesTotalesInstagram,
+  setImpresionesTotalesFacebook,
+  setUsuariosTotalesGoogle,
+  setFechas,
+  setultimaFechaCargadaBarplot,
+  setUltimoClienteCargadoBarplot,
+  setComentariosFacebook,
+  setComentariosInstagram,
+  setLikesFacebook,
+  setLikesInstagram,
+  setCompartidosFacebook,
+  setCompartidosInstagram,
+  setReaccionesFacebook,
+  setReaccionesInstagram,
+} = barplotSlice.actions;
+
 export default barplotSlice.reducer;

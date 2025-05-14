@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { comprimirImagen } from '../components/nota/componetesNota/ImagenPrincipal.jsx';
 
  export async function analizarHTML(html) {
   const resultados = [];
@@ -37,18 +38,27 @@ import { createSlice } from '@reduxjs/toolkit';
 }
 
 // Función para convertir imágenes a Base64
-export async function convertirImagenBase64(url) {
-  url = url.replace("https://panel.serviciosd.com/img/", "https://diego.serviciosd.com/oldpanel/");
-  const response = await fetch(url);
-  const blob = await response.blob();
+export async function convertirImagenBase64(url, maxWidth = 1600) {
+  try {
+    url = url.replace("https://panel.serviciosd.com/img/", "https://noticiasd.com/wp-content/img/");
+    const response = await fetch(url);
 
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(blob);
-  });
+    if (!response.ok) {
+      throw new Error(`Error al descargar la imagen: ${response.status}`);
+    }
+
+    const blob = await response.blob();
+
+    const base64 = await comprimirImagen(blob, 1, maxWidth); 
+
+    return base64;
+
+  } catch (error) {
+    console.error("Error en convertirImagenBase64:", error);
+    throw error;
+  }
 }
+
 
 
 const initialState = {
@@ -57,21 +67,23 @@ const initialState = {
   contenidoNota: [], // [[tipo, contenido, abre etiqueta, cierra etiqueta ]]
   categorias: [],
   categoriasNombres: "", ///listo
+  categoriasActivas: [], ///listo
   imagenPrincipal: null, ///listo
   imagenRRSS: null, ///listo
+  con_distribucion: '0', /// listo
   copete: "", ///listo
   comentarios: "", /// listo
-  conDistribucion: "0", /// listo
-  distribucion_prioritaria: false, /// listo
+  distribucion_prioritaria: '0', /// listo
   engagement: "", /// listo
   autor: "", /// listo
   autor_cliente: "", /// listo
-  es_demo: false, /// listo
-  es_home: false, /// listo
+  es_demo: '0', /// listo
+  es_home: '0', /// listo
   etiquetas: [],
   estado: "", /// listo
   id_noti: "",
   tipoContenido: "gestion",
+  f_pub: "",
   f_vence: "",
   engagement: "",
   bajada: "",
@@ -111,7 +123,7 @@ const initialState = {
     attachment_9: null,
     attachment_10: null,
   },
-  numeroDeAtachment: 2,
+  numeroDeAtachment: 1,
   id_att: "",
   cliente: "",
 };
@@ -146,6 +158,13 @@ const crearNotaSlice = createSlice({
         state.contenidoNota[index + 1] = temp;
       }
     },
+    setAttachmentToNull: (state, action) => {
+      const numero = action.payload; 
+      const key = `attachment_${numero}`;
+      if (state.atachments.hasOwnProperty(key)) {
+        state.atachments[key] = null;
+      }
+    },
     BajarContenidoPorIndice: (state, action) => {
       const index = action.payload;
       if (index > 0 && index < state.contenidoNota.length) {
@@ -160,6 +179,8 @@ const crearNotaSlice = createSlice({
       state.contenidoNota[indice][1] = contenido;
       state.contenidoNota[indice][2] = action.payload[2];
       state.contenidoNota[indice][3] = action.payload[3];
+      if(action.payload[4] !== undefined) {
+        state.contenidoNota[indice][4] = action.payload[4];}
     },
     setCategorias: (state, action) => {
       state.categorias = action.payload;
@@ -168,30 +189,31 @@ const crearNotaSlice = createSlice({
       const nota = action.payload;
       state.tituloNota = nota.titulo;
       state.copete = nota.copete;
-      state.categoriasNombres = nota.categorias;
       state.comentarios = nota.comentarios;
+      state.categoriasNombres = nota.categorias;
       state.engagement = nota.engagement;
       state.es_demo = nota.es_demo;
       state.es_home = nota.es_home;
       state.autor = nota.autor;
       state.autor_cliente = nota.autor_cliente;
-      state.conDistribucion = nota.conDistribucion;
+      state.con_distribucion = nota.con_distribucion;
       state.distribucion_prioritaria = nota.distribucion_prioritaria;
       state.estado = nota.estado;
       state.id_noti = nota.id;
       state.etiquetas = nota.etiquetas;
       state.f_vence = nota.fecha_vencimiento;
+      state.f_pub = nota.fecha_publicacion;
       state.autor = nota.autor;
-      state.pais = nota.pais;
-      state.provincia = nota.provincia;
-      state.municipio = nota.municipio;
+      state.pais = {'nombre': nota.pais };
+      state.provincia = {'nombre': nota.provincia };
+      state.municipio = {'nombre': nota.municipio };
       state.cliente = nota.cliente;
       state.engagement = nota.engagement || nota.titulo;
       state.bajada = nota.bajada || nota.copete;
       state.tipoContenido = nota.tipo_contenido;
     },
     setContenidoAEditar: (state, action) => {
-      state.contenidoNota = action.payload;
+    state.contenidoNota = [...state.contenidoNota, ...action.payload];
     },
     setItemsEtiquetas: (state, action) => {
       state.etiquetas = action.payload;
@@ -207,6 +229,9 @@ const crearNotaSlice = createSlice({
     },
     setTipoContenido: (state, action) => {
       state.tipoContenido = action.payload;
+    },
+    setFechaPublicacion: (state, action) => {
+      state.f_pub= action.payload;
     },
     setFechaVencimiento: (state, action) => {
       state.f_vence = action.payload;
@@ -232,7 +257,9 @@ const crearNotaSlice = createSlice({
     setListaImagenesContenidoEnBase64: (state, action) => {
       state.listaDeImagenesContenidoEnBase64 = action.payload;
     },
-
+    setComentario: (state, action) => {
+      state.comentarios = action.payload;
+    },
     ///ejemplo dispatch(setAtachment({ key, value }));
     setAtachment: (state, action) => {
       const { key, value } = action.payload; // Extraer valores del payload
@@ -243,6 +270,9 @@ const crearNotaSlice = createSlice({
     setNumeroDeAtachment: (state, action) => {
       state.numeroDeAtachment = action.payload
     },
+    setSelectedOptionDistribucion: (state, action) => {
+      state.con_distribucion = action.payload;
+    },
     setSumarUnoAlNumeroDeAtachment: (state, action) => {
       console.log("Se ejecuta")
       state.numeroDeAtachment = state.numeroDeAtachment + 1
@@ -250,17 +280,18 @@ const crearNotaSlice = createSlice({
     setIdAtt: (state, action) => {
       state.id_att = action.payload
     },
-    
-
+    setCategoriasActivasEnStore: (state, action) => {
+      state.categoriasActivas = action.payload;
+    },
     resetCrearNota: () => initialState
   }
 });
 
 export const {
-  setTituloNota, setContenidoNota, DeleteContenidoPorIndice, setContenidoPorIndice,
+  setTituloNota, setContenidoNota, DeleteContenidoPorIndice, setContenidoPorIndice,setFechaPublicacion, setAttachmentToNull,
   SubirContenidoPorIndice, BajarContenidoPorIndice, setCategorias, setImagenPrincipal, setImagenRRSS,
-  setCopete, setNotaAEditar, setContenidoAEditar, setItemsEtiquetas, setEsDemo, setNoHome,
-  setDistribucionProioritaria, setTipoContenido, setFechaVencimiento, setBajada, setEngagement,
+  setCopete, setNotaAEditar, setContenidoAEditar, setItemsEtiquetas, setEsDemo, setNoHome, setCategoriasActivasEnStore,
+  setDistribucionProioritaria, setTipoContenido, setFechaVencimiento, setBajada, setEngagement, setComentario, setSelectedOptionDistribucion,
   setAutor, setMunicipio, setMunicipios, setProvincia,setPais, setIdAtt,setProvincias, resetCrearNota, setListaImagenesContenidoEnBase64, setAtachment, setSumarUnoAlNumeroDeAtachment
 } = crearNotaSlice.actions;
 

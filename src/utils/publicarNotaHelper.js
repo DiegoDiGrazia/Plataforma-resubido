@@ -1,5 +1,10 @@
 import axios from 'axios';
 
+
+function escapeHTML(str) {
+    return str
+        .replace(/'/g, '"'); // Reemplaza comillas simples por comillas dobles
+}
 export const clickearEnPublicarNota = async ({
     status,
     TOKEN,
@@ -17,6 +22,7 @@ export const clickearEnPublicarNota = async ({
     isCheckedDemo,
     isCheckedNoHome,
     tipoContenido,
+    fechaPublicacion,
     fecha,
     itemsEtiquetas,
     engagementText,
@@ -46,7 +52,7 @@ export const clickearEnPublicarNota = async ({
                 titulo: titulo,
                 categorias: categoriasActivas,
                 copete: notaCargada.copete,
-                parrafo: contenidoHTMLSTR,
+                parrafo: escapeHTML(contenidoHTMLSTR),
                 estado: status,
                 cliente: datosUsuario.cliente || cliente,
                 email: "",
@@ -54,15 +60,16 @@ export const clickearEnPublicarNota = async ({
                 base_feed: imagefeed,
                 comentarios: comentario,
                 autor_cliente: datosUsuario.email,
-                conDistribucion: selectedOptionDistribucion === 'normal' ? "1" : "0",
+                con_distribucion: selectedOptionDistribucion,
                 distribucion: selectedOptionDistribucion === 'normal'
-                    ? isCheckedDistribucionPrioritaria
+                    ? isCheckedDistribucionPrioritaria === '1'
                         ? "prioritaria"
                         : "normal"
                     : "ninguna",
-                es_demo: isCheckedDemo ? "1" : "0",
-                no_home: isCheckedNoHome ? "1" : "0",
+                es_demo: isCheckedDemo,
+                no_home: isCheckedNoHome,
                 tipo_contenido: tipoContenido,
+                f_pub: fechaPublicacion,
                 fecha_vencimiento: fecha,
                 etiquetas: itemsEtiquetas,
                 engagement: engagementText,
@@ -82,7 +89,7 @@ export const clickearEnPublicarNota = async ({
         );
 
         if (response.data.status === "true") {
-            navigate('/notas');
+            return response.data.status;
         } else {
             console.error('Error en la respuesta de la API:', response.data.message);
         }

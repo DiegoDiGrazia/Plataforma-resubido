@@ -92,10 +92,13 @@
     font-weight: bold;
 }
 
-.miPerfilContainer .iframeTutorial{
-    margin: 0px 10px;
-    margin-bottom: 10px;
+.iframeTutorial{
+    display: block !important;
+    margin: auto auto;
+    height: 200px;
     border-radius: 10px;
+    margin-bottom: 20px;
+    object-fit: cover;
 }
 .miPerfilContainer .card-body{
     padding-bottom: 0px;

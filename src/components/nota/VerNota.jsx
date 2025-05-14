@@ -25,22 +25,8 @@ const VerNota = () => {
     const { id, notaABM } = location.state || {};
     const [Nota, setNota] = useState({});
     const [FPUB, setFPUB] = useState("");
-    const [isTokenLoaded, setIsTokenLoaded] = useState(false);
     const { id_ruta } = useParams();
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
 
-    const editarNota = async (notaABM) => {
-        dispatch(setNotaAEditar(notaABM))
-        const contenidoNota = await(analizarHTML(notaABM.parrafo))
-        dispatch(setContenidoAEditar(contenidoNota))
-        const base64PPAL = await convertirImagenBase64("https://panel.serviciosd.com/img" + notaABM.imagen_principal);
-        dispatch(setImagenPrincipal(base64PPAL))
-        const base64RRSS = await convertirImagenBase64("https://panel.serviciosd.com/img" + notaABM.imagen_feed);
-        dispatch(setImagenRRSS(base64RRSS))
-        navigate("/crearNota"); 
-    };
-    
     ///ELEGIR UN ID
     const id_para_api= id_ruta ? id_ruta : id
     console.log("ID DE LOCATION STATE: ", id, "ID_PARA_API: ", id_para_api)
@@ -55,25 +41,6 @@ const VerNota = () => {
         if (!id_para_api) return;
     
         // Lógica para obtener el token en modo demo
-        if (!isTokenLoaded) {
-            axios.post("https://builder.ntcias.de/public/index.php", {
-            }, {
-                headers: { 'Content-Type': 'multipart/form-data' }
-            })
-            .then((response) => {
-                if (response) {
-                    setTOKEN(response.data.token);
-                    setIsTokenLoaded(true); // Marca el token como cargado
-                } else {
-                    console.error('Error en login:', response.data.message);
-                    setCargando(false); // Detiene la carga si hay error
-                }
-            })
-            .catch((error) => {
-                console.error('Error en login:', error);
-                setCargando(false);
-            });
-        } else {
             // Lógica para obtener los datos de la noticia
             axios.post("https://panel.serviciosd.com/app_obtener_noticia", {
                 token: TOKEN,
@@ -97,8 +64,8 @@ const VerNota = () => {
             .finally(() => {
                 setCargando(false); // Finaliza la carga
             });
-        }
-    }, [id_para_api, es_demo, isTokenLoaded, TOKEN]);
+        
+    }, [id_para_api, es_demo]);
     
     console.log(Nota)
 
@@ -156,11 +123,11 @@ const VerNota = () => {
                                     Compartir
                                 </button>
                                 }
-                                {notaABM && !notaABM.id_noti && !es_demo &&
+                                {/* {notaABM && !notaABM.id_noti && !es_demo &&
                                 <button className="btn custom-dropdown-button boton_compartir" type="button" onClick={() => editarNota(notaABM)}>
                                     Editar
                                 </button>
-                                }
+                                } */}
                             </div>
                             {/* <div className='col-2 ver_nota_boton'>
                                     <button className='ver_nota_boton'> 

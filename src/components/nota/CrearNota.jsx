@@ -20,6 +20,9 @@ import Embebido from './componetesNota/Embebidos';
 import { useLocation } from 'react-router-dom';
 import ImagenPrincipal from './componetesNota/ImagenPrincipal';
 import CopeteNota from './componetesNota/Copete';
+import { videos } from '../miPerfil/soporte';
+import CardTutorial from '../miPerfil/CardTutorial';
+import { comprimirImagen } from './componetesNota/ImagenPrincipal';
 
 
 const CrearNota = () => {
@@ -28,6 +31,7 @@ const CrearNota = () => {
     const dispatch = useDispatch();
     const [image, setImage] = useState(null);
     const navigate = useNavigate();
+    const imagenppal = useSelector((state) => state.crearNota.imagenPrincipal);
 
     const [cropper, setCropper] = useState(null);
     const [showModal, setShowModal] = useState(false);
@@ -55,14 +59,19 @@ const CrearNota = () => {
         dispatch(setIdAtt(idUsuario + "_" + timestamp));
     }, [idUsuario]);
 
-    const agregarContenido = (tipo, contenido = "") => {
+    const agregarContenido = async (tipo, contenido = "") => {
         if (tipo === "imagen") {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                dispatch(setContenidoNota([tipo, reader.result])); // Almacena la imagen en base64
-            };
-            reader.readAsDataURL(contenido); // Convierte el archivo a base64
+            try {
+                // Usamos la función comprimirImagen para reducir el peso de la imagen
+                const compressedBase64 = await comprimirImagen(contenido, 0.8, 1600); 
+                
+                // Guardamos la imagen comprimida en el redux como base64
+                dispatch(setContenidoNota([tipo, compressedBase64])); // Almacena la imagen comprimida en base64
+            } catch (error) {
+                console.error("Error al comprimir la imagen:", error);
+            }
         } else {
+            // Si no es una imagen, solo almacenamos el contenido normalmente
             dispatch(setContenidoNota([tipo, contenido]));
         }
     };
@@ -182,8 +191,12 @@ const CrearNota = () => {
                         </div>
 
                         {/* Seccion columna izquierda del tutorial */}
-                        <div className='col-4 columnaTutorial align-self-start'>
-                            <img src="/images/tutorialvideo.png" alt="Icono 1" className="float-right" />
+                        <div className='col-4' style={{ paddingRight: "30px", display: "flex", flexDirection: "column", gap: "30px" }}>
+                            {!imagenppal ? <CardTutorial title = {videos.portada.title} description = {videos.portada.description} src = {videos.portada.src} /> : 
+                            <CardTutorial title = {videos.fotoCuerpoNota.title} description = {videos.fotoCuerpoNota.description} src = {videos.fotoCuerpoNota.src}/>}
+                            <CardTutorial title = {videos.tituloYBajada.title} description = {videos.tituloYBajada.description} src = {videos.tituloYBajada.src}/>
+                            <CardTutorial title = {videos.embebidos.title} description = {videos.embebidos.description} src = {videos.embebidos.src}/>
+
                         </div>
                         {/* fin seccion columna izquierda */}
                     </div>

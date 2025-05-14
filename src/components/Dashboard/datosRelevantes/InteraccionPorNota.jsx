@@ -13,10 +13,10 @@ export function formatearTitulo(titulo, corte = 30) {
 }
 
 export function formatearFecha(fechaStr) {
-    const fecha = new Date(fechaStr);
+    const [anio, mes, dia] = fechaStr.split('-');
+    const fecha = new Date(Number(anio), Number(mes) - 1, Number(dia)); // mes comienza en 0
     const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
     return `${fecha.getDate()} de ${meses[fecha.getMonth()]} de ${fecha.getFullYear()}`;
-    
 }
 function reemplazarUrl(url) {
     console.log("Original URL:", url); // Agrega este registro

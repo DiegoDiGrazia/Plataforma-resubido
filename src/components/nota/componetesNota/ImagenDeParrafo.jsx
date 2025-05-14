@@ -25,7 +25,19 @@ function obtenerFechaActual() {
     return `${año}/${mes}/${dia}`;
 }
 
-const ImagenDeParrafo = ({ indice, numeroDeAtachmentAUsar }) => {
+export function calcularNumeroDeAtachment(attachments) {
+    for (let i = 1; i <= 10; i++) {
+      if (attachments[`attachment_${i}`] === null) {
+        return i;
+      }
+    }
+    return 11; // Si están todos ocupados, devuelve 11 (opcional según tu lógica)
+  }
+
+const ImagenDeParrafo = ({ indice }) => {
+    const attachments = useSelector((state) => state.crearNota.atachments);
+    const numeroDeAtachmentAUsar = calcularNumeroDeAtachment(attachments);
+    console.log("numeroDeAtachmentAUsar EN LA IMAGEN", numeroDeAtachmentAUsar)
     const dispatch = useDispatch();
     const imagen = useSelector((state) => state.crearNota.contenidoNota[indice]);
     const idUsuario = useSelector((state) => state.formulario.usuario.id);
@@ -55,18 +67,17 @@ const ImagenDeParrafo = ({ indice, numeroDeAtachmentAUsar }) => {
                         numeroDeAtachmentAUsar.toString() +
                         "_." +
                         tipoDeImagen  ,
-                    '"/>',
+                    '"/>', numeroDeAtachmentAUsar
                 ])
             );
             dispatch(setAtachment({ key: atachment, value: imagen[1] }));
             dispatch(setSumarUnoAlNumeroDeAtachment());
         }
-    }, [id_att]); 
-    console.log(id_att, "id_att")
+    }, []); 
 
     return (
         <span className="spanContainer">
-            <BotoneraContenido indice={indice} className="pr-2" />
+            <BotoneraContenido indice={indice} numeroDeAtachmentAUsado = {numeroDeAtachmentAUsar} className="pr-2" />
             <img
                 src={imagen[1]}
                 alt="Imagen de parrafo"

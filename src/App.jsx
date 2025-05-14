@@ -42,7 +42,7 @@ function App() {
         {/* <Route path="/notificaciones/" element={<Notificaciones/>} /> */}
         <Route path="/verNota/:id_ruta?" element={<VerNota/>} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/notas" element={<Notas/>} />
+        <Route path="/notas" element={<NotasParaEditorial/>} />
         <Route path="/notasEditorial" element={<NotasParaEditorial/>} />
 
         <Route path="/recuperar-contraseña" element={<RecuperarContraseña/>} />

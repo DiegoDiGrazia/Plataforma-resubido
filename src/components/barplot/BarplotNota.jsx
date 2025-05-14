@@ -35,8 +35,6 @@ const BarplotNota = ({id_noti, TOKEN, cliente, fpub}) => {
     const f_pub = "2024-05-31 20:03:22"
     console.log(f_pub, "DISTINTOS", fpub)
     console.log(f_pub === fpub, "Los valores son iguales pero no estrictamente.");
-    const meses_a_ver = 6;
-
 
     const [loading, setLoading] = useState(true); // Estado de carga
     const [usuariosImpresionesNota, setUsuariosImpresionesNota] = useState([]); // Estado de carga

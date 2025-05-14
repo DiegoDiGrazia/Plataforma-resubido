@@ -21,6 +21,34 @@ import { resetCrearNota } from '../../redux/crearNotaSlice';
 
 const Notas = () => {
 
+        const editarNota = async (notaABM) => {
+            console.log("entro a editarNota");
+            dispatch(resetCrearNota());
+            dispatch(setNotaAEditar(notaABM));
+    
+            // const contenidoNota = await analizarHTML(notaABM.parrafo);
+            dispatch(setContenidoAEditar([["parrafo", notaABM.parrafo ]]));
+        
+            try {
+                const base64PPAL = await convertirImagenBase64("https://panel.serviciosd.com/img" + notaABM.imagen_principal);
+                dispatch(setImagenPrincipal(base64PPAL));
+            } catch (error) {
+                console.error("Error al convertir la imagen principal a Base64:", error);
+                dispatch(setImagenPrincipal(null)); // Opcional: establece un valor por defecto
+            }
+        
+            try {
+                const base64RRSS = await convertirImagenBase64("https://panel.serviciosd.com/img" + notaABM.imagen_feed);
+                dispatch(setImagenRRSS(base64RRSS));
+            } catch (error) {
+                console.error("Error al convertir la imagen de RRSS a Base64:", error);
+                dispatch(setImagenRRSS(null)); // Opcional: establece un valor por defecto
+            }
+        
+            navigate("/crearNota");
+            
+        };
+
     const navigate = useNavigate()
     const [filtroSeleccionado, setFiltroSeleccionado] = useState(1); /// botones TODAS LAS NOTAS; EN PROGRESO; FINALIZADAS
     const [numeroDePagina, setNumeroDePagina] = useState(1); /// para los botones de la paginacion

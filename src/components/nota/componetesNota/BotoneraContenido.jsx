@@ -4,14 +4,20 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'cropperjs/dist/cropper.css';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
-import { BajarContenidoPorIndice, setContenidoPorIndice, setTituloNota, SubirContenidoPorIndice } from '../../../redux/crearNotaSlice';
+import { BajarContenidoPorIndice, setAttachmentToNull, setContenidoPorIndice, setTituloNota, SubirContenidoPorIndice } from '../../../redux/crearNotaSlice';
 import { Button } from 'react-bootstrap';
 import { DeleteContenidoPorIndice } from '../../../redux/crearNotaSlice';
 
-const BotoneraContenido= ({indice}) => {
+const  BotoneraContenido= ({indice}) => {
     const dispatch = useDispatch();
-    
+    const contenidoNota = useSelector((state) => state.crearNota.contenidoNota[indice]);
+    const tieneAtachment = contenidoNota && contenidoNota[4] ? contenidoNota[4] : false;
+    console.log("tieneAtachment", tieneAtachment)
+
     const eliminarContenido = (indice) =>{
+      if(tieneAtachment){
+        dispatch(setAttachmentToNull(tieneAtachment))
+      }
       dispatch(DeleteContenidoPorIndice(indice))
     }   
     const SubirUnaPosicionContenido = (indice) =>{
@@ -20,6 +26,7 @@ const BotoneraContenido= ({indice}) => {
     const BajarUnaPosicionContenido = (indice) =>{
       dispatch(BajarContenidoPorIndice(indice))
     }   
+
 
 
     return (

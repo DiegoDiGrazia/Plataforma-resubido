@@ -8,128 +8,43 @@ import 'cropperjs/dist/cropper.css';
 import "./nota.css";
 import { useDispatch, useSelector } from 'react-redux';
 import { Link} from 'react-router-dom';
-import {setImagenRRSS } from '../../redux/crearNotaSlice'; // Asegúrate de importar setImagenPrincipal
+import {setCategoriasActivasEnStore, setImagenRRSS } from '../../redux/crearNotaSlice'; // Asegúrate de importar setImagenPrincipal
 import { useNavigate } from 'react-router-dom';
 import ColumnaEditorial from './Editorial/ColumnaEditorial';
 import { clickearEnPublicarNota } from '../../utils/publicarNotaHelper';
 import useCategorias from '../../hooks/useCategorias';
 import { use } from 'react';
+import BotonPublicarNota from './Editorial/BotonPublicarNota';
+import { videos } from '../miPerfil/soporte';
+import CardTutorial from '../miPerfil/CardTutorial';
+import { setComentario } from '../../redux/crearNotaSlice';
+import { setSelectedOptionDistribucion } from '../../redux/crearNotaSlice';
+
 
 const PublicarNota = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch();
-    const notaCargada = useSelector((state) => state.crearNota)
-    const [isLoading, setIsLoading] = useState(false);
     const TOKEN = useSelector((state) => state.formulario.token);
     const imageRef = useRef(null);
     const [cropper, setCropper] = useState(null);
-    const [croppedImage, setCroppedImage] = useState(null); // Estado para la imagen recortada
     const es_editor = useSelector((state) => state.formulario.es_editor);
-    const [estadoPublicar, setEstadoPublicar]= useState('EN REVISION');
-    const itemsEtiquetas = useSelector((state) => state.crearNota.etiquetas)
-    const isCheckedDemo = useSelector((state) => state.crearNota.es_demo)
-    const isCheckedDistribucionPrioritaria = useSelector((state) => state.crearNota.distribucion_prioritaria)
-    const isCheckedNoHome = useSelector((state) => state.crearNota.es_home)
-    const tipoContenido = useSelector((state) => state.crearNota.tipoContenido); // Verifica si este es el nombre correcto
-    const fecha = useSelector((state) => state.crearNota.f_vence)
-    const id_noti = useSelector((state) => state.crearNota.id_noti)
-    const engagementText = useSelector((state) => state.crearNota.engagement) || "";
-    const bajadaText = useSelector((state) => state.crearNota.bajada) || "";
-    const tipoAutor = useSelector((state) => state.crearNota.autor); 
-    const provincia = useSelector((state) => state.crearNota.provincia);
-    const municipio = useSelector((state) => state.crearNota.municipio);
-    const cliente = useSelector((state) => state.crearNota.cliente);
-    
-    const pais = useSelector((state) => state.crearNota.pais);
-
     const image = useSelector((state) => state.crearNota.imagenPrincipal); // Imagen seleccionada
-    const imagefeed = useSelector((state) => state.crearNota.imagenRRSS); // Imagen seleccionada
-    const idUsuario = useSelector((state) => state.formulario.usuario.id); 
-    const attachments = useSelector((state) => state.crearNota.atachments); 
-    const id_att = useSelector((state) => state.crearNota.id_att); 
-
-    const atachmentsValidos = Object.entries(attachments)
-    .filter(([key, value]) => value !== null) // Filtrar los que no son null
-    .reduce((obj, [key, value]) => {
-        obj[key] = value; // Construir un nuevo objeto con los valores válidos
-        return obj;
-    }, {});
-
-
-
+    const imagefeed = useSelector((state) => state.crearNota.imagenRRSS); // Imagen seleccionada  
     const { categorias, categoriasActivas, setCategoriasActivas } = useCategorias(TOKEN);
-    
-    
     const [isClickedRecorte, setIsClickedRecorte] = useState(false);
-    const [showModal, setShowModal] = useState(false); // Estado para mostrar el modal
-    const [comentario, setComentario] = useState('');
+    const comentario = useSelector((state) => state.crearNota.comentarios); // Comentario de la nota
+    const con_distribucion = useSelector((state) => state.crearNota.con_distribucion); // Comentario de la nota
+
 
     const manejarCambioComentarios = (e) => {
-        setComentario(e.target.value);
+        dispatch(setComentario(e.target.value));
     };
 
 
-    const transformarContenidoAHTML = (contenidos) => {
-        if (!contenidos || !Array.isArray(contenidos)) {
-            return ''; 
-        }
-    
-        // Construimos el HTML concatenando las etiquetas y el contenido
-        const contenidoEnHTML = contenidos.reduce((html, contenido) => {
-            const etiquetaAbrir = contenido[2];
-            const etiquetaCerrar = contenido[3];
-            if(contenido[0] == "imagen"){
-                return html + etiquetaAbrir + etiquetaCerrar;
-            }
-            return html + etiquetaAbrir + contenido[1] + etiquetaCerrar;
+    useEffect(() => {
+        console.log("Valor inicial de comentario:", comentario);
+    }, [comentario]);
 
-        }, '');
-    
-        return contenidoEnHTML; // Retorna el HTML como un string
-    };
-
-    /// subir la nota !!
-    const titulo = useSelector((state) => state.crearNota.tituloNota);
-    const contenidoNota = useSelector((state) => state.crearNota.contenidoNota)
-    const datosUsuario =useSelector((state) => state.formulario)
-       const clickear_en_publicar_nota = (status) => {
-        setEstadoPublicar(status)
-        const contenidoHTMLSTR = transformarContenidoAHTML(contenidoNota);
-
-        clickearEnPublicarNota({
-            status,
-            TOKEN,
-            titulo,
-            categoriasActivas,
-            notaCargada,
-            contenidoHTMLSTR,
-            estadoPublicar,
-            datosUsuario,
-            image,
-            imagefeed,
-            comentario,
-            selectedOptionDistribucion,
-            isCheckedDistribucionPrioritaria,
-            isCheckedDemo,
-            isCheckedNoHome,
-            tipoContenido,
-            fecha,
-            itemsEtiquetas,
-            engagementText,
-            bajadaText,
-            tipoAutor,
-            provincia,
-            municipio,
-            pais,
-            id_noti,
-            id_att,
-            cliente,
-            ...atachmentsValidos,
-            setIsLoading,
-            setShowModal,
-            navigate,
-        });
-    };
 
     // Inicializa Cropper cuando la imagen cambia
     useEffect(() => {
@@ -139,18 +54,23 @@ const PublicarNota = () => {
             }
             const newCropper = new Cropper(imageRef.current, {
                 aspectRatio: 1, // Permite cualquier relación de aspecto
-                viewMode: 3,
+                viewMode: 1, // Cambia a "1" para mostrar la imagen completa
+                autoCropArea: 1, // Asegura que el área de recorte ocupe toda la imagen
+                responsive: true, // Ajusta el cropper al tamaño del contenedor
+                zoomable: true, // Permite hacer zoom
+                scalable: true, // Permite escalar la imagen
+                movable: true, // Permite mover la imagen
             });
             setCropper(newCropper); // Almacena la nueva instancia de Cropper
         }
-    }, [image]);
+    }, [image, isClickedRecorte]);
 
     const handleCrop = () => {
         if (cropper) {
             const canvas = cropper.getCroppedCanvas();
             const croppedBase64 = canvas.toDataURL(); // Obtiene la imagen recortada en base64
             dispatch(setImagenRRSS(croppedBase64)); // Guarda la imagen recortada en el estado global
-            setIsClickedRecorte(true); // Cambia el estado a "clicked"
+            setIsClickedRecorte(false); // Cambia el estado a "clicked"
         }
     };
 
@@ -169,17 +89,22 @@ const PublicarNota = () => {
 
         if (categoriasActivas.includes(categoria.id)) {
             setCategoriasActivas(categoriasActivas.filter(item => item !== categoria.id));
+            dispatch(setCategoriasActivasEnStore(categoriasActivas.filter(item => item !== categoria.id)));
         } else if (categoriasActivas.length < 3) {
             setCategoriasActivas([...categoriasActivas, categoria.id]);
+            dispatch(setCategoriasActivasEnStore([...categoriasActivas, categoria.id]));
         }
 
     };
-    const [selectedOptionDistribucion, setSelectedOption] = useState('ninguna');
+    const selectedOptionDistribucion = con_distribucion ? "normal" : "ninguna";
 
-    // Función para manejar el cambio de opción seleccionada
+    // Función para manejar el cambio de opción seleccionada4
     const handleChange = (event) => {
-      setSelectedOption(event.target.id);
-      console.log(event.target.id)
+        if(event.target.id === "normal"){
+            dispatch(setSelectedOptionDistribucion(1));}
+        else{
+            dispatch(setSelectedOptionDistribucion(0));
+        }
     };
 
     return (
@@ -192,7 +117,11 @@ const PublicarNota = () => {
                                 <h4 id="nota">
                                 <nav aria-label="breadcrumb">
                                     <ol className="breadcrumb">
-                                        <li className="breadcrumb-item"><Link to="/notas" className='breadcrumb-item'>{'< '} Notas</Link></li>
+                                    <li className="breadcrumb-item">
+                                    <Link to={!es_editor ? "/notas" : "/notasEditorial"} className="breadcrumb-item">
+                                        {'< '} Notas
+                                    </Link>
+                                    </li>
                                         <li className="breadcrumb-item blackActive" aria-current="page">Nueva Nota</li>
                                     </ol>
                                 </nav>
@@ -222,28 +151,46 @@ const PublicarNota = () => {
                                 <h4 className='abajoDeAgregarCategoria mlRRSS'>Selecciona el recorte de tu imagen de portada para que podamos ajustarlo en redes sociales</h4>
 
 
-                                {(imagefeed && es_editor) && (
-                                    <div>                                        
-                                    <img
-                                    src={imagefeed}
-                                    alt="Imagen seleccionada"
-                                    className='imagenRRSS'
-                                /></div>
-                                )}
-                                {(image && !(imagefeed && es_editor)) && (
-                                    <div className=''>
-                                        <img
+                                {/* Mostrar la imagen recortada si existe y no se está editando */}
+                                    {imagefeed && !isClickedRecorte && (
+                                        <div>
+                                            <img
+                                                src={imagefeed}
+                                                alt="Imagen recortada"
+                                                className='imagenRRSS'
+                                            />
+                                        </div>
+                                    )}
 
-                                            ref={imageRef}
-                                            src={image}
-                                            alt="Imagen seleccionada"
-                                            className='imagenRRSS'
-                                        />
-                                       <Button onClick={handleCrop} variant= "none" id= "botonPublicar" className={(isClickedRecorte == false  ?  "recorteSinSeleccionar" :"recorteSeleccionado")}>
-                                            {isClickedRecorte == false ? "Seleccionar área de recorte" : "Área recortada para redes"}
-                                        </Button> 
-                                    </div>
-                                )}
+                                    {/* Mostrar la imagen principal para recortar si se está editando */}
+                                    {((image && !imagefeed) || isClickedRecorte) && (
+                                        <div>
+                                            <img
+                                                ref={imageRef}
+                                                src={image}
+                                                alt="Imagen seleccionada"
+                                                className='imagenRRSS'
+                                            />
+                                        </div>
+                                    )}
+                                       {/* Botón para alternar entre mostrar la imagen recortada y permitir la edición */}
+                                        <Button
+                                            onClick={() => {
+                                                if (isClickedRecorte) {
+                                                    // Guardar el recorte
+                                                    handleCrop();
+                                                } else {
+                                                    // Permitir editar el recorte
+                                                    dispatch(setImagenRRSS(null)); // Establece imagefeed en null
+                                                    setIsClickedRecorte(true);
+                                                }
+                                            }}
+                                            variant="none"
+                                            id="botonPublicar"
+                                            className={isClickedRecorte ? "recorteSeleccionado" : "recorteSinSeleccionar"}
+                                        >
+                                            {isClickedRecorte ? "Guardar recorte" : "Editar recorte"}
+                                        </Button>
                                 <div className='hDistribucionContenido'>Distribucion de contenido</div>
                                 <div className='abajoDeAgregarCategoria mlRRSS'>Selecciona el recorte de tu imagen</div>
 
@@ -290,6 +237,7 @@ const PublicarNota = () => {
                                 <p className='abajoDeAgregarCategoria'>Deja comentarios para el el equipo de Noticias 'd' pueda ayudarte a potenciar tus contenidos
                                     y entender mejor tus objetivos
                                 </p>
+                                
                                 <textarea
                                     placeholder="Escribí aquí tus comentarios"
                                     className="textAreaComentarios"
@@ -299,86 +247,31 @@ const PublicarNota = () => {
                                 />
                                 <p className='abajoDeAgregarCategoria' >Max 300 caracteres</p>
                                 <div className='mb-5'>
-                                    <Button
-                                        onClick={() => clickear_en_publicar_nota("EN REVISION")}
-                                        id="botonPublicar"
-                                        variant="none"
-                                        disabled={isLoading || !imagefeed || !image} // Deshabilitar el botón mientras se carga
-                                    >
-                                        <img src="/images/send.png" alt="Icono 1" className="icon me-2 icono_tusNotas" />{" Enviar a revision"}
-                                    </Button>
-                                    <Button
-                                        onClick={() => clickear_en_publicar_nota("BORRADOR")}
-                                        id="botonPublicar"
-                                        variant="none"
-                                        disabled={isLoading || !imagefeed || !image} // Deshabilitar el botón mientras se carga
-                                    >
-                                        <img src="/images/send.png" alt="Icono 1" className="icon me-2 icono_tusNotas" />{" Guardar borrador"}
-                                    </Button>
-                                    
-                                    {es_editor &&
-                                    <Button
-                                        onClick={() => clickear_en_publicar_nota("PUBLICADO")}
-                                        id= {"botonPublicar"}
-                                        variant="none"
-                                        disabled={isLoading || !imagefeed || !image} // Deshabilitar el botón mientras se carga
-                                    >
-                                        <img src="/images/send.png" alt="Icono 1" className="icon me-2 icono_tusNotas" />{" Publicar"}
-                                    </Button>
-                                    }
-                                    
-                                    {!isLoading &&
+                                    <BotonPublicarNota status="EN REVISION" />
+                                    <BotonPublicarNota status="BORRADOR" />
+                                    {es_editor && <BotonPublicarNota status="PUBLICADO" />}
                                     <Button
                                         onClick={() => navigate('/crearNota')}
                                         id="botonVolver"
                                         variant="none"
-                                        disabled={isLoading } // Deshabilitar el botón mientras se carga
                                     >
                                         {" Volver"}
                                     </Button>
-                                    }
                                 </div>
-                                {isLoading && (
-                                    <div className="loading-overlay">
-                                        <div className="spinner-border text-light" role="status">
-                                            <span className="visually-hidden">Cargando...</span>
-                                        </div>
-                                    </div>
-                                )}
-
                             </div>
                             
 
                         </div>
 
-                        {es_editor && <ColumnaEditorial/>}
+                        {es_editor ? 
+                            <ColumnaEditorial/>  
+                            : 
+                            <div className='col-4'style={{ paddingRight: "30px"}}>
+                                <CardTutorial title = {videos.publicarNota.title} description = {videos.publicarNota.description} src = {videos.publicarNota.src}/>
+                            </div>
+                        }
                     </div>
                 </div>
-                <Modal show={showModal} onHide={() => setShowModal(false)} centered>
-                <Modal.Header>
-                    <Modal.Title>{isLoading ? "Estamos enviando la nota" : "Nota enviada con éxito"}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    {isLoading ? (
-                        <div className="text-center">
-                            <p className="mt-3">Por favor, espera mientras enviamos tu nota.</p>
-                        </div>
-                    ) : (
-                        <div className="text-center">
-                            <p>Tu nota ha sido enviada correctamente.</p>
-                            <Button
-                                variant="primary"
-                                onClick={() => {
-                                    setShowModal(false);
-                                    navigate(`/notas${es_editor ? "Editorial": ""}`); // Redirige a la página de notas// Redirige a la página de notas
-                                }}
-                            >
-                                Ir a Notas
-                            </Button>
-                        </div>
-                    )}
-                </Modal.Body>
-            </Modal>
             </div>
     );
 };

@@ -10,7 +10,7 @@ import TextareaWithCounter from './textAreaConContador';
 import SelectorAutor from './SelectorAutor';
 import "./colEditorial.css"
 import { useDispatch, useSelector } from 'react-redux';
-import { setEsDemo, setDistribucionProioritaria,setNoHome, setFechaVencimiento} from '../../../redux/crearNotaSlice';
+import { setEsDemo, setDistribucionProioritaria,setNoHome, setFechaVencimiento, setFechaPublicacion} from '../../../redux/crearNotaSlice';
 
 
 
@@ -19,14 +19,19 @@ const ColumnaEditorial = ({ indice }) => {
     const isCheckedDemo = useSelector((state) => state.crearNota.es_demo)
     const isCheckedDistribucionPrioritaria = useSelector((state) => state.crearNota.distribucion_prioritaria)
     const isCheckedNoHome = useSelector((state) => state.crearNota.es_home)
-    const fecha = useSelector((state) => state.crearNota.f_vence)
+    const fechaVence = useSelector((state) => state.crearNota.f_vence)
+    const fechaPublicacion = useSelector((state) => state.crearNota.f_pub)
+
 
     const dispatch = useDispatch();
 
 
-    const handleChange = (e) => {
+    const dispacharfechaVencimiento = (e) => {
       dispatch(setFechaVencimiento(e.target.value)); 
     };
+    const dispacharfechaPublicacion = (e) => {
+        dispatch(setFechaPublicacion(e.target.value)); 
+      };
 
     return (
         <div className='col-4 align-self-start col_editorial'>
@@ -47,8 +52,8 @@ const ColumnaEditorial = ({ indice }) => {
                     className="form-check-input" 
                     type="checkbox" 
                     id="flexCheckChecked1" 
-                    checked={isCheckedNoHome} 
-                    onChange={() => dispatch(setNoHome(!isCheckedNoHome))} 
+                    checked={isCheckedNoHome == '1'} 
+                    onChange={() => dispatch(setNoHome(isCheckedNoHome == '1'? '0' : '1'))} 
                     />
             </div>
 
@@ -67,8 +72,8 @@ const ColumnaEditorial = ({ indice }) => {
                     className="form-check-input" 
                     type="checkbox" 
                     id="flexCheckChecked1" 
-                    checked={isCheckedDemo} 
-                    onChange={() => dispatch(setEsDemo(!isCheckedDemo))} 
+                    checked={isCheckedDemo == '1'} 
+                    onChange={() => dispatch(setEsDemo(isCheckedDemo == '1'? '0' : '1'))} 
                     />
 
             </div>
@@ -88,19 +93,29 @@ const ColumnaEditorial = ({ indice }) => {
                 className="form-check-input" 
                 type="checkbox" 
                 id="flexCheckChecked2" 
-                checked={isCheckedDistribucionPrioritaria} 
-                onChange={() => dispatch(setDistribucionProioritaria(!isCheckedDistribucionPrioritaria))} 
+                checked={isCheckedDistribucionPrioritaria == '1'} 
+                onChange={() => dispatch(setDistribucionProioritaria(isCheckedDistribucionPrioritaria == '1'? '0' : '1'))} 
                 />
         </div>
                     <SelectorAutor/>
                     <ArbolDistribucion/>
                     <SelectorTipoContenido/>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: "20px", padding: "0px" }}>
+                    <span style={{ fontSize: "20px", fontWeight: "bold"}}>Fecha Publicacion:</span>
+                    <input 
+                        type="date" 
+                        value={fechaPublicacion} 
+                        onChange={dispacharfechaPublicacion} 
+                        style={{ fontSize: "20px", fontWeight: "bold"}}
+                    />
+                </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: "20px", padding: "0px" }}>
                     <span style={{ fontSize: "20px", fontWeight: "bold"}}>Fecha de vencimiento:</span>
                     <input 
                         type="date" 
-                        value={fecha} 
-                        onChange={handleChange} 
+                        value={fechaVence} 
+                        onChange={dispacharfechaVencimiento} 
                         style={{ fontSize: "20px", fontWeight: "bold"}}
                     />
                 </div>

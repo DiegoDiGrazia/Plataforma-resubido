@@ -86,13 +86,13 @@ const AutoEntrevistasVideoAsk = () => {
                     <div className='row miPerfilContainer soporteContainer mt-4 p-0'>
                         {filteredVideos.map((video, index) => (
                             <div key={index} className='col-6'>
-                                <div className="card" style={{ width: "auto", height: "450px" }}>
-                                    <div className="card-body">
+                                <div className="card" style={{ width: "auto", height: "400px" }}>
+                                    <div className="card-body" style={{ height: "auto" }}>
                                         <h5 className="card-title">{video.title}</h5>
                                         <p className="abajoDeTusNotas">{video.description}</p>
                                     </div>
                                     <iframe
-                                        width="auto"
+                                        width="80%"
                                         height="100%"
                                         src={video.src}
                                         title="YouTube video player"

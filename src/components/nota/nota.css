@@ -395,12 +395,12 @@ padding-top: 0px !important;
     overflow-wrap: break-word;
     padding-right: 10px;
     margin-left: 20px;
+    padding-right: 20px;
 }
 textarea.inputTituloNota {
-    width: 810px !important;
+    width: 100% !important;
 }
 .marginTitulo{
-    margin-left: 65px;
     margin-top: 10px;
 }
 .inputTituloNota::placeholder{
@@ -542,6 +542,7 @@ textarea.inputTituloNota {
     align-items: center; /* Alinea verticalmente al centro */
     padding-left: 0px;
     padding-right: 10px;
+    width: 100%;
   } 
 .imagenNotaContenido{
     margin-top: 20px;
@@ -754,15 +755,25 @@ textarea.inputTituloNota {
     height: 100% !important;
   
 }
-.centradoContenido iframe{
+.centradoContenido iframe {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+.twitter-tweet{
     height: 100% !important;
 }
+
 
 
 .quill-editor {
     display: flex;
     flex-direction: column-reverse; /* Invierte el orden de los hijos */
     width: 100%;
+  }
+
+  .quill-editor p {
+    margin-bottom: 1em !important; /* Espaciado entre párrafos */
   }
 
 
