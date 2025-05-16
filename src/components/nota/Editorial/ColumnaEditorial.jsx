@@ -11,6 +11,7 @@ import SelectorAutor from './SelectorAutor';
 import "./colEditorial.css"
 import { useDispatch, useSelector } from 'react-redux';
 import { setEsDemo, setDistribucionProioritaria,setNoHome, setFechaVencimiento, setFechaPublicacion} from '../../../redux/crearNotaSlice';
+import SelectorCliente2 from './SelectorCliente2';
 
 
 
@@ -36,6 +37,12 @@ const ColumnaEditorial = ({ indice }) => {
     return (
         <div className='col-4 align-self-start col_editorial'>
                 <Etiquetas />
+                    <span style={{ fontSize: "20px", fontWeight: "bold", padding: "0px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+                        Cliente de la nota:
+                        <div style={{ marginLeft: "auto" }}>
+                            <SelectorCliente2/>
+                        </div>
+                    </span>
             <div className='row pt-0'>
                 <div 
                 className="form-check form_editorial p-0" 
@@ -100,7 +107,6 @@ const ColumnaEditorial = ({ indice }) => {
                     <SelectorAutor/>
                     <ArbolDistribucion/>
                     <SelectorTipoContenido/>
-
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: "20px", padding: "0px" }}>
                     <span style={{ fontSize: "20px", fontWeight: "bold"}}>Fecha Publicacion:</span>
                     <input 

@@ -40,7 +40,8 @@ const BotonPublicarNota = ({ status }) => {
     const id_noti = useSelector((state) => state.crearNota.id_noti);
     const id_att = useSelector((state) => state.crearNota.id_att);
     const clienteActual = useSelector((state) => state.formulario.cliente);
-    const cliente = clienteActual ? clienteActual : useSelector((state) => state.crearNota.cliente);
+    const clienteDeLaNota = useSelector((state) => state.crearNota.cliente)
+    const cliente = clienteDeLaNota;
 
 
     const attachments = useSelector((state) => state.crearNota.atachments);
@@ -128,7 +129,7 @@ const BotonPublicarNota = ({ status }) => {
                 onClick={clickear_en_publicar_nota}
                 id="botonPublicar"
                 variant="none"
-                disabled={isLoading || !imagefeed || !image} // Deshabilitar el botón mientras se carga
+                disabled={isLoading || !imagefeed || !image || categoriasActivas.length < 1} // Deshabilitar el botón mientras se carga
             >
                 <img src="/images/send.png" alt="Icono 1" className="icon me-2 icono_tusNotas" />
                 {status === "EN REVISION" ? "Enviar a revisión" : status === "BORRADOR" ? "Guardar borrador" : "Publicar"}

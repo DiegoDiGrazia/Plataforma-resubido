@@ -35,7 +35,8 @@ const ArbolDistribucion = () => {
         { nombre: "Puerto Rico" },
         { nombre: "República Dominicana" },
         { nombre: "Uruguay" },
-        { nombre: "Venezuela" }
+        { nombre: "Venezuela" },
+        { nombre: "Miami"}
     ]);
 
     // Obtener provincias al montar el componente

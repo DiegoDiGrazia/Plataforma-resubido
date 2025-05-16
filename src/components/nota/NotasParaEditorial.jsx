@@ -16,9 +16,10 @@ import { left } from '@popperjs/core';
 import SelectorCliente from '../Dashboard/SelectorCliente';
 import { useCallback } from 'react';
 import { editarNota } from './VerNota';
-import { resetCrearNota } from '../../redux/crearNotaSlice';
+import { resetCrearNota, setClienteNota } from '../../redux/crearNotaSlice';
 import { analizarHTML, convertirImagenBase64, setContenidoAEditar, setContenidoNota, setImagenPrincipal, setImagenRRSS, setNotaAEditar } from '../../redux/crearNotaSlice';
 import BotonEliminarNota from './Editorial/botonEliminarNota';
+import { updateCliente } from '../../redux/formularioSlice';
 
   function obtenerFechaDeManana() {
     const hoy = new Date();
@@ -32,55 +33,55 @@ import BotonEliminarNota from './Editorial/botonEliminarNota';
 
 const NotasParaEditorial = () => {
     const [searchQuery, setSearchQuery] = useState('');
-
-
-
     const editarNota = async (notaABM) => {
-        console.log("entro a editarNota");
-        dispatch(resetCrearNota());
-        dispatch(setNotaAEditar(notaABM));
+    console.log("entro a editarNota");
+    dispatch(resetCrearNota());
+    dispatch(setNotaAEditar(notaABM));
+    dispatch(updateCliente(notaABM.cliente));
+    // Procesar el contenido HTML
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(notaABM.parrafo, 'text/html');
+    const nodes = doc.body.childNodes;
+    const contenido = [];
 
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(notaABM.parrafo, 'text/html'); // Aquí usas tu contenido HTML
+    for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i];
 
-        // Obtener todos los elementos hijos del body del documento parseado
-        const children = doc.body.children;
+        if (node.nodeType === 1) { // ELEMENT_NODE
+            const tag = node.tagName.toUpperCase();
 
-        // Recorrer los elementos
-        for (let i = 0; i < children.length; i++) {
-        const element = children[i];
-
-        // Mostrar el tipo de etiqueta (p, h2, iframe, etc.)
-        console.log('Etiqueta:', element.tagName);
-        
-        // Extraer el contenido de las etiquetas
-        if (element.tagName == 'IFRAME' || element.tagName == 'BLOCKQUOTE') {
-            dispatch(setContenidoAEditar([["embebido", element.outerHTML, "", ""]]));
-        } else 
-            dispatch(setContenidoAEditar([["parrafo", element.outerHTML, "", ""]]));
+            if (tag === 'IFRAME' || tag === 'BLOCKQUOTE') {
+                contenido.push(["embebido", node.outerHTML, "", ""]);
+            } else {
+                contenido.push(["parrafo", node.outerHTML, "", ""]);
+            }
+        } else if (node.nodeType === 3) { // TEXT_NODE
+            const trimmed = node.textContent.trim();
+            if (trimmed) {
+                contenido.push(["parrafo", trimmed, "", ""]);
+            }
         }
-        
-    
-        try {
-            const base64PPAL = await convertirImagenBase64("https://static.noticiasd.com/img" + notaABM.imagen_principal);
-            dispatch(setImagenPrincipal(base64PPAL));
-        } catch (error) {
-            console.error("Error al convertir la imagen principal a Base64:", error);
-            dispatch(setImagenPrincipal(null)); // Opcional: establece un valor por defecto
-        }
-    
-        try {
-            const base64RRSS = await convertirImagenBase64("https://static.noticiasd.com/img" + notaABM.imagen_feed);
-            dispatch(setImagenRRSS(base64RRSS));
-        } catch (error) {
-            console.error("Error al convertir la imagen de RRSS a Base64:", error);
-            dispatch(setImagenRRSS(null)); // Opcional: establece un valor por defecto
-        }
-    
-        navigate("/crearNota");
-        
-    };
+    }
 
+    dispatch(setContenidoAEditar(contenido));
+    try {
+        const [base64PPAL, base64RRSS] = await Promise.all([
+            convertirImagenBase64("https://static.noticiasd.com/img" + notaABM.imagen_principal),
+            convertirImagenBase64("https://static.noticiasd.com/img" + notaABM.imagen_feed)
+        ]);
+
+        dispatch(setImagenPrincipal(base64PPAL));
+        dispatch(setImagenRRSS(base64RRSS));
+    } catch (error) {
+        console.error("Error al convertir una o ambas imágenes:", error);
+        // Opcional: si querés manejar errores parciales, pasá a Promise.allSettled
+        dispatch(setImagenPrincipal(null));
+        dispatch(setImagenRRSS(null));
+    }
+
+    // ✅ Solo después de que todo se haya procesado, se navega
+    navigate("/crearNota");
+};
 
     const CLIENTE = useSelector((state) => state.formulario.cliente);
     const navigate = useNavigate()
@@ -221,8 +222,9 @@ const NotasParaEditorial = () => {
     }, [CLIENTE, TOKEN, categorias, verMasUltimo, verMasCantidadPaginacion]);
     
     
-    const ClickearEnCrearNota = () => {
+    const ClickearEnCrearNota = (cliente) => {
         dispatch(resetCrearNota());
+        dispatch(setClienteNota(cliente))
         navigate("/crearNota");
     };
     
@@ -299,7 +301,7 @@ const NotasParaEditorial = () => {
                                     <div className='abajoDeTusNotas'> Crea, gestiona y monitorea tus notas</div>
                                 </div>
                                 <div className='col boton'>
-                                    <Button onClick = {()=> ClickearEnCrearNota() } id="botonPublicar" variant="none">{"Crear nota "}
+                                    <Button onClick = {()=> ClickearEnCrearNota(CLIENTE) } id="botonPublicar" variant="none">{"Crear nota "}
                                         {CLIENTE ?  "de " + CLIENTE : "sin cliente"}
                                     </Button>
                                 </div>

@@ -744,6 +744,10 @@ textarea.inputTituloNota {
     width: 100%;
 }
 
+.datoFaltante{
+    color: red;
+
+}
 .centradoContenido{
     display: flex;
     justify-content: center; /* Centra horizontalmente */

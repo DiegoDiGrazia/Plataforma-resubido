@@ -43,7 +43,8 @@ const PublicarNota = () => {
 
     useEffect(() => {
         console.log("Valor inicial de comentario:", comentario);
-    }, [comentario]);
+        console.log(categoriasActivas)
+    }, [comentario, categoriasActivas]);
 
 
     // Inicializa Cropper cuando la imagen cambia
@@ -91,12 +92,12 @@ const PublicarNota = () => {
             setCategoriasActivas(categoriasActivas.filter(item => item !== categoria.id));
             dispatch(setCategoriasActivasEnStore(categoriasActivas.filter(item => item !== categoria.id)));
         } else if (categoriasActivas.length < 3) {
-            setCategoriasActivas([...categoriasActivas, categoria.id]);
-            dispatch(setCategoriasActivasEnStore([...categoriasActivas, categoria.id]));
+            setCategoriasActivas([categoria.id]);
+            dispatch(setCategoriasActivasEnStore([categoria.id]));
         }
 
     };
-    const selectedOptionDistribucion = con_distribucion ? "normal" : "ninguna";
+    const selectedOptionDistribucion = con_distribucion == "1" ? "normal" : "ninguna";
 
     // Función para manejar el cambio de opción seleccionada4
     const handleChange = (event) => {
@@ -136,7 +137,7 @@ const PublicarNota = () => {
                         <div className='col-8 columnaNota'>
                             <div className='col mt-0'>
                                 <h3 className='headerPublicarNota fw-bold'>Agregar categorias a tu Nota</h3>
-                                <h3 className='abajoDeAgregarCategoria mb-4'>Selecciona las tres categorias claves para tu contenido</h3>
+                                <h3 className='abajoDeAgregarCategoria mb-4'>Seleccione una categoria clave para tu contenido</h3>
                             </div>
                             <div className='filaCategorias'>
                                 {Array.isArray(categorias) && categorias.map((categoria, index) => (
@@ -206,7 +207,7 @@ const PublicarNota = () => {
                                             onChange={handleChange}
                                             />
                                             <label className="form-check-label" htmlFor="normal">
-                                                <p className='distribuirNotaP'><strong>Distribuir nota</strong> {'(Te quedan 2/4 notas en tu plan)'}</p>
+                                                <p className='distribuirNotaP'><strong>Distribuir nota</strong> {}</p>
                                                 <p className='abajoDeAgregarCategoria'>La distribucion de tu nota amplifica el impactoy la llegada a mas usuarios</p>
                                                 
                                             </label>
@@ -246,6 +247,15 @@ const PublicarNota = () => {
                                     onChange={manejarCambioComentarios}
                                 />
                                 <p className='abajoDeAgregarCategoria' >Max 300 caracteres</p>
+
+                                {categoriasActivas.length < 1 && (
+                                    <p className='datoFaltante'>-Seleccione una categoria para poder publicar</p>
+                                )}
+                                {!imagefeed && (
+                                    <p className='datoFaltante'>-Seleccione una imagen de portada y su recorte</p>
+
+                                )}
+                                
                                 <div className='mb-5'>
                                     <BotonPublicarNota status="EN REVISION" />
                                     <BotonPublicarNota status="BORRADOR" />

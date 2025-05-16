@@ -200,7 +200,7 @@ const crearNotaSlice = createSlice({
       state.distribucion_prioritaria = nota.distribucion_prioritaria;
       state.estado = nota.estado;
       state.id_noti = nota.id;
-      state.etiquetas = nota.etiquetas;
+      state.etiquetas = nota.etiquetas.split(",");
       state.f_vence = nota.fecha_vencimiento;
       state.f_pub = nota.fecha_publicacion;
       state.autor = nota.autor;
@@ -283,12 +283,15 @@ const crearNotaSlice = createSlice({
     setCategoriasActivasEnStore: (state, action) => {
       state.categoriasActivas = action.payload;
     },
+    setClienteNota: (state,action) => {
+      state.cliente = action.payload;
+    },
     resetCrearNota: () => initialState
   }
 });
 
 export const {
-  setTituloNota, setContenidoNota, DeleteContenidoPorIndice, setContenidoPorIndice,setFechaPublicacion, setAttachmentToNull,
+  setTituloNota, setClienteNota, setContenidoNota, DeleteContenidoPorIndice, setContenidoPorIndice,setFechaPublicacion, setAttachmentToNull,
   SubirContenidoPorIndice, BajarContenidoPorIndice, setCategorias, setImagenPrincipal, setImagenRRSS,
   setCopete, setNotaAEditar, setContenidoAEditar, setItemsEtiquetas, setEsDemo, setNoHome, setCategoriasActivasEnStore,
   setDistribucionProioritaria, setTipoContenido, setFechaVencimiento, setBajada, setEngagement, setComentario, setSelectedOptionDistribucion,

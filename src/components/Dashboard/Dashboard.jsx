@@ -21,6 +21,7 @@ import { periodoUltimoAnio } from '../barplot/Barplot.jsx';
 import { setPeriodoApi } from '../../redux/dashboardSlice.js';
 import { setFechas } from '../../redux/barplotSlice.js';
 import { formatDate } from '../barplot/Barplot.jsx';
+import { setClienteNota } from '../../redux/crearNotaSlice.js';
 
 export function formatNumberMiles(num) {
     if (num === null || num === undefined || num === "") {
@@ -77,6 +78,7 @@ const Dashboard = () => {
 
     const ClickearEnCrearNota = () => {
         dispatch(resetCrearNota());
+        dispatch(setClienteNota(cliente));
         navigate("/crearNota");
     };
 
@@ -100,7 +102,7 @@ const Dashboard = () => {
                                     <h3 id="nombre_municipio">{nombreCliente}</h3>
                                 </>
                             )}
-                            <Button id="botonCrearNota" className='no-print' variant="none" onClick={() => ClickearEnCrearNota()}>
+                            <Button id="botonCrearNota" className='no-print' variant="none" onClick={() => ClickearEnCrearNota(nombreCliente)}>
                                 <img src="/images/boton_crear_nota.png" alt="Icono 1" className="icon me-2" />
                             </Button>
                         </header>
