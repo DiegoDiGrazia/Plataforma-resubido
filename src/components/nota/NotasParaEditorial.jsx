@@ -20,6 +20,7 @@ import { resetCrearNota, setClienteNota } from '../../redux/crearNotaSlice';
 import { analizarHTML, convertirImagenBase64, setContenidoAEditar, setContenidoNota, setImagenPrincipal, setImagenRRSS, setNotaAEditar } from '../../redux/crearNotaSlice';
 import BotonEliminarNota from './Editorial/botonEliminarNota';
 import { updateCliente } from '../../redux/formularioSlice';
+import BotonCrearNota from './Editorial/BotonCrearNota';
 
   function obtenerFechaDeManana() {
     const hoy = new Date();
@@ -66,8 +67,8 @@ const NotasParaEditorial = () => {
     dispatch(setContenidoAEditar(contenido));
     try {
         const [base64PPAL, base64RRSS] = await Promise.all([
-            convertirImagenBase64("https://static.noticiasd.com/img" + notaABM.imagen_principal),
-            convertirImagenBase64("https://static.noticiasd.com/img" + notaABM.imagen_feed)
+            convertirImagenBase64("https://static.noticiasd.com/img" + notaABM.imagen_principal + "?cb=" + Math.random()),
+            convertirImagenBase64("https://static.noticiasd.com/img" + notaABM.imagen_feed + "?cb=" + Math.random())
         ]);
 
         dispatch(setImagenPrincipal(base64PPAL));
@@ -301,9 +302,10 @@ const NotasParaEditorial = () => {
                                     <div className='abajoDeTusNotas'> Crea, gestiona y monitorea tus notas</div>
                                 </div>
                                 <div className='col boton'>
-                                    <Button onClick = {()=> ClickearEnCrearNota(CLIENTE) } id="botonPublicar" variant="none">{"Crear nota "}
-                                        {CLIENTE ?  "de " + CLIENTE : "sin cliente"}
-                                    </Button>
+                                    <BotonCrearNota
+                                        onClick={() => ClickearEnCrearNota(CLIENTE)}
+                                        cliente={CLIENTE}
+                                    />
                                 </div>
                             </div>
 

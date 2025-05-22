@@ -22,6 +22,7 @@ import { setPeriodoApi } from '../../redux/dashboardSlice.js';
 import { setFechas } from '../../redux/barplotSlice.js';
 import { formatDate } from '../barplot/Barplot.jsx';
 import { setClienteNota } from '../../redux/crearNotaSlice.js';
+import { traerDatosLocalmente } from '../../utils/buscarEnLocal.js';
 
 export function formatNumberMiles(num) {
     if (num === null || num === undefined || num === "") {
@@ -30,20 +31,14 @@ export function formatNumberMiles(num) {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
-function formatFechaApiExportar(fechaStr) {
-    const [year, month] = fechaStr.split("-");
-    return `01-${month}-${year}`;
-}
-
 const Dashboard = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const es_editor = useSelector((state) => state.formulario.es_editor);
     const nombreCliente = useSelector((state) => state.formulario.cliente);
     const FiltroActual = useSelector((state) => state.dashboard.filtro);
-    const periodos = useSelector((state) => state.dashboard.periodos_api).split(",");
+    const [datosLocalmente, setDatosLocalmente] = useState(null); 
     const componenteRef = useRef(null);
-
-    const periodosActuales = periodos.slice(seleccionPorFiltro(FiltroActual));
     const handleClickFiltro = (nuevoFiltro) => {
         dispatch(setFiltro(nuevoFiltro));
     };
@@ -59,6 +54,15 @@ const Dashboard = () => {
         dispatch(setPeriodoApi(periodoUltimoAnio())); // Guarda los periodos originales en el estado
     }, [dispatch]);
 
+    /// ME FIJO SI EXISTE LOCALMENTE
+    useEffect(() => {
+        if (!nombreCliente) return;
+
+        traerDatosLocalmente(nombreCliente).then((data) => {
+        setDatosLocalmente(data);
+        });
+    }, [nombreCliente]);
+
     
     const handlePrint = () => {
         window.print();
@@ -69,18 +73,20 @@ const Dashboard = () => {
         dispatch(setFechaActual(fecha.getDate()));
     }, [FiltroActual, dispatch]);
 
-    const es_editor = useSelector((state) => state.formulario.es_editor);
     const fecha = new Date().toLocaleDateString('es-ES', {
         day: 'numeric',
         month: 'long',
         year: 'numeric'
     });
 
-    const ClickearEnCrearNota = () => {
+    const ClickearEnCrearNota = (nombreCliente) => {
         dispatch(resetCrearNota());
-        dispatch(setClienteNota(cliente));
+        dispatch(setClienteNota(nombreCliente));
         navigate("/crearNota");
     };
+
+
+
 
     return (
         <div className="container-fluid sinPadding">
@@ -139,22 +145,22 @@ const Dashboard = () => {
                             </span>
                         </div>
                         <div className="mb-2 tamaño_barplot">
-                            <Barplot />
+                            <Barplot datosLocales={datosLocalmente}/>
                         </div>
                         <div className='row g-1'>
                             <div className='col-lg-12 col-xl col-6 m-2 back-white'>
-                                <InteraccionPorNota />
+                                <InteraccionPorNota datosLocales={datosLocalmente}/>
                             </div>
                             <div className='col-lg-12 col-xl col-6 m-2 back-white'>
-                                <MediosMasRelevantes />
+                                <MediosMasRelevantes datosLocales={datosLocalmente} />
                             </div>
                         </div>
                         <div className='row g-1'>
                             <div className='col-lg-12 col-xl col-6 m-2 p-3 back-white'>
-                                <PlataformaMasImpresiones />
+                                <PlataformaMasImpresiones/>
                             </div>
                             <div className='col-lg-12 col-xl col-6 m-2 p-3 back-white'>
-                                <CategoriasMasRelevantes />
+                                <CategoriasMasRelevantes datosLocales={datosLocalmente}/>
                             </div>
                         </div>
                     </div>

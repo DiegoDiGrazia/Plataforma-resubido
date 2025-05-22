@@ -5,8 +5,8 @@ import { useSelector } from 'react-redux';
 import { seleccionPorFiltro } from '../../barplot/Barplot';
 import { formatNumberMiles } from '../Dashboard';
 
-const PlataformaMasImpresiones = () => {
-    const [openIndex, setOpenIndex] = useState(null); // Estado del acordeón
+const PlataformaMasImpresiones = ({datosLocales}) => {
+        const [openIndex, setOpenIndex] = useState(null); // Estado del acordeón
     const toggle = (index) => {
         setOpenIndex(openIndex === index ? null : index);
     };
@@ -14,39 +14,41 @@ const PlataformaMasImpresiones = () => {
     const FiltroActual = useSelector((state) => state.dashboard.filtro);
     let cantidad_meses = seleccionPorFiltro(FiltroActual);
 
-    const selectAndSlice = (selector, cantidad_meses) => {
-        const data = useSelector((state) => selector(state));
-        return Array.isArray(data) ? data.slice(cantidad_meses) : [];
-    };
+    // Obtén todo el slice barplot de Redux una sola vez
+    const barplot = useSelector((state) => state.barplot);
 
     const sumArray = (arr) => arr.reduce((a, b) => a + b, 0);
+
+    // Helper para cortar arrays
+    const sliceArr = (arr, cantidad_meses) =>
+        Array.isArray(arr) ? arr.slice(cantidad_meses) : [];
 
     const plataformasData = [
         {
             nombre: 'Facebook',
             logo: '/images/logoFB.png',
-            impresiones: sumArray(selectAndSlice(state => state.barplot.impresionesTotalesFacebook, cantidad_meses)),
-            comentarios: sumArray(selectAndSlice(state => state.barplot.comentarios_facebook, cantidad_meses)),
-            meGusta: sumArray(selectAndSlice(state => state.barplot.likes_facebook, cantidad_meses)),
-            clicks: sumArray(selectAndSlice(state => state.barplot.reacciones_facebook, cantidad_meses)),
-            compartido: sumArray(selectAndSlice(state => state.barplot.compartidos_facebook, cantidad_meses))
+            impresiones: sumArray(sliceArr(barplot.impresionesTotalesFacebook, cantidad_meses)),
+            comentarios: sumArray(sliceArr(barplot.comentarios_facebook, cantidad_meses)),
+            meGusta: sumArray(sliceArr(barplot.likes_facebook, cantidad_meses)),
+            clicks: sumArray(sliceArr(barplot.reacciones_facebook, cantidad_meses)),
+            compartido: sumArray(sliceArr(barplot.compartidos_facebook, cantidad_meses))
         },
         {
             nombre: 'Instagram',
             logo: '/images/logo_ig.png',
-            impresiones: sumArray(selectAndSlice(state => state.barplot.impresionesTotalesInstagram, cantidad_meses)),
-            comentarios: sumArray(selectAndSlice(state => state.barplot.comentarios_instagram, cantidad_meses)),
-            meGusta: sumArray(selectAndSlice(state => state.barplot.likes_instagram, cantidad_meses)),
-            clicks: sumArray(selectAndSlice(state => state.barplot.reacciones_instagram, cantidad_meses)),
-            compartido: sumArray(selectAndSlice(state => state.barplot.compartidos_instagram, cantidad_meses))
+            impresiones: sumArray(sliceArr(barplot.impresionesTotalesInstagram, cantidad_meses)),
+            comentarios: sumArray(sliceArr(barplot.comentarios_instagram, cantidad_meses)),
+            meGusta: sumArray(sliceArr(barplot.likes_instagram, cantidad_meses)),
+            clicks: sumArray(sliceArr(barplot.reacciones_instagram, cantidad_meses)),
+            compartido: sumArray(sliceArr(barplot.compartidos_instagram, cantidad_meses))
         },
         {
             nombre: 'Google',
             logo: '/images/logo_google.png',
-            impresiones: sumArray(selectAndSlice(state => state.barplot.impresionesTotalesGoogle, cantidad_meses)),
+            impresiones: sumArray(sliceArr(barplot.impresionesTotalesGoogle, cantidad_meses)),
             comentarios: 0,
             meGusta: 0,
-            clicks: sumArray(selectAndSlice(state => state.barplot.impresionesTotalesGoogle, cantidad_meses)),
+            clicks: sumArray(sliceArr(barplot.impresionesTotalesGoogle, cantidad_meses)),
             compartido: 0
         }
     ];

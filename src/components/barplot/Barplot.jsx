@@ -62,16 +62,15 @@ export function seleccionPorFiltro(filtro) {
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const Barplot = () => {
+const Barplot = ({datosLocales}) => {
     const dispatch = useDispatch();
     const token = useSelector((state) => state.formulario.token);
     const fechas = useSelector((state) => state.barplot.fechas);
     const FiltroActual = useSelector((state) => state.dashboard.filtro);
     const nombreCliente = useSelector((state) => state.formulario.cliente);
-    const ultimo_cliente_cargado = useSelector((state) => state.barplot.ultimoClienteCargadoBarplot);
-    const ultima_fecha_cargada = useSelector((state) => state.barplot.ultimaFechaCargadaBarplot);
     const navigate = useNavigate();
     const captureRef = useRef(null);  // Definir el ref para capturar la imagen
+    console.log("localDataEnBarplot:", datosLocales)
 
     const [loading, setLoading] = useState(true); // Estado de carga
 
@@ -79,68 +78,60 @@ const Barplot = () => {
         setLoading(true);
         const fecha = new Date();
         const diaMes = fecha.getDate();
+        dispatch(setultimaFechaCargadaBarplot(diaMes));
+        dispatch(setUltimoClienteCargadoBarplot(nombreCliente));
 
-        // if (nombreCliente !== ultimo_cliente_cargado || diaMes !== ultima_fecha_cargada) {
-        if (true) {
-
-            dispatch(setultimaFechaCargadaBarplot(diaMes));
-            dispatch(setUltimoClienteCargadoBarplot(nombreCliente));
-
-            axios.post(
-                "https://panel.serviciosd.com/app_obtener_usuarios",
-                {
-                    cliente: nombreCliente,
-                    periodos: periodoUltimoAnio(),
-                    token: token
-                },
-                {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
+        axios.post(
+            "https://panel.serviciosd.com/app_obtener_usuarios",
+            {
+                cliente: nombreCliente,
+                periodos: periodoUltimoAnio(),
+                token: token
+            },
+            {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
                 }
-            )
-            .then((response) => {
-                if (response.data.message === "Token Invalido") {
-                    navigate("/");
+            }
+        )
+        .then((response) => {
+            if (response.data.message === "Token Invalido") {
+                navigate("/");
+            }
+            if (response.data.status === "true") {
+                dispatch(resetBarplot());
+                let datos = datosLocales.datosParaBarplot || response.data.item;
+                console.log("datos", datos)
+                for (let datoMensual of datos) {
+                    dispatch(setUsuariosTotales(Number(datoMensual.usuarios_total)));
+                    dispatch(setUsuariosTotalesMeta(Number(datoMensual.usuarios_redes)));
+                    dispatch(setUsuariosTotalesGoogle(Number(datoMensual.usuarios_medios)));
+                    dispatch(setImpresionesTotalesInstagram(Number(datoMensual.impresiones_instagram)));
+                    dispatch(setImpresionesTotalesGoogle(Number(datoMensual.impresiones_busqueda)));
+                    dispatch(setImpresionesTotalesFacebook(Number(datoMensual.impresiones_facebook)));
+                    dispatch(setultimaFechaCargadaBarplot(fecha.getDate()));
+                    dispatch(setComentariosFacebook(Number(datoMensual.comentarios_facebook)));
+                    dispatch(setComentariosInstagram(Number(datoMensual.comentarios_instagram)));   
+                    dispatch(setCompartidosFacebook(Number(datoMensual.compartidos_facebook)));
+                    dispatch(setCompartidosInstagram(Number(datoMensual.compartidos_instagram)));
+                    dispatch(setLikesFacebook(Number(datoMensual.likes_facebook)));
+                    dispatch(setLikesInstagram(Number(datoMensual.likes_instagram)));
+                    dispatch(setReaccionesFacebook(Number(datoMensual.reacciones_facebook)));
+                    dispatch(setReaccionesInstagram(Number(datoMensual.reacciones_instagram)));
                 }
-                if (response.data.status === "true") {
-                    dispatch(resetBarplot()); // Reinicia el estado del barplot al cargar el componente
-                    let datos = response.data.item;
-                    for (let datoMensual of datos) {
-                        if (true) {
-                            dispatch(setUsuariosTotales(Number(datoMensual.usuarios_total)));
-                            dispatch(setUsuariosTotalesMeta(Number(datoMensual.usuarios_redes)));
-                            dispatch(setUsuariosTotalesGoogle(Number(datoMensual.usuarios_medios)));
-                            dispatch(setImpresionesTotalesInstagram(Number(datoMensual.impresiones_instagram)));
-                            dispatch(setImpresionesTotalesGoogle(Number(datoMensual.impresiones_busqueda)));
-                            dispatch(setImpresionesTotalesFacebook(Number(datoMensual.impresiones_facebook)));
-                            dispatch(setultimaFechaCargadaBarplot(fecha.getDate()));
-                            dispatch(setComentariosFacebook(Number(datoMensual.comentarios_facebook)));
-                            dispatch(setComentariosInstagram(Number(datoMensual.comentarios_instagram)));   
-                            dispatch(setCompartidosFacebook(Number(datoMensual.compartidos_facebook)));
-                            dispatch(setCompartidosInstagram(Number(datoMensual.compartidos_instagram)));
-                            dispatch(setLikesFacebook(Number(datoMensual.likes_facebook)));
-                            dispatch(setLikesInstagram(Number(datoMensual.likes_instagram)));
-                            dispatch(setReaccionesFacebook(Number(datoMensual.reacciones_facebook)));
-                            dispatch(setReaccionesInstagram(Number(datoMensual.reacciones_instagram)));
-                        }
-                    }
-                } else {
-                    console.error('Error en la respuesta de la API:', response.data.message);
-                }
-            })
-            .catch((error) => {
-                console.error('Error al hacer la solicitud:', error);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-        } else {
+            } else {
+                console.error('Error en la respuesta de la API:', response.data.message);
+            }
+        })
+        .catch((error) => {
+            console.error('Error al hacer la solicitud:', error);
+        })
+        .finally(() => {
             setLoading(false);
-        }
+        });
 
         ; // Limpia el intervalo si el componente se desmonta
-    }, [nombreCliente]);
+    }, [nombreCliente, datosLocales]);
 
     // Aquí están tus datos reales
     let cantidad_meses = seleccionPorFiltro(FiltroActual);

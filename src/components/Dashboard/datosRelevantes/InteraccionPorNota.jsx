@@ -26,7 +26,7 @@ function reemplazarUrl(url) {
 }
 
 
-const InteraccionPorNota = () => {
+const InteraccionPorNota = ({datosLocales}) => {
     const dispatch = useDispatch();
     const periodos_api = useSelector(state => state.dashboard.periodos_api);
     const nombreCliente = useSelector(state => state.formulario.cliente);
@@ -63,7 +63,7 @@ const InteraccionPorNota = () => {
             {listaTresNotas.map((nota, index) => (
                 <div className='row seccionInteracciones pt-1' key={index}>
                     <div className='col-auto mr-2'>
-                        <img src={nota.imagen} alt="Icono" className='imagenWidwetInteracciones2' />
+                        <img src={"https://static.noticiasd.com/img/" + nota.imagen} alt="Icono" className='imagenWidwetInteracciones2' />
                     </div>
                     <div className='col-auto pt-1'>
                         <Link className="link-sin-estilos" to={`/verNota`} state={{ id: nota.id_noti ? nota.id_noti : nota.term_id, notaABM: nota }}>
@@ -74,7 +74,7 @@ const InteraccionPorNota = () => {
                         </div>
                     </div>
                     <div className='col totales_widget'>
-                        <p>{formatNumberMiles(nota.total)}</p>
+                        {datosLocales ? <p>{datosLocales.interaccionesNota[index]}</p> : <p>{formatNumberMiles(nota.total)}</p>}
                     </div>
                 </div>
             ))}

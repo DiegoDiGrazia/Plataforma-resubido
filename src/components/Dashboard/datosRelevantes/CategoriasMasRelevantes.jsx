@@ -22,7 +22,7 @@ function reduceBykeyCategorias(lista_medios) {
     return sitios;
 }
 
-const CategoriasMasRelevantes = () => {
+const CategoriasMasRelevantes = ({datosLocales}) => {
     const nombreCliente = useSelector((state) => state.formulario.cliente);
     const periodos_api = useSelector((state) => state.dashboard.periodos_api);
     const dispatch = useDispatch();
@@ -59,7 +59,7 @@ const CategoriasMasRelevantes = () => {
 
     const categoriasPorMes = useSelector(state => state.interaccionesPorNota.categoriasMayorInteraccion || []).slice(cantidad_meses);
     let todasLasCategorias = [];
-    for (let mes of categoriasPorMes) {
+    for (let mes of datosLocales ? datosLocales.tresCategorias : categoriasPorMes) {
         todasLasCategorias.push(...mes.categoria);
     }
     const categoriasSinRepetir = Object.values(reduceBykeyCategorias(todasLasCategorias));

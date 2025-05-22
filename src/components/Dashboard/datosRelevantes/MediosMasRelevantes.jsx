@@ -32,7 +32,7 @@ function reduceBykeyMedios(lista_medios) {
     return sitios;
 }
 
-const MediosMasRelevantes = () => {
+const MediosMasRelevantes = ({datosLocales}) => {
     const nombreCliente = useSelector((state) => state.formulario.cliente);
     const periodos_api = useSelector((state) => state.dashboard.periodos_api);
     const dispatch = useDispatch();
@@ -40,6 +40,8 @@ const MediosMasRelevantes = () => {
     const FiltroActual = useSelector((state) => state.dashboard.filtro);
     let cantidad_meses = seleccionPorFiltro(FiltroActual);
     const ultimaFechaCargadaBarplot = useSelector((state) => state.barplot.ultimaFechaCargadaBarplot);
+    console.log("datos adentro de medios", datosLocales)
+
 
     useEffect(() => {
         axios.post(
@@ -102,7 +104,10 @@ const MediosMasRelevantes = () => {
                     <img src="/images/help-circle.png" alt="Descripción" className="info-icon no-print" title="aca va el texto" />
                 </p>
             </div>
-            {listaTresMedios.map(renderMedio)}
+            {datosLocales
+            ? datosLocales.tresMedios?.map(renderMedio)
+            : listaTresMedios.map(renderMedio)
+}
         </div>
     );
 };
