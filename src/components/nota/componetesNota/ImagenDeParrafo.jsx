@@ -4,9 +4,8 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'cropperjs/dist/cropper.css';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
-import {setAtachment, setContenidoPorIndice, setNumeroDeAtachment, setSumarUnoAlNumeroDeAtachment } from '../../../redux/crearNotaSlice';
+import {setAtachment, setContenidoPorIndice, setEpigrafeDeImagen, setSumarUnoAlNumeroDeAtachment } from '../../../redux/crearNotaSlice';
 import BotoneraContenido from './botoneraContenido';
-
 
 function obtenerTipoDeImagenDesdeBase64(base64) {
     if (base64.startsWith('data:image/png')) {
@@ -40,17 +39,25 @@ const ImagenDeParrafo = ({ indice }) => {
     console.log("numeroDeAtachmentAUsar EN LA IMAGEN", numeroDeAtachmentAUsar)
     const dispatch = useDispatch();
     const imagen = useSelector((state) => state.crearNota.contenidoNota[indice]);
-    const idUsuario = useSelector((state) => state.formulario.usuario.id);
     const id_att = useSelector((state) => state.crearNota.id_att); 
-    
+    const [textoEpigrafe, setTextoEpigrafe] = useState("");
+        const textareaRef = useRef(null);
     if (!imagen) {
         console.log(imagen[0], "Asdasd");
         return null; // Manejo de casos donde no hay imagen
     }
 
+    // Handler para autoajustar el alto
+    const handleEpigrafeChange = (e) => {
+        setTextoEpigrafe(e.target.value);
+        if (textareaRef.current) {
+            textareaRef.current.style.height = "auto";
+            textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
+        }
+    };
     
     useEffect(() => {
-        if (id_att) { // Solo ejecuta este efecto si id_att ya tiene un valor
+        if (id_att && !imagen[2]) { // Solo ejecuta este efecto si id_att ya tiene un valor
             const atachment = "attachment_" + numeroDeAtachmentAUsar.toString();
             const tipoDeImagen = obtenerTipoDeImagenDesdeBase64(imagen[1]);
     
@@ -66,24 +73,42 @@ const ImagenDeParrafo = ({ indice }) => {
                         "_" +
                         numeroDeAtachmentAUsar.toString() +
                         "_." +
-                        tipoDeImagen  ,
+                        tipoDeImagen + 
                     '"/>', numeroDeAtachmentAUsar
                 ])
             );
             dispatch(setAtachment({ key: atachment, value: imagen[1] }));
-            dispatch(setSumarUnoAlNumeroDeAtachment());
         }
     }, []); 
 
+
+    useEffect(() => {
+      if(textoEpigrafe !== "") {
+        dispatch(setEpigrafeDeImagen([ indice, textoEpigrafe ]));
+      }
+    }, [textoEpigrafe]);
+
+
+
     return (
+      <>
         <span className="spanContainer">
-            <BotoneraContenido indice={indice} numeroDeAtachmentAUsado = {numeroDeAtachmentAUsar} className="pr-2" />
-            <img
-                src={imagen[1]}
-                alt="Imagen de parrafo"
-                className="imagenRecortada imagenNotaContenido"
-            />
+          <BotoneraContenido indice={indice} className="pr-2" />
+          <img
+              src={imagen[1]}
+              alt="Imagen de parrafo"
+              className="imagenRecortada imagenNotaContenido"
+          />
         </span>
+        <textarea
+            ref={textareaRef}
+            placeholder='Epigrafe de la imagen'
+            className='textAreaComentarios'
+            style={{ width: '90%', minHeight: '0px', resize: 'none', padding: '0px 10px', marginLeft: "50px", height: '30px'}}
+            value={textoEpigrafe}
+            onChange={handleEpigrafeChange}
+        ></textarea>
+        </>
     );
 };
 

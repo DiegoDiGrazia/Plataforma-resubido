@@ -1,0 +1,89 @@
+@media print {
+    .no_print{
+        display: none !important;
+    }
+
+    .breadcrumbs {
+        display: none !important;
+    }
+  .margin_vn {
+    display: flex !important;
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  
+  .imagen_nota {
+      width: 100% !important;
+      height: auto !important;
+      max-width: 100% !important;
+      max-height: 350px !important; /* Igual que el ancho para mantener proporción */
+      object-fit: cover !important;
+      border-radius: 30px !important;
+      display: block !important;
+      background: #fff !important; /* Opcional: para que el borde se note si la imagen es blanca */
+    }
+    
+    .col-6, .col-7, .col {
+        flex: 1 1 0 !important;
+        max-width: none !important;
+    }
+    .imagen_col {
+      width: 100% !important;
+      flex: 0 0 550px !important;  /* Igual que max-width */
+      padding-right: 0 !important;
+      position: relative;
+      border-radius: 10px !important;
+      /* overflow: visible !important; */ /* Asegúrate de que NO esté hidden */
+    }
+    .margin_vn .col-6{
+        max-width: 580px !important;
+    }
+    .imagenParaReporte{
+        width: 1150px !important;
+        height: auto !important;
+        max-width: 100% !important;
+        max-height: 350px !important; /* Igual que el ancho para mantener proporción */
+        object-fit: cover !important;
+        display: block !important;
+        margin-bottom: 50px !important;
+    }
+
+    .medioRowNota, .medioRowNota2 {
+    display: flex !important;
+    align-items: center !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+
+    .col-auto, .totales_widget, .impresionesWidget {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        flex: 0 0 auto !important;
+    }
+
+    .imagenWidwetInteracciones {
+        width: 48px !important;      /* Ajusta el tamaño según tu diseño */
+        height: 48px !important;
+        object-fit: cover !important;
+        border-radius: 8px !important;
+        display: block !important;
+        margin: 0 !important;
+    }
+    .impresionesWidget{
+        text-align: right !important;
+    }
+
+    .col-6, .col {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+  }
+      .no_print{
+        display: none !important;
+    }
+
+}

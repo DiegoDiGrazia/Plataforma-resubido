@@ -744,6 +744,10 @@ textarea.inputTituloNota {
     width: 100%;
 }
 
+.imagenParaReporte{
+    display: none !important;
+}
+
 .datoFaltante{
     color: red;
 

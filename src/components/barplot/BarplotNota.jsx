@@ -31,11 +31,9 @@ const RUTA = "http://localhost:4000/"
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const BarplotNota = ({id_noti, TOKEN, cliente, fpub}) => {
-    const f_pub = "2024-05-31 20:03:22"
-    console.log(f_pub, "DISTINTOS", fpub)
-    console.log(f_pub === fpub, "Los valores son iguales pero no estrictamente.");
+const BarplotNota = ({id_noti, TOKEN, cliente, fpub, dataLocalNota}) => {
 
+    console.log("LOCAL DATA NOTA", dataLocalNota)
     const [loading, setLoading] = useState(true); // Estado de carga
     const [usuariosImpresionesNota, setUsuariosImpresionesNota] = useState([]); // Estado de carga
 
@@ -56,7 +54,7 @@ const BarplotNota = ({id_noti, TOKEN, cliente, fpub}) => {
         )
         .then((response) => {
             if (response.data.status === "true") {
-                setUsuariosImpresionesNota(response.data.item);
+                setUsuariosImpresionesNota(dataLocalNota ? dataLocalNota : response.data.item);
                 console.log(response.data.item)
             } else {
                 console.error('Error en la respuesta de la API:', response.data.message);

@@ -85,16 +85,15 @@ const Dashboard = () => {
         navigate("/crearNota");
     };
 
-
-
-
     return (
         <div className="container-fluid sinPadding">
             <div className="d-flex h-100">
                 <Sidebar estadoActual={"dashboard"} className='no-print' />
                 <div className="content flex-grow-1" ref={componenteRef}>
                     <div id="print-header">
-                        <img src="/images/headerExports.png" alt="Encabezado para impresión"  className='mb-5'/>
+                            <row>
+                                <img src={"/images/imagenParaReportes.png"} alt="Icono 1" className="imagenParaReporte" />
+                            </row>
                         <h4 id="saludo" className='nombreReporteEncabezado'>Reporte de {nombreCliente} </h4>
                         <h5 className='resenaReporte'>Reporte emitido el {fecha} de {FiltroActual.toLowerCase()} de la cuenta </h5>
                     </div>

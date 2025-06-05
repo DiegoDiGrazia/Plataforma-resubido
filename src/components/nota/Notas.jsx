@@ -25,8 +25,6 @@ const Notas = () => {
             console.log("entro a editarNota");
             dispatch(resetCrearNota());
             dispatch(setNotaAEditar(notaABM));
-    
-            // const contenidoNota = await analizarHTML(notaABM.parrafo);
             dispatch(setContenidoAEditar([["parrafo", notaABM.parrafo ]]));
         
             try {

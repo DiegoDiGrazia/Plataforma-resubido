@@ -1,6 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { comprimirImagen } from '../components/nota/componetesNota/ImagenPrincipal.jsx';
 
+function extraerTagImg(texto) {
+  const match = texto.match(/<img[^>]*>/);
+  return match ? match[0] : null;
+}
+
  export async function analizarHTML(html) {
   const resultados = [];
 
@@ -22,7 +27,7 @@ import { comprimirImagen } from '../components/nota/componetesNota/ImagenPrincip
     let textoParrafo = parrafo.innerHTML;
 
     if (strong && br) {
-      textoParrafo = textoParrafo.replace(`<strong>${strong.textContent}</strong><br>`, "").trim();
+      textoParrafo = textoParrafo.replace(`<strong>${strong.textContent}</strong>`, "").trim();
     } else if (strong) {
       textoParrafo = textoParrafo.replace(`<strong>${strong.textContent}</strong>`, "").trim();
     }
@@ -182,6 +187,17 @@ const crearNotaSlice = createSlice({
       if(action.payload[4] !== undefined) {
         state.contenidoNota[indice][4] = action.payload[4];}
     },
+    setEpigrafeDeImagen: (state, action) => {
+      ///Recibe indice( action.payload[0] ) y epigrafe action.payload[1]
+      const indice = action.payload[0];
+      const epigrafe = action.payload[1];
+      console.log("indice", indice, "epigrafe", epigrafe) 
+      console.log("contenidoNota", state.contenidoNota[indice])
+      const tagImg = extraerTagImg(state.contenidoNota[indice][2]);
+      console.log("tagImg", tagImg)
+      state.contenidoNota[indice][2] = tagImg + `<span class="epigrafe">${epigrafe}</span>`;   
+      console.log("contenidoNota actualizado", state.contenidoNota[indice][2]);
+    },
     setCategorias: (state, action) => {
       state.categorias = action.payload;
     },
@@ -295,7 +311,7 @@ export const {
   SubirContenidoPorIndice, BajarContenidoPorIndice, setCategorias, setImagenPrincipal, setImagenRRSS,
   setCopete, setNotaAEditar, setContenidoAEditar, setItemsEtiquetas, setEsDemo, setNoHome, setCategoriasActivasEnStore,
   setDistribucionProioritaria, setTipoContenido, setFechaVencimiento, setBajada, setEngagement, setComentario, setSelectedOptionDistribucion,
-  setAutor, setMunicipio, setMunicipios, setProvincia,setPais, setIdAtt,setProvincias, resetCrearNota, setListaImagenesContenidoEnBase64, setAtachment, setSumarUnoAlNumeroDeAtachment
+  setAutor, setMunicipio, setMunicipios, setProvincia,setPais, setIdAtt,setProvincias, resetCrearNota, setEpigrafeDeImagen, setListaImagenesContenidoEnBase64, setAtachment, setSumarUnoAlNumeroDeAtachment
 } = crearNotaSlice.actions;
 
 export default crearNotaSlice.reducer;

@@ -53,6 +53,11 @@ const PlataformaMasImpresiones = ({datosLocales}) => {
         }
     ];
 
+    const plataformasConDatos = plataformasData.filter(p =>
+        p.impresiones != 0
+    );
+    console.log("Plataformas con datos:", plataformasConDatos);
+
     return (
         <div className="">
             <div className='row '>
@@ -61,7 +66,7 @@ const PlataformaMasImpresiones = ({datosLocales}) => {
                 </p>
             </div>
             <div className="accordion">
-                {plataformasData.map((plataforma, index) => (
+                {plataformasConDatos.map((plataforma, index) => (
                     <div className="accordion-item" key={index}>
                         <button
                             className={`accordion-button ${openIndex === index ? '' : 'collapsed'}`}

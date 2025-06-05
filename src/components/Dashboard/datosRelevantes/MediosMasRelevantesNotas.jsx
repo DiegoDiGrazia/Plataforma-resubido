@@ -23,7 +23,7 @@ function reduceByKeyMedios(lista_medios) {
     }, {});
 }
 
-const MediosMasRelevantesNotas = ({ id_noti, TOKEN, cliente, fpub }) => {
+const MediosMasRelevantesNotas = ({ id_noti, TOKEN, cliente, fpub, dataLocalNota }) => {
     const fechaCompleta = new Date(fpub);
     fechaCompleta.setDate(1);
     const desde = fpub ? fechaCompleta.toISOString().split('T')[0] : null;
@@ -50,7 +50,7 @@ const MediosMasRelevantesNotas = ({ id_noti, TOKEN, cliente, fpub }) => {
         )
         .then((response) => {
             if (response.data.status === "true") {
-                setMediosNota(response.data.item);
+                setMediosNota(dataLocalNota ?  dataLocalNota : response.data.item);
             } else {
                 console.error('Error en la respuesta de la API:', response.data.message);
             }
@@ -63,14 +63,14 @@ const MediosMasRelevantesNotas = ({ id_noti, TOKEN, cliente, fpub }) => {
     const todosLosMediosSinRepetir = Object.values(reduceByKeyMedios(mediosNota));
     const listaTresMedios = todosLosMediosSinRepetir
         .sort((medioA, medioB) => medioB.impresiones - medioA.impresiones)
-        .slice(0, 3);
+        .slice(0, 4);
 
     const renderMedio = (medio, index) => (
-        <div key={index} className={`row pt-3 medioRowNota ${index > 0 ? 'medioRowNota2' : ''}`}>
+        <div key={index} className={`row medioRowNota`}>
             <div className='col-auto mr-2'>
                 <img src={`https://panel.serviciosd.com${medio.imagen}`} alt="Icono" className='imagenWidwetInteracciones' />
             </div>
-            <div className='col-auto pt-1'>
+            <div className='col pt-1'>
                 <div className='row p-0 nombre_plataforma'>{formatearTextoNombre(medio.sitio)}</div>
                 <div className='row p-0'>
                     <a href="https://www.facebook.com" className='linkPlataforma'>{medio.sitio}</a>
@@ -83,7 +83,7 @@ const MediosMasRelevantesNotas = ({ id_noti, TOKEN, cliente, fpub }) => {
     );
 
     return (
-        <div className="container-fluid">
+        <div className="">
             <div className='row'>
                 <p id="titulo_relevantes">
                     Medios más relevantes

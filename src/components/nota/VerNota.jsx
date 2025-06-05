@@ -14,9 +14,9 @@ import PlataformaMasImpresionesNota from '../Dashboard/datosRelevantes/Plataform
 import MediosMasRelevantesNotas from '../Dashboard/datosRelevantes/MediosMasRelevantesNotas';
 import { formatearFecha } from '../Dashboard/datosRelevantes/InteraccionPorNota';
 import { Link } from 'react-router-dom';
-import CrearNota from './CrearNota';
 import { useParams } from 'react-router-dom';
-import { analizarHTML, convertirImagenBase64, setContenidoAEditar, setContenidoNota, setImagenPrincipal, setImagenRRSS, setNotaAEditar } from '../../redux/crearNotaSlice';
+import { traerDatosDeNota } from '../../utils/buscarEnLocal';
+import "./nota_print.css"
 export const RUTA = "http://localhost:4000/"
 const VerNota = () => {
 
@@ -26,6 +26,7 @@ const VerNota = () => {
     const [Nota, setNota] = useState({});
     const [FPUB, setFPUB] = useState("");
     const { id_ruta } = useParams();
+    const [dataLocalNota, setdataLocalNota] = useState(null);
 
     ///ELEGIR UN ID
     const id_para_api= id_ruta ? id_ruta : id
@@ -35,6 +36,13 @@ const VerNota = () => {
     const TOKEN_ESTADO = useSelector((state) => state.formulario.token);
     const [TOKEN, setTOKEN] = useState(TOKEN_ESTADO)
     const [CLIENTE, setCLIENTE] = useState("");
+
+    useEffect(() => {
+        if (!id_para_api) return;
+        traerDatosDeNota(id_para_api).then((data) => {
+        setdataLocalNota(data);
+        });
+    }, [id_para_api]);
     
     useEffect(() => {
         // Evita ejecutar si el ID no está definido
@@ -82,23 +90,27 @@ const VerNota = () => {
                 <Sidebar estadoActual={"notas"} /> 
                 }
                 <div className="content flex-grow-1">
-                    <div className='row'>
+                    <div className='row p-0'>
                         <div className='col'>
                             <h4 id="nota">
                             {!es_demo &&
-                            <nav aria-label="breadcrumb">
-                                <ol className="breadcrumb">
+                            <nav aria-label="breadcrumb no_print">
+                                <ol className="breadcrumb no_print">
                                     <li className="breadcrumb-item"><Link to="/notas" className='breadcrumb-item'>{'< '} Notas</Link></li>
                                     <li className="breadcrumb-item blackActive" aria-current="page">Ver Nota</li>
                                 </ol>
                             </nav>
                             }
                             </h4>
+                            <row>
+                                <img src={"/images/imagenParaReportes.png"} alt="Icono 1" className="imagenParaReporte" />
+
+                            </row>
                         </div>
                     </div>
-                        <div className='row margin_vn'>
+                        <div className='row margin_vn '>
                             <div className='col imagen_col'>
-                                    <img src={Nota.imagen} alt="Icono 1" className="imagen_nota" />
+                                    <img src={Nota.imagen.includes('noticiasd') ? Nota.imagen : "https://noticiasd.com/img" + Nota.imagen} alt="Icono 1" className="imagen_nota" />
                             </div>
                             <div className='col-6 d-flex flex-column' style={{ height: "200px" }}>
                                 <div className='row vn_titulo'>{Nota.titulo}</div>
@@ -115,12 +127,12 @@ const VerNota = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className='col boton_nota d-flex justify-content-end align-items-start'>
+                            <div className='col boton_nota d-flex justify-content-end align-items-start no_print'>
                                 {!es_demo &&
-                                <button className="btn custom-dropdown-button dropdown-toggle boton_compartir" onClick={() => window.open("/verNota/" + id_noti, "_blank")}
+                                <button className="btn custom-dropdown-button dropdown-toggle boton_compartir" onClick={() => window.print()}
                                 type="button" id="dropdownMenuButton2">
                                     <img src="/images/share_icon.png" alt="Icono 1" className="icon me-2" />
-                                    Compartir
+                                    Descargar reporte
                                 </button>
                                 }
                                 {/* {notaABM && !notaABM.id_noti && !es_demo &&
@@ -139,14 +151,14 @@ const VerNota = () => {
                         <h5 id= "subtitulo_performance">Performance de la nota</h5>
                     </div>
                     <div className="mb-2 tamaño_barplot">
-                            { <BarplotNota id_noti={id_noti} TOKEN={TOKEN} cliente={CLIENTE} fpub={FPUB}/> } 
+                            { <BarplotNota id_noti={id_noti} TOKEN={TOKEN} cliente={CLIENTE} fpub={FPUB} dataLocalNota = {dataLocalNota?.usuarioDeNota}/> } 
                     </div>
-                    <div className='row g-1'>
-                        <div className='col m-2 p-3 back-white'>
-                            { <PlataformaMasImpresionesNota id_noti={id_noti} TOKEN={TOKEN} cliente={CLIENTE} fpub={FPUB} /> }
+                    <div className='row g-1 align-items-start'>
+                        <div className='col-6 m-2 p-3 back-white'>
+                            { <PlataformaMasImpresionesNota id_noti={id_noti} TOKEN={TOKEN} cliente={CLIENTE} fpub={FPUB} dataLocalNota = {dataLocalNota?.impresionesNoticias}/> }
                         </div>
-                        <div className='col m-2 p-3 back-white'>
-                                {<MediosMasRelevantesNotas id_noti={id_noti} TOKEN={TOKEN} cliente={CLIENTE} fpub={FPUB}/>}   
+                        <div className='col-6 m-2 p-3 back-white'>
+                                {<MediosMasRelevantesNotas id_noti={id_noti} TOKEN={TOKEN} cliente={CLIENTE} fpub={FPUB} dataLocalNota = {dataLocalNota?.mediosNoticia}/>}   
                         </div>
                     </div> 
                 </div>

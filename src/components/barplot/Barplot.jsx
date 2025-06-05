@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Button, Spinner } from 'react-bootstrap';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,8 +19,6 @@ import { setImpresionesTotalesInstagram, setImpresionesTotalesGoogle, setImpresi
 import axios from 'axios';
 import { formatNumberMiles } from '../Dashboard/Dashboard.jsx';
 import { useNavigate } from 'react-router-dom';
-import html2canvas from 'html2canvas';
-import { setBarplot } from '../../redux/datospdfSlice.js';
 import Barplot_Carga from './Barplot_mejorado_carga.jsx';
 
 ///Recibe una fecha del tipo "2024-08" y te devuelve  "jun 24"
@@ -100,7 +97,7 @@ const Barplot = ({datosLocales}) => {
             }
             if (response.data.status === "true") {
                 dispatch(resetBarplot());
-                let datos = datosLocales.datosParaBarplot || response.data.item;
+                let datos = datosLocales ? datosLocales.datosParaBarplot : response.data.item;
                 console.log("datos", datos)
                 for (let datoMensual of datos) {
                     dispatch(setUsuariosTotales(Number(datoMensual.usuarios_total)));

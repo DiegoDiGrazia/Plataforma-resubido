@@ -25,6 +25,13 @@ function reemplazarUrl(url) {
     return nuevaUrl;
 }
 
+function seleccionarUrlImagenDeUnaNota(url) {
+    if (url.includes("www.noticiasd.com/wp-content")) 
+        return url;
+
+    return "https://static.noticiasd.com/img/" + url;
+}
+
 
 const InteraccionPorNota = ({datosLocales}) => {
     const dispatch = useDispatch();
@@ -49,7 +56,13 @@ const InteraccionPorNota = ({datosLocales}) => {
         .catch(error => console.error('Error al hacer la solicitud:', error));
     }, [nombreCliente, ultimaFechaCargadaBarplot]);
 
-    const meses = useSelector(state => state.interaccionesPorNota.notasMayorInteraccion).slice(cantidad_meses);
+
+
+
+    const notasDeApi = useSelector(state => state.interaccionesPorNota.notasMayorInteraccion); 
+    const notasLocales = datosLocales?.notasMayorInteraccion;
+    const notasAUsar = notasLocales ? notasLocales : notasDeApi;
+    const meses = notasAUsar.slice(cantidad_meses);
     let todas_las_notas = meses.flatMap(mes => mes.notas);
     const listaTresNotas = todas_las_notas.sort((a, b) => Number(b.total) - Number(a.total)).slice(0, 3);
 
@@ -63,7 +76,7 @@ const InteraccionPorNota = ({datosLocales}) => {
             {listaTresNotas.map((nota, index) => (
                 <div className='row seccionInteracciones pt-1' key={index}>
                     <div className='col-auto mr-2'>
-                        <img src={"https://static.noticiasd.com/img/" + nota.imagen} alt="Icono" className='imagenWidwetInteracciones2' />
+                        <img src={seleccionarUrlImagenDeUnaNota(nota.imagen)} alt="Icono" className='imagenWidwetInteracciones2' />
                     </div>
                     <div className='col-auto pt-1'>
                         <Link className="link-sin-estilos" to={`/verNota`} state={{ id: nota.id_noti ? nota.id_noti : nota.term_id, notaABM: nota }}>
@@ -74,7 +87,7 @@ const InteraccionPorNota = ({datosLocales}) => {
                         </div>
                     </div>
                     <div className='col totales_widget'>
-                        {datosLocales ? <p>{datosLocales.interaccionesNota[index]}</p> : <p>{formatNumberMiles(nota.total)}</p>}
+                        <p>{formatNumberMiles(nota.total)}</p>
                     </div>
                 </div>
             ))}

@@ -58,10 +58,11 @@ const ParrafoNota = ({ indice }) => {
   return (
     <span className="p-0" style={{ display: 'flex', alignItems: 'center' }}>
       <BotoneraContenido indice={indice} />
-      <div className={`quill-editor ${isFocused ? 'focused' : ''}`}>
+      <div className={`quill-editor ${isFocused ? 'focused' : ''}`} translate='no'>
         <div
           ref={editorRef}
           className="quill-editor"
+          translate='no'
           style={{
             flex: 1,
             border: 'none',

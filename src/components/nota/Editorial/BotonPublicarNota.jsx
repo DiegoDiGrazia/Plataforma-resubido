@@ -63,7 +63,7 @@ const BotonPublicarNota = ({ status }) => {
             const etiquetaAbrir = contenido[2];
             const etiquetaCerrar = contenido[3];
             if (contenido[0] === "imagen") {
-                return html + etiquetaAbrir + etiquetaCerrar;
+                return html + etiquetaAbrir;
             }
             return html + etiquetaAbrir + contenido[1] + etiquetaCerrar;
         }, '');
