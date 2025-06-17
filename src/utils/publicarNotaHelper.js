@@ -34,6 +34,7 @@ export const clickearEnPublicarNota = async ({
     id_noti,
     id_att,
     cliente,
+    epigrafeImagenPpal,
     setIsLoading,
     setShowModal,
     navigate,
@@ -67,6 +68,7 @@ export const clickearEnPublicarNota = async ({
                         : "normal"
                     : "ninguna",
                 es_demo: isCheckedDemo,
+                epigrafe_ppal: epigrafeImagenPpal,
                 no_home: isCheckedNoHome,
                 tipo_contenido: tipoContenido,
                 f_pub: fechaPublicacion,
@@ -88,8 +90,9 @@ export const clickearEnPublicarNota = async ({
             }
         );
 
+        console.log('Nota publicada correctamente:', response);
         if (response.data.status === "true") {
-            return response.data.status;
+            return response.data;
         } else {
             console.error('Error en la respuesta de la API:', response.data.message);
         }

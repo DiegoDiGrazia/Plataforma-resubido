@@ -128,7 +128,7 @@ const Barplot = ({datosLocales}) => {
         });
 
         ; // Limpia el intervalo si el componente se desmonta
-    }, [nombreCliente, datosLocales]);
+    }, [nombreCliente]);
 
     // Aquí están tus datos reales
     let cantidad_meses = seleccionPorFiltro(FiltroActual);

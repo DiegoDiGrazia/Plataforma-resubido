@@ -23,6 +23,8 @@ import CopeteNota from './componetesNota/Copete';
 import { videos } from '../miPerfil/soporte';
 import CardTutorial from '../miPerfil/CardTutorial';
 import { comprimirImagen } from './componetesNota/ImagenPrincipal';
+import BotonEnGenerarVistaPrevia from './Editorial/BotonEnGenerarVistaPrevia';
+import EpigrafeImagenPpal from './Editorial/epigrafeImagenPpal';
 
 
 const CrearNota = () => {
@@ -127,6 +129,9 @@ const CrearNota = () => {
                             </h4>
                         </div>
                         <div className='col'>
+                            <BotonEnGenerarVistaPrevia status= {'Preview'}/>
+                        </div>
+                        <div className='col-auto'>
                             <Button onClick={() => navigate('/publicarNota')} id="botonPublicar" variant="none">
                                 <img src="/images/send.png" alt="Icono 1" className="icon me-2 icono_tusNotas" />{" Publicar"}
                             </Button>
@@ -141,6 +146,7 @@ const CrearNota = () => {
                     <div className='row notaTutorial'>
                         <div className='col-8 columnaNota'>
                             <ImagenPrincipal />
+                            <EpigrafeImagenPpal />
                             <div className='row'>
                                 <TituloNota />
                                 <CopeteNota />

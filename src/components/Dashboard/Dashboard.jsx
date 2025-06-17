@@ -150,9 +150,19 @@ const Dashboard = () => {
                             <div className='col-lg-12 col-xl col-6 m-2 back-white'>
                                 <InteraccionPorNota datosLocales={datosLocalmente}/>
                             </div>
-                            <div className='col-lg-12 col-xl col-6 m-2 back-white'>
-                                <MediosMasRelevantes datosLocales={datosLocalmente} />
-                            </div>
+                            {/* <div className='col-lg-12 col-xl col-6 m-2 back-white'>
+                                <MediosMasRelevantes datosLocales={datosLocalmente}  
+                                
+                                asdfasdfasdf
+                                
+                                asdf
+                                asdf
+                                asdf
+                                asdf
+                                asdf
+                                asfd
+                                />
+                            </div> */}
                         </div>
                         <div className='row g-1'>
                             <div className='col-lg-12 col-xl col-6 m-2 p-3 back-white'>

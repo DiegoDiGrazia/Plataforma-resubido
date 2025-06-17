@@ -4,10 +4,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { clickearEnPublicarNota } from '../../../utils/publicarNotaHelper';
 import { useNavigate } from 'react-router-dom';
 
-const BotonPublicarNota = ({ status }) => {
+const BotonEnGenerarVistaPrevia = ({ status }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    const [idPreview, setidPreview] = useState(null);
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -33,13 +34,12 @@ const BotonPublicarNota = ({ status }) => {
     const itemsEtiquetas = useSelector((state) => state.crearNota.etiquetas);
     const engagementText = useSelector((state) => state.crearNota.engagement);
     const bajadaText = useSelector((state) => state.crearNota.bajada);
-    const epigrafeImagenPpal = useSelector((state) => state.crearNota.epigrafeImagenPpal);
-
     const tipoAutor = useSelector((state) => state.crearNota.autor);
     const provincia = useSelector((state) => state.crearNota.provincia);
     const municipio = useSelector((state) => state.crearNota.municipio);
     const pais = useSelector((state) => state.crearNota.pais);
     const id_noti = useSelector((state) => state.crearNota.id_noti);
+    const epigrafeImagenPpal = useSelector((state) => state.crearNota.epigrafeImagenPpal);
     const id_att = useSelector((state) => state.crearNota.id_att);
     const clienteActual = useSelector((state) => state.formulario.cliente);
     const clienteDeLaNota = useSelector((state) => state.crearNota.cliente)
@@ -113,9 +113,10 @@ const BotonPublicarNota = ({ status }) => {
                 navigate,
             });
 
-            console.log("Respuesta del servidor:", response);
             if (response.status === "true") {
                 setShowModal(true); // Muestra el modal de éxito
+                setidPreview(response.item); // Guarda el ID de la vista previa
+                console.log("RESPONSE VISTA PREVIA:", response);
             } else {
                 throw new Error(response.message || "Error al enviar la nota. Por favor, inténtalo nuevamente.");
             }
@@ -131,16 +132,12 @@ const BotonPublicarNota = ({ status }) => {
         <>
             <Button
                 onClick={clickear_en_publicar_nota}
-                id="botonPublicar"
-                variant="none"
-                disabled={isLoading || !imagefeed || !image || categoriasActivas.length < 1} // Deshabilitar el botón mientras se carga
-            >
-                <img src="/images/send.png" alt="Icono 1" className="icon me-2 icono_tusNotas" />
-                {status === "EN REVISION" ? "Enviar a revisión" : status === "BORRADOR" ? "Guardar borrador" : "Publicar"}
+                className='icono_vistaPrevia' variant="none">
+                <img src="/images/iconoOjo.png" alt="Icono 1" className="icon me-2 " />{" Vista previa"}
             </Button>
 
             <Modal show={showModal} onHide={() => setShowModal(false)} centered>
-                <Modal.Header>
+                <Modal.Header closeButton>
                     <Modal.Title>
                         {isLoading
                             ? "Estamos enviando la nota"
@@ -152,7 +149,7 @@ const BotonPublicarNota = ({ status }) => {
                 <Modal.Body>
                     {isLoading ? (
                         <div className="text-center">
-                            <p className="mt-3">Por favor, espera mientras enviamos tu nota.</p>
+                            <p className="mt-3">Por favor, espera mientras estamos generando la vista previa.</p>
                         </div>
                     ) : errorMessage ? (
                         <div className="text-center">
@@ -163,15 +160,15 @@ const BotonPublicarNota = ({ status }) => {
                         </div>
                     ) : (
                         <div className="text-center">
-                            <p>Tu nota ha sido enviada correctamente.</p>
+                            <p>Mire la vista previa de la nota</p>
                             <Button
                                 variant="primary"
                                 onClick={() => {
                                     setShowModal(false);
-                                    navigate(es_editor ? "/notasEditorial" : "/notas"); // Redirigir a la página de notas
+                                    window.open("https://noticiasd.com/notaPreview/" + idPreview, "_blank");
                                 }}
                             >
-                                Ir a Notas
+                                Vista previa
                             </Button>
                         </div>
                     )}
@@ -181,4 +178,4 @@ const BotonPublicarNota = ({ status }) => {
     );
 };
 
-export default BotonPublicarNota;
+export default BotonEnGenerarVistaPrevia;

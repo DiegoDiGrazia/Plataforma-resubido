@@ -217,6 +217,21 @@
     border-radius: 10px;
     margin-top: 10px;
 }
+
+.icono_vistaPrevia{
+    background-color:none;
+    color: #323232;
+    font-size: 16px;
+    float: right;
+    margin-right: 30px;
+    width: auto;
+    height: 48px;
+    font-weight: 600;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+    
 .recorteSinSeleccionar{
     background-color: rgb(179, 53, 53) !important;
 }

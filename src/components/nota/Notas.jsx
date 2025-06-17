@@ -40,12 +40,10 @@ const Notas = () => {
                 dispatch(setImagenRRSS(base64RRSS));
             } catch (error) {
                 console.error("Error al convertir la imagen de RRSS a Base64:", error);
-                dispatch(setImagenRRSS(null)); // Opcional: establece un valor por defecto
+                dispatch(setImagenRRSS(null)); 
             }
-        
             navigate("/crearNota");
-            
-        };
+            };
 
     const navigate = useNavigate()
     const [filtroSeleccionado, setFiltroSeleccionado] = useState(1); /// botones TODAS LAS NOTAS; EN PROGRESO; FINALIZADAS

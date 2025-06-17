@@ -68,6 +68,7 @@ export async function convertirImagenBase64(url, maxWidth = 1600) {
 
 const initialState = {
   listaDeImagenesContenidoEnBase64: "", ///listo
+  epigrafeImagenPpal: "", ///listo
   tituloNota: "", ///listo
   contenidoNota: [], // [[tipo, contenido, abre etiqueta, cierra etiqueta ]]
   categorias: [],
@@ -139,6 +140,9 @@ const crearNotaSlice = createSlice({
   reducers: {
     setCopete: (state, action) => {
       state.copete = action.payload;
+    },
+    setEpigrafeImagenPpal: (state, action) => {
+      state.epigrafeImagenPpal = action.payload;
     },
     setTituloNota: (state, action) => {
       state.tituloNota = action.payload;
@@ -227,6 +231,7 @@ const crearNotaSlice = createSlice({
       state.engagement = nota.engagement || nota.titulo;
       state.bajada = nota.bajada || nota.copete;
       state.tipoContenido = nota.tipo_contenido;
+      state.epigrafeImagenPpal = nota.epigrafe_ppal || "";
     },
     setContenidoAEditar: (state, action) => {
     state.contenidoNota = [...state.contenidoNota, ...action.payload];
@@ -311,7 +316,7 @@ export const {
   SubirContenidoPorIndice, BajarContenidoPorIndice, setCategorias, setImagenPrincipal, setImagenRRSS,
   setCopete, setNotaAEditar, setContenidoAEditar, setItemsEtiquetas, setEsDemo, setNoHome, setCategoriasActivasEnStore,
   setDistribucionProioritaria, setTipoContenido, setFechaVencimiento, setBajada, setEngagement, setComentario, setSelectedOptionDistribucion,
-  setAutor, setMunicipio, setMunicipios, setProvincia,setPais, setIdAtt,setProvincias, resetCrearNota, setEpigrafeDeImagen, setListaImagenesContenidoEnBase64, setAtachment, setSumarUnoAlNumeroDeAtachment
+  setAutor, setMunicipio,setEpigrafeImagenPpal, setMunicipios, setProvincia,setPais, setIdAtt,setProvincias, resetCrearNota, setEpigrafeDeImagen, setListaImagenesContenidoEnBase64, setAtachment, setSumarUnoAlNumeroDeAtachment
 } = crearNotaSlice.actions;
 
 export default crearNotaSlice.reducer;
