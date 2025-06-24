@@ -39,14 +39,12 @@ export function periodoUltimoAnio() {
     for (let i = 0; i < 12; i++) {
         const year = currentDate.getFullYear();
         const month = String(currentDate.getMonth() + 1 ).padStart(2, '0');
-        console.log(" mes:", month, " año:" + year);
         months.unshift(`${year}-${month}`);
         
         // Retrocede un mes y ajusta el año si es necesario
         currentDate.setDate(1); // Evita problemas con días fuera de rango
         currentDate.setMonth(currentDate.getMonth() - 1);
     }
-    console.log("periodoUltimoAño", months, months.join(','));
 
     return months.join(',');
 }
@@ -67,7 +65,6 @@ const Barplot = ({datosLocales}) => {
     const nombreCliente = useSelector((state) => state.formulario.cliente);
     const navigate = useNavigate();
     const captureRef = useRef(null);  // Definir el ref para capturar la imagen
-    console.log("localDataEnBarplot:", datosLocales)
 
     const [loading, setLoading] = useState(true); // Estado de carga
 
@@ -98,7 +95,6 @@ const Barplot = ({datosLocales}) => {
             if (response.data.status === "true") {
                 dispatch(resetBarplot());
                 let datos = datosLocales ? datosLocales.datosParaBarplot : response.data.item;
-                console.log("datos", datos)
                 for (let datoMensual of datos) {
                     dispatch(setUsuariosTotales(Number(datoMensual.usuarios_total)));
                     dispatch(setUsuariosTotalesMeta(Number(datoMensual.usuarios_redes)));

@@ -75,7 +75,7 @@ export const clickearEnPublicarNota = async ({
                 fecha_vencimiento: fecha,
                 etiquetas: itemsEtiquetas,
                 engagement: engagementText,
-                bajada: bajadaText,
+                extracto: bajadaText,
                 autor: tipoAutor,
                 provincia: provincia?.nombre || "", // Usa el operador opcional `?.`
                 municipio: municipio?.nombre || "", // Usa el operador opcional `?.`

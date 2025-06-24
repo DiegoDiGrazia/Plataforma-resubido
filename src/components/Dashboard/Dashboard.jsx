@@ -23,6 +23,7 @@ import { setFechas } from '../../redux/barplotSlice.js';
 import { formatDate } from '../barplot/Barplot.jsx';
 import { setClienteNota } from '../../redux/crearNotaSlice.js';
 import { traerDatosLocalmente } from '../../utils/buscarEnLocal.js';
+import GuardarUbicacionDeCliente from './GuardarUbicacionDeCliente.jsx';
 
 export function formatNumberMiles(num) {
     if (num === null || num === undefined || num === "") {
@@ -35,6 +36,8 @@ const Dashboard = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const es_editor = useSelector((state) => state.formulario.es_editor);
+    const id_cliente = useSelector((state) => state.formulario.id_cliente);
+
     const nombreCliente = useSelector((state) => state.formulario.cliente);
     const FiltroActual = useSelector((state) => state.dashboard.filtro);
     const [datosLocalmente, setDatosLocalmente] = useState(null); 
@@ -87,6 +90,7 @@ const Dashboard = () => {
 
     return (
         <div className="container-fluid sinPadding">
+            <GuardarUbicacionDeCliente id_cliente={id_cliente}/>
             <div className="d-flex h-100">
                 <Sidebar estadoActual={"dashboard"} className='no-print' />
                 <div className="content flex-grow-1" ref={componenteRef}>

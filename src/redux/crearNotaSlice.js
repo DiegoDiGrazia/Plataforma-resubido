@@ -94,25 +94,25 @@ const initialState = {
   engagement: "",
   bajada: "",
   provincia: {
-    "provincia_id": "54",
-    "nombre": "Misiones",
-    "iso_nombre": "Misiones",
-    "categoria": "Provincia",
-    "centroide_lat": "-26.8753965086829",
-    "centroide_lon": "-54.6516966230371",
-    "iso_id": "AR-N",
-    "nombre_completo": "Provincia de Misiones",
-    "Poblacion": "0"
+    "provincia_id": "",
+    "nombre": "",
+    "iso_nombre": "",
+    "categoria": "",
+    "centroide_lat": "",
+    "centroide_lon": "",
+    "iso_id": "",
+    "nombre_completo": "",
+    "Poblacion": ""
   },
   municipio: {
-    "municipio_id": "746252",
-    "nombre": "Beazley",
-    "nombre_completo": "Comisión Municipal Beazley",
-    "provincia_id": "74",
-    "centroide_lat": "-33.7572721991329",
-    "centroide_lon": "-66.6446207562444",
-    "categoria": "Comisión Municipal",
-    "poblacion": "0"
+    "municipio_id": "",
+    "nombre": "",
+    "nombre_completo": "",
+    "provincia_id": "",
+    "centroide_lat": "",
+    "centroide_lon": "",
+    "categoria": "",
+    "poblacion": ""
   },
   pais: {
     "nombre": "Argentina",
@@ -229,7 +229,7 @@ const crearNotaSlice = createSlice({
       state.municipio = {'nombre': nota.municipio };
       state.cliente = nota.cliente;
       state.engagement = nota.engagement || nota.titulo;
-      state.bajada = nota.bajada || nota.copete;
+      state.bajada = nota.extracto || nota.copete;
       state.tipoContenido = nota.tipo_contenido;
       state.epigrafeImagenPpal = nota.epigrafe_ppal || "";
     },

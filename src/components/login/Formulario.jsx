@@ -27,16 +27,10 @@ const Formulario = () => {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-
-            
-            console.log('Respuesta:', response);
-
             if(response.data.message === "Usuario o Contrase\u00f1a incorrecta"){
                 setContraseñaIncorrecta(true)
             }
             if (response.data.status === "true" && response.data.item.token) {
-
-                console.log('api_login:', response.data.item);
                 dispatch(updateEmail(email));
                 dispatch(updateContraseña(contraseña));
                 dispatch(updateToken(response.data.item.token));

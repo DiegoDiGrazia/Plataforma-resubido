@@ -1,61 +1,55 @@
 {
   "ids": [
     {
-      "id_noti": "1002871",
+      "id_noti": "1004170",
       "usuarioDeNota": 
         [
             {
-                "periodo": "2025-05",
-                "impresiones_total": 1516760,
-                "usuarios_total": 505586
-            },
-            {
                 "periodo": "2025-06",
-                "impresiones_total": 0,
-                "usuarios_total": 0
+                "impresiones_total": 278208,
+                "usuarios_total": 103199
             },
             {
                 "periodo": "2025-07",
                 "impresiones_total": 0,
                 "usuarios_total": 0
+            },
+            {
+                "periodo": "2025-08",
+                "impresiones_total": 0,
+                "usuarios_total": 0
             }
         ],
         "impresionesNoticias" :  {
-            "facebook": "0",
-            "instagram": "0",
-            "busqueda": "1516760",
+            "facebook": "19438",
+            "instagram": "43350",
+            "busqueda": "215430",
             "nd": 0,
-            "instagram_share": "0",
-            "instagram_like": 0,
-            "instagram_comment": "0",
-            "instagram_clicks": "0",
-            "facebook_share": "0",
-            "facebook_like": "0",
-            "facebook_comment": "0",
-            "facebook_clicks": "0",
-            "google_clicks": "3275"
+            "instagram_share": "929",
+            "instagram_like": "730",
+            "instagram_comment": "33",
+            "instagram_clicks": "1033",
+            "facebook_share": "105",
+            "facebook_like": "832",
+            "facebook_comment": "943",
+            "facebook_clicks": "630",
+            "google_clicks": "327"
         },
         "mediosNoticia": 
             [
             {
-                "appurl_id": "32",
-                "impresiones": "122144",
-                "imagen": "/img/63155927292233297.png",
-                "sitio": "ultimaHora.com.ar"
-            },
-            {
-                "appurl_id": "117",
+                "appurl_id": "9062",
                 "impresiones": "33973",
                 "imagen": "/img/54248470061523198.png",
                 "sitio": "snt.com"
             },
             {
-                "appurl_id": "96",
+                "appurl_id": "9286",
                 "impresiones": "16302",
                 "imagen": "/img/39897110288453138.png",
                 "sitio": "clarin.com"
             },            {
-                "appurl_id": "15995",
+                "appurl_id": "43158",
                 "impresiones": "1132",
                 "imagen": "/img/92348418515225632.png",
                 "sitio": "lanacion.com"

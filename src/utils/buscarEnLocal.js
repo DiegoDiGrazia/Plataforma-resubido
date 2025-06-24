@@ -13,8 +13,8 @@ export async function traerDatosLocalmente(nombreCliente) {
 
 export async function traerDatosDeNota(id_noti) {
     try {
-        const res = await fetch('/mocksData/datosPorCliente2.json?v=' + Date.now());
-        const data = await res.json();
+        const res = await fetch('/mocksData/datosPorId.json?v=' + Date.now());
+        const data = await res.json(); 
         const encontrado = data.ids.find(c => c.id_noti === id_noti);
         return encontrado || null;
     } catch (err) {

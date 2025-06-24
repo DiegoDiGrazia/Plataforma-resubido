@@ -14,7 +14,11 @@ const formularioSlice = createSlice({
         id_usuario :"",
         es_editor : false,
         usuario: "",
-        todosLosClientesActivado: false
+        todosLosClientesActivado: false,
+        paisUsuario: "",
+        provinciaUsuario: "",
+        municipioUsuario: "",
+
     },
     reducers: {
         updateEmail: (state, action) => {
@@ -47,12 +51,23 @@ const formularioSlice = createSlice({
         updateUsuario: (state, action) =>{
             state.usuario = action.payload;
         },
+        updatePaisUsuario: (state, action) => {
+            state.paisUsuario = action.payload;  // Asignación directa para cadenas de texto
+        },
+        updateProvinciaUsuario: (state, action) => {
+            state.provinciaUsuario = action.payload;  // Asignación directa para cadenas de texto
+        },
+        updateMunicipioUsuario: (state, action) => {
+            state.municipioUsuario = action.payload;  // Asignación directa para cadenas de texto
+        },
+
         updateActivarTodosLosClientes: (state,action ) =>{
             state.todosLosClientesActivado = action.payload;
         },
     }
 });
 
-export const { updateEmail, updateContraseña,updateEsEditor, updateCodigoRecuperacion, 
+export const { updateEmail, updateContraseña,updateEsEditor, updateCodigoRecuperacion, updateMunicipioUsuario,
+    updatePaisUsuario, updateProvinciaUsuario,
     updateToken, updateCliente, updateIdCliente, setTodosLosClientes,updateUsuario, updateActivarTodosLosClientes,updateIdUsuario } = formularioSlice.actions;
 export default formularioSlice.reducer;

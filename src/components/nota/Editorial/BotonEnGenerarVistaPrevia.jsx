@@ -35,8 +35,6 @@ const BotonEnGenerarVistaPrevia = ({ status }) => {
     const engagementText = useSelector((state) => state.crearNota.engagement);
     const bajadaText = useSelector((state) => state.crearNota.bajada);
     const tipoAutor = useSelector((state) => state.crearNota.autor);
-    const provincia = useSelector((state) => state.crearNota.provincia);
-    const municipio = useSelector((state) => state.crearNota.municipio);
     const pais = useSelector((state) => state.crearNota.pais);
     const id_noti = useSelector((state) => state.crearNota.id_noti);
     const epigrafeImagenPpal = useSelector((state) => state.crearNota.epigrafeImagenPpal);
@@ -44,6 +42,14 @@ const BotonEnGenerarVistaPrevia = ({ status }) => {
     const clienteActual = useSelector((state) => state.formulario.cliente);
     const clienteDeLaNota = useSelector((state) => state.crearNota.cliente)
     const cliente = clienteDeLaNota;
+
+    const provinciaSelector = useSelector((state) => state.crearNota.provincia);
+    const municipioSelector = useSelector((state) => state.crearNota.municipio);
+    const provinciaDelUsuario = useSelector((state) => state.formulario.provinciaUsuario);
+    const municipioDelUsuario = useSelector((state) => state.formulario.municipioUsuario);
+    const provincia = provinciaDelUsuario || provinciaSelector;
+    const municipio = municipioDelUsuario || municipioSelector;
+    
 
 
     const attachments = useSelector((state) => state.crearNota.atachments);
