@@ -3,11 +3,14 @@ import { Button, Modal } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import { clickearEnPublicarNota } from '../../../utils/publicarNotaHelper';
 import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { ArchivoContext } from '../../../context/archivoContext';
 
 const BotonPublicarNota = ({ status }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    const { archivo } = useContext(ArchivoContext); // video es tipo File
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -71,7 +74,7 @@ const BotonPublicarNota = ({ status }) => {
         return contenidos.reduce((html, contenido) => {
             const etiquetaAbrir = contenido[2];
             const etiquetaCerrar = contenido[3];
-            if (contenido[0] === "imagen") {
+            if (contenido[0] == "imagen" || (contenido[0] == "video")) {
                 return html + etiquetaAbrir;
             }
             return html + etiquetaAbrir + contenido[1] + etiquetaCerrar;
@@ -110,6 +113,7 @@ const BotonPublicarNota = ({ status }) => {
                 provincia,
                 municipio,
                 pais,
+                archivo,
                 id_noti,
                 id_att,
                 cliente,

@@ -129,6 +129,7 @@ const initialState = {
     attachment_9: null,
     attachment_10: null,
   },
+  attachment_video1: null,
   numeroDeAtachment: 1,
   id_att: "",
   cliente: "",
@@ -155,6 +156,9 @@ const crearNotaSlice = createSlice({
     },
     setContenidoNota: (state, action) => {
       state.contenidoNota.push(action.payload);
+    },
+    setAttachment_video1: (state,action) =>{
+      state.attachment_video1 = action.payload
     },
     DeleteContenidoPorIndice: (state, action) => {
       state.contenidoNota.splice(action.payload, 1);
@@ -195,12 +199,8 @@ const crearNotaSlice = createSlice({
       ///Recibe indice( action.payload[0] ) y epigrafe action.payload[1]
       const indice = action.payload[0];
       const epigrafe = action.payload[1];
-      console.log("indice", indice, "epigrafe", epigrafe) 
-      console.log("contenidoNota", state.contenidoNota[indice])
       const tagImg = extraerTagImg(state.contenidoNota[indice][2]);
-      console.log("tagImg", tagImg)
       state.contenidoNota[indice][2] = tagImg + `<span class="epigrafe">${epigrafe}</span>`;   
-      console.log("contenidoNota actualizado", state.contenidoNota[indice][2]);
     },
     setCategorias: (state, action) => {
       state.categorias = action.payload;
@@ -295,7 +295,6 @@ const crearNotaSlice = createSlice({
       state.con_distribucion = action.payload;
     },
     setSumarUnoAlNumeroDeAtachment: (state, action) => {
-      console.log("Se ejecuta")
       state.numeroDeAtachment = state.numeroDeAtachment + 1
     },
     setIdAtt: (state, action) => {
@@ -312,7 +311,7 @@ const crearNotaSlice = createSlice({
 });
 
 export const {
-  setTituloNota, setClienteNota, setContenidoNota, DeleteContenidoPorIndice, setContenidoPorIndice,setFechaPublicacion, setAttachmentToNull,
+  setTituloNota, setClienteNota, setContenidoNota, setAttachment_video1, DeleteContenidoPorIndice, setContenidoPorIndice,setFechaPublicacion, setAttachmentToNull,
   SubirContenidoPorIndice, BajarContenidoPorIndice, setCategorias, setImagenPrincipal, setImagenRRSS,
   setCopete, setNotaAEditar, setContenidoAEditar, setItemsEtiquetas, setEsDemo, setNoHome, setCategoriasActivasEnStore,
   setDistribucionProioritaria, setTipoContenido, setFechaVencimiento, setBajada, setEngagement, setComentario, setSelectedOptionDistribucion,

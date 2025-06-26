@@ -8,48 +8,66 @@ import { setContenidoPorIndice } from '../../../redux/crearNotaSlice';
 import BotoneraContenido from './botoneraContenido';
 import Quill from 'quill';
 
+// 🟡 REGISTRO DEL BLOT PERSONALIZADO PARA VIDEO
+const BlockEmbed = Quill.import('blots/block/embed');
+
+class VideoBlot extends BlockEmbed {
+  static create(value) {
+    const node = super.create();
+    node.setAttribute('src', value);
+    node.setAttribute('controls', true);
+    node.setAttribute('playsinline', true);
+    node.setAttribute('style', 'max-width: 100%; height: auto; display: block; margin: 1rem 0;');
+    return node;
+  }
+
+  static value(node) {
+    return node.getAttribute('src');
+  }
+}
+
+VideoBlot.blotName = 'video';
+VideoBlot.tagName = 'video';
+
+Quill.register(VideoBlot);
+
 const ParrafoNota = ({ indice }) => {
-  const editorRef = useRef(null); // Referencia al contenedor del editor
-  const quillInstanceRef = useRef(null); // Referencia a la instancia de Quill
+  const editorRef = useRef(null);
+  const quillInstanceRef = useRef(null);
   const dispatch = useDispatch();
-  const [isFocused, setIsFocused] = useState(false); // Estado para el enfoque del editor
+  const [isFocused, setIsFocused] = useState(false);
   const tituloGlobalNota = useSelector((state) => state.crearNota.contenidoNota[indice][1]);
 
   useEffect(() => {
     if (!quillInstanceRef.current) {
-      // Inicializar Quill solo si no está ya inicializado
       quillInstanceRef.current = new Quill(editorRef.current, {
         theme: 'snow',
         placeholder: ' Escribe tu nota...',
         modules: {
           toolbar: [
-            ['bold', 'italic', 'underline'], // Opciones de formato
-            [{ list: 'ordered' }, { list: 'bullet' }], // Listas
+            ['bold', 'italic', 'underline'],
+            [{ list: 'ordered' }, { list: 'bullet' }],
             ['link'], // Enlaces
-            [{ header: [1, 2, 3, false] }], // Encabezados (h1, h2, h3, texto normal)
+            [{ header: [1, 2, 3, false] }],
           ],
         },
       });
 
-      // Manejar cambios en el editor
       quillInstanceRef.current.on('text-change', () => {
         dispatch(setContenidoPorIndice([indice, quillInstanceRef.current.root.innerHTML, '', '']));
       });
 
-      // Manejar el foco y desenfoque del editor
       const editorRoot = quillInstanceRef.current.root;
       editorRoot.addEventListener('focus', () => setIsFocused(true));
       editorRoot.addEventListener('blur', () => setIsFocused(false));
 
-      // Prevenir que el foco se pierda al hacer clic en los botones del toolbar
       const toolbar = quillInstanceRef.current.getModule('toolbar').container;
       toolbar.addEventListener('mousedown', (e) => {
-        e.preventDefault(); // Prevenir la pérdida de foco al hacer clic en el toolbar
-        editorRoot.focus(); // Mantener el foco en el editor
+        e.preventDefault();
+        editorRoot.focus();
       });
     }
 
-    // Establecer el contenido inicial
     if (quillInstanceRef.current.root.innerHTML !== tituloGlobalNota) {
       quillInstanceRef.current.root.innerHTML = tituloGlobalNota;
     }
@@ -58,11 +76,11 @@ const ParrafoNota = ({ indice }) => {
   return (
     <span className="p-0" style={{ display: 'flex', alignItems: 'center' }}>
       <BotoneraContenido indice={indice} />
-      <div className={`quill-editor ${isFocused ? 'focused' : ''}`} translate='no'>
+      <div className={`quill-editor ${isFocused ? 'focused' : ''}`} translate="no">
         <div
           ref={editorRef}
           className="quill-editor"
-          translate='no'
+          translate="no"
           style={{
             flex: 1,
             border: 'none',

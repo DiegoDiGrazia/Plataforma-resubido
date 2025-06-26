@@ -18,39 +18,32 @@ import Notificaciones from './components/miPerfil/Notificaciones';
 import AutoEntrevistas from './components/miPerfil/AutoEntrevistas';
 import NotasParaEditorial from './components/nota/NotasParaEditorial';
 import AutoEntrevistasVideoAsk from './components/miPerfil/AutoEntrevistasVideoAsk';
+import { ArchivoProvider } from "./context/archivoContext";
 
 
-const inlineStyles = {
-  marginRight: '10px'
-};
 
 function App() {
-
-  
   return (
-    <BrowserRouter>
-      <header>
-      </header>
-      
-      <Routes>
-        <Route path="/crearNota/" element={<CrearNota/>} />
-        <Route path="/publicarNota/" element={<PublicarNota/>} />
-        <Route path="/mi-perfil/" element={<Perfil/>} />
-        <Route path="/autoEntrevistas/" element={<AutoEntrevistasVideoAsk/>} />
+    <ArchivoProvider>
+      <BrowserRouter>
+        <header></header>
 
-        <Route path="/soporte-y-ayuda/" element={<Soporte/>} />
-        {/* <Route path="/notificaciones/" element={<Notificaciones/>} /> */}
-        <Route path="/verNota/:id_ruta?" element={<VerNota/>} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/notas" element={<NotasParaEditorial/>} />
-        <Route path="/notasEditorial" element={<NotasParaEditorial/>} />
-
-        <Route path="/recuperar-contraseña" element={<RecuperarContraseña/>} />
-        <Route path="/actualizar-contraseña" element={<UpdatePassword/>} />
-        <Route path="/" element={<Formulario />} />
-
-      </Routes>
-    </BrowserRouter>
+        <Routes>
+          <Route path="/crearNota/" element={<CrearNota />} />
+          <Route path="/publicarNota/" element={<PublicarNota />} />
+          <Route path="/mi-perfil/" element={<Perfil />} />
+          <Route path="/autoEntrevistas/" element={<AutoEntrevistasVideoAsk />} />
+          <Route path="/soporte-y-ayuda/" element={<Soporte />} />
+          <Route path="/verNota/:id_ruta?" element={<VerNota />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/notas" element={<NotasParaEditorial />} />
+          <Route path="/notasEditorial" element={<NotasParaEditorial />} />
+          <Route path="/recuperar-contraseña" element={<RecuperarContraseña />} />
+          <Route path="/actualizar-contraseña" element={<UpdatePassword />} />
+          <Route path="/" element={<Formulario />} />
+        </Routes>
+      </BrowserRouter>
+    </ArchivoProvider>
   );
 }
 

@@ -31,6 +31,7 @@ export const clickearEnPublicarNota = async ({
     provincia,
     municipio,
     pais,
+    archivo,
     id_noti,
     id_att,
     cliente,
@@ -80,6 +81,7 @@ export const clickearEnPublicarNota = async ({
                 provincia: provincia?.nombre || "", // Usa el operador opcional `?.`
                 municipio: municipio?.nombre || "", // Usa el operador opcional `?.`
                 pais:pais?.nombre || "",
+                attachment_video1: archivo || "",
                 id_att: id_att ? id_att : "",
                 ...atachments,
             },

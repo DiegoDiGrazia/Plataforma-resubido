@@ -17,7 +17,6 @@ import { useNavigate } from 'react-router-dom';
 import YoutubeNota from './componetesNota/YoutubeNota';
 import Ubicacion from './componetesNota/Ubicacion';
 import Embebido from './componetesNota/Embebidos';
-import { useLocation } from 'react-router-dom';
 import ImagenPrincipal from './componetesNota/ImagenPrincipal';
 import CopeteNota from './componetesNota/Copete';
 import { videos } from '../miPerfil/soporte';
@@ -25,21 +24,26 @@ import CardTutorial from '../miPerfil/CardTutorial';
 import { comprimirImagen } from './componetesNota/ImagenPrincipal';
 import BotonEnGenerarVistaPrevia from './Editorial/BotonEnGenerarVistaPrevia';
 import EpigrafeImagenPpal from './Editorial/epigrafeImagenPpal';
+import VideosDeParrafo from './componetesNota/VideosDeParrafo';
+import { useContext } from "react";
+import { ArchivoContext } from "../../context/archivoContext";
 
 
 const CrearNota = () => {
     const idUsuario = useSelector((state) => state.formulario.usuario.id); 
-    
     const dispatch = useDispatch();
     const [image, setImage] = useState(null);
     const navigate = useNavigate();
     const imagenppal = useSelector((state) => state.crearNota.imagenPrincipal);
-
     const [cropper, setCropper] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const imageRef = useRef(null);
     const [showButtons, setShowButtons] = useState(false);
     const inputFileRef = useRef(null);
+    const inputVideoRef = useRef(null);
+    const { setArchivo } = useContext(ArchivoContext);
+    const { archivo } = useContext(ArchivoContext); // video es tipo File
+
 
     const toggleButtons = () => {
       setShowButtons(!showButtons);
@@ -48,6 +52,15 @@ const CrearNota = () => {
     const handleClickEnNota = () => {
         inputFileRef.current.click();
     };
+
+    const handleArchivoVideo = (e) => {
+        setArchivo(e.target.files[0]);
+        agregarContenido("video", "");
+    };
+
+    useEffect(() => {
+    console.log(archivo, "archivos actualizado");
+    }, [archivo]);
 
     const handleFileChangeEnNota = (event) => {
         const file = event.target.files[0];
@@ -64,15 +77,16 @@ const CrearNota = () => {
     const agregarContenido = async (tipo, contenido = "") => {
         if (tipo === "imagen") {
             try {
-                // Usamos la función comprimirImagen para reducir el peso de la imagen
                 const compressedBase64 = await comprimirImagen(contenido, 0.8, 1600); 
-                
-                // Guardamos la imagen comprimida en el redux como base64
                 dispatch(setContenidoNota([tipo, compressedBase64])); // Almacena la imagen comprimida en base64
             } catch (error) {
                 console.error("Error al comprimir la imagen:", error);
             }
-        } else {
+        } else if((tipo === "video")){
+            dispatch(setContenidoNota([tipo, contenido]));
+
+        }else
+            {
             // Si no es una imagen, solo almacenamos el contenido normalmente
             dispatch(setContenidoNota([tipo, contenido]));
         }
@@ -160,6 +174,7 @@ const CrearNota = () => {
                                         videoYoutube: YoutubeNota,
                                         ubicacion: Ubicacion,
                                         embebido: Embebido,
+                                        video: VideosDeParrafo,
                                         };
 
                                     const Componente = componentes[contenido[0]]; // Obtiene el componente correspondiente
@@ -190,6 +205,17 @@ const CrearNota = () => {
                                             />
                                             <button onClick={() => agregarContenido("ubicacion")} className="botones-nota"><img src="images/mapaIcon.png" alt="" /></button>
                                             <button onClick={() => agregarContenido("embebido")} className="botones-nota"><img src="images/embebidoImagen.png" alt="" /></button>
+                                            <button onClick={() => inputVideoRef.current.click()} className="botones-nota">
+                                                <img src="images/video-botton.png" alt="Subir Video" />
+                                            </button>
+                                            <input
+                                                type="file"
+                                                ref={inputVideoRef}
+                                                style={{ display: 'none' }}
+                                                onChange={handleArchivoVideo}
+                                                accept="video/mp4"
+                                            />
+
                                         </div>
                                     )}
                                 </div>
