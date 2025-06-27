@@ -68,6 +68,11 @@ export const clickearEnPublicarNota = async ({
                         ? "prioritaria"
                         : "normal"
                     : "ninguna",
+                distribuicion_prioritaria: selectedOptionDistribucion == 1
+                    ? isCheckedDistribucionPrioritaria == '1' || isCheckedDistribucionPrioritaria == 'Prioritaria'
+                        ? "Prioritaria"
+                        : "Normal"
+                    : "Ninguna",
                 es_demo: isCheckedDemo,
                 epigrafe_ppal: epigrafeImagenPpal,
                 no_home: isCheckedNoHome,

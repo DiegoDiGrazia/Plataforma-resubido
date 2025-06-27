@@ -364,7 +364,7 @@ const NotasParaEditorial = () => {
                                         </>
                                         :
                                         <>
-                                            <div className='col categoriasNotas text-end'>Interacciones Totales</div>
+                                            <div className='col categoriasNotas text-end'>Amplificacion</div>
                                         </>
                                     }
 
@@ -439,7 +439,7 @@ const NotasParaEditorial = () => {
                                         </>
                                         ) : (
                                         <div className='col totales_widget'>
-                                            <p>{nota.total}</p>
+                                            <p>{nota.amplificacion}</p>
                                         </div>
                                         )
                                         }

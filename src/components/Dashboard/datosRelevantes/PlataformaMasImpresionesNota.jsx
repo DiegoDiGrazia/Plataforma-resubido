@@ -148,7 +148,7 @@ const PlataformaMasImpresionesNota = ({id_noti, TOKEN, cliente, fpub, dataLocalN
       impresiones: Number(plataformas.busqueda),
       comentarios: 0,
       meGusta: 0,
-      clicks: plataformas.google_clicks,
+      clicks: Number(plataformas.busqueda),
       compartido: 0
     }
   ];
