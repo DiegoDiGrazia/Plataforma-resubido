@@ -129,6 +129,11 @@ const initialState = {
     attachment_9: null,
     attachment_10: null,
   },
+  atachmentsArchivos: {
+    attachment_archivo1: null,
+    attachment_archivo2: null,
+    attachment_archivo3: null,
+  },
   attachment_video1: null,
   numeroDeAtachment: 1,
   id_att: "",
@@ -176,6 +181,13 @@ const crearNotaSlice = createSlice({
       const key = `attachment_${numero}`;
       if (state.atachments.hasOwnProperty(key)) {
         state.atachments[key] = null;
+      }
+    },
+    setAttachmentArchivoToNull: (state, action) => {
+      const numero = action.payload; 
+      const key = `attachment_${numero}`;
+      if (state.atachmentsArchivos.hasOwnProperty(key)) {
+        state.atachmentsArchivos[key] = null;
       }
     },
     BajarContenidoPorIndice: (state, action) => {
@@ -288,6 +300,12 @@ const crearNotaSlice = createSlice({
         state.atachments[key] = value; // Actualizar el attachment correspondiente
       }
     },
+    setAttachmentArchivo: (state, action) => {
+      const { key, value } = action.payload; // Extraer valores del payload
+      if (state.atachmentsArchivos.hasOwnProperty(key)) {
+        state.atachmentsArchivos[key] = value; // Actualizar el attachment correspondiente
+      }
+    },
     setNumeroDeAtachment: (state, action) => {
       state.numeroDeAtachment = action.payload
     },
@@ -311,7 +329,7 @@ const crearNotaSlice = createSlice({
 });
 
 export const {
-  setTituloNota, setClienteNota, setContenidoNota, setAttachment_video1, DeleteContenidoPorIndice, setContenidoPorIndice,setFechaPublicacion, setAttachmentToNull,
+  setTituloNota,setAttachmentArchivo,setAttachmentArchivoToNull, setClienteNota, setContenidoNota, setAttachment_video1, DeleteContenidoPorIndice, setContenidoPorIndice,setFechaPublicacion, setAttachmentToNull,
   SubirContenidoPorIndice, BajarContenidoPorIndice, setCategorias, setImagenPrincipal, setImagenRRSS,
   setCopete, setNotaAEditar, setContenidoAEditar, setItemsEtiquetas, setEsDemo, setNoHome, setCategoriasActivasEnStore,
   setDistribucionProioritaria, setTipoContenido, setFechaVencimiento, setBajada, setEngagement, setComentario, setSelectedOptionDistribucion,

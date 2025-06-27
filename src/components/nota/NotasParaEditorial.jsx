@@ -228,20 +228,12 @@ const NotasParaEditorial = () => {
         dispatch(setClienteNota(cliente))
         navigate("/crearNota");
     };
-    
-
-    
+        
     const handleInputChange = (e) => {
     setSearchQuery(e.target.value);
     setNumeroDePagina(1);
     };
 
-    const handleKeyPress = (e) => {
-        if (e.key === "Enter") {
-            e.preventDefault(); // Evita el comportamiento predeterminado del formulario
-            handleFiltroClick(filtroSeleccionado); // Llama a handleFiltroClick con el filtro seleccionado
-        }
-    };
     const handleSearch = (e) => {
     e.preventDefault(); // Evita el comportamiento predeterminado del formulario
     handleFiltroClick(filtroSeleccionado); // Llama a handleFiltroClick con el filtro seleccionado

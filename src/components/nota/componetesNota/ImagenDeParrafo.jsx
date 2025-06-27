@@ -74,7 +74,7 @@ const ImagenDeParrafo = ({ indice }) => {
                         numeroDeAtachmentAUsar.toString() +
                         "_." +
                         tipoDeImagen + 
-                    '"/>', numeroDeAtachmentAUsar
+                    '"/>', '',numeroDeAtachmentAUsar
                 ])
             );
             dispatch(setAtachment({ key: atachment, value: imagen[1] }));
