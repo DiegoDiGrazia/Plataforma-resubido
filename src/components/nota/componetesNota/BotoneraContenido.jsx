@@ -4,19 +4,22 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'cropperjs/dist/cropper.css';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
-import { BajarContenidoPorIndice, setAttachmentToNull, setContenidoPorIndice, setTituloNota, SubirContenidoPorIndice } from '../../../redux/crearNotaSlice';
+import { BajarContenidoPorIndice, setAttachmentArchivoToNull, setAttachmentToNull, setContenidoPorIndice, setTituloNota, SubirContenidoPorIndice } from '../../../redux/crearNotaSlice';
 import { Button } from 'react-bootstrap';
 import { DeleteContenidoPorIndice } from '../../../redux/crearNotaSlice';
 
-const  BotoneraContenido= ({indice}) => {
+const  BotoneraContenido= ({indice, tipo}) => {
     const dispatch = useDispatch();
     const contenidoNota = useSelector((state) => state.crearNota.contenidoNota[indice]);
     const tieneAtachment = contenidoNota && contenidoNota[4] ? contenidoNota[4] : false;
     console.log("tieneAtachment", tieneAtachment)
 
     const eliminarContenido = (indice) =>{
-      if(tieneAtachment){
+      if(tieneAtachment && tipo == 'imagen'){
         dispatch(setAttachmentToNull(tieneAtachment))
+      }
+      if(tieneAtachment && tipo == 'archivoPDF'){
+        dispatch(setAttachmentArchivoToNull(tieneAtachment))
       }
       dispatch(DeleteContenidoPorIndice(indice))
     }   

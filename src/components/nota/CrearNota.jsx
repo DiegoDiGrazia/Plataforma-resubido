@@ -28,6 +28,8 @@ import VideosDeParrafo from './componetesNota/VideosDeParrafo';
 import { useContext } from "react";
 import { ArchivoContext } from "../../context/archivoContext";
 import GaleriaImagenes from './componetesNota/GaleriaImagenes';
+import ArchivoPDFParrafo from './componetesNota/ArchivosPdfParrafo';
+import { comprimirPDFaBase64 } from '../../utils/convertirPDFaBase64';
 
 
 const CrearNota = () => {
@@ -41,6 +43,8 @@ const CrearNota = () => {
     const imageRef = useRef(null);
     const [showButtons, setShowButtons] = useState(false);
     const inputFileRef = useRef(null);
+    const inputFileRefArchivoPDF = useRef(null);
+
     const inputVideoRef = useRef(null);
     const { setArchivo } = useContext(ArchivoContext);
     const { archivo } = useContext(ArchivoContext); // video es tipo File
@@ -52,6 +56,10 @@ const CrearNota = () => {
 
     const handleClickEnNota = () => {
         inputFileRef.current.click();
+    };
+
+    const handleClickEnArchivoPDF = () => {
+        inputFileRefArchivoPDF.current.click();
     };
 
     const handleArchivoVideo = (e) => {
@@ -69,6 +77,12 @@ const CrearNota = () => {
             agregarContenido("imagen", file);
         }
     };
+    const handleFileChangeArchivoNota = (event) => {
+        const file = event.target.files[0];
+        if(file){
+            agregarContenido('archivoPDF', file)
+        }
+    }
 
     useEffect(() => {
         const timestamp = Date.now(); // Obtiene el timestamp actual
@@ -86,6 +100,9 @@ const CrearNota = () => {
         } else if((tipo === "video")){
             dispatch(setContenidoNota([tipo, contenido]));
 
+        } else if((tipo === "archivoPDF")){
+            const archivoPDFEnBase64 = await comprimirPDFaBase64(contenido)
+            dispatch(setContenidoNota([tipo, archivoPDFEnBase64]));
         }else
             {
             // Si no es una imagen, solo almacenamos el contenido normalmente
@@ -120,7 +137,6 @@ const CrearNota = () => {
     const esEditor = useSelector((state) => state.formulario.es_editor);
     const contenidoNota = useSelector((state) => state.crearNota.contenidoNota);
     const numeroDeAtachmentAUsar= useSelector((state) => state.crearNota.numeroDeAtachment);
-    const id_att = useSelector((state) => state.crearNota.id_att);
 
 
     return (
@@ -177,6 +193,7 @@ const CrearNota = () => {
                                         ubicacion: Ubicacion,
                                         embebido: Embebido,
                                         video: VideosDeParrafo,
+                                        archivoPDF: ArchivoPDFParrafo,
                                         };
 
                                     const Componente = componentes[contenido[0]]; // Obtiene el componente correspondiente
@@ -218,6 +235,18 @@ const CrearNota = () => {
                                                 accept="video/mp4"
                                             />
 
+                                            {/*       BOTON DE ARCHIVOS PDF         */}
+                                            <button onClick={handleClickEnArchivoPDF} className="botones-nota">
+                                                <img src="images/image-icon-botton.png" alt="Subir Imagen" />
+                                            </button>
+        
+                                            <input
+                                                type="file"
+                                                ref={inputFileRefArchivoPDF}
+                                                style={{ display: 'none' }}
+                                                onChange={handleFileChangeArchivoNota}
+                                                accept=".pdf"  // Acepta solo archivos pdf
+                                            />
                                         </div>
                                     )}
                                 </div>
