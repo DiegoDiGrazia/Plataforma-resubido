@@ -27,6 +27,7 @@ import EpigrafeImagenPpal from './Editorial/epigrafeImagenPpal';
 import VideosDeParrafo from './componetesNota/VideosDeParrafo';
 import { useContext } from "react";
 import { ArchivoContext } from "../../context/archivoContext";
+import GaleriaImagenes from './componetesNota/GaleriaImagenes';
 
 
 const CrearNota = () => {
@@ -164,6 +165,7 @@ const CrearNota = () => {
                             <div className='row'>
                                 <TituloNota />
                                 <CopeteNota />
+                                <GaleriaImagenes/>
 
                                 {contenidoNota &&
                                     contenidoNota.map((contenido, index) => {
