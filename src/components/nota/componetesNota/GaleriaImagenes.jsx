@@ -10,7 +10,8 @@ const GaleriaImagenes = () => {
 
   const handleAgregarImagenes = (e) => {
     const archivos = Array.from(e.target.files);
-
+    
+    
     archivos.forEach((archivo) => {
       const reader = new FileReader();
       reader.onloadend = () => {

@@ -30,6 +30,7 @@ import { ArchivoContext } from "../../context/archivoContext";
 import GaleriaImagenes from './componetesNota/GaleriaImagenes';
 import ArchivoPDFParrafo from './componetesNota/ArchivosPdfParrafo';
 import { comprimirPDFaBase64 } from '../../utils/convertirPDFaBase64';
+import CarruselEnNota from './componetesNota/carruselEnNota';
 
 
 const CrearNota = () => {
@@ -182,6 +183,7 @@ const CrearNota = () => {
                                 <TituloNota />
                                 <CopeteNota />
                                 <GaleriaImagenes/>
+                                <CarruselEnNota />
 
                                 {contenidoNota &&
                                     contenidoNota.map((contenido, index) => {
