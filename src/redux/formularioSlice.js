@@ -64,10 +64,26 @@ const formularioSlice = createSlice({
         updateActivarTodosLosClientes: (state,action ) =>{
             state.todosLosClientesActivado = action.payload;
         },
+        resetFormulario: (state) => {
+            state.email = "";
+            state.contraseña = "";
+            state.token = "";
+            state.status = "";
+            state.codigoRecuperacion = "";
+            state.cliente = "";
+            state.id_cliente = "";
+            state.id_usuario = "";
+            state.es_editor = false;
+            state.usuario = "";
+            state.todosLosClientesActivado = false;
+            state.paisUsuario = "";
+            state.provinciaUsuario = "";
+            state.municipioUsuario = "";
+        },
     }
 });
 
 export const { updateEmail, updateContraseña,updateEsEditor, updateCodigoRecuperacion, updateMunicipioUsuario,
     updatePaisUsuario, updateProvinciaUsuario,
-    updateToken, updateCliente, updateIdCliente, setTodosLosClientes,updateUsuario, updateActivarTodosLosClientes,updateIdUsuario } = formularioSlice.actions;
+    updateToken, updateCliente, updateIdCliente, setTodosLosClientes,updateUsuario, updateActivarTodosLosClientes,updateIdUsuario, resetFormulario } = formularioSlice.actions;
 export default formularioSlice.reducer;

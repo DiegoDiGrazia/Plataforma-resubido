@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Formulario.css';
-import { updateEmail, updateContraseña, updateToken, updateCliente, updateIdCliente, updateEsEditor, updateUsuario, updateIdUsuario } from '../../redux/formularioSlice';
+import { updateEmail, updateContraseña, updateToken, updateCliente, updateIdCliente, updateEsEditor, updateUsuario, updateIdUsuario, resetFormulario } from '../../redux/formularioSlice';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -31,6 +31,7 @@ const Formulario = () => {
                 setContraseñaIncorrecta(true)
             }
             if (response.data.status === "true" && response.data.item.token) {
+                dispatch(resetFormulario())
                 dispatch(updateEmail(email));
                 dispatch(updateContraseña(contraseña));
                 dispatch(updateToken(response.data.item.token));

@@ -209,10 +209,12 @@ const CrearNota = () => {
 
                                     {showButtons && (
                                         <div className="buttons-container">
-                                            {/* <button onClick={() => agregarContenido("subtitulo")} className="botones-nota" title='Subtítulo'><img src="images/t-botton.png" alt="" /></button> */}
-                                            <button onClick={() => agregarContenido("parrafo")} className="botones-nota" title='Párrafo'><img src="images/Aa-botton.png" alt="" /></button>
+                                            <button onClick={() => agregarContenido("parrafo")} className="botones-nota" title='Párrafo'>
+                                                <i className="bi bi-type rounded-circle border border-dark p-2"></i>
+                                            </button>
                                             <button onClick={handleClickEnNota} className="botones-nota">
-                                                <img src="images/image-icon-botton.png" alt="Subir Imagen" />
+                                                <i className="bi bi-image rounded-circle border border-dark p-2"></i>
+
                                             </button>
         
                                             <input
@@ -222,10 +224,14 @@ const CrearNota = () => {
                                                 onChange={handleFileChangeEnNota}
                                                 accept="image/*"  // Acepta solo archivos de imagen
                                             />
-                                            <button onClick={() => agregarContenido("ubicacion")} className="botones-nota"><img src="images/mapaIcon.png" alt="" /></button>
-                                            <button onClick={() => agregarContenido("embebido")} className="botones-nota"><img src="images/embebidoImagen.png" alt="" /></button>
+                                            <button onClick={() => agregarContenido("ubicacion")} className="botones-nota">
+                                                <i className="bi bi-geo-alt rounded-circle border border-dark p-2"></i>
+                                            </button>
+                                            <button onClick={() => agregarContenido("embebido")} className="botones-nota">
+                                                <i className="bi bi-code-slash rounded-circle border border-dark p-2"></i>
+                                            </button>
                                             <button onClick={() => inputVideoRef.current.click()} className="botones-nota">
-                                                <img src="images/video-botton.png" alt="Subir Video" />
+                                                <i className="bi bi-camera-video rounded-circle border border-dark p-2"></i>
                                             </button>
                                             <input
                                                 type="file"
@@ -237,7 +243,7 @@ const CrearNota = () => {
 
                                             {/*       BOTON DE ARCHIVOS PDF         */}
                                             <button onClick={handleClickEnArchivoPDF} className="botones-nota">
-                                                <img src="images/image-icon-botton.png" alt="Subir Imagen" />
+                                                <i className="bi bi-filetype-pdf rounded-circle border border-dark p-2"></i>
                                             </button>
         
                                             <input

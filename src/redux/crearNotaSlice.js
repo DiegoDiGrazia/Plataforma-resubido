@@ -185,7 +185,7 @@ const crearNotaSlice = createSlice({
     },
     setAttachmentArchivoToNull: (state, action) => {
       const numero = action.payload; 
-      const key = `attachment_${numero}`;
+      const key = `attachment_archivo${numero}`;
       if (state.atachmentsArchivos.hasOwnProperty(key)) {
         state.atachmentsArchivos[key] = null;
       }

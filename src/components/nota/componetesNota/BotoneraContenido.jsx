@@ -13,12 +13,15 @@ const  BotoneraContenido= ({indice, tipo}) => {
     const contenidoNota = useSelector((state) => state.crearNota.contenidoNota[indice]);
     const tieneAtachment = contenidoNota && contenidoNota[4] ? contenidoNota[4] : false;
     console.log("tieneAtachment", tieneAtachment)
+    console.log("tipo_", tipo)
+
 
     const eliminarContenido = (indice) =>{
       if(tieneAtachment && tipo == 'imagen'){
         dispatch(setAttachmentToNull(tieneAtachment))
       }
       if(tieneAtachment && tipo == 'archivoPDF'){
+        console.log("ACCEDO AL IF archivoPDF")
         dispatch(setAttachmentArchivoToNull(tieneAtachment))
       }
       dispatch(DeleteContenidoPorIndice(indice))

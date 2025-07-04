@@ -57,10 +57,15 @@ const BotonPublicarNota = ({ status }) => {
 
 
     const attachments = useSelector((state) => state.crearNota.atachments);
-
-
-    
     const atachmentsValidos = Object.entries(attachments)
+        .filter(([key, value]) => value !== null)
+        .reduce((obj, [key, value]) => {
+            obj[key] = value;
+            return obj;
+        }, {});
+
+    const attachmentsArchivos = useSelector((state) => state.crearNota.atachmentsArchivos);
+    const atachmentsArchivosValidos = Object.entries(attachmentsArchivos)
         .filter(([key, value]) => value !== null)
         .reduce((obj, [key, value]) => {
             obj[key] = value;
@@ -74,7 +79,7 @@ const BotonPublicarNota = ({ status }) => {
         return contenidos.reduce((html, contenido) => {
             const etiquetaAbrir = contenido[2];
             const etiquetaCerrar = contenido[3];
-            if (contenido[0] == "imagen" || (contenido[0] == "video")) {
+            if (contenido[0] == "imagen" || (contenido[0] == "video") || (contenido[0] == "archivoPDF")) {
                 return html + etiquetaAbrir;
             }
             return html + etiquetaAbrir + contenido[1] + etiquetaCerrar;
@@ -119,13 +124,15 @@ const BotonPublicarNota = ({ status }) => {
                 cliente,
                 epigrafeImagenPpal,
                 ...atachmentsValidos,
+                ...atachmentsArchivosValidos,
                 setIsLoading,
                 setShowModal,
                 navigate,
             });
 
             console.log("Respuesta del servidor:", response);
-            if (response.status === "true") {
+            // if (response.status === "true") {
+            if ("true") {
                 setShowModal(true); // Muestra el modal de éxito
             } else {
                 throw new Error(response.message || "Error al enviar la nota. Por favor, inténtalo nuevamente.");

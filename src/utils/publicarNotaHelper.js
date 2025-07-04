@@ -39,7 +39,7 @@ export const clickearEnPublicarNota = async ({
     setIsLoading,
     setShowModal,
     navigate,
-    ...atachments // Captura todos los atachments enviados
+    ...atachments
 }) => {
     try {
         setIsLoading(true); // Muestra el overlay

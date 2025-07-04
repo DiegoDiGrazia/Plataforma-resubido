@@ -1,50 +1,86 @@
-.galeria {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 10px;
-  margin-top: 20px;
+.contenedor-galeria {
+  padding: 1rem;
+  max-width: 1000px;
+  margin: auto;
 }
 
-.imagen-container {
+.wp-block-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 1rem;
+}
+
+.blocks-gallery-item {
   position: relative;
-  width: 100%;
-  aspect-ratio: 1 / 1;
   overflow: hidden;
   border-radius: 8px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  aspect-ratio: 1 / 1;
 }
 
-.galeria img {
+.blocks-gallery-item img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  border-radius: 8px;
 }
 
-.btn-eliminar {
+/* Tamaños dinámicos */
+.col-2 {
+  grid-column: span 2;
+}
+.row-2 {
+  grid-row: span 2;
+}
+
+.controles {
   position: absolute;
   top: 5px;
-  right: 5px;
-  background-color: red;
-  border: none;
-  color: white;
-  font-size: 16px;
-  border-radius: 50%;
-  cursor: pointer;
-  width: 24px;
-  height: 24px;
-  line-height: 20px;
-  text-align: center;
-  z-index: 1;
-}
-
-.my-masonry-grid {
+  left: 5px;
   display: flex;
-  margin-left: -10px; /* gutter size offset */
-  width: auto;
+  gap: 4px;
+  z-index: 10;
 }
 
-.my-masonry-grid_column {
-  padding-left: 10px; /* gutter size */
-  background-clip: padding-box;
+.controles button {
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  padding: 3px 6px;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.controles button:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.wp-block-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* antes 150px */
+  gap: 12px;
+  margin-top: 1rem;
+}
+
+/* Mantener cuadrado pero con más tamaño */
+.blocks-gallery-item {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  aspect-ratio: 1 / 1;
+}
+
+/* Si querés que no sean tan cuadradas, podés probar esto:
+.aspect-cuadrado {
+  aspect-ratio: 4 / 3;
+}
+*/
+
+/* También podés limitar la galería para que no se extienda de más */
+.contenedor-galeria {
+  padding: 1rem;
+  max-width: 1200px; /* antes 1000px */
+  margin: auto;
 }

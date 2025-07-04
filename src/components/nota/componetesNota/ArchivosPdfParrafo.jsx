@@ -42,19 +42,22 @@ const ArchivoPDFListaParrafo = ({ indice }) => {
             const atachment = "attachment_archivo" + numeroDeAtachmentAUsar.toString();
             const tipoDearchivoPDFLista = archivoPDFLista[1];
 
+            const urlPDF = "https://noticiasd.com/img/" +
+               obtenerFechaActual() +
+               "/" +
+               id_att +
+               "_pdf" +
+               numeroDeAtachmentAUsar.toString() +
+               "_.pdf";
+
+               const contenido = '<iframe src="' + urlPDF + '" width="40%" height="300px"></iframe>'
+
+
             dispatch(
                 setContenidoPorIndice([
                     indice,
                     archivoPDFLista[1],
-                    '<iframe src="' +
-                        "https://noticiasd.com/img/" +
-                        obtenerFechaActual() +
-                        "/" +
-                        id_att + // Ahora id_att tiene el valor correcto
-                        "_archivo" +
-                        numeroDeAtachmentAUsar.toString() +
-                        ".pdf" + 
-                    '"></iframe>','', numeroDeAtachmentAUsar
+                    contenido,'', numeroDeAtachmentAUsar
                 ])
             );
             dispatch(setAttachmentArchivo({ key: atachment, value: archivoPDFLista[1] }));
@@ -70,6 +73,7 @@ const ArchivoPDFListaParrafo = ({ indice }) => {
               src={archivoPDFLista[1]}
               alt="archivoPDFLista de parrafo"
               className="archivoPDFListaRecortada archivoPDFListaNotaContenido"
+              style={{ width: '40%', height: '300px' }}
           />
         </span>
         </>
