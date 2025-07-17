@@ -84,3 +84,13 @@
   max-width: 1200px; /* antes 1000px */
   margin: auto;
 }
+
+.carousel-item{
+  height: auto !important;
+  border-radius: 5px;
+}
+.carousel-inner{
+  margin: 0px;
+    border-radius: 10px;
+
+}

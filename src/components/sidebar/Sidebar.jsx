@@ -3,8 +3,15 @@ import { Button } from 'react-bootstrap';
 import './Sidebar.css';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 
 const Sidebar = ({ estadoActual }) => {
+  const esEditor = useSelector((state) => state.formulario.es_editor);
+  const cliente = useSelector((state) => state.formulario.cliente);
+  const location = useLocation();
+
+  estadoActual = location.pathname.split('/')[1] || 'dashboard'; // Obtiene el estado actual desde la URL
+  console.log("Estado actual desde Sidebar:", estadoActual);
   const [isOpen, setIsOpen] = useState(true);
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -15,8 +22,6 @@ const Sidebar = ({ estadoActual }) => {
     navigate(`/${url}`);
   };
 
-  const esEditor = useSelector((state) => state.formulario.es_editor);
-  const cliente = useSelector((state) => state.formulario.cliente);
 
   // Función para generar botones del sidebar
   const renderSidebarButton = (estado, url, icono, texto) => (

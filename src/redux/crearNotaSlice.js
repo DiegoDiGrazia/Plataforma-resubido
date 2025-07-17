@@ -176,6 +176,14 @@ const crearNotaSlice = createSlice({
         state.contenidoNota[index + 1] = temp;
       }
     },
+    setImagenesDeCarrusel: (state, action) => {
+      const indice = action.payload[0];
+      const imagenes = action.payload[1];
+      console.log("Imágenes del carrusel:", imagenes, "indice", indice);
+      if (state.contenidoNota[indice]) {
+        state.contenidoNota[indice][1] = imagenes; // Solo actualiza el array de imágenes
+      }
+    },
     setAttachmentToNull: (state, action) => {
       const numero = action.payload; 
       const key = `attachment_${numero}`;
@@ -295,6 +303,7 @@ const crearNotaSlice = createSlice({
     },
     ///ejemplo dispatch(setAtachment({ key, value }));
     setAtachment: (state, action) => {
+      console.log("action.payload", action.payload);
       const { key, value } = action.payload; // Extraer valores del payload
       if (state.atachments.hasOwnProperty(key)) {
         state.atachments[key] = value; // Actualizar el attachment correspondiente
@@ -330,7 +339,7 @@ const crearNotaSlice = createSlice({
 
 export const {
   setTituloNota,setAttachmentArchivo,setAttachmentArchivoToNull, setClienteNota, setContenidoNota, setAttachment_video1, DeleteContenidoPorIndice, setContenidoPorIndice,setFechaPublicacion, setAttachmentToNull,
-  SubirContenidoPorIndice, BajarContenidoPorIndice, setCategorias, setImagenPrincipal, setImagenRRSS,
+  SubirContenidoPorIndice, BajarContenidoPorIndice, setCategorias, setImagenPrincipal, setImagenRRSS, setImagenesDeCarrusel,
   setCopete, setNotaAEditar, setContenidoAEditar, setItemsEtiquetas, setEsDemo, setNoHome, setCategoriasActivasEnStore,
   setDistribucionProioritaria, setTipoContenido, setFechaVencimiento, setBajada, setEngagement, setComentario, setSelectedOptionDistribucion,
   setAutor, setMunicipio,setEpigrafeImagenPpal, setMunicipios, setProvincia,setPais, setIdAtt,setProvincias, resetCrearNota, setEpigrafeDeImagen, setListaImagenesContenidoEnBase64, setAtachment, setSumarUnoAlNumeroDeAtachment

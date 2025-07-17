@@ -45,8 +45,6 @@ const BotonPublicarNota = ({ status }) => {
     const clienteActual = useSelector((state) => state.formulario.cliente);
     const clienteDeLaNota = useSelector((state) => state.crearNota.cliente)
     const cliente = clienteDeLaNota;
-
-
     const provinciaSelector = useSelector((state) => state.crearNota.provincia);
     const municipioSelector = useSelector((state) => state.crearNota.municipio);
     const provinciaDelUsuario = useSelector((state) => state.formulario.provinciaUsuario);
@@ -55,7 +53,7 @@ const BotonPublicarNota = ({ status }) => {
     const provincia = provinciaDelUsuario || provinciaSelector;
     const municipio = municipioDelUsuario || municipioSelector;
 
-
+    // Filtrar los attachments para obtener solo los válidos 
     const attachments = useSelector((state) => state.crearNota.atachments);
     const atachmentsValidos = Object.entries(attachments)
         .filter(([key, value]) => value !== null)
@@ -79,7 +77,8 @@ const BotonPublicarNota = ({ status }) => {
         return contenidos.reduce((html, contenido) => {
             const etiquetaAbrir = contenido[2];
             const etiquetaCerrar = contenido[3];
-            if (contenido[0] == "imagen" || (contenido[0] == "video") || (contenido[0] == "archivoPDF")) {
+            if (contenido[0] == "imagen" || (contenido[0] == "video") 
+                || (contenido[0] == "archivoPDF") || (contenido[0] == "carrusel")) {
                 return html + etiquetaAbrir;
             }
             return html + etiquetaAbrir + contenido[1] + etiquetaCerrar;
@@ -130,12 +129,10 @@ const BotonPublicarNota = ({ status }) => {
                 navigate,
             });
 
-            console.log("Respuesta del servidor:", response);
-            // if (response.status === "true") {
-            if ("true") {
+            if (response.status === "true") {
                 setShowModal(true); // Muestra el modal de éxito
             } else {
-                throw new Error(response.message || "Error al enviar la nota. Por favor, inténtalo nuevamente.");
+                throw new Error("Hemos tenido un problema en el servidor, por favor comuníquese con el soporte.");
             }
         } catch (error) {
             setErrorMessage(error.message || "Ocurrió un error inesperado.");

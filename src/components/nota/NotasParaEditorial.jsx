@@ -276,10 +276,7 @@ const NotasParaEditorial = () => {
     }, [CLIENTE]);
 
     return (
-        <div className="container-fluid  sinPadding">
-            <div className="d-flex h-100">
-                <Sidebar estadoActual={"notasEditorial"} /> {/* Usa el componente Sidebar */}
-                <div className="content flex-grow-1">
+                <div className="content flex-grow-1 p-3">
                             <div className='row'>
                                 <h4 id="nota">Notas</h4>
                             </div>
@@ -322,7 +319,7 @@ const NotasParaEditorial = () => {
                         </div>
                         </div>
                         {/* todas las notas mas buscador */}
-                        <div className='row'>
+                        <div className='row sin-margin'>
                             <div className="container-notas">
                                 <div className='row'>
                                     <div className='col todasLasNotas'>
@@ -473,8 +470,6 @@ const NotasParaEditorial = () => {
                             </div>
                         </div>   
                 </div>
-            </div>
-        </div>
 
     );
 };

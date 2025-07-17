@@ -9,7 +9,7 @@ html, body {
 }
 /* Estilos básicos para el Sidebar */
 .sidebar {
-    position: fixed;
+    position: sticky;
     top: 0;
     left: 0; /* Barra a la izquierda */
     width: 250px;
@@ -21,6 +21,7 @@ html, body {
     overflow: visible;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     flex-shrink: 0;
+    
 }
 
 /* Estado cerrado de la barra lateral (solo iconos visibles) */

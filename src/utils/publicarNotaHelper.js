@@ -97,7 +97,6 @@ export const clickearEnPublicarNota = async ({
             }
         );
 
-        console.log('Nota publicada correctamente:', response);
         if (response.data.status === "true") {
             return response.data;
         } else {

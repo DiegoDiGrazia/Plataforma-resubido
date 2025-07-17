@@ -38,40 +38,44 @@ const ParrafoNota = ({ indice }) => {
   const [isFocused, setIsFocused] = useState(false);
   const tituloGlobalNota = useSelector((state) => state.crearNota.contenidoNota[indice][1]);
 
-  useEffect(() => {
-    if (!quillInstanceRef.current) {
-      quillInstanceRef.current = new Quill(editorRef.current, {
-        theme: 'snow',
-        placeholder: ' Escribe tu nota...',
-        modules: {
-          toolbar: [
-            ['bold', 'italic', 'underline'],
-            [{ list: 'ordered' }, { list: 'bullet' }],
-            ['link'], // Enlaces
-            [{ header: [1, 2, 3, false] }],
-          ],
-        },
-      });
+useEffect(() => {
+  if (!quillInstanceRef.current) {
+    quillInstanceRef.current = new Quill(editorRef.current, {
+      theme: 'snow',
+      placeholder: ' Escribe tu nota...',
+      modules: {
+        toolbar: [
+          ['bold', 'italic', 'underline'],
+          [{ list: 'ordered' }, { list: 'bullet' }],
+          ['link'], // Enlaces
+          [{ header: [1, 2, 3, false] }],
+        ],
+      },
+    });
 
-      quillInstanceRef.current.on('text-change', () => {
-        dispatch(setContenidoPorIndice([indice, quillInstanceRef.current.root.innerHTML, '', '']));
-      });
+    quillInstanceRef.current.on('text-change', () => {
+      dispatch(setContenidoPorIndice([indice, quillInstanceRef.current.root.innerHTML, '', '']));
+    });
 
-      const editorRoot = quillInstanceRef.current.root;
-      editorRoot.addEventListener('focus', () => setIsFocused(true));
-      editorRoot.addEventListener('blur', () => setIsFocused(false));
+    const editorRoot = quillInstanceRef.current.root;
+    editorRoot.addEventListener('focus', () => setIsFocused(true));
+    editorRoot.addEventListener('blur', () => setIsFocused(false));
 
-      const toolbar = quillInstanceRef.current.getModule('toolbar').container;
-      toolbar.addEventListener('mousedown', (e) => {
-        e.preventDefault();
-        editorRoot.focus();
-      });
+    const toolbar = quillInstanceRef.current.getModule('toolbar').container;
+    toolbar.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      editorRoot.focus();
+    });
+  }
+
+  // Solo insertar si el contenido cambia
+  if (quillInstanceRef.current && tituloGlobalNota) {
+    const currentHTML = quillInstanceRef.current.root.innerHTML;
+    if (currentHTML !== tituloGlobalNota) {
+      quillInstanceRef.current.clipboard.dangerouslyPasteHTML(tituloGlobalNota);
     }
-
-    if (quillInstanceRef.current.root.innerHTML !== tituloGlobalNota) {
-      quillInstanceRef.current.root.innerHTML = tituloGlobalNota;
-    }
-  }, [dispatch, indice, tituloGlobalNota]);
+  }
+}, [dispatch, indice, tituloGlobalNota]);
 
   return (
     <span className="p-0" style={{ display: 'flex', alignItems: 'center' }}>

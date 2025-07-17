@@ -5,6 +5,10 @@ import { Button, Modal } from 'react-bootstrap';
 import Sidebar from '../sidebar/Sidebar';
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
+import '../../App.css'
+import '../../components/nota/nota_print.css'
+import '../../components/nota/nota.css'
+import '../Dashboard/Dashboard.css';
 import "./nota.css";
 import SubtituloNota from './componetesNota/SubtituloNota';
 import ParrafoNota from './componetesNota/ParrafoNota';
@@ -30,7 +34,7 @@ import { ArchivoContext } from "../../context/archivoContext";
 import GaleriaImagenes from './componetesNota/GaleriaImagenes';
 import ArchivoPDFParrafo from './componetesNota/ArchivosPdfParrafo';
 import { comprimirPDFaBase64 } from '../../utils/convertirPDFaBase64';
-import CarruselEnNota from './componetesNota/carruselEnNota';
+import CarruselEnNota from './componetesNota/CarruselEnNota';
 
 
 const CrearNota = () => {
@@ -141,9 +145,7 @@ const CrearNota = () => {
 
 
     return (
-        <div className="container-fluid sinPadding crearNotaGlobal">
-            <div className="d-flex h-100">
-                <Sidebar estadoActual={"notas"} />
+
                 <div className="content flex-grow-1 crearNotaGlobal">
                     <div className='row'>
                         <div className='col'>
@@ -182,8 +184,6 @@ const CrearNota = () => {
                             <div className='row'>
                                 <TituloNota />
                                 <CopeteNota />
-                                <GaleriaImagenes/>
-                                <CarruselEnNota />
 
                                 {contenidoNota &&
                                     contenidoNota.map((contenido, index) => {
@@ -196,6 +196,7 @@ const CrearNota = () => {
                                         embebido: Embebido,
                                         video: VideosDeParrafo,
                                         archivoPDF: ArchivoPDFParrafo,
+                                        carrusel: CarruselEnNota,
                                         };
 
                                     const Componente = componentes[contenido[0]]; // Obtiene el componente correspondiente
@@ -214,7 +215,7 @@ const CrearNota = () => {
                                             <button onClick={() => agregarContenido("parrafo")} className="botones-nota" title='Párrafo'>
                                                 <i className="bi bi-type rounded-circle border border-dark p-2"></i>
                                             </button>
-                                            <button onClick={handleClickEnNota} className="botones-nota">
+                                            <button onClick={handleClickEnNota} className="botones-nota" title="Imagen">
                                                 <i className="bi bi-image rounded-circle border border-dark p-2"></i>
 
                                             </button>
@@ -226,14 +227,14 @@ const CrearNota = () => {
                                                 onChange={handleFileChangeEnNota}
                                                 accept="image/*"  // Acepta solo archivos de imagen
                                             />
-                                            <button onClick={() => agregarContenido("ubicacion")} className="botones-nota">
+                                            {/* <button onClick={() => agregarContenido("ubicacion")} className="botones-nota" title="Ubicación">
                                                 <i className="bi bi-geo-alt rounded-circle border border-dark p-2"></i>
-                                            </button>
-                                            <button onClick={() => agregarContenido("embebido")} className="botones-nota">
+                                            </button> */}
+                                            <button onClick={() => agregarContenido("embebido")} className="botones-nota" title="Embebidos">
                                                 <i className="bi bi-code-slash rounded-circle border border-dark p-2"></i>
                                             </button>
-                                            <button onClick={() => inputVideoRef.current.click()} className="botones-nota">
-                                                <i className="bi bi-camera-video rounded-circle border border-dark p-2"></i>
+                                            <button onClick={() => inputVideoRef.current.click()} className="botones-nota" title="Video MP4">
+                                                <i className="bi bi-filetype-mp4 rounded-circle border border-dark p-2"></i>
                                             </button>
                                             <input
                                                 type="file"
@@ -244,7 +245,7 @@ const CrearNota = () => {
                                             />
 
                                             {/*       BOTON DE ARCHIVOS PDF         */}
-                                            <button onClick={handleClickEnArchivoPDF} className="botones-nota">
+                                            <button onClick={handleClickEnArchivoPDF} className="botones-nota" title="Archivo PDF">
                                                 <i className="bi bi-filetype-pdf rounded-circle border border-dark p-2"></i>
                                             </button>
         
@@ -255,6 +256,9 @@ const CrearNota = () => {
                                                 onChange={handleFileChangeArchivoNota}
                                                 accept=".pdf"  // Acepta solo archivos pdf
                                             />
+                                            <button onClick={() => agregarContenido("carrusel")} className="botones-nota" title="Carrusel de imagenes">
+                                                <i className="bi bi-folder2 rounded-circle border border-dark p-2"></i>
+                                            </button>
                                         </div>
                                     )}
                                 </div>
@@ -308,8 +312,6 @@ const CrearNota = () => {
                         </Modal.Footer>
                     </Modal>
                 </div>
-            </div>
-        </div>
     );
 };
 

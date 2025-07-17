@@ -4,7 +4,7 @@ import { obtenerFechaActual } from '../components/nota/componetesNota/ImagenDePa
  * Recibe un html unas imagenes y un id_att, y devuelve el html con los src 
  * de las imagenes actualizados
  */
-export const actualizarSRCDeUnHTML = (html, images, id_att) => {
+export const actualizarSRCDeUnHTML = (html, images, id_att, numeroAtachmentActual) => {
   if (!html || !images || images.length === 0) return html;
 
   const cantidadDeImagenes = images.length;
@@ -12,9 +12,9 @@ export const actualizarSRCDeUnHTML = (html, images, id_att) => {
 
   for (let i = 0; i < cantidadDeImagenes; i++) {
     const src = 'https://noticiasd.com/img/' + obtenerFechaActual() + '/' +
-                  id_att + '_' +
-                  (10 - i).toString() +
-                  '_.' + 'jpeg';
+                id_att + '_' +
+                (numeroAtachmentActual + i).toString() +
+                '_.' + 'jpeg';
     nuevosSRC.push(src);
   }
 
@@ -35,4 +35,5 @@ export const actualizarSRCDeUnHTML = (html, images, id_att) => {
   // Retornar el HTML modificado
   const updatedHTML = doc.body.innerHTML;
   return updatedHTML;
-}
+
+};
