@@ -21,8 +21,8 @@ const BotonEliminarNota = ({ id, token }) => {
     };
   
     return (
-      <button onClick={handleEliminar} className="btn btn-danger">
-        x
+      <button onClick={handleEliminar} className='p-0 m-2 border-0 bg-transparent'>
+        Eliminar
       </button>
     );
   };

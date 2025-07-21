@@ -182,8 +182,6 @@ const CrearNota = () => {
                             <div className='row'>
                                 <TituloNota />
                                 <CopeteNota />
-                                <GaleriaImagenes/>
-                                <CarruselEnNota />
 
                                 {contenidoNota &&
                                     contenidoNota.map((contenido, index) => {
@@ -196,6 +194,7 @@ const CrearNota = () => {
                                         embebido: Embebido,
                                         video: VideosDeParrafo,
                                         archivoPDF: ArchivoPDFParrafo,
+                                        carousel: CarruselEnNota,
                                         };
 
                                     const Componente = componentes[contenido[0]]; // Obtiene el componente correspondiente
@@ -255,6 +254,9 @@ const CrearNota = () => {
                                                 onChange={handleFileChangeArchivoNota}
                                                 accept=".pdf"  // Acepta solo archivos pdf
                                             />
+                                            <button onClick={() => agregarContenido("carousel")} className="botones-nota">
+                                                <i className="bi bi-geo-alt rounded-circle border border-dark p-2"></i>
+                                            </button>
                                         </div>
                                     )}
                                 </div>

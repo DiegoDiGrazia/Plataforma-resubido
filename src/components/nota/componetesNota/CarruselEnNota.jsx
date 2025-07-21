@@ -4,8 +4,7 @@ import { obtenerFechaActual } from './ImagenDeParrafo';
 import { actualizarSRCDeUnHTML } from '../../../utils/funcionesVarias';
 const cantidadDeAtachments = 10; // Definimos la cantidad de attachments
 
-
-const CarruselEnNota = () => {
+const CarruselEnNota = ({indice}) => {
   const [images, setImages] = useState([]);
   const [carouselHTML, setCarouselHTML] = useState('');
   const [carruselHTMLCopiaConSRCEditado, setCarruselHTMLCopiaConSRCEditado] = useState('');
@@ -62,7 +61,18 @@ const CarruselEnNota = () => {
 
       <h4 className="mt-4">Código fuente del carrusel</h4>
       <pre className="bg-light p-3 rounded"><code>{carruselHTMLCopiaConSRCEditado}</code></pre>
+      <span className="spanContainer">
+        <BotoneraContenido indice={indice} className="pr-2" />
+        <img
+            src={imagen[1]}
+            alt="Imagen de parrafo"
+            className="imagenRecortada imagenNotaContenido"
+        />
+      </span>
     </div>
+
+          
+        
   );
 };
 

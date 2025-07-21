@@ -16,7 +16,7 @@ import { left } from '@popperjs/core';
 import SelectorCliente from '../Dashboard/SelectorCliente';
 import { useCallback } from 'react';
 import { editarNota } from './VerNota';
-import { resetCrearNota, setClienteNota } from '../../redux/crearNotaSlice';
+import { resetCrearNota, setClienteNota, setIdNoti } from '../../redux/crearNotaSlice';
 import { analizarHTML, convertirImagenBase64, setContenidoAEditar, setContenidoNota, setImagenPrincipal, setImagenRRSS, setNotaAEditar } from '../../redux/crearNotaSlice';
 import BotonEliminarNota from './Editorial/botonEliminarNota';
 import { updateCliente } from '../../redux/formularioSlice';
@@ -34,11 +34,14 @@ import BotonCrearNota from './Editorial/BotonCrearNota';
 
 const NotasParaEditorial = () => {
     const [searchQuery, setSearchQuery] = useState('');
-    const editarNota = async (notaABM) => {
+    const editarNota = async (notaABM, seDuplica) => {
     console.log("entro a editarNota");
     dispatch(resetCrearNota());
     dispatch(setNotaAEditar(notaABM));
     dispatch(updateCliente(notaABM.cliente));
+    if (seDuplica) {
+        dispatch(setIdNoti("0"));
+    }
     // Procesar el contenido HTML
     const parser = new DOMParser();
     const doc = parser.parseFromString(notaABM.parrafo, 'text/html');
@@ -368,7 +371,21 @@ const NotasParaEditorial = () => {
                                             {((filtroSeleccionado == 2 || filtroSeleccionado == 3) && ///SOlO EN BOTONES 1 y 2
                                                 !(filtroSeleccionado == 2 && !es_editor))   &&        /// SI NO ES EDITOR NO PUEDE BORRAR NOTAS PUBLICADAS
                                             <div className='col-auto'>
-                                                <BotonEliminarNota id={nota.id} token={TOKEN} />
+                                                {/* <BotonEliminarNota id={nota.id} token={TOKEN} />
+                                                <BotonEliminarNota id={nota.id} token={TOKEN} /> */}
+                                            <div class="dropdown">
+                                                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><BotonEliminarNota id={nota.id} token={TOKEN}></BotonEliminarNota></li>
+                                                    <li>      
+                                                        <button onClick={() => editarNota(nota, true)} className='p-0 m-2 border-0 bg-transparent'>
+                                                            Duplicar 
+                                                        </button>
+                                                    </li>
+
+                                                </ul>
+                                                </div>
                                             </div>
                                             }
                                         <div className='col-auto'>
@@ -390,7 +407,7 @@ const NotasParaEditorial = () => {
                                                     {formatearTitulo(nota.titulo, 45)}
                                                 </div>
                                             </Link>
-                                        ) : (
+                                        ) :  (
                                             <Link
                                                 className="link-sin-estilos"
                                                 onClick={(e) => {

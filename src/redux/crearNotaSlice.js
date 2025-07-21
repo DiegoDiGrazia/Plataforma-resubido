@@ -275,6 +275,9 @@ const crearNotaSlice = createSlice({
     setBajada: (state, action) => {
       state.bajada = action.payload;
     },
+    setIdNoti: (state, action) => {
+      state.id_noti = action.payload;
+    },
     setAutor: (state, action) => {
       state.autor = action.payload;
     },
@@ -333,7 +336,7 @@ export const {
   SubirContenidoPorIndice, BajarContenidoPorIndice, setCategorias, setImagenPrincipal, setImagenRRSS,
   setCopete, setNotaAEditar, setContenidoAEditar, setItemsEtiquetas, setEsDemo, setNoHome, setCategoriasActivasEnStore,
   setDistribucionProioritaria, setTipoContenido, setFechaVencimiento, setBajada, setEngagement, setComentario, setSelectedOptionDistribucion,
-  setAutor, setMunicipio,setEpigrafeImagenPpal, setMunicipios, setProvincia,setPais, setIdAtt,setProvincias, resetCrearNota, setEpigrafeDeImagen, setListaImagenesContenidoEnBase64, setAtachment, setSumarUnoAlNumeroDeAtachment
+  setAutor, setMunicipio,setEpigrafeImagenPpal, setMunicipios,setIdNoti, setProvincia,setPais, setIdAtt,setProvincias, resetCrearNota, setEpigrafeDeImagen, setListaImagenesContenidoEnBase64, setAtachment, setSumarUnoAlNumeroDeAtachment
 } = crearNotaSlice.actions;
 
 export default crearNotaSlice.reducer;
