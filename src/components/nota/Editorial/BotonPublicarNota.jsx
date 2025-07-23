@@ -5,12 +5,14 @@ import { clickearEnPublicarNota } from '../../../utils/publicarNotaHelper';
 import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { ArchivoContext } from '../../../context/archivoContext';
+import  store  from '../../../redux/store'; // o la ruta que tengas definida
 
 const BotonPublicarNota = ({ status }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const { archivo } = useContext(ArchivoContext); // video es tipo File
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -45,17 +47,15 @@ const BotonPublicarNota = ({ status }) => {
     const clienteActual = useSelector((state) => state.formulario.cliente);
     const clienteDeLaNota = useSelector((state) => state.crearNota.cliente)
     const cliente = clienteDeLaNota;
-
-
     const provinciaSelector = useSelector((state) => state.crearNota.provincia);
     const municipioSelector = useSelector((state) => state.crearNota.municipio);
     const provinciaDelUsuario = useSelector((state) => state.formulario.provinciaUsuario);
     const municipioDelUsuario = useSelector((state) => state.formulario.municipioUsuario);
 
-    const provincia = provinciaDelUsuario || provinciaSelector;
-    const municipio = municipioDelUsuario || municipioSelector;
+    const provincia =  provinciaSelector || provinciaDelUsuario
+    const municipio = municipioSelector || municipioDelUsuario 
 
-
+    // Filtrar los attachments para obtener solo los válidos 
     const attachments = useSelector((state) => state.crearNota.atachments);
     const atachmentsValidos = Object.entries(attachments)
         .filter(([key, value]) => value !== null)
@@ -79,7 +79,8 @@ const BotonPublicarNota = ({ status }) => {
         return contenidos.reduce((html, contenido) => {
             const etiquetaAbrir = contenido[2];
             const etiquetaCerrar = contenido[3];
-            if (contenido[0] == "imagen" || (contenido[0] == "video") || (contenido[0] == "archivoPDF")) {
+            if (contenido[0] == "imagen" || (contenido[0] == "video") 
+                || (contenido[0] == "archivoPDF") || (contenido[0] == "carrusel")) {
                 return html + etiquetaAbrir;
             }
             return html + etiquetaAbrir + contenido[1] + etiquetaCerrar;
@@ -87,6 +88,7 @@ const BotonPublicarNota = ({ status }) => {
     };
 
     const clickear_en_publicar_nota = async () => {
+        const state = store.getState(); // 💡 IMPORTANTE: necesitás importar el store
         setIsLoading(true);
         setErrorMessage("");
 
@@ -130,12 +132,10 @@ const BotonPublicarNota = ({ status }) => {
                 navigate,
             });
 
-            console.log("Respuesta del servidor:", response);
-            // if (response.status === "true") {
-            if ("true") {
+            if (response.status === "true") {
                 setShowModal(true); // Muestra el modal de éxito
             } else {
-                throw new Error(response.message || "Error al enviar la nota. Por favor, inténtalo nuevamente.");
+                throw new Error("Hemos tenido un problema en el servidor, por favor comuníquese con el soporte.");
             }
         } catch (error) {
             setErrorMessage(error.message || "Ocurrió un error inesperado.");
@@ -148,10 +148,10 @@ const BotonPublicarNota = ({ status }) => {
     return (
         <>
             <Button
-                onClick={clickear_en_publicar_nota}
+                onClick={() => setShowConfirmModal(true)}
                 id="botonPublicar"
                 variant="none"
-                disabled={isLoading || !imagefeed || !image || categoriasActivas.length < 1} // Deshabilitar el botón mientras se carga
+                disabled={isLoading || !imagefeed || !image || categoriasActivas.length < 1}
             >
                 <img src="/images/send.png" alt="Icono 1" className="icon me-2 icono_tusNotas" />
                 {status === "EN REVISION" ? "Enviar a revisión" : status === "BORRADOR" ? "Guardar borrador" : "Publicar"}
@@ -194,6 +194,28 @@ const BotonPublicarNota = ({ status }) => {
                         </div>
                     )}
                 </Modal.Body>
+            </Modal>
+            {/* MODAL DE CONFIRMACION */}
+            <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirmar publicación</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>¿Estás seguro de que querés {status === "EN REVISION" ? "enviar esta nota a revisión" : status === "BORRADOR" ? "guardar el borrador" : "publicar esta nota"}?</p>
+                    <p>{ status === "PUBLICADO" && `En la home de ${municipio?.nombre ? municipio?.nombre.toUpperCase() : provincia?.nombre ? provincia?.nombre.toUpperCase() : pais?.nombre.toUpperCase()  }`}</p>
+                    {status === "PUBLICADO" && <p>{ clienteDeLaNota ? `y con cliente ${clienteDeLaNota}` : 'y SIN CLIENTE'}</p>}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>
+                        Cancelar
+                    </Button>
+                    <Button variant="primary" onClick={() => {
+                        setShowConfirmModal(false);
+                        clickear_en_publicar_nota();
+                    }}>
+                        Confirmar
+                    </Button>
+                </Modal.Footer>
             </Modal>
         </>
     );

@@ -52,9 +52,8 @@ const Soporte = () => {
     );
 
     return (
-        <div className="container-fluid sinPadding crearNotaGlobal">
-            <div className="d-flex h-100">
-                <Sidebar estadoActual={"soporte-y-ayuda"} />
+
+            <>
                 <div className="content flex-grow-1 crearNotaGlobal">
                     <div className='row miPerfilContainer soporteContainer'>
                         <div className='col p-0'>
@@ -98,8 +97,7 @@ const Soporte = () => {
                         ))}
                     </div>
                 </div>
-            </div>
-        </div>
+        </>
     );
 };
 

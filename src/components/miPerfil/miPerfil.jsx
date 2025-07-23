@@ -77,9 +77,7 @@ const Perfil = () => {
     };
 
     return (
-        <div className="container-fluid sinPadding crearNotaGlobal">
-            <div className="d-flex h-100">
-                <Sidebar estadoActual={"mi-perfil"} />
+<>
                 <div className="content flex-grow-1 crearNotaGlobal">
                     <div className='row miPerfilContainer'>
                         <div className='col p-0'>
@@ -197,8 +195,7 @@ const Perfil = () => {
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+</>
     );
 };
 

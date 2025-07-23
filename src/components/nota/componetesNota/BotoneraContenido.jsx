@@ -8,12 +8,13 @@ import { BajarContenidoPorIndice, setAttachmentArchivoToNull, setAttachmentToNul
 import { Button } from 'react-bootstrap';
 import { DeleteContenidoPorIndice } from '../../../redux/crearNotaSlice';
 
-const  BotoneraContenido= ({indice, tipo}) => {
+const  BotoneraContenido= ({indice, tipo, cantidad}) => {
     const dispatch = useDispatch();
     const contenidoNota = useSelector((state) => state.crearNota.contenidoNota[indice]);
     const tieneAtachment = contenidoNota && contenidoNota[4] ? contenidoNota[4] : false;
     console.log("tieneAtachment", tieneAtachment)
     console.log("tipo_", tipo)
+    console.log("cantidad", cantidad)
 
 
     const eliminarContenido = (indice) =>{
@@ -21,14 +22,21 @@ const  BotoneraContenido= ({indice, tipo}) => {
         dispatch(setAttachmentToNull(tieneAtachment))
       }
       if(tieneAtachment && tipo == 'archivoPDF'){
-        console.log("ACCEDO AL IF archivoPDF")
         dispatch(setAttachmentArchivoToNull(tieneAtachment))
       }
+      if(tieneAtachment && tipo == 'carrusel'){
+        for (let i = 0; i < cantidad; i++) {
+          dispatch(setAttachmentToNull(tieneAtachment + i));
+        }
+
+      }
       dispatch(DeleteContenidoPorIndice(indice))
-    }   
+    }  
+
     const SubirUnaPosicionContenido = (indice) =>{
       dispatch(SubirContenidoPorIndice(indice))
     }   
+
     const BajarUnaPosicionContenido = (indice) =>{
       dispatch(BajarContenidoPorIndice(indice))
     }   

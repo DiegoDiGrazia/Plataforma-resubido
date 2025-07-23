@@ -24,15 +24,12 @@
     display: flex;
 }
 
-.sidebar {
-    position: relative;
-
-}
 
 .content {
     /* Permite que el contenido ocupe el espacio restante */
     flex-grow: 1;
     background-color: #fbfcfc ;
+    height: auto;
      /* background-color: rgb(179, 150, 150); */
     
 }

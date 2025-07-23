@@ -5,6 +5,10 @@ import { Button, Modal } from 'react-bootstrap';
 import Sidebar from '../sidebar/Sidebar';
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
+import '../../App.css'
+import '../../components/nota/nota_print.css'
+import '../../components/nota/nota.css'
+import '../Dashboard/Dashboard.css';
 import "./nota.css";
 import { useDispatch, useSelector } from 'react-redux';
 import { Link} from 'react-router-dom';
@@ -109,9 +113,8 @@ const PublicarNota = () => {
     };
 
     return (
-            <div className="app-container">
-                <Sidebar estadoActual={"notas"} />
-                <div className="content flex-grow-1 crearNotaGlobal">
+                <>
+                <div className="content flex-grow-1">
                     <header id="head_dash" className='header_dash'>
                         <div className='row'>
                             <div className='col'>
@@ -281,8 +284,8 @@ const PublicarNota = () => {
                             </div>
                         }
                     </div>
-                </div>
-            </div>
+        </div>
+        </>
     );
 };
 

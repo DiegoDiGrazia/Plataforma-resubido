@@ -2,22 +2,38 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useSelector,useDispatch } from 'react-redux';
 import { obtenerFechaActual } from './ImagenDeParrafo';
 import { actualizarSRCDeUnHTML } from '../../../utils/funcionesVarias';
+import { calcularNumeroDeAtachment } from './ImagenDeParrafo';
+import { comprimirImagen } from './ImagenPrincipal';
+import { setContenidoPorIndice, setAtachment, setImagenesDeCarrusel } from '../../../redux/crearNotaSlice';
+import BotoneraContenido from './botoneraContenido';
 const cantidadDeAtachments = 10; // Definimos la cantidad de attachments
 
+
 const CarruselEnNota = ({indice}) => {
-  const [images, setImages] = useState([]);
+  const dispatch = useDispatch();
+  // const [images, setImages] = useState([]);
+  const images = useSelector((state) => state.crearNota.contenidoNota[indice][1]);
   const [carouselHTML, setCarouselHTML] = useState('');
   const [carruselHTMLCopiaConSRCEditado, setCarruselHTMLCopiaConSRCEditado] = useState('');
   const carouselRef = useRef(null);
   const id_att = useSelector((state) => state.crearNota.id_att); 
+  const attachments = useSelector((state) => state.crearNota.atachments);
+  const numeroDeAtachmentAUsar = calcularNumeroDeAtachment(attachments);
 
 
-  const handleImageUpload = (e) => {
-    const files = Array.from(e.target.files);
-    const newImages = files.map(file => URL.createObjectURL(file));
-    setImages(prev => [...prev, ...newImages]);
-  };
-  // Actualiza el HTML enriquecido cuando las imágenes cambian
+
+const handleImageUpload = async (e) => {
+  const files = Array.from(e.target.files);
+
+  try {
+    const base64Images = await Promise.all(
+      files.map(file => comprimirImagen(file)) // Usamos tu función personalizada
+    );
+    dispatch(setImagenesDeCarrusel([indice, base64Images])); // Actualizamos el estado global con las nuevas imágenes
+  } catch (error) {
+    console.error('Error al comprimir las imágenes:', error);
+  }
+};
   useEffect(() => {
     if (carouselRef.current) {
       setCarouselHTML(carouselRef.current.outerHTML);
@@ -26,17 +42,29 @@ const CarruselEnNota = ({indice}) => {
 
   useEffect(() => {
   if (carouselHTML && images.length > 0 && id_att) {
-    const nuevoHTML = actualizarSRCDeUnHTML(carouselHTML, images, id_att);
+    let atachmentAUsar = calcularNumeroDeAtachment(attachments);
+    const nuevoHTML = actualizarSRCDeUnHTML(carouselHTML, images, id_att, atachmentAUsar);
     setCarruselHTMLCopiaConSRCEditado(nuevoHTML);
+    dispatch(
+      setContenidoPorIndice([
+          indice,
+          images,
+          nuevoHTML, '', atachmentAUsar
+      ])
+    ); 
+    for (let i = 0; i < images.length; i++) {
+      const atachment = "attachment_" + (atachmentAUsar + i).toString(); 
+      dispatch(setAtachment({ key: atachment, value: images[i] }));
+    }
   }
 }, [carouselHTML, images, id_att]);
 
-  return (
-    <div className="container my-4">
-      <h2>Cargar imágenes al carrusel</h2>
-      <input type="file" multiple accept="image/*" onChange={handleImageUpload} className="form-control mb-3" />
+return (
+  <span className="spanContainer">
+    <BotoneraContenido indice={indice} tipo ={"carrusel"} cantidad={images.length} className="pr-2" />
 
-      {images.length > 0 && (
+    {images.length > 0 ? (
+      <div style={{ position: 'relative', marginBottom: '1rem' }}>
         <div id="carouselExample" className="carousel slide" data-bs-ride="carousel" ref={carouselRef}>
           <div className="carousel-inner">
             {images.map((imgSrc, index) => (
@@ -54,26 +82,13 @@ const CarruselEnNota = ({indice}) => {
             <span className="visually-hidden">Siguiente</span>
           </button>
         </div>
-      )}
-
-      <h4 className="mt-4">Vista del HTML enriquecido (renderizado)</h4>
-      <div dangerouslySetInnerHTML={{ __html: carouselHTML }} />
-
-      <h4 className="mt-4">Código fuente del carrusel</h4>
-      <pre className="bg-light p-3 rounded"><code>{carruselHTMLCopiaConSRCEditado}</code></pre>
-      <span className="spanContainer">
-        <BotoneraContenido indice={indice} className="pr-2" />
-        <img
-            src={imagen[1]}
-            alt="Imagen de parrafo"
-            className="imagenRecortada imagenNotaContenido"
-        />
-      </span>
-    </div>
-
-          
-        
-  );
-};
+      </div>
+    ) : (
+      // ⬇️ Mostrar el input normalmente si no hay imágenes
+      <input type="file" multiple accept="image/*" onChange={handleImageUpload} className="form-control mb-3" />
+    )}
+  </span>
+);
+}
 
 export default CarruselEnNota;

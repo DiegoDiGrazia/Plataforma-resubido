@@ -36,7 +36,8 @@ const ArbolDistribucion = () => {
         { nombre: "República Dominicana" },
         { nombre: "Uruguay" },
         { nombre: "Venezuela" },
-        { nombre: "Miami"}
+        { nombre: "Miami"},
+        { nombre: "España" }
     ]);
 
     // Obtener provincias al montar el componente
@@ -68,7 +69,10 @@ const ArbolDistribucion = () => {
         .then((response) => {
             if (response.data.status === "true") {
                 setMunicipios(response.data.item);
-                dispatch(setMunicipio(response.data.item[0] || {}));
+                      // Si NO hay municipio seleccionado en el estado, seteo el primero
+                if (!municipio || !municipio.municipio_id) {
+                    dispatch(setMunicipio(response.data.item[0] || {}));
+      }
             } else {
                 console.error('Error en la respuesta de la API:', response.data.message);
             }

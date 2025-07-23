@@ -83,12 +83,13 @@ const VerNota = () => {
         return <div>Cargando...</div>
     }
     return (
-        <div className="container-fluid  sinPadding">
-            {!cargando && 
-            <div className="d-flex h-100">
-                {!es_demo &&
-                <Sidebar estadoActual={"notas"} /> 
-                }
+        // <div className="container-fluid  sinPadding">
+        //     <div className="d-flex h-100">
+        //         {!es_demo &&
+        //         <Sidebar estadoActual={"notas"} /> 
+        //         }
+        <>
+             {!cargando && 
                 <div className="content flex-grow-1">
                     <div className='row p-0'>
                         <div className='col'>
@@ -162,9 +163,8 @@ const VerNota = () => {
                         </div>
                     </div> 
                 </div>
-            </div> 
-            }
-        </div>
+                }
+            </>
 
     );
 };
