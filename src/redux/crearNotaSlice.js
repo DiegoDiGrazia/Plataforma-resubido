@@ -138,6 +138,7 @@ const initialState = {
   numeroDeAtachment: 1,
   id_att: "",
   cliente: "",
+  demo: '',
 };
 
 const crearNotaSlice = createSlice({
@@ -153,6 +154,10 @@ const crearNotaSlice = createSlice({
     setTituloNota: (state, action) => {
       state.tituloNota = action.payload;
     },
+    setDemo: (state, action) => {
+      state.demo = action.payload;
+    },
+
     setImagenPrincipal: (state, action) => {
       state.imagenPrincipal = action.payload;
     },
@@ -336,16 +341,19 @@ const crearNotaSlice = createSlice({
     setClienteNota: (state,action) => {
       state.cliente = action.payload;
     },
-    resetCrearNota: () => initialState
+    setCambiarEstadoActual: (state,action) => {
+      return action.payload;
+    },
+    resetCrearNota: () => initialState,
   }
 });
 
 export const {
-  setTituloNota,setAttachmentArchivo,setAttachmentArchivoToNull, setClienteNota, setContenidoNota, setAttachment_video1, DeleteContenidoPorIndice, setContenidoPorIndice,setFechaPublicacion, setAttachmentToNull,
+  setTituloNota, setCambiarEstadoActual, setAttachmentArchivo,setAttachmentArchivoToNull, setClienteNota, setContenidoNota, setAttachment_video1, DeleteContenidoPorIndice, setContenidoPorIndice,setFechaPublicacion, setAttachmentToNull,
   SubirContenidoPorIndice, BajarContenidoPorIndice, setCategorias, setImagenPrincipal, setImagenRRSS, setImagenesDeCarrusel,
   setCopete, setNotaAEditar, setContenidoAEditar, setItemsEtiquetas, setEsDemo, setNoHome, setCategoriasActivasEnStore,
   setDistribucionProioritaria, setTipoContenido, setFechaVencimiento, setBajada, setEngagement, setComentario, setSelectedOptionDistribucion,
-  setAutor, setMunicipio,setEpigrafeImagenPpal, setMunicipios,setIdNoti, setProvincia,setPais, setIdAtt,setProvincias, resetCrearNota, setEpigrafeDeImagen, setListaImagenesContenidoEnBase64, setAtachment, setSumarUnoAlNumeroDeAtachment
+  setAutor, setMunicipio,setEpigrafeImagenPpal,setDemo, setMunicipios,setIdNoti, setProvincia,setPais, setIdAtt,setProvincias, resetCrearNota, setEpigrafeDeImagen, setListaImagenesContenidoEnBase64, setAtachment, setSumarUnoAlNumeroDeAtachment
 } = crearNotaSlice.actions;
 
 export default crearNotaSlice.reducer;

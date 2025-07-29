@@ -35,7 +35,6 @@ const Dashboard = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const es_editor = useSelector((state) => state.formulario.es_editor);
-
     const nombreCliente = useSelector((state) => state.formulario.cliente);
     const FiltroActual = useSelector((state) => state.dashboard.filtro);
     const [datosLocalmente, setDatosLocalmente] = useState(null); 

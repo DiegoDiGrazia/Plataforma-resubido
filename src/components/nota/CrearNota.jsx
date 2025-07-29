@@ -13,7 +13,7 @@ import "./nota.css";
 import SubtituloNota from './componetesNota/SubtituloNota';
 import ParrafoNota from './componetesNota/ParrafoNota';
 import TituloNota from './componetesNota/TituloNota';
-import { setTituloNota, setContenidoNota, setImagenPrincipal, setIdAtt } from '../../redux/crearNotaSlice';
+import { setTituloNota, setContenidoNota, setImagenPrincipal, setIdAtt, setCambiarEstadoActual } from '../../redux/crearNotaSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import ImagenDeParrafo from './componetesNota/ImagenDeParrafo';
 import { Link, Navigate } from 'react-router-dom';
@@ -42,7 +42,7 @@ const CrearNota = () => {
     const dispatch = useDispatch();
     const [image, setImage] = useState(null);
     const navigate = useNavigate();
-    const imagenppal = useSelector((state) => state.crearNota.imagenPrincipal);
+    const imagenppal = useSelector((state) => state.crearNota);
     const [cropper, setCropper] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const imageRef = useRef(null);
@@ -53,6 +53,57 @@ const CrearNota = () => {
     const inputVideoRef = useRef(null);
     const { setArchivo } = useContext(ArchivoContext);
     const { archivo } = useContext(ArchivoContext); // video es tipo File
+
+    const actual = useSelector((state) => state.crearNota);
+
+  const [historial, setHistorial] = useState([]);
+  const [futuros, setFuturos] = useState([]);
+
+  // ⚠️ Esta ref indica si el cambio fue por undo/redo (entonces NO guardamos en historial)
+  const saltoDeHistorial = useRef(false);
+
+  // Clonar para evitar referencias compartidas
+  const copiar = (obj) => JSON.parse(JSON.stringify(obj));
+
+  // ✅ Escuchar cambios automáticos en "actual" (hechos por otros componentes)
+  useEffect(() => {
+  if (saltoDeHistorial.current) {
+    saltoDeHistorial.current = false;
+    return;
+  }
+
+  setHistorial((prev) => {
+    const nuevoHistorial = [...prev, copiar(actual)];
+    // Limitar a los últimos 20
+    return nuevoHistorial.length > 20
+      ? nuevoHistorial.slice(nuevoHistorial.length - 20)
+      : nuevoHistorial;
+  });
+
+  setFuturos([]); // limpiar futuros si hubo un cambio nuevo
+}, [actual]);
+
+  const handleUndo = () => {
+    if (historial.length === 0) return;
+
+    const anterior = historial[historial.length - 1];
+    setHistorial((prev) => prev.slice(0, -1));
+    setFuturos((prev) => [copiar(actual), ...prev]);
+
+    saltoDeHistorial.current = true;
+    dispatch(setCambiarEstadoActual(copiar(anterior)));
+  };
+
+  const handleRedo = () => {
+    if (futuros.length === 0) return;
+
+    const siguiente = futuros[0];
+    setFuturos((prev) => prev.slice(1));
+    setHistorial((prev) => [...prev, copiar(actual)]);
+
+    saltoDeHistorial.current = true;
+    dispatch(setCambiarEstadoActual(copiar(siguiente)));
+  };
 
 
     const toggleButtons = () => {
@@ -71,10 +122,6 @@ const CrearNota = () => {
         setArchivo(e.target.files[0]);
         agregarContenido("video", "");
     };
-
-    useEffect(() => {
-    console.log(archivo, "archivos actualizado");
-    }, [archivo]);
 
     const handleFileChangeEnNota = (event) => {
         const file = event.target.files[0];
@@ -256,6 +303,12 @@ const CrearNota = () => {
                                                 onChange={handleFileChangeArchivoNota}
                                                 accept=".pdf"  // Acepta solo archivos pdf
                                             />
+                                            <button onClick={handleUndo} className="botones-nota" title="deshacer">
+                                                <i className="bi bi-arrow-left rounded-circle border border-dark p-2"></i>
+                                            </button>
+                                            <button onClick={handleRedo} className="botones-nota" title="rehacer">
+                                                <i className="bi bi-arrow-right rounded-circle border border-dark p-2"></i>
+                                            </button>
                                         </div>
                                     )}
                                 </div>

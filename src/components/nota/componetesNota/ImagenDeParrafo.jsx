@@ -40,11 +40,12 @@ const ImagenDeParrafo = ({ indice }) => {
     const dispatch = useDispatch();
     const imagen = useSelector((state) => state.crearNota.contenidoNota[indice]);
     const id_att = useSelector((state) => state.crearNota.id_att); 
+    const imagenEnAttachment = useSelector((state) => state.crearNota.atachments['attachment_' + numeroDeAtachmentAUsar.toString() ]);
     const [textoEpigrafe, setTextoEpigrafe] = useState("");
         const textareaRef = useRef(null);
     if (!imagen) {
         console.log(imagen[0], "Asdasd");
-        return null; // Manejo de casos donde no hay imagen
+        return null; 
     }
 
     // Handler para autoajustar el alto
@@ -93,7 +94,7 @@ const ImagenDeParrafo = ({ indice }) => {
     return (
       <>
         <span className="spanContainer">
-          <BotoneraContenido indice={indice} className="pr-2" />
+          <BotoneraContenido indice={indice} tipo={'imagen'} className="pr-2" />
           <img
               src={imagen[1]}
               alt="Imagen de parrafo"

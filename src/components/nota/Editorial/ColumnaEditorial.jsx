@@ -4,20 +4,18 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'cropperjs/dist/cropper.css';
 import Etiquetas from './Etiquetas';
 import ArbolDistribucion from './ArbolDistribucion';
-import SelectorCliente from '../../Dashboard/SelectorCliente';
 import SelectorTipoContenido from './SelectorContenido';
 import TextareaWithCounter from './textAreaConContador';
 import SelectorAutor from './SelectorAutor';
 import "./colEditorial.css"
 import { useDispatch, useSelector } from 'react-redux';
-import { setEsDemo, setDistribucionProioritaria,setNoHome, setFechaVencimiento, setFechaPublicacion} from '../../../redux/crearNotaSlice';
+import { setDistribucionProioritaria,setNoHome, setFechaVencimiento, setFechaPublicacion} from '../../../redux/crearNotaSlice';
 import SelectorCliente2 from './SelectorCliente2';
+import EsDemo from './EsDemo';
 
 
 
 const ColumnaEditorial = ({ indice }) => {
-
-    const isCheckedDemo = useSelector((state) => state.crearNota.es_demo)
     const isCheckedDistribucionPrioritaria = useSelector((state) => state.crearNota.distribucion_prioritaria)
     const isCheckedNoHome = useSelector((state) => state.crearNota.es_home)
     const fechaVence = useSelector((state) => state.crearNota.f_vence)
@@ -64,26 +62,7 @@ const ColumnaEditorial = ({ indice }) => {
                     />
             </div>
 
-            <div 
-                className="form-check form_editorial p-0" 
-                style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
-            >
-                <label 
-                    className="form-check-label" 
-                    htmlFor="flexCheckChecked1" 
-                    style={{ fontSize: "20px", fontWeight: "bold", marginRight: "10px" }}
-                >
-                    Es demo
-                </label>
-                <input 
-                    className="form-check-input" 
-                    type="checkbox" 
-                    id="flexCheckChecked1" 
-                    checked={isCheckedDemo == '1'} 
-                    onChange={() => dispatch(setEsDemo(isCheckedDemo == '1'? '0' : '1'))} 
-                    />
-
-            </div>
+            <EsDemo></EsDemo>
 
         <div 
             className="form-check form_editorial p-0" 

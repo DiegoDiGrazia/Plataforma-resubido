@@ -121,53 +121,57 @@ const NotasParaEditorial = () => {
     
     const fechaDeMañana = obtenerFechaDeManana(); // Obtener la fecha de mañana al cargar el componente
     const handleFiltroClick_todasLasNotas = useCallback((id, verMas = false) => {
-        setFiltroSeleccionado(id);
-        setCargandoNotas(true);
-    
-        const categoria = categorias[id] || "";
-        let desdeLimite = 0;
-        let limite = verMasCantidadPaginacion;
-    
-        if (verMas) {
-            const siguientePagina = verMasUltimo + 1;
-            desdeLimite = verMasUltimo * verMasCantidadPaginacion;
-            setVerMasUltimo(siguientePagina);
+    setFiltroSeleccionado(id);
+    setCargandoNotas(true);
+
+    const categoria = categorias[id] || "";
+    let desdeLimite = 0;
+    let limite = verMasCantidadPaginacion;
+
+    if (verMas) {
+        const siguientePagina = verMasUltimo + 1;
+        desdeLimite = verMasUltimo * verMasCantidadPaginacion;
+        setVerMasUltimo(siguientePagina);
+    } else {
+        setTodasLasNotas2([]);               // ✅ Limpiar la lista
+        setVerMasUltimo(1);                  // ✅ Reiniciar el contador de paginación
+        desdeLimite = 0;                     // ✅ Resetear el offset
+    }
+
+    axios.post(
+        "https://panel.serviciosd.com/app_obtener_noticias",
+        {
+            cliente: CLIENTE,
+            desde: "2020-01-01",
+            hasta: fechaDeMañana,
+            token: TOKEN,
+            categoria: categoria,
+            limite: limite,
+            desde_limite: desdeLimite,
+            titulo: "",
+            id: "",
+        },
+        { headers: { 'Content-Type': 'multipart/form-data' } }
+    )
+    .then((response) => {
+        if (response.data.message === "Token Invalido") {
+            navigate("/");
+            return;
         }
-    
-        axios.post(
-            "https://panel.serviciosd.com/app_obtener_noticias",
-            {
-                cliente: CLIENTE,
-                desde: "2020-01-01",
-                hasta: fechaDeMañana,
-                token: TOKEN,
-                categoria: categoria,
-                limite: limite,
-                desde_limite: desdeLimite,
-                titulo: "",
-                id: "",
-            },
-            { headers: { 'Content-Type': 'multipart/form-data' } }
-        )
-        .then((response) => {
-            if (response.data.message === "Token Invalido") {
-                navigate("/");
-                return;
-            }
-    
-            if (response.data.status === "true") {
-                setTodasLasNotas2((prev) => [...prev, ...response.data.item]);
-            } else {
-                console.error('Error en la respuesta de la API:', response.data.message);
-            }
-        })
-        .catch((error) => {
-            console.error('Error al hacer la solicitud:', error);
-        })
-        .finally(() => {
-            setCargandoNotas(false);
-        });
-    }, [CLIENTE, TOKEN, navigate, verMasUltimo]);
+
+        if (response.data.status === "true") {
+            setTodasLasNotas2((prev) => [...prev, ...response.data.item]);
+        } else {
+            console.error('Error en la respuesta de la API:', response.data.message);
+        }
+    })
+    .catch((error) => {
+        console.error('Error al hacer la solicitud:', error);
+    })
+    .finally(() => {
+        setCargandoNotas(false);
+    });
+}, [CLIENTE, TOKEN, navigate, verMasUltimo, categorias, verMasCantidadPaginacion]);
     
     const handleFiltroClick = useCallback((id, verMas = false) => {
         console.log("searchQuery", searchQuery);
@@ -386,8 +390,10 @@ const NotasParaEditorial = () => {
                                             </div>
                                             }
                                         <div className='col-auto'>
-                                            {nota.imagen ? (
-                                                <img src={nota.imagen} alt="Icono Nota" className='imagenWidwetInteracciones2' />
+                                            {nota.imagen  ? (
+                                               nota.imagen.includes('wp-content/uploads') ? 
+                                                <img src={nota.imagen} alt="Icono Nota" className='imagenWidwetInteracciones2' /> : 
+                                                <img src={'https://noticiasd.com/img' + nota.imagen} alt="Icono Nota" className='imagenWidwetInteracciones2' />
                                             ) : (
                                                 <img src={"https://panel.serviciosd.com/img/" + nota.imagen_principal} alt="Icono Nota" className='imagenWidwetInteracciones2' />
                                             )}

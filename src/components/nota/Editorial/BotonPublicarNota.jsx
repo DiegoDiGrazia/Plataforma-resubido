@@ -46,6 +46,7 @@ const BotonPublicarNota = ({ status }) => {
     const id_att = useSelector((state) => state.crearNota.id_att);
     const clienteActual = useSelector((state) => state.formulario.cliente);
     const clienteDeLaNota = useSelector((state) => state.crearNota.cliente)
+    const demo = useSelector((state) => state.crearNota.demo.nombre)
     const cliente = clienteDeLaNota;
     const provinciaSelector = useSelector((state) => state.crearNota.provincia);
     const municipioSelector = useSelector((state) => state.crearNota.municipio);
@@ -124,6 +125,7 @@ const BotonPublicarNota = ({ status }) => {
                 id_noti,
                 id_att,
                 cliente,
+                demo,
                 epigrafeImagenPpal,
                 ...atachmentsValidos,
                 ...atachmentsArchivosValidos,
