@@ -48,7 +48,7 @@ const PlataformaMasImpresiones = ({datosLocales}) => {
             impresiones: sumArray(sliceArr(barplot.impresionesTotalesGoogle, cantidad_meses)),
             comentarios: 0,
             meGusta: 0,
-            clicks: sumArray(sliceArr(barplot.impresionesTotalesGoogle, cantidad_meses)),
+            clicks: sumArray(sliceArr(barplot.busqueda_clicks, cantidad_meses)),
             compartido: 0
         }
     ];

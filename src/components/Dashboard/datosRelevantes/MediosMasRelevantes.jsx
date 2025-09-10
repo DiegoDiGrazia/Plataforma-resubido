@@ -23,7 +23,7 @@ function reduceBykeyMedios(lista_medios) {
         if (!sitios[medio.sitio]) {
             sitios[medio.sitio] = {
                 ...medio,
-                impresiones: Number(medio.impresiones) * 10
+                impresiones: Number(medio.impresiones) * 5
             };
         } else {
             sitios[medio.sitio].impresiones += Number(medio.impresiones);

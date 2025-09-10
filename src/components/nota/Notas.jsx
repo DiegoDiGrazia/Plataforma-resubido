@@ -75,91 +75,105 @@ const Notas = () => {
         5: "BORRADOR"
     };
     const handleFiltroClick = (id, verMas = false) => {
-        console.log(id, "id_del_filtro")
-        setFiltroSeleccionado(id);
-        setCargandoNotas(true);
-    
-        const categoria = categorias[id] || "";
-        let desdeLimite = 0;
-        let limite = verMasCantidadPaginacion;
-    
-        if (verMas) {
-            setTraerNotas(true);
-            desdeLimite = verMasUltimo * verMasCantidadPaginacion;
-            setVerMasUltimo((prev) => prev + 1);
-        }else{
-            setTodasLasNotas2([])
-        }
-        
-        if (id == 1){
-            axios.post(
-                "https://panel.serviciosd.com/app_obtener_noticias" ,
-                {
-                    cliente: CLIENTE,
-                    desde: `${DESDE}`,
-                    hasta: `${HASTA}`,
-                    token: TOKEN,
-                    categoria: categoria,
-                    limite: limite,
-                    desde_limite: desdeLimite,
-                    titulo : "",
-                    id: ""
-                },
-                { headers: { 'Content-Type': 'multipart/form-data' } }
-            )
-            .then((response) => {
-                if (response.data.message === "Token Invalido") {
-                    navigate("/");
-                    return;
-                }
-        
-                if (response.data.status === "true") {
-                    setTodasLasNotas2((prev) => [...prev, ...response.data.item]);
+    console.log(id, "id_del_filtro");
+    setFiltroSeleccionado(id);
+    setCargandoNotas(true);
 
-                } else {
-                    console.error('Error en la respuesta de la API:', response.data.message);
-                }
-            })
-            .catch((error) => {
-                console.error('Error al hacer la solicitud:', error);
-            })
-            .finally(() => {
-                setCargandoNotas(false);
-            });
-        }else{
-            axios.post(
-                "https://panel.serviciosd.com/app_obtener_noticias_abm",
-                {
-                    cliente: CLIENTE,
-                    desde: "",
-                    hasta: "",
-                    token: TOKEN,
-                    categoria: categoria,
-                    limit: limite,
-                    offset: desdeLimite,
-                },
-                { headers: { 'Content-Type': 'multipart/form-data' } }
-            )
-            .then((response) => {
-                if (response.data.message === "Token Invalido") {
-                    navigate("/");
-                    return;
-                }
-        
-                if (response.data.status === "true") {
+    const categoria = categorias[id] || "";
+    let desdeLimite = 0;
+    let limite = verMasCantidadPaginacion;
+
+    if (verMas) {
+        // modo "Ver más" → acumula
+        setTraerNotas(true);
+        desdeLimite = verMasUltimo * verMasCantidadPaginacion;
+        setVerMasUltimo((prev) => prev + 1);
+    } else {
+        // si cambiás de filtro → limpiar y reiniciar "ver más"
+        setTodasLasNotas2([]);
+        setVerMasUltimo(2);
+    }
+
+    // endpoint para todas las notas
+    if (id === 1) {
+        axios.post(
+            "https://panel.serviciosd.com/app_obtener_noticias",
+            {
+                cliente: CLIENTE,
+                desde: `${DESDE}`,
+                hasta: `${HASTA}`,
+                token: TOKEN,
+                categoria: categoria,
+                limite: limite,
+                desde_limite: desdeLimite,
+                titulo: "",
+                id: ""
+            },
+            { headers: { 'Content-Type': 'multipart/form-data' } }
+        )
+        .then((response) => {
+            if (response.data.message === "Token Invalido") {
+                navigate("/");
+                return;
+            }
+
+            if (response.data.status === "true") {
+                if (verMas) {
                     setTodasLasNotas2((prev) => [...prev, ...response.data.item]);
                 } else {
-                    console.error('Error en la respuesta de la API:', response.data.message);
+                    setTodasLasNotas2(response.data.item);
                 }
-            })
-            .catch((error) => {
-                console.error('Error al hacer la solicitud:', error);
-            })
-            .finally(() => {
-                setCargandoNotas(false);
-            });
-        };
-        }
+            } else {
+                console.error("Error en la respuesta de la API:", response.data.message);
+            }
+        })
+        .catch((error) => {
+            console.error("Error al hacer la solicitud:", error);
+        })
+        .finally(() => {
+            setCargandoNotas(false);
+        });
+    } 
+    // endpoint para el resto (publicadas, revisión, borrador...)
+    else {
+        axios.post(
+            "https://panel.serviciosd.com/app_obtener_noticias_abm",
+            {
+                cliente: CLIENTE,
+                desde: "",
+                hasta: "",
+                token: TOKEN,
+                categoria: categoria,
+                limit: limite,
+                offset: desdeLimite,
+            },
+            { headers: { 'Content-Type': 'multipart/form-data' } }
+        )
+        .then((response) => {
+            if (response.data.message === "Token Invalido") {
+                navigate("/");
+                return;
+            }
+
+            if (response.data.status === "true") {
+                if (verMas) {
+                    setTodasLasNotas2((prev) => [...prev, ...response.data.item]);
+                } else {
+                    setTodasLasNotas2(response.data.item);
+                }
+            } else {
+                console.error("Error en la respuesta de la API:", response.data.message);
+            }
+        })
+        .catch((error) => {
+            console.error("Error al hacer la solicitud:", error);
+        })
+        .finally(() => {
+            setCargandoNotas(false);
+        });
+    }
+};
+
     
 
     const handleBotonPaginaClick = (id) => {
@@ -180,15 +194,6 @@ const Notas = () => {
         console.log('Buscando:', searchQuery);
         };
     
-    /// Te devuelve la fecha actual con el formato "YYYY-MM-DD"
-    const obtenerFechaActual = () => {
-        const fecha = new Date();
-        const año = fecha.getFullYear();
-        const mes = String(fecha.getMonth() + 1).padStart(2, '0'); // getMonth() devuelve de 0 a 11, por lo que se suma 1
-        const dia = String(fecha.getDate()).padStart(2, '0');
-        
-        return `${año}-${mes}-${dia}`;
-        }
 
     const dispatch = useDispatch();
     ///api///
@@ -291,7 +296,7 @@ const Notas = () => {
                                 <div className='row'>
                                     <div className='col-auto' style={{width: "70px"}}></div>
                                     <div className='col-4 columna_interaccion' style={{fontSize: "12px", color: "#667085", fontWeight: "bold"}}>Título de la Nota</div>
-                                    <div className='col-1 categoriasNotas text-aling-center'>Estado</div>
+                                    {/* <div className='col-1 categoriasNotas text-aling-center'>Estado</div> */}
                                     <div className='col categoriasNotas d-flex align-items-center justify-content-center'>Categorías</div> 
                                     <div className='col categoriasNotas text-end'>Interacciones</div>
                                 </div>
@@ -316,12 +321,12 @@ const Notas = () => {
                                                 <span className='FechaPubNota'>{nota.f_pub ? formatearFecha(nota.f_pub) : formatearFecha(nota.update_date)}</span>
                                             </div>
                                         </div>
-                                        <div className='col-auto d-flex align-items-center'>
+                                        {/* <div className='col-auto d-flex align-items-center'>
                                             <span className="publicada">
                                                 <img src="./images/puntoVerde.png" alt="Icono Nota" className='' />
                                                 {nota.estado ? " " + nota.estado : " Publicada"}
                                             </span>
-                                        </div>
+                                        </div> */}
                                         <div className='col'>
                                             <span className="categoria_notas">{nota.categorias}</span>
                                         </div>

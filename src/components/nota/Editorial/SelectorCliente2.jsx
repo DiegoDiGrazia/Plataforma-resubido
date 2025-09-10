@@ -17,6 +17,8 @@ import { setClienteNota } from '../../../redux/crearNotaSlice';
 
 const SelectorCliente2= () => {
     const esEditor = useSelector((state) => state.formulario.esEditor)
+    const paisID = useSelector((state) => state.formulario.usuario.id_pais)
+    
     const nombreCliente = useSelector((state) => state.crearNota.cliente)
     const TOKEN = useSelector((state) => state.formulario.token)
     const todosLosClientes = useSelector((state) => state.dashboard.todosLosClientes) || []
@@ -39,7 +41,10 @@ const SelectorCliente2= () => {
             )
             .then((response) => {
                 if (response.data.status === "true") {
-                    let clientes = response.data.item;
+                    let clientes  = response.data.item
+                        if(paisID){
+                            clientes = clientes.filter(cliente => cliente.pais_id === paisID);
+                        }
                     clientes.sort((a, b) => a.name.localeCompare(b.name));
                     dispatch(setTodosLosClientes(clientes));
                 } else {

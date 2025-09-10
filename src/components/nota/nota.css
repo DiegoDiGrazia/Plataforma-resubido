@@ -6,6 +6,10 @@
     height: 100vh; /* Asegurarse de que el contenido ocupe toda la altura de la vista */
 }
 
+.notaNoEditable{
+    background-color: #eee;
+}
+
 
 #nota{
     font-size: 18px;
@@ -78,7 +82,7 @@
     border-radius: 10px;
     outline: none;
     color: #050505;
-    background-image: url('../../../public/images/search.png'); /* Ruta de la imagen */
+    background-image: url('../../../public/images/search.png'); 
     background-repeat: no-repeat;
     background-position: 10px center; /* Posiciona la imagen dentro del input */
     background-size: 20px 20px; /* Tamaño de la imagen */
@@ -91,6 +95,10 @@
 .inputBuscadorNotas:focus() {
     background-color: transparent; /* Hace el fondo transparente al escribir */
     background-image:none;
+}
+.inputBuscadorNotas:not(:placeholder-shown) {
+    background-color: transparent;
+    background-image: none;
 }
 
 .categoriasNotas{

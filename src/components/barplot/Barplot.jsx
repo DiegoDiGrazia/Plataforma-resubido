@@ -14,6 +14,7 @@ import { setImpresionesTotalesInstagram, setImpresionesTotalesGoogle, setImpresi
     setLikesInstagram,
     setCompartidosFacebook,
     setCompartidosInstagram,
+    setBusquedaClicks,
     setReaccionesFacebook, setReaccionesInstagram, 
     resetBarplot} from '../../redux/barplotSlice.js';
 import axios from 'axios';
@@ -111,6 +112,7 @@ const Barplot = ({datosLocales}) => {
                     dispatch(setLikesInstagram(Number(datoMensual.likes_instagram)));
                     dispatch(setReaccionesFacebook(Number(datoMensual.reacciones_facebook)));
                     dispatch(setReaccionesInstagram(Number(datoMensual.reacciones_instagram)));
+                    dispatch(setBusquedaClicks(Number(datoMensual.busqueda_clicks)));
                 }
             } else {
                 console.error('Error en la respuesta de la API:', response.data.message);

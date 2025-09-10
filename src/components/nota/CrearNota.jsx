@@ -35,6 +35,7 @@ import GaleriaImagenes from './componetesNota/GaleriaImagenes';
 import ArchivoPDFParrafo from './componetesNota/ArchivosPdfParrafo';
 import { comprimirPDFaBase64 } from '../../utils/convertirPDFaBase64';
 import CarruselEnNota from './componetesNota/CarruselEnNota';
+import FormFranquicias from './componetesNota/FormFranquicias';
 
 
 const CrearNota = () => {
@@ -104,6 +105,12 @@ const CrearNota = () => {
     saltoDeHistorial.current = true;
     dispatch(setCambiarEstadoActual(copiar(siguiente)));
   };
+
+  const handleAddForm = () => {
+    const valor = window.prompt("Escribí algo:");
+    console.log("Valor ingresado:", valor);
+    dispatch(setContenidoNota(['formFranquicia', valor]));
+  }
 
 
     const toggleButtons = () => {
@@ -244,6 +251,7 @@ const CrearNota = () => {
                                         video: VideosDeParrafo,
                                         archivoPDF: ArchivoPDFParrafo,
                                         carousel: CarruselEnNota,
+                                        formFranquicias: FormFranquicias,
                                         };
 
                                     const Componente = componentes[contenido[0]]; // Obtiene el componente correspondiente
@@ -309,6 +317,11 @@ const CrearNota = () => {
                                             <button onClick={handleRedo} className="botones-nota" title="rehacer">
                                                 <i className="bi bi-arrow-right rounded-circle border border-dark p-2"></i>
                                             </button>
+                                            {esEditor && (
+                                                <button onClick={() => agregarContenido("formFranquicias")} className="botones-nota" title="formulario">
+                                                    <i className="bi bi-journal rounded-circle border border-dark p-2"></i>
+                                                </button>
+                                            )}
                                         </div>
                                     )}
                                 </div>

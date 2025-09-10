@@ -31,6 +31,10 @@ html, body {
 
 .descripcion_boton.closed{
     display: none;
+    padding-top: 5px !important;
+}
+.descripcion_boton{
+    padding-top: 5px !important;
 }
 
 /* Botón cuadrado con forma de flecha */
@@ -197,6 +201,9 @@ html, body {
     text-align: start;
     justify-content: flex-start;
     padding-left: 8px;
+    max-width: 100%;
+    width: 100%;
+    padding-top: 3px;
 }
 
 

@@ -93,18 +93,21 @@ const NotasParaEditorial = () => {
     const [numeroDePagina, setNumeroDePagina] = useState(1); /// para los botones de la paginacion
     const [todasLasNotas2, setTodasLasNotas2] = useState([])
     const [verMasUltimo, setVerMasUltimo] = useState(1)
+    const idPais = useSelector((state) => state.formulario.usuario.id_pais)
     const verMasCantidadPaginacion = 15
     const [traerNotas, setTraerNotas] = useState(true)
     const [cargandoNotas, setCargandoNotas] = useState(true)
     const es_editor = useSelector((state) => state.formulario.es_editor);
+    const id_pais = useSelector((state) => state.formulario.usuario.id_pais);
+    const paises = useSelector((state) =>state.formulario.geo);
+    const nombrePaisUsuario = paises.find(pais => pais.pais_id === id_pais)?.nombre || null;
+
 
 
     let CantidadDeNotasPorPagina = 200;
-
-
     const botones = [
-        { id: 1, nombre: 'Todas las notas (Dashboards)' },
-        { id: 2, nombre: 'Publicadas (Edición)' },
+        { id: 1, nombre: 'Todas las publicaciones' },
+        { id: 2, nombre: 'Publicaciones editables' },
         { id: 3, nombre: 'En revision' },
         { id: 4, nombre: 'Borradores' },
         { id: 5, nombre: 'Eliminadas' },
@@ -121,6 +124,7 @@ const NotasParaEditorial = () => {
     
     const fechaDeMañana = obtenerFechaDeManana(); // Obtener la fecha de mañana al cargar el componente
     const handleFiltroClick_todasLasNotas = useCallback((id, verMas = false) => {
+
     setFiltroSeleccionado(id);
     setCargandoNotas(true);
 
@@ -175,6 +179,7 @@ const NotasParaEditorial = () => {
     
     const handleFiltroClick = useCallback((id, verMas = false) => {
         console.log("searchQuery", searchQuery);
+        console.log(nombrePaisUsuario, idPais, paises)
         setFiltroSeleccionado(id);
         setCargandoNotas(true);
     
@@ -206,6 +211,7 @@ const NotasParaEditorial = () => {
                 limit: limite,
                 offset: verMas ? nuevoOffset : 0,  // este es el valor real que irá a la API
                 titulo: searchQuery,
+                pais: nombrePaisUsuario || "",
             },
             { headers: { 'Content-Type': 'multipart/form-data' } }
         )
@@ -227,7 +233,7 @@ const NotasParaEditorial = () => {
         .finally(() => {
             setCargandoNotas(false);
         });
-    }, [CLIENTE, TOKEN, categorias, verMasUltimo, verMasCantidadPaginacion]);
+    }, [CLIENTE, TOKEN, categorias, verMasUltimo, verMasCantidadPaginacion, nombrePaisUsuario]);
     
     
     const ClickearEnCrearNota = (cliente) => {
@@ -280,7 +286,7 @@ const NotasParaEditorial = () => {
         } else {
             handleFiltroClick_todasLasNotas(filtroSeleccionado); // Llama a la función específica para el caso de id = 1
         }
-    }, [CLIENTE]);
+    }, [CLIENTE, filtroSeleccionado]);
 
     return (
                 <div className="content flex-grow-1 p-3">
@@ -316,7 +322,7 @@ const NotasParaEditorial = () => {
                                             className={`boton_filtro_notas ${
                                                 filtroSeleccionado === boton.id ? 'active' : ''
                                             }`}
-                                            onClick={() => boton.id != 1 ? handleFiltroClick(boton.id) : handleFiltroClick_todasLasNotas(boton.id)}
+                                            onClick={() => setFiltroSeleccionado(boton.id)}
                                         >
                                             {boton.nombre}
                                         </button>
@@ -351,7 +357,7 @@ const NotasParaEditorial = () => {
                                 <div className='row'>
                                     <div className='col-auto' style={{width: "70px"}}></div>
                                     <div className='col-4 columna_interaccion' style={{fontSize: "12px", color: "#667085", fontWeight: "bold"}}>Título de la Nota</div>
-                                    <div className='col-1 categoriasNotas text-aling-center'>Estado</div>
+                                    {/* <div className='col-1 categoriasNotas text-aling-center'>Estado</div> */}
                                     <div className='col categoriasNotas d-flex align-items-center justify-content-center'>Categorías</div> 
                                     { (filtroSeleccionado != 1) ?
                                         <>
@@ -368,12 +374,13 @@ const NotasParaEditorial = () => {
                                 {/* aca va la nota */}
 
                                 {notasEnPaginaActual.map((nota, index) => (
-                                        <div key={nota.id_noti || nota.term_id || `nota-${index}`} className='row pt-1 borderNotas'>
+                                        <div
+                                            key={nota.id_noti || nota.term_id || `nota-${index}`}
+                                            className={`row pt-1 borderNotas ${nota.editable == '1' ? '' : 'notaNoEditable'}`}
+                                            >
                                             {((filtroSeleccionado == 2 || filtroSeleccionado == 3) && ///SOlO EN BOTONES 1 y 2
-                                                !(filtroSeleccionado == 2 && !es_editor))   &&        /// SI NO ES EDITOR NO PUEDE BORRAR NOTAS PUBLICADAS
+                                                !(filtroSeleccionado == 2 && !es_editor)) && nota?.editable == '1'  &&        /// SI NO ES EDITOR NO PUEDE BORRAR NOTAS PUBLICADAS
                                             <div className='col-auto'>
-                                                {/* <BotonEliminarNota id={nota.id} token={TOKEN} />
-                                                <BotonEliminarNota id={nota.id} token={TOKEN} /> */}
                                             <div class="dropdown">
                                                 <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                 </button>
@@ -403,7 +410,7 @@ const NotasParaEditorial = () => {
                                         {filtroSeleccionado === 1 ? (
                                             <Link
                                                 className="link-sin-estilos"
-                                                to={`/verNota`}
+                                                to={nota?.editable == '1' ? `/verNota` : `#`}
                                                 state={{ id: nota.id_noti ? nota.id_noti : nota.term_id, notaABM: nota }}
                                             >
                                                 <div className='row p-0 nombre_plataforma'>
@@ -414,8 +421,10 @@ const NotasParaEditorial = () => {
                                             <Link
                                                 className="link-sin-estilos"
                                                 onClick={(e) => {
+                                                    if(nota?.editable == '1') {
                                                     e.preventDefault();
                                                     editarNota(nota);
+                                                    } 
                                                 }}
                                             >
                                                 <div className='row p-0 nombre_plataforma'>
@@ -428,12 +437,12 @@ const NotasParaEditorial = () => {
                                                 <span className='FechaPubNota'>{nota.f_pub ? formatearFecha(nota.f_pub) : formatearFecha(nota.update_date)}</span>
                                             </div>
                                         </div>
-                                        <div className='col-auto d-flex align-items-center'>
+                                        {/* <div className='col-auto d-flex align-items-center'>
                                             <span className="publicada">
                                                 <img src="./images/puntoVerde.png" alt="Icono Nota" className='' />
                                                 {nota.estado ? " " + nota.estado : " Publicada"}
                                             </span>
-                                        </div>
+                                        </div> */}
                                         <div className='col-2'>
                                             <span className="categoria_notas">{nota.categorias}</span>
                                         </div>

@@ -164,7 +164,7 @@ const crearNotaSlice = createSlice({
     setImagenRRSS: (state, action) => {
       state.imagenRRSS = action.payload;
     },
-    setContenidoNota: (state, action) => {
+    setContenidoNota: (state, action) => {  // aca llega [tipo, contenido]
       state.contenidoNota.push(action.payload);
     },
     setAttachment_video1: (state,action) =>{
@@ -326,24 +326,31 @@ const crearNotaSlice = createSlice({
     setNumeroDeAtachment: (state, action) => {
       state.numeroDeAtachment = action.payload
     },
+
     setSelectedOptionDistribucion: (state, action) => {
       state.con_distribucion = action.payload;
     },
+
     setSumarUnoAlNumeroDeAtachment: (state, action) => {
       state.numeroDeAtachment = state.numeroDeAtachment + 1
     },
+
     setIdAtt: (state, action) => {
       state.id_att = action.payload
     },
+
     setCategoriasActivasEnStore: (state, action) => {
       state.categoriasActivas = action.payload;
     },
+
     setClienteNota: (state,action) => {
       state.cliente = action.payload;
     },
+
     setCambiarEstadoActual: (state,action) => {
       return action.payload;
     },
+
     resetCrearNota: () => initialState,
   }
 });

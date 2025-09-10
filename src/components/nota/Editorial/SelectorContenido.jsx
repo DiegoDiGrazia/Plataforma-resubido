@@ -10,7 +10,6 @@ const SelectorTipoContenido = () => {
     "Comunidad",
     "GestiónND",
     "Otros",
-    "Otros-Demostración",
   ]);
   const tipoContenido = useSelector((state) => state.crearNota.tipoContenido); // Verifica si este es el nombre correcto
   const dispatch = useDispatch(); // CORREGIDO el error tipográfico

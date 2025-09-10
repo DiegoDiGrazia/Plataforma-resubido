@@ -8,6 +8,9 @@ import { useLocation } from 'react-router-dom';
 const Sidebar = ({ estadoActual }) => {
   const esEditor = useSelector((state) => state.formulario.es_editor);
   const cliente = useSelector((state) => state.formulario.cliente);
+  const PerfilUsuario = useSelector((state) => state.formulario.usuario.perfil);
+
+
   const location = useLocation();
 
   estadoActual = location.pathname.split('/')[1] || 'dashboard'; // Obtiene el estado actual desde la URL
@@ -24,14 +27,15 @@ const Sidebar = ({ estadoActual }) => {
 
 
   // Función para generar botones del sidebar
-  const renderSidebarButton = (estado, url, icono, texto) => (
+  const renderSidebarButton = (estado, url, icono, texto, iconoBootstrap) => (
     <li
       className={`${
         estadoActual === estado ? 'boton_sidebar_clickeado' : 'boton_sidebar_Noclickeado'
       } ${isOpen ? 'openBoton' : 'closedBoton'}`}
     >
       <Button className="botonSidebar" variant="none" onClick={() => handleClickBotonSidebar(url)}>
-        <img src={icono} alt={`Icono ${texto}`} className="icon me-2" />
+        {/* <img src={icono} alt={`Icono ${texto}`} className="icon me-2" /> */}
+        <i class={`fs-4 mb-4 ${iconoBootstrap}`} style={{color: '#3e4658ff', marginRight: '5px', bottom: '10px'}}></i>
         <span className={`descripcion_boton ${isOpen ? 'open' : 'closed'}`}>{texto}</span>
       </Button>
     </li>
@@ -72,23 +76,33 @@ const Sidebar = ({ estadoActual }) => {
                 'dashboard',
                 'dashboard',
                 '/images/barchar_icon.png',
-                'Dashboard'
+                'Dashboard',
+                'bi bi-bar-chart-fill'
               )}
 
             {esEditor === false
-              ? renderSidebarButton('notas', 'notas', '/images/notas_icon.png', 'Notas')
+              ? renderSidebarButton('notas', 'notas', '/images/notas_icon.png', 'Notas', 'bi bi-stack')
               : renderSidebarButton(
                   'notasEditorial',
                   'notasEditorial',
                   '/images/notas_icon.png',
-                  'Notas'
+                  'Notas',
+                  'bi bi-stack'
                 )}
 
             {renderSidebarButton(
               'autoEntrevistas',
               'autoEntrevistas',
               '/images/auto_entrevistas_icon.png',
-              'Auto-entrevistas'
+              'Auto-entrevistas',
+              'bi bi-mic-fill'
+            )}
+            {PerfilUsuario == '1' && renderSidebarButton(
+              'Administrador',
+              'administrador',
+              '/images/auto_entrevistas_icon.png',
+              'Administrador',
+              'bi bi-gear-fill'
             )}
             {/* {renderSidebarButton(
               'notificaciones',
@@ -102,40 +116,16 @@ const Sidebar = ({ estadoActual }) => {
                 'soporte-y-ayuda',
                 'soporte-y-ayuda',
                 '/images/ayuda_icon.png',
-                'Ayuda y soporte'
+                'Ayuda y soporte',
+                'bi bi-headset'
               )}
-              <li
-                className={`${
-                  estadoActual === 'mi-perfil'
-                    ? 'boton_sidebar_clickeado'
-                    : 'boton_sidebar_Noclickeado'
-                } ${isOpen ? 'openBoton' : 'closedBoton'} mb-4`}
-              >
-                <Button
-                  className="botonSidebar mb-4"
-                  variant="none"
-                  onClick={() => handleClickBotonSidebar('mi-perfil')}
-                  style={{
-                    position: 'relative',
-                    right: '8px',
-                  }}
-                >
-                  <img
-                    src="/images/miPerfilIconMini.png"
-                    alt="Icono Mi perfil"
-                    className="icon me-2"
-                  />
-                  <span
-                    style={{
-                      position: 'relative',
-                      top: '5px',
-                    }}
-                    className={`descripcion_boton ${isOpen ? 'open' : 'closed'} text-center`}
-                  >
-                    Mi perfil
-                  </span>
-                </Button>
-              </li>
+              {renderSidebarButton(
+                'mi-perfil',
+                'mi-perfil',
+                '',
+                'Mi perfl',
+                'bi bi-person-fill'
+              )}
             </ul>
           </ul>
         </div>

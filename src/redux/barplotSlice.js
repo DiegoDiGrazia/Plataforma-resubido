@@ -21,6 +21,7 @@ const initialState = {
   impresionesTotalesFacebook: [],
   impresionesTotalesGoogle: [],
   impresionesTotalesInstagram: [],
+  busqueda_clicks: [],
 };
 
 const barplotSlice = createSlice({
@@ -42,6 +43,9 @@ const barplotSlice = createSlice({
     setUsuariosTotalesGoogle: (state, action) => {
       state.usuariosTotalesGoogle.push(action.payload);
     },
+    setBusquedaClicks: (state, action) => {
+      state.busqueda_clicks.push(action.payload);
+    },  
     setUsuariosTotales: (state, action) => {
       state.usuariosTotales.push(action.payload);
     },
@@ -99,6 +103,7 @@ const barplotSlice = createSlice({
       state.impresionesTotalesFacebook = [];
       state.impresionesTotalesGoogle = [];
       state.impresionesTotalesInstagram = [];
+      state.busqueda_clicks = [];
     },
   },
 });
@@ -110,6 +115,7 @@ export const {
   setUsuariosTotales,
   setImpresionesTotalesGoogle,
   setUsuariosTotalesMeta,
+  setBusquedaClicks,
   resetBarplot,
   setImpresionesTotalesInstagram,
   setImpresionesTotalesFacebook,

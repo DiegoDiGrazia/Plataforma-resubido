@@ -12,7 +12,7 @@ const LayoutConSidebar = () => {
                 <div className="container-fluid sinPadding">
                 <GuardarUbicacionDeCliente id_cliente={id_cliente}/>
                 <div className="d-flex h-100">
-                    <Sidebar estadoActual={"dashboard"} className='no-print' />
+                    <Sidebar className='no-print' />
                     <div className="content flex-grow-1">
                         <Outlet />
                     </div>

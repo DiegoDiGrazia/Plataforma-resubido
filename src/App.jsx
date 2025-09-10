@@ -8,6 +8,9 @@ import '../src/components/login/Formulario.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ArchivoProvider } from "./context/archivoContext";
 import LayoutConSidebar from './LayoutConSidebar'; // Ajustá si está en otra carpeta
+import Administrador from './components/administrador/administrador';
+import UsuariosAdmin from './components/administrador/gestores/UsuariosAdmin';
+import PerfilesAdmin from './components/administrador/gestores/PerfilesAdmin';
 
 // 👇 Acá van tus componentes con lazy
 const Formulario = lazy(() => import('./components/login/Formulario'));
@@ -38,6 +41,12 @@ function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/crearNota" element={<CrearNota />} />
               <Route path="/publicarNota" element={<PublicarNota />} />
+              <Route path="/administrador" element={<Administrador />} />
+              <Route path="/usuarios" element={<UsuariosAdmin />} />
+              <Route path="/perfiles" element={<PerfilesAdmin />} />
+
+
+
               <Route path="/mi-perfil" element={<Perfil />} />
               <Route path="/autoEntrevistas" element={<AutoEntrevistasVideoAsk />} />
               <Route path="/soporte-y-ayuda" element={<Soporte />} />

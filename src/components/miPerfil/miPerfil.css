@@ -90,6 +90,24 @@
 .miPerfilContainer .card-title{
     font-size: 16px;
     font-weight: bold;
+    width: auto;
+    justify-content: space-between;
+    display: flex;
+    }
+
+
+.miPerfilContainer .card-title button{
+    text-decoration: none;
+    margin-left: auto;
+    z-index: 1000;
+    background-color: transparent;
+    border-radius: none;
+    border: none;
+    
+}
+.miPerfilContainer .card-title button:hover{
+    color: #FF653B;
+    
 }
 
 .iframeTutorial{

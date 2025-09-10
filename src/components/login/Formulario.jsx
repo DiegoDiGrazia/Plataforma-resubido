@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Formulario.css';
-import { updateEmail, updateContraseña, updateToken, updateCliente, updateIdCliente, updateEsEditor, updateUsuario, updateIdUsuario, resetFormulario } from '../../redux/formularioSlice';
+import { updateEmail, updateGeo, updateContraseña, updateToken, updateCliente, updateIdCliente, updateEsEditor, updateUsuario, updateIdUsuario, resetFormulario } from '../../redux/formularioSlice';
+import { obtenerGeo } from '../administrador/gestores/apisUsuarios';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,14 +11,17 @@ const Formulario = () => {
     const dispatch = useDispatch();
     const [email, setEmail] = useState('');
     const [contraseña, setContraseña] = useState('');
+    const [geo, setGeo] = useState({paises: []});
     const navigate = useNavigate();
     const CLIENTE_DEFAULT = ""
     const ID_CLIENTE_DEFAULT = ""
     const [contraseñaIncorrecta, setContraseñaIncorrecta] = useState(false)
 
+    useEffect(() => {
+        obtenerGeo().then(setGeo);
+    }, []);
     const handleLogin = async (e) => {
         e.preventDefault();
-
         try {
             const response = await axios.post("https://panel.serviciosd.com/api/login", {
                 usuario: email,
@@ -40,6 +44,7 @@ const Formulario = () => {
                 dispatch(updateEsEditor(false))
                 dispatch(updateUsuario(response.data.item))
                 dispatch(updateIdUsuario(response.data.id))
+                dispatch(updateGeo(geo.paises))
 
                 if(!response.data.item.cliente){
                     console.log("entre porque no tiene cliente")

@@ -111,7 +111,7 @@ const VerNota = () => {
                     </div>
                         <div className='row margin_vn '>
                             <div className='col imagen_col'>
-                                    <img src={Nota.imagen.includes('noticiasd') ? Nota.imagen : "https://noticiasd.com/img" + Nota.imagen} alt="Icono 1" className="imagen_nota" />
+                                    <img src={Nota.imagen.includes('noticiasd') ? Nota.imagen : "https://static.noticiasd.com/img" + Nota.imagen} alt="Icono 1" className="imagen_nota" />
                             </div>
                             <div className='col-6 d-flex flex-column' style={{ height: "200px" }}>
                                 <div className='row vn_titulo'>{Nota.titulo}</div>
