@@ -36,6 +36,7 @@ import ArchivoPDFParrafo from './componetesNota/ArchivosPdfParrafo';
 import { comprimirPDFaBase64 } from '../../utils/convertirPDFaBase64';
 import CarruselEnNota from './componetesNota/CarruselEnNota';
 import FormFranquicias from './componetesNota/FormFranquicias';
+import ImagePickerModal from './componetesNota/ImagePickerModal';
 
 
 const CrearNota = () => {
@@ -50,6 +51,7 @@ const CrearNota = () => {
     const [showButtons, setShowButtons] = useState(false);
     const inputFileRef = useRef(null);
     const inputFileRefArchivoPDF = useRef(null);
+    const [show, setShow] = useState(false);
 
     const inputVideoRef = useRef(null);
     const { setArchivo } = useContext(ArchivoContext);
@@ -142,7 +144,9 @@ const CrearNota = () => {
             agregarContenido('archivoPDF', file)
         }
     }
-
+    const agregarImagenDeElCliente = () => {
+        setShow(true)
+    }
     useEffect(() => {
         const timestamp = Date.now(); // Obtiene el timestamp actual
         dispatch(setIdAtt(idUsuario + "_" + timestamp));
@@ -258,6 +262,11 @@ const CrearNota = () => {
 
                                     return Componente ? <Componente key={index} indice={index} numeroDeAtachmentAUsar = {numeroDeAtachmentAUsar} /> : null; // Renderiza el componente si existe
                                 })}
+                                <ImagePickerModal
+                                    isOpen={show}
+                                    onClose={() => setShow(false)}
+                                    fetchUrl="https://panel.serviciosd.com/app_imagenes_por_cliente" // URL del endpoint que devuelve URLs
+                                />
 
                                 {/* BOTONERA AGREGAR CONTENIDO */}
                                 <div className="containerButton">
@@ -317,6 +326,9 @@ const CrearNota = () => {
                                             <button onClick={handleRedo} className="botones-nota" title="rehacer">
                                                 <i className="bi bi-arrow-right rounded-circle border border-dark p-2"></i>
                                             </button>
+                                            <button onClick={agregarImagenDeElCliente} className="botones-nota" title="rehacer">
+                                                <i className="bi bi-collection rounded-circle border border-dark p-2"></i>
+                                            </button>
                                             {esEditor && (
                                                 <button onClick={() => agregarContenido("formFranquicias")} className="botones-nota" title="formulario">
                                                     <i className="bi bi-journal rounded-circle border border-dark p-2"></i>
@@ -374,6 +386,7 @@ const CrearNota = () => {
                             </div>
                         </Modal.Footer>
                     </Modal>
+
                 </div>
     );
 };

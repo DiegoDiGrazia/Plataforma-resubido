@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 
-const SelectorConBuscador = ({ title, options, selectedOption, onSelect, onClear }) => {
+const SelectorConBuscador = ({ title, options = [], selectedOption, onSelect, onClear }) => {
     const [searchQuery, setSearchQuery] = useState(''); // Estado para el texto del buscador
 
     // Filtrar las opciones según el texto ingresado
-    const filteredOptions = options.filter(option =>
-        option.nombre.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredOptions = (options || []).filter(option => {
+  const text = option?.nombre ?? option?.name ?? '';
+  return text.toLowerCase().includes(searchQuery.toLowerCase());
+});
 
     return (
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: "10px" }}>
@@ -16,7 +17,7 @@ const SelectorConBuscador = ({ title, options, selectedOption, onSelect, onClear
                 type="button" 
                 data-bs-toggle="dropdown"
             >
-                {selectedOption?.nombre || "Ninguno"}
+                {selectedOption?.nombre || selectedOption?.name || "Ninguno"}
             </button>
             <ul className="dropdown-menu listaClientes">
                 {/* Campo de búsqueda */}
@@ -45,7 +46,7 @@ const SelectorConBuscador = ({ title, options, selectedOption, onSelect, onClear
                             className="dropdown-item" 
                             onClick={() => onSelect(option)}
                         >
-                            {option.nombre}
+                            {option.nombre || option.name}
                         </button>
                     </li>
                 ))}
