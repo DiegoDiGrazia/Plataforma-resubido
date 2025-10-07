@@ -13,10 +13,10 @@ function reduceBykeyCategorias(lista_medios) {
         if (!sitios[medio.categoria]) {
             sitios[medio.categoria] = {
                 ...medio,
-                impresiones: Number(medio.impresiones)
+                impresiones: Number(medio.interacciones)
             };
         } else {
-            sitios[medio.categoria].impresiones += Number(medio.impresiones);
+            sitios[medio.categoria].interacciones += Number(medio.interacciones);
         }
     }
     return sitios;
@@ -32,12 +32,19 @@ const CategoriasMasRelevantes = ({datosLocales}) => {
     let cantidad_meses = seleccionPorFiltro(FiltroActual);
 
     useEffect(() => {
+        let periodos = periodos_api.split(",");
+        let fecha_inicio_creacion = `${periodos[0]}-01`;
+        let [anio, mes] = periodos[periodos.length - 1].split("-");
+        let ultimo_dia = new Date(anio, mes, 0).getDate(); // mes siguiente (implícito) y día 0 => último día del mes anterior
+        let fecha_fin_creacion = `${anio}-${mes}-${ultimo_dia.toString().padStart(2, '0')}`;
         axios.post(
             "https://panel.serviciosd.com/app_obtener_categorias",
             {
                 cliente: nombreCliente,
                 periodos: periodos_api,
-                token: token
+                token: token,
+                fecha_fin_creacion: fecha_fin_creacion,
+                fecha_inicio_creacion: fecha_inicio_creacion
             },
             {
                 headers: {
@@ -63,7 +70,7 @@ const CategoriasMasRelevantes = ({datosLocales}) => {
         todasLasCategorias.push(...mes.categoria);
     }
     const categoriasSinRepetir = Object.values(reduceBykeyCategorias(todasLasCategorias));
-    const listaTresCategorias = categoriasSinRepetir.sort((categoriaA, categoriaB) => Number(categoriaB.impresiones) - Number(categoriaA.impresiones)).slice(0, 3);
+    const listaTresCategorias = categoriasSinRepetir.sort((categoriaA, categoriaB) => Number(categoriaB.interacciones) - Number(categoriaA.interacciones)).slice(0, 3);
 
     const renderCategoria = (categoria) => (
         <div className='row pt-1' key={categoria.categoria}>
@@ -73,7 +80,7 @@ const CategoriasMasRelevantes = ({datosLocales}) => {
                 </div>
             </div>
             <div className='col totales_widget impresionesCategorias123'>
-                <p>{formatNumberMiles(categoria.impresiones)}</p>
+                <p>{formatNumberMiles(categoria.interacciones)}</p>
             </div>
         </div>
     );

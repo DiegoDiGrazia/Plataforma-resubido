@@ -43,7 +43,15 @@ const InteraccionPorNota = ({datosLocales}) => {
     const cantidad_meses = seleccionPorFiltro(FiltroActual);
     
     useEffect(() => {
-        axios.post("https://panel.serviciosd.com/app_obtener_notas", { cliente: nombreCliente, periodos: periodos_api, token: token }, {
+        let periodos = periodos_api.split(",");
+        let fecha_inicio_creacion = `${periodos[0]}-01`;
+        let [anio, mes] = periodos[periodos.length - 1].split("-");
+        let ultimo_dia = new Date(anio, mes, 0).getDate(); // mes siguiente (implícito) y día 0 => último día del mes anterior
+        let fecha_fin_creacion = `${anio}-${mes}-${ultimo_dia.toString().padStart(2, '0')}`;
+        axios.post("https://panel.serviciosd.com/app_obtener_notas", { cliente: nombreCliente, periodos: periodos_api, token: token, 
+                                                                        fecha_inicio_creacion: fecha_inicio_creacion,
+                                                                        fecha_fin_creacion: fecha_fin_creacion
+                                                                     }, {
             headers: { 'Content-Type': 'multipart/form-data' }
         })
         .then(response => {
@@ -64,7 +72,29 @@ const InteraccionPorNota = ({datosLocales}) => {
     const notasAUsar = notasLocales ? notasLocales : notasDeApi;
     const meses = notasAUsar.slice(cantidad_meses);
     let todas_las_notas = meses.flatMap(mes => mes.notas);
-    const listaTresNotas = todas_las_notas.sort((a, b) => Number(b.total) - Number(a.total)).slice(0, 3);
+    console.log("todas_las_notas", todas_las_notas);
+
+    const agrupado = Object.values(
+    todas_las_notas.reduce((acc, item) => {
+        const id = item.id_noti;
+
+        if (!acc[id]) {
+        acc[id] = { ...item, total: Number(item.total) }; // convertimos a número
+        } else {
+        acc[id].total += Number(item.total); // sumamos como número
+        }
+
+        return acc;
+    }, {})
+    );
+
+    console.log("agrupado", agrupado);
+
+    const listaTresNotas = agrupado
+    .sort((a, b) => b.total - a.total)
+    .slice(0, 3);
+
+    console.log("listaTresNotas", listaTresNotas);
 
     return (
         <div className="container-fluid">

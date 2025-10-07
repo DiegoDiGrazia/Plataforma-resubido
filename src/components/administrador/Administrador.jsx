@@ -19,6 +19,11 @@ const DEF = {
         "descripcion": "Gestiona los perfiles de los usuarios, asignando roles y permisos específicos.",
         "url": "perfiles",
         "titulo": "Perfil"
+        },
+    "distribucion": {
+        "descripcion": "Gestiona la distribucion del contenido.",
+        "url": "distribucion",
+        "titulo": "Distribucion"
         }
     }
 

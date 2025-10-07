@@ -104,6 +104,13 @@ const Sidebar = ({ estadoActual }) => {
               'Administrador',
               'bi bi-gear-fill'
             )}
+            {PerfilUsuario == '1' && renderSidebarButton(
+              'distribucion',
+              'distribucion',
+              '/images/auto_entrevistas_icon.png',
+              'Distribucion',
+              'bi bi-clipboard2-check-fill'
+            )}
             {/* {renderSidebarButton(
               'notificaciones',
               'notificaciones',
