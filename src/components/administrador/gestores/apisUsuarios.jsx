@@ -62,3 +62,9 @@ export const obtenerNotasDeGeneraciones = (token, cliente = '', desde, hasta,
   fetchData("https://panel.serviciosd.com/app_obtener_noticias_abm", token, {
     cliente, desde, hasta, categoria, limit, offset, titulo, pais
 });
+
+
+export const obtenerPlanesMarketing = (token, desde, hasta) =>
+  fetchData("https://panel.serviciosd.com/app_obtener_planes_marketing", token, {
+    desde, hasta
+});

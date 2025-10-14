@@ -26,10 +26,6 @@ const DEF = {
         "titulo": "Distribucion"
         }
     }
-
-
-
-
 const Administrador = () => {
     const [searchQuery, setSearchQuery] = useState('');
 

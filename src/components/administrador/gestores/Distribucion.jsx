@@ -5,40 +5,80 @@ import "../../miPerfil/miPerfil.css";
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import ModalMensaje from '../gestores/ModalMensaje';
-import { obtenerUsuarios, obtenerClientes, obtenerPerfiles, obtenerGeo, obtenerNotasDeGeneraciones } from './apisUsuarios'; // Importa la función para obtener usuarios
+import { obtenerUsuarios, obtenerClientes, obtenerPerfiles, obtenerGeo, obtenerNotasDeGeneraciones, obtenerPlanesMarketing } from './apisUsuarios'; // Importa la función para obtener usuarios
+import { use } from 'react';
 
-const usuarioVacio = {
-  celular_reporte: "",
-  clave: "",
-  cliente: "",
-  email: "",
-  email_reporte: "",
-  id: "0",
-  nombre: "",
-  term_id: "",
-  tipo: "1",
-  id_cliente: '',
-  reporte_acceso: "0",
-  reporte_whatsapp: "0",
-  reporte_email: "0",
-  id_pais: null,
-};
 
-function generarPassword(longitud = 8) {
-  const caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
-  let password = "";
-  for (let i = 0; i < longitud; i++) {
-    const indice = Math.floor(Math.random() * caracteres.length);
-    password += caracteres[indice];
-  }
-  return password;
+const obtenerMesActual = () => {
+  const hoy = new Date();
+  const año = hoy.getFullYear();
+  const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+  return `${año}-${mes}`;
 }
 
+const obtenerColorDeEstadoDistribucion = (campoAChequear, datosDelCiente) => {
+
+  const notas = datosDelCiente['notas'].filter(n => n[campoAChequear] != null);
+  const totalDeNotasDistribuidas = notas.length;
+  const numeroDeNotasADistribuir = Number(datosDelCiente['plan']['notas_x_mes']);
+  if(totalDeNotasDistribuidas === 0 && numeroDeNotasADistribuir != 0){
+    return 'text-danger'
+  }
+  else if(totalDeNotasDistribuidas < numeroDeNotasADistribuir){
+    return 'text-warning'
+  }
+  else if(totalDeNotasDistribuidas >= numeroDeNotasADistribuir){
+    return 'text-success'
+  }
+  return 'text-success';
+}
+
+function agregarPlanAlDiccionarioDeNotas(dicNotas, clientes, planes) {
+  const nuevoDic = {};
+
+  for (const [nombreCliente, notas] of Object.entries(dicNotas)) {
+    // Buscar municipio por nombre
+    const municipio = clientes.find(m => m.name === nombreCliente);
+
+    // Buscar plan correspondiente al municipio
+    const plan = municipio
+      ? planes.find(p => p.id === municipio.id_plan)
+      : null;
+
+    // Armar nueva estructura
+    nuevoDic[nombreCliente] = {
+      notas: notas,
+      plan: plan || null
+    };
+  }
+
+  return nuevoDic;
+}
+
+const agruparNotasPorCliente = (notas) => {
+  if(!notas || notas.length === 0) return {};
+  return notas.reduce((acc, nota) => {
+    if(!nota.fecha_vencimiento){
+      return acc;
+    }
+    if (!acc[nota.cliente]) {
+      acc[nota.cliente] = [nota];
+    } else {
+      acc[nota.cliente].push(nota);
+    }
+    return acc;
+  }, {});
+};
 
 const DistribucionAdmin = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [clientes, setClientes] = useState([]);
-  const [notasGeneraciones, setNotasGeneraciones] = useState([]);
+  const [fechaDesde, setFechaDesde] = useState(obtenerMesActual());
+  const [fechaHasta, setFechaHasta] = useState(obtenerMesActual());
+  const [pendientes, setPendientes] = useState('GAM o Meta');
+  const [planes, setPlanes] = useState([]);
+  const [notasGeneraciones, setNotasGeneraciones] = useState({});
+  const [notasGeneracionesAgrupadas, setNotasGeneracionesAgrupadas] = useState({});
   const [geo, setGeo] = useState([]);
   const [llevaCliente, setLlevaCliente] = useState(false);
   const [limitadoAJurisdiccion, setLimitadoAJurisdiccion] = useState(false);
@@ -51,33 +91,39 @@ const DistribucionAdmin = () => {
   const itemsPerPage = 10;  
   const TOKEN = useSelector((state) => state.formulario.token);
 
-  // Cargar usuarios
   useEffect(() => {
     obtenerUsuarios(TOKEN).then(setUsuarios);
     obtenerClientes(TOKEN).then(setClientes);
-    obtenerNotasDeGeneraciones(TOKEN).then(setNotasGeneraciones);
+    obtenerPlanesMarketing(TOKEN, fechaDesde+'-01', fechaHasta+'-31').then(setPlanes);
 }, [TOKEN]);
 
-  // Filtrar por búsqueda
-  const filteredUsuarios = useMemo(() => {
-    return usuarios.filter((item) =>  //-- Cambia esto a usuarios cuando tengas la API
-      item.nombre.toLowerCase().includes(search.toLowerCase()) ||
-      item.email.toLowerCase().includes(search.toLowerCase())
-    );
-  }, [search, usuarios]);
+useEffect(() => {
+  if(planes.length === 0 || clientes.length === 0) return;
+  obtenerNotasDeGeneraciones(TOKEN, '', '', '', 'PUBLICADO', '150', '0', '', '')
+    .then((res) => {
+      const diccionarioDeCLientesConSusNotas = agruparNotasPorCliente(res);
+      const agrupadasConPlanes = agregarPlanAlDiccionarioDeNotas(diccionarioDeCLientesConSusNotas, 
+                                                                 clientes, planes);
+      console.log('agrupadasConPlanes: ',agrupadasConPlanes);
+      setNotasGeneracionesAgrupadas(agrupadasConPlanes);
+      setNotasGeneraciones(agrupadasConPlanes);
+    });
+}, [TOKEN, clientes, planes]);
 
-  const totalPages = Math.ceil(filteredUsuarios.length / itemsPerPage);
+const filteredClientes = useMemo(() => {
+  const allKeys = Object.keys(notasGeneraciones || {});
+  if (!search) return allKeys;
+  return allKeys.filter((clave) =>
+    clave.toLowerCase().includes(search.toLowerCase())
+  );
+}, [search, notasGeneraciones]);
 
-  const pagedItems = useMemo(() => {
-    const start = (page - 1) * itemsPerPage;
-    return filteredUsuarios.slice(start, start + itemsPerPage);
-  }, [filteredUsuarios, page]);
+const totalPages = Math.ceil(filteredClientes.length / itemsPerPage);
 
-  const goToPage = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setPage(newPage);
-    }
-  };
+const pagedClientes = useMemo(() => {
+  const start = (page - 1) * itemsPerPage;
+  return filteredClientes.slice(start, start + itemsPerPage);
+}, [filteredClientes, page]);
 
   useEffect(() => {
     setPage(1);
@@ -176,7 +222,10 @@ const generarContrasenia= (id, contrasenia) => {
     });
 };
 
-
+const goToPage = (newPage) => {
+  if (newPage < 1 || newPage > totalPages) return;
+  setPage(newPage);
+};
 
   return (
     <div className="content flex-grow-1 crearNotaGlobal">
@@ -194,8 +243,35 @@ const generarContrasenia= (id, contrasenia) => {
       </div>
       {/* Búsqueda */}
       <div className='row miPerfilContainer soporteContainer mt-4 p-0 mb-3'>
-        <div className='col buscadorNotas'> 
-          <button className="mb-2 btn btn-primary" onClick={() => handleEditClick(usuarioVacio)}>Crear nuevo usuario</button>
+        <div className='col buscadorNotas d-flex align-items-center gap-3 justify-content-between'> 
+          {/* <button className="mb-2 btn btn-primary" onClick={() => handleEditClick(usuarioVacio)}>Crear nuevo usuario</button> */}
+          <span style={{ fontSize: "14px"}}>Vencimiendo desde:
+          <input 
+              type="month" 
+              value={fechaDesde} 
+              onChange={(e) => setFechaDesde(e.target.value)} 
+              style={{ fontSize: "14px"}}
+          />
+          </span>
+          <span style={{ fontSize: "14px"}}>Vencimiento hasta:
+            <input 
+                type="month" 
+                value={fechaHasta} 
+                onChange={(e) => setFechaHasta(e.target.value)} 
+                style={{ fontSize: "14px"}}
+            />
+          </span>
+          <div className="dropdown">
+            <a className="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              {pendientes}
+            </a>
+            <ul className="dropdown-menu">
+              <li><button className="dropdown-item" onClick={() => setPendientes('Todos los casos')} >Todos los casos</button></li>
+              <li><button className="dropdown-item" onClick={() => setPendientes('solo en Meta')} >solo en Meta</button></li>
+              <li><button className="dropdown-item" onClick={() => setPendientes('solo en GAM')} >solo en GAM</button></li>
+              <li><button className="dropdown-item" onClick={() => setPendientes('GAM o Meta')} >GAM o Meta</button></li>
+            </ul>
+          </div>
           <form className='buscadorNotasForm'>
             <input
               className='inputBuscadorNotas'
@@ -212,66 +288,180 @@ const generarContrasenia= (id, contrasenia) => {
       <div className='row miPerfilContainer soporteContainer mt-4 p-0'>
         <div>
           <ul className="list-group">
-            {pagedItems.length === 0 ? (
+            {Object.keys(notasGeneraciones).length === 0 ? (
               <li className="list-group-item">No hay resultados.</li>
             ) : (
-              pagedItems.map((item) => (
-                <li key={item.id} className="list-group-item">
-                  <div className='row pt-0'>
-                    <div className='col-2'>
-                      <div className='row pt-0'>
-                        <button
-                          className="btn btn-link p-0 text-start"
-                          onClick={() => handleEditClick(item)}
+              <div className="accordion" id="accordionExample">
+                {pagedClientes.map((cliente, index) => {
+                  const collapseId = `collapse-${index}`;
+                  const headingId = `heading-${index}`;
+                  const data = notasGeneracionesAgrupadas[cliente];
+                  if (!data) return null;
+
+                  return (
+                    <li key={cliente} className="list-group-item p-0">
+                      <div className="accordion-item">
+                        <h2 className="accordion-header" id={headingId}>
+                          <button
+                            className="accordion-button collapsed"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target={`#${collapseId}`}
+                            aria-expanded="false"
+                            aria-controls={collapseId}
+                          >
+                            <div className="row pt-0 w-100">
+                              <div className="col-2">
+                                <div className="row pt-0">
+                                  <button
+                                    className="btn btn-link p-0 text-start"
+                                    onClick={() => handleEditClick(cliente)}
+                                  >
+                                    <strong>{cliente}</strong>
+                                  </button>
+                                </div>
+                                <div className="row p-1">
+                                  <span>
+                                    {'Distribuibles: ' + data.plan.notas_x_mes}
+                                  </span>
+                                </div>
+                                <div className="row p-1">
+                                  <span>
+                                    {'Por Publicar: ' +
+                                      (Number(data.plan.notas_x_mes) -
+                                        data.notas.length)}
+                                  </span>
+                                </div>
+                              </div>
+
+                              <div className="col-3">
+                                <div className="row pt-0">
+                                  <strong>Meta</strong>
+                                </div>
+                                <div className="row p-1">
+                                  <span>
+                                    {'Distribuidas: ' +
+                                      data.notas.filter(
+                                        (n) => n.primer_dato_en_meta != null
+                                      ).length}
+                                  </span>
+                                </div>
+                                <div className="row p-1">
+                                  <span>
+                                    {'Vencidas: ' +
+                                      data.notas.filter(
+                                        (n) =>
+                                          new Date(n.fecha_vencimiento) < new Date() &&
+                                          n.primer_dato_en_meta != null
+                                      ).length}
+                                  </span>
+                                </div>
+                              </div>
+
+                              <div className="col-3">
+                                <div className="row pt-0">
+                                  <strong>DV360</strong>
+                                </div>
+                                <div className="row p-1">
+                                  <span>
+                                    {'Distribuidas: ' +
+                                      data.notas.filter(
+                                        (n) => n.primer_dato_en_360 != null
+                                      ).length}
+                                  </span>
+                                </div>
+                                <div className="row p-1">
+                                  <span>
+                                    {'Vencidas: ' +
+                                      data.notas.filter(
+                                        (n) =>
+                                          new Date(n.fecha_vencimiento) < new Date() &&
+                                          n.primer_dato_en_360 != null
+                                      ).length}
+                                  </span>
+                                </div>
+                              </div>
+
+                              <div className="col-3">
+                                <div className="row p-1">
+                                  <span>
+                                    <i
+                                      className={
+                                        'bi bi-meta fs-2 ' +
+                                        obtenerColorDeEstadoDistribucion(
+                                          'primer_dato_en_meta',
+                                          data
+                                        )
+                                      }
+                                    ></i>
+                                  </span>
+                                </div>
+                                <div className="row p-1">
+                                  <span>
+                                    <i
+                                      className={
+                                        'bi bi-google fs-2 ' +
+                                        obtenerColorDeEstadoDistribucion(
+                                          'primer_dato_en_360',
+                                          data
+                                        )
+                                      }
+                                    ></i>
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </button>
+                        </h2>
+
+                        <div
+                          id={collapseId}
+                          className="accordion-collapse collapse"
+                          aria-labelledby={headingId}
+                          data-bs-parent="#accordionExample"
                         >
-                          <strong>{'Nombre del cliente'}</strong>
-                        </button>
+                          <div className="accordion-body">
+                            <ul className="list-group">
+                              {data.notas.map((nota) => (
+                                <li key={nota.id} className="list-group-item">
+                                  <div className="col-3">
+                                    <div className="row p-1">
+                                      <span>
+                                        <a href={`https://www.noticiasd.com/${nota.term_id}`} target="_blank" rel="noopener noreferrer">
+                                          {nota.term_id}
+                                        </a>  
+                                      </span>
+                                    </div>
+                                    <div className="row p-1">
+                                      <span>
+                                        {'Publicacion: ' + nota.f_pub}
+                                      </span>
+                                    </div>
+                                    <div className="row p-1">
+                                      <span>
+                                        {'Ultima version: ' + nota.update_date}
+                                      </span>
+                                    </div>
+                                    <div className="row p-1">
+                                      <span>
+                                        {'Fecha vencimiento: ' + nota.fecha_vencimiento}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
                       </div>
-                      <div className='row p-1'>
-                        <span> distribuibles: xxx</span>
-                      </div>
-                      <div className='row p-1'>
-                        <span> Por publicar: xxx</span>
-
-                      </div>
-                    </div>
-                    <div className='col-3'>
-                      <div className='row pt-0'>
-                          <strong>{'Meta'}</strong>
-                      </div>
-                      <div className='row p-1'>
-                        <span> distribuibles: xxx</span>
-                      </div>
-                      <div className='row p-1'>
-                        <span> Por publicar: xxx</span>
-
-                      </div>
-                    </div>
-                    <div className='col-3'>
-                      <div className='row pt-0'>
-                          <strong>{'DV 360'}</strong>
-                      </div>
-                      <div className='row p-1'>
-                        <span> distribuibles: xxx</span>
-                      </div>
-                      <div className='row p-1'>
-                        <span> Por publicar: xxx</span>
-
-                      </div>
-                    </div>
-                    <div className='col-3'>
-                      <div className='row pt-0'>
-                          <strong>{'Meta'}</strong>
-                      </div>
-                      <div className='row p-1'>
-                        <span> Por publicar: xxx</span>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-              ))
+                    </li>
+                  );
+                })}
+              </div>
             )}
           </ul>
+
+
 
           {/* Paginación */}
           <div className="d-flex justify-content-center mt-3">
@@ -294,406 +484,6 @@ const generarContrasenia= (id, contrasenia) => {
         </div>
       </div>
 
-      {/* Modal */}
-      <div className="modal fade" id="editModal" tabIndex="-1" aria-hidden="true">
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title">
-                {selectedUser ? "Editar Usuario" : "Nuevo Usuario"}
-              </h5>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-              ></button>
-            </div>
-
-            <div className="modal-body">
-              {selectedUser && (
-                <>
-                  {/* Nombre */}
-                  <div className="mb-3">
-                    <label className="form-label">Nombre</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={formData.nombre || ""}
-                      onChange={(e) =>
-                        setFormData({ ...formData, nombre: e.target.value })
-                      }
-                    />
-                  </div>
-
-                  {/* Email */}
-                  <div className="mb-3">
-                    <label className="form-label">Email</label>
-                    <input
-                      type="email"
-                      className="form-control"
-                      value={formData.email || ""}
-                      onChange={(e) =>
-                        setFormData({ ...formData, email: e.target.value })
-                      }
-                    />
-                  </div>
-
-                  {/* Email Reporte */}
-                  <div className="mb-3">
-                    <label className="form-label">Email para envio de reporte(Opcional)</label>
-                    <input
-                      type="email"
-                      className="form-control"
-                      value={formData.email_reporte || ""}
-                      onChange={(e) =>
-                        setFormData({ ...formData, email_reporte: e.target.value })
-                      }
-                    />
-                  </div>
-
-                  {/* Email Reporte */}
-                  <div className="mb-3">
-                    <label className="form-label">Numero de celular(opcional)</label>
-                    <input
-                      type="email"
-                      className="form-control"
-                      value={formData.celular_reporte || ""}
-                      onChange={(e) =>
-                        setFormData({ ...formData, celular_reporte: e.target.value })
-                      }
-                    />
-                  </div>
-
-
-                  {/* ver si lleva cliente */}
-                  <div className="mb-3">
-                    <label className="form-label">Acceso</label>
-                    <div className="dropdown">
-                      <button
-                        className="btn btn-secondary dropdown-toggle w-100 text-start"
-                        type="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                      >
-                      {llevaCliente ? "Limitado a cientes" : "Acceso a todos los clientes"}
-                      </button>
-                      <ul className="dropdown-menu w-100">
-                        <li>
-                          <button
-                            type="button"
-                            className="dropdown-item"
-                            onClick={() =>
-                              setLlevaCliente(true)
-                            }
-                          >
-                            Limitado a cientes
-                          </button>
-                        </li>
-                        <li>
-                          <button
-                            type="button"
-                            className="dropdown-item"
-                            onClick={() => {
-                              setLlevaCliente(false);
-                              setFormData({
-                                ...formData,
-                                id_cliente: '',
-                                cliente: '',
-                              });
-                            }}
-                            
-                          >
-                            Acceso a todos los clientes
-                          </button>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-
-                  
-
-
-                  {/* Cliente (dropdown) */}
-                  {llevaCliente && (
-                  <div className="mb-3">
-                    <label className="form-label">Cliente</label>
-                    <div className="dropdown">
-                      <button
-                        className="btn btn-secondary dropdown-toggle w-100 text-start"
-                        type="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                      >
-                        {formData.cliente
-                          ? formData.cliente
-                          : "Seleccionar cliente..."}
-                        </button>
-
-                      <ul className="dropdown-menu w-100">
-                        {clientes.map((c) => (
-                          <li key={c.id}>
-                            <button
-                              type="button"
-                              className="dropdown-item"
-                              onClick={() => {
-                                setFormData({
-                                  ...formData,
-                                  id_cliente: c.id,
-                                  cliente: c.name,
-                                });
-                              }}
-                            >
-                              {c.name}
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                  )}
-
-                  {/* jurisdiccion */}
-                  <div className="mb-3">
-                    <label className="form-label">Limitado a jurisdiccion</label>
-                    <div className="dropdown">
-                      <button
-                        className="btn btn-secondary dropdown-toggle w-100 text-start"
-                        type="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                      >
-                      {limitadoAJurisdiccion ? "Limitado a jurisdiccion" : "Acceso a todas las jurisdicciones"}
-                      </button>
-                      <ul className="dropdown-menu w-100">
-                        <li>
-                          <button
-                            type="button"
-                            className="dropdown-item"
-                            onClick={() =>
-                              setLimitadoAJurisdiccion(true)
-                            }
-                          >
-                            Limitado a jurisdiccion
-                          </button>
-                        </li>
-                        <li>
-                          <button
-                            type="button"
-                            className="dropdown-item"
-                            onClick={() => {
-                              setLimitadoAJurisdiccion(false);
-                              setFormData({
-                                ...formData,
-                                id_pais: null,
-                              });
-                            }}
-                            
-                          >
-                            Acceso a todos las jurisdicciones
-                          </button>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-
-                  {/* pais (dropdown) */}
-                  {limitadoAJurisdiccion && (
-                  <div className="mb-3">
-                    <label className="form-label">Pais</label>
-                    <div className="dropdown">
-                      <button
-                        className="btn btn-secondary dropdown-toggle w-100 text-start"
-                        type="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                      >
-                        {formData.pais
-                          ? formData.pais
-                          : "Seleccionar pais..."}
-                        </button>
-
-                      <ul className="dropdown-menu w-100">
-                        {geo.paises.map((pais) => (
-                          <li key={pais.pais_id}>
-                            <button
-                              type="button"
-                              className="dropdown-item"
-                              onClick={() => {
-                                setFormData({
-                                  ...formData,
-                                  id_pais: pais.pais_id,
-                                  pais: pais.nombre,
-                                });
-                              }}
-                            >
-                              {pais.nombre}
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                  )}
-
-                  {/* Perfil (dropdown) */}
-                  <div className="mb-3">
-                    <label className="form-label">Perfil</label>
-                    <div className="dropdown">
-                      <button
-                        className="btn btn-secondary dropdown-toggle w-100 text-start"
-                        type="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                      >
-                        {formData.tipo
-                          ? (perfiles.find((p) => p.id == formData.tipo)).nombre
-                          : "Seleccionar cliente..."}
-                        </button>
-
-                      <ul className="dropdown-menu w-100">
-                        {perfiles.map((p) => (
-                          <li key={p.id}>
-                            <button
-                              type="button"
-                              className="dropdown-item"
-                              onClick={() => {
-                                setFormData({
-                                  ...formData,
-                                  tipo: p.id,
-                                });
-                              }}
-                            >
-                              {p.nombre}
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-
-                  {/* reportes automaticos email */}
-                  <div className="mb-3">
-                    <label className="form-label">Recibir reportes automaticos email</label>
-                    <div className="dropdown">
-                      <button
-                        className="btn btn-secondary dropdown-toggle w-100 text-start"
-                        type="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                      >
-                        {formData.reporte_acceso == '0' ? "No" : "Si"}
-                      </button>
-                      <ul className="dropdown-menu w-100">
-                        <li>
-                          <button
-                            type="button"
-                            className="dropdown-item"
-                            onClick={() =>
-                              setFormData({ ...formData, reporte_acceso: "0" })
-                            }
-                          >
-                            No
-                          </button>
-                        </li>
-                        <li>
-                          <button
-                            type="button"
-                            className="dropdown-item"
-                            onClick={() =>
-                              setFormData({ ...formData, reporte_acceso: "1" })
-                            }
-                          >
-                            Si
-                          </button>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-
-                  {/* reportes automaticos wsp */}
-                  <div className="mb-3">
-                    <label className="form-label">Recibir reportes celular</label>
-                    <div className="dropdown">
-                      <button
-                        className="btn btn-secondary dropdown-toggle w-100 text-start"
-                        type="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                      >
-                        {formData.reporte_whatsapp == '0' ? "No" : "Si"}
-                      </button>
-                      <ul className="dropdown-menu w-100">
-                        <li>
-                          <button
-                            type="button"
-                            className="dropdown-item"
-                            onClick={() =>
-                              setFormData({ ...formData, reporte_whatsapp: "0" })
-                            }
-                          >
-                            No
-                          </button>
-                        </li>
-                        <li>
-                          <button
-                            type="button"
-                            className="dropdown-item"
-                            onClick={() =>
-                              setFormData({ ...formData, reporte_whatsapp: "1" })
-                            }
-                          >
-                            Si
-                          </button>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Cerrar
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-                onClick={() => eliminarUsuario(formData.id)}
-                disabled={formData.id == '0'}
-
-              >
-                Eliminar
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-                onClick={() => generarContrasenia(formData.id, generarPassword(8))}
-                disabled={formData.id == '0'}
-
-              >
-                Generar clave
-              </button>
-
-
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={() => handleSave()}
-                disabled={!formData.email || !formData.nombre}
-              >
-                Guardar
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
       <ModalMensaje
         show={showModal}
         mensaje={mensajeModalExito}
