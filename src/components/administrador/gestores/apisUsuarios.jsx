@@ -58,9 +58,9 @@ export const agregarPaginaDelPerfil = (token, id_perfil, id_pagina) =>
 });
 
 export const obtenerNotasDeGeneraciones = (token, cliente = '', desde, hasta, 
-                                            categoria, limit, offset, titulo, pais) =>
+                                            categoria, limit, offset, titulo, pais, vencimiento_desde = '', vencimiento_hasta = '') =>
   fetchData("https://panel.serviciosd.com/app_obtener_noticias_abm", token, {
-    cliente, desde, hasta, categoria, limit, offset, titulo, pais
+    cliente, desde, hasta, categoria, limit, offset, titulo, pais, vencimiento_desde, vencimiento_hasta
 });
 
 

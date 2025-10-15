@@ -7,6 +7,7 @@ import axios from 'axios';
 import ModalMensaje from '../gestores/ModalMensaje';
 import { obtenerUsuarios, obtenerClientes, obtenerPerfiles, obtenerGeo, obtenerNotasDeGeneraciones, obtenerPlanesMarketing } from './apisUsuarios'; // Importa la función para obtener usuarios
 import { use } from 'react';
+import CopiarTexto from './CopiarTexto';
 
 
 const obtenerMesActual = () => {
@@ -16,11 +17,18 @@ const obtenerMesActual = () => {
   return `${año}-${mes}`;
 }
 
+function formatearFechaDDMMAAAA(fechaStr) {
+  if (!fechaStr) return "";
+  const [año, mes, dia] = fechaStr.split("-");
+  return `${dia}-${mes}-${año}`;
+}
 const obtenerColorDeEstadoDistribucion = (campoAChequear, datosDelCiente) => {
-
+    if (!datosDelCiente || !datosDelCiente.plan) {
+    return 'text-muted';
+  }
   const notas = datosDelCiente['notas'].filter(n => n[campoAChequear] != null);
   const totalDeNotasDistribuidas = notas.length;
-  const numeroDeNotasADistribuir = Number(datosDelCiente['plan']['notas_x_mes']);
+  const numeroDeNotasADistribuir = Number(datosDelCiente['plan']['notas_x_mes']) || 0;
   if(totalDeNotasDistribuidas === 0 && numeroDeNotasADistribuir != 0){
     return 'text-danger'
   }
@@ -33,19 +41,57 @@ const obtenerColorDeEstadoDistribucion = (campoAChequear, datosDelCiente) => {
   return 'text-success';
 }
 
+const filtrarClientesSegunPendientes = (clientesObj, pendientes) => {
+  const clientesFiltradosEntries = Object.entries(clientesObj).filter(([nombre, datos]) => {
+    if (!datos.notas || datos.notas.length === 0) return false;
+
+    if (pendientes === 'Todos los casos') return true;
+
+    if (pendientes === 'solo en Meta') {
+      return datos.notas.some(nota => nota.primer_dato_en_meta == null);
+    }
+
+    if (pendientes === 'solo en GAM') {
+      return datos.notas.some(nota => nota.primer_dato_en_360 == null);
+    }
+
+    if (pendientes === 'GAM o Meta') {
+      return datos.notas.some(
+        nota => nota.primer_dato_en_meta == null || nota.primer_dato_en_360 == null
+      );
+    }
+
+    return true; // fallback
+  });
+
+  // Convertimos el array de nuevo a objeto
+  return Object.fromEntries(clientesFiltradosEntries);
+};
+const obtenerColorDeEstadoDistribucionDeNota = (campoAChequear, nota) => {
+  const fechaHoy = new Date();
+  const fechaVencimiento = new Date(nota['fecha_vencimiento']);
+  if (!campoAChequear || !nota) {
+    return 'text-muted';
+  }
+  if (nota[campoAChequear] == null && fechaVencimiento > fechaHoy) {  
+    return 'text-danger'
+  }
+  else if(nota[campoAChequear] == null && fechaVencimiento < fechaHoy){
+    return 'text-warning'
+  }
+  else if(nota[campoAChequear] != null){
+    return 'text-success'
+  }
+  return 'text-muted';
+}
+
 function agregarPlanAlDiccionarioDeNotas(dicNotas, clientes, planes) {
   const nuevoDic = {};
-
   for (const [nombreCliente, notas] of Object.entries(dicNotas)) {
-    // Buscar municipio por nombre
     const municipio = clientes.find(m => m.name === nombreCliente);
-
-    // Buscar plan correspondiente al municipio
     const plan = municipio
       ? planes.find(p => p.id === municipio.id_plan)
       : null;
-
-    // Armar nueva estructura
     nuevoDic[nombreCliente] = {
       notas: notas,
       plan: plan || null
@@ -54,6 +100,8 @@ function agregarPlanAlDiccionarioDeNotas(dicNotas, clientes, planes) {
 
   return nuevoDic;
 }
+
+
 
 const agruparNotasPorCliente = (notas) => {
   if(!notas || notas.length === 0) return {};
@@ -71,52 +119,43 @@ const agruparNotasPorCliente = (notas) => {
 };
 
 const DistribucionAdmin = () => {
-  const [usuarios, setUsuarios] = useState([]);
   const [clientes, setClientes] = useState([]);
   const [fechaDesde, setFechaDesde] = useState(obtenerMesActual());
   const [fechaHasta, setFechaHasta] = useState(obtenerMesActual());
   const [pendientes, setPendientes] = useState('GAM o Meta');
   const [planes, setPlanes] = useState([]);
-  const [notasGeneraciones, setNotasGeneraciones] = useState({});
   const [notasGeneracionesAgrupadas, setNotasGeneracionesAgrupadas] = useState({});
-  const [geo, setGeo] = useState([]);
-  const [llevaCliente, setLlevaCliente] = useState(false);
-  const [limitadoAJurisdiccion, setLimitadoAJurisdiccion] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [mensajeModalExito, setMensajeModalExito] = useState("Los cambios se realizaron correctamente.");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [formData, setFormData] = useState({});
   const itemsPerPage = 10;  
   const TOKEN = useSelector((state) => state.formulario.token);
 
   useEffect(() => {
-    obtenerUsuarios(TOKEN).then(setUsuarios);
     obtenerClientes(TOKEN).then(setClientes);
     obtenerPlanesMarketing(TOKEN, fechaDesde+'-01', fechaHasta+'-31').then(setPlanes);
-}, [TOKEN]);
+}, [TOKEN]);  
 
 useEffect(() => {
   if(planes.length === 0 || clientes.length === 0) return;
-  obtenerNotasDeGeneraciones(TOKEN, '', '', '', 'PUBLICADO', '150', '0', '', '')
+  obtenerNotasDeGeneraciones(TOKEN, '', '', '', 'PUBLICADO', '150', '0', '', '', fechaDesde+'-01', fechaHasta+'-31')
     .then((res) => {
       const diccionarioDeCLientesConSusNotas = agruparNotasPorCliente(res);
       const agrupadasConPlanes = agregarPlanAlDiccionarioDeNotas(diccionarioDeCLientesConSusNotas, 
                                                                  clientes, planes);
       console.log('agrupadasConPlanes: ',agrupadasConPlanes);
       setNotasGeneracionesAgrupadas(agrupadasConPlanes);
-      setNotasGeneraciones(agrupadasConPlanes);
     });
-}, [TOKEN, clientes, planes]);
+}, [TOKEN, clientes, planes, fechaDesde, fechaHasta]);
 
 const filteredClientes = useMemo(() => {
-  const allKeys = Object.keys(notasGeneraciones || {});
+  const allKeys = Object.keys(notasGeneracionesAgrupadas || {});
   if (!search) return allKeys;
   return allKeys.filter((clave) =>
     clave.toLowerCase().includes(search.toLowerCase())
   );
-}, [search, notasGeneraciones]);
+}, [search, notasGeneracionesAgrupadas]);
 
 const totalPages = Math.ceil(filteredClientes.length / itemsPerPage);
 
@@ -129,98 +168,10 @@ const pagedClientes = useMemo(() => {
     setPage(1);
   }, [search]);
 
-  // Abrir modal con datos
-  const handleEditClick = (user) => {
-    setSelectedUser(user);
-    setFormData({ ...user,reporte_acceso: '0', tipo: user?.tipo_usuario || `1` } ); // copia datos
-    console.log(geo)
-    if(user?.cliente){
-      setLlevaCliente(true)
-    }
-    if (user?.id_pais) {
-      const paisNombre = geo.paises.find(g => g.pais_id === user.id_pais)?.nombre || '';
-      setFormData(prev => ({
-        ...prev,
-        id_pais: user.id_pais,
-        pais: paisNombre,
-      }));
-      setLimitadoAJurisdiccion(true);
-      console.log(paisNombre, "pais");
-    }
-    const modal = new window.bootstrap.Modal(document.getElementById('editModal'));
-    modal.show();
-  };
-
-const handleSave = () => {
-  axios
-    .post(
-      "https://panel.serviciosd.com/app_usuario_edit",
-      {
-        token: TOKEN,
-        ...formData,
-      },
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      }
-    )
-    .then(() => {
-      setMensajeModalExito('Los cambios se realizaron correctamente.');
-      setShowModal(true);
-      setTimeout(() => {
-        window.location.reload(); 
-      }, 1500);
-      
-    })
-    .catch((err) => {
-      console.log("Error al guardar cambios:", err);
-    });
-};
-
-const eliminarUsuario = (id) => {
-  axios
-    .post(
-      "https://panel.serviciosd.com/app_usuario_eliminar",
-      {
-        token: TOKEN,
-        id: id,
-      },
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      }
-    )
-      .then(() => {
-        setMensajeModalExito('El usuario se elimino correctamente');
-        setShowModal(true); // mostrar modal
-        setTimeout(() => {
-          window.location.reload(); // recargar luego de 3s
-        }, 1500);
-      })
-    .catch((err) => {
-      console.log("Error al guardar cambios:", err);
-    });
-};
-
-const generarContrasenia= (id, contrasenia) => {
-  axios
-    .post(
-      "https://panel.serviciosd.com/app_modificar_clave_usuario",
-      {
-        token: TOKEN,
-        id_usuario: id,
-        clave: contrasenia,
-      },
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      }
-    )
-      .then(() => {
-        setMensajeModalExito('La nueva contraseña es: '+contrasenia);
-        setShowModal(true); // mostrar modal
-      })
-    .catch((err) => {
-      console.log("Error al guardar cambios:", err);
-    });
-};
+useEffect(() => {
+  setNotasGeneracionesAgrupadas(filtrarClientesSegunPendientes(notasGeneracionesAgrupadas, pendientes));
+  console.log('notasGeneracionesAgrupadas filtradas: ', notasGeneracionesAgrupadas);
+}, [pendientes]);
 
 const goToPage = (newPage) => {
   if (newPage < 1 || newPage > totalPages) return;
@@ -288,7 +239,7 @@ const goToPage = (newPage) => {
       <div className='row miPerfilContainer soporteContainer mt-4 p-0'>
         <div>
           <ul className="list-group">
-            {Object.keys(notasGeneraciones).length === 0 ? (
+            {Object.keys(notasGeneracionesAgrupadas).length === 0 ? (
               <li className="list-group-item">No hay resultados.</li>
             ) : (
               <div className="accordion" id="accordionExample">
@@ -315,22 +266,21 @@ const goToPage = (newPage) => {
                                 <div className="row pt-0">
                                   <button
                                     className="btn btn-link p-0 text-start"
-                                    onClick={() => handleEditClick(cliente)}
                                   >
                                     <strong>{cliente}</strong>
                                   </button>
                                 </div>
                                 <div className="row p-1">
                                   <span>
-                                    {'Distribuibles: ' + data.plan.notas_x_mes}
+                                    {'Distribuibles: ' + (data.plan ? data.plan.notas_x_mes : 0)}
                                   </span>
+
                                 </div>
                                 <div className="row p-1">
-                                  <span>
-                                    {'Por Publicar: ' +
-                                      (Number(data.plan.notas_x_mes) -
-                                        data.notas.length)}
-                                  </span>
+                                    <span>
+                                      {'Por Publicar: ' +
+                                        (data.plan ? Number(data.plan.notas_x_mes) - data.notas.length : 0)}
+                                    </span>
                                 </div>
                               </div>
 
@@ -424,28 +374,97 @@ const goToPage = (newPage) => {
                             <ul className="list-group">
                               {data.notas.map((nota) => (
                                 <li key={nota.id} className="list-group-item">
-                                  <div className="col-3">
-                                    <div className="row p-1">
-                                      <span>
-                                        <a href={`https://www.noticiasd.com/${nota.term_id}`} target="_blank" rel="noopener noreferrer">
-                                          {nota.term_id}
-                                        </a>  
-                                      </span>
+                                  {/* COLUMNA 1 DE LA NOTA */}
+                                  <div className='row'>
+                                    <div className="col-3">
+                                      <div className="row p-1">
+                                        <span>
+                                          <a href={`https://www.noticiasd.com/${nota.term_id}`} target="_blank" rel="noopener noreferrer">
+                                            {nota.term_id}
+                                          </a>  
+                                        </span>
+                                      </div>
+                                      <div className="row p-1">
+                                        <span>
+                                          {'Publicacion: ' + nota.f_pub}
+                                        </span>
+                                      </div>
+                                      <div className="row p-1">
+                                        <span>
+                                          {'Ultima version: ' + nota.update_date}
+                                        </span>
+                                      </div>
+                                      <div className="row p-1">
+                                        <span>
+                                          {'Fecha vencimiento: ' + nota.fecha_vencimiento}
+                                        </span>
+                                      </div>
                                     </div>
-                                    <div className="row p-1">
-                                      <span>
-                                        {'Publicacion: ' + nota.f_pub}
-                                      </span>
+                                    {/* COLUMNA 2 DE LA NOTA */}
+                                    <div className="col-3">
+                                      <div className="row p-1">
+                                          <span>
+                                          <a
+                                            href={decodeURI(
+                                              `https://builder.ntcias.de/single.php?name=-wp${nota.cliente}-${nota.term_id}_v:${formatearFechaDDMMAAAA(nota.fecha_vencimiento)}&nota_id=${nota.term_id}`
+                                            )}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                          >
+                                            CREATIVO
+                                          </a>
+                                        </span>
+                                      </div>
+                                      <div className="row p-1">
+                                        <span>
+                                          {'Comentarios: ' + nota.comentarios || 'No hay comentarios'}
+                                        </span>
+                                      </div>
                                     </div>
-                                    <div className="row p-1">
-                                      <span>
-                                        {'Ultima version: ' + nota.update_date}
-                                      </span>
+                                    <div className="col-3">
+                                      <div className="row p-1">
+                                        <span>
+                                            <CopiarTexto textoACopiar= {nota.titulo} TituloBoton={'Copiar Titulo'}/>
+                                        </span>
+                                      </div>
+                                      <div className="row p-1">
+                                        <span>
+                                            <CopiarTexto textoACopiar= {nota.extracto} TituloBoton={'Copiar Bajada'}/>
+                                        </span>
+                                      </div>
+                                      <div className="row p-1">
+                                        <span>
+                                            <CopiarTexto textoACopiar= {nota.engagement} TituloBoton={'Copiar Engagement'}/>
+                                        </span>
+                                      </div>
                                     </div>
-                                    <div className="row p-1">
-                                      <span>
-                                        {'Fecha vencimiento: ' + nota.fecha_vencimiento}
-                                      </span>
+                                    <div className="col-3">
+                                      <div className="row p-1">
+                                        <span>
+                                          <i
+                                            className={
+                                              'bi bi-meta fs-2 ' +
+                                              obtenerColorDeEstadoDistribucionDeNota(
+                                                'primer_dato_en_meta',
+                                                nota
+                                              )
+                                            }
+                                          ></i>
+                                        </span>
+                                      </div>
+                                      <div className="row p-1">
+                                        <span>
+                                          <i
+                                            className={
+                                              'bi bi-google fs-2 ' +
+                                              obtenerColorDeEstadoDistribucionDeNota(
+                                                'primer_dato_en_360',
+                                                nota
+                                              )
+                                            }
+                                          ></i>
+                                        </span>
+                                      </div>
                                     </div>
                                   </div>
                                 </li>
