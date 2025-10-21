@@ -15,16 +15,11 @@ const DEF = {
         "titulo": "Usuarios"
         },
 
-    "perfil": {
+    "perfiles": {
         "descripcion": "Gestiona los perfiles de los usuarios, asignando roles y permisos específicos.",
         "url": "perfiles",
         "titulo": "Perfil"
         },
-    "distribucion": {
-        "descripcion": "Gestiona la distribucion del contenido.",
-        "url": "distribucion",
-        "titulo": "Distribucion"
-        }
     }
 const Administrador = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -33,13 +28,9 @@ const Administrador = () => {
         setSearchQuery(e.target.value);
     };
 
-    // Filtrar las categorías por nombre (categoriaKey)
     const filteredCategories = Object.keys(DEF).filter((categoriaKey) =>
         categoriaKey.toLowerCase().includes(searchQuery.toLowerCase())
     );
-    
-
-
     return (
         <>
         <div className="content flex-grow-1 crearNotaGlobal">

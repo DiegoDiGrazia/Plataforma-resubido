@@ -12,7 +12,7 @@ function CopiarTexto({ textoACopiar, TituloBoton }) {
   };
 
   return (
-    <button className="btn btn-primary" onClick={copiarAlPortapapeles}>
+    <button className="btn btn-outline-secondary w-100" onClick={copiarAlPortapapeles}>
       {TituloBoton || 'Copiar Texto'} 
     </button>
   );

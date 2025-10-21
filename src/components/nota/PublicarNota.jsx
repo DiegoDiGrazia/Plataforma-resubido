@@ -2,22 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { Button, Modal } from 'react-bootstrap';
-import Sidebar from '../sidebar/Sidebar';
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
-import '../../App.css'
-import '../../components/nota/nota_print.css'
-import '../../components/nota/nota.css'
-import '../Dashboard/Dashboard.css';
-import "./nota.css";
 import { useDispatch, useSelector } from 'react-redux';
 import { Link} from 'react-router-dom';
 import {setCategoriasActivasEnStore, setImagenRRSS } from '../../redux/crearNotaSlice'; // Asegúrate de importar setImagenPrincipal
 import { useNavigate } from 'react-router-dom';
 import ColumnaEditorial from './Editorial/ColumnaEditorial';
-import { clickearEnPublicarNota } from '../../utils/publicarNotaHelper';
 import useCategorias from '../../hooks/useCategorias';
-import { use } from 'react';
 import BotonPublicarNota from './Editorial/BotonPublicarNota';
 import { videos } from '../miPerfil/soporte';
 import CardTutorial from '../miPerfil/CardTutorial';
@@ -46,12 +38,9 @@ const PublicarNota = () => {
 
 
     useEffect(() => {
-        console.log("Valor inicial de comentario:", comentario);
         console.log(categoriasActivas)
     }, [comentario, categoriasActivas]);
 
-
-    // Inicializa Cropper cuando la imagen cambia
     useEffect(() => {
         if (imageRef.current && image) {
             if (cropper) {
@@ -250,7 +239,6 @@ const PublicarNota = () => {
                                     onChange={manejarCambioComentarios}
                                 />
                                 <p className='abajoDeAgregarCategoria' >Max 300 caracteres</p>
-
                                 {categoriasActivas.length < 1 && (
                                     <p className='datoFaltante'>-Seleccione una categoria para poder publicar</p>
                                 )}

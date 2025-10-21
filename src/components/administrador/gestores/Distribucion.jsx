@@ -201,7 +201,7 @@ const goToPage = (newPage) => {
               type="month" 
               value={fechaDesde} 
               onChange={(e) => setFechaDesde(e.target.value)} 
-              style={{ fontSize: "14px"}}
+              style={{ fontSize: "14px", border: "1px solid #ccc", borderRadius: "4px", padding: "2px 5px"}}
           />
           </span>
           <span style={{ fontSize: "14px"}}>Vencimiento hasta:
@@ -209,7 +209,7 @@ const goToPage = (newPage) => {
                 type="month" 
                 value={fechaHasta} 
                 onChange={(e) => setFechaHasta(e.target.value)} 
-                style={{ fontSize: "14px"}}
+                style={{ fontSize: "14px", border: "1px solid #ccc", borderRadius: "4px", padding: "2px 5px"}}
             />
           </span>
           <div className="dropdown">
@@ -264,22 +264,19 @@ const goToPage = (newPage) => {
                             <div className="row pt-0 w-100">
                               <div className="col-2">
                                 <div className="row pt-0">
-                                  <button
-                                    className="btn btn-link p-0 text-start"
-                                  >
-                                    <strong>{cliente}</strong>
-                                  </button>
+                                    <strong className='text-primary' style={{fontSize: '18px'}}>{cliente}</strong>
                                 </div>
                                 <div className="row p-1">
                                   <span>
-                                    {'Distribuibles: ' + (data.plan ? data.plan.notas_x_mes : 0)}
+                                    <strong>Distribuibles: </strong>
+                                    {(data.plan ? data.plan.notas_x_mes : 0)}
                                   </span>
 
                                 </div>
                                 <div className="row p-1">
                                     <span>
-                                      {'Por Publicar: ' +
-                                        (data.plan ? Number(data.plan.notas_x_mes) - data.notas.length : 0)}
+                                      <strong>Por publicar: </strong>
+                                      {data.plan ? Number(data.plan.notas_x_mes) - data.notas.length : 0}
                                     </span>
                                 </div>
                               </div>
@@ -290,16 +287,16 @@ const goToPage = (newPage) => {
                                 </div>
                                 <div className="row p-1">
                                   <span>
-                                    {'Distribuidas: ' +
-                                      data.notas.filter(
+                                    <strong>Distribuidas: </strong>
+                                    {data.notas.filter(
                                         (n) => n.primer_dato_en_meta != null
                                       ).length}
                                   </span>
                                 </div>
                                 <div className="row p-1">
                                   <span>
-                                    {'Vencidas: ' +
-                                      data.notas.filter(
+                                    <strong>Vencidas: </strong>
+                                    {data.notas.filter(
                                         (n) =>
                                           new Date(n.fecha_vencimiento) < new Date() &&
                                           n.primer_dato_en_meta != null
@@ -314,16 +311,16 @@ const goToPage = (newPage) => {
                                 </div>
                                 <div className="row p-1">
                                   <span>
-                                    {'Distribuidas: ' +
-                                      data.notas.filter(
+                                    <strong>Distribuidas: </strong>
+                                    {data.notas.filter(
                                         (n) => n.primer_dato_en_360 != null
                                       ).length}
                                   </span>
                                 </div>
                                 <div className="row p-1">
                                   <span>
-                                    {'Vencidas: ' +
-                                      data.notas.filter(
+                                    <strong>Vencidas: </strong>
+                                    {data.notas.filter(
                                         (n) =>
                                           new Date(n.fecha_vencimiento) < new Date() &&
                                           n.primer_dato_en_360 != null
@@ -332,33 +329,25 @@ const goToPage = (newPage) => {
                                 </div>
                               </div>
 
-                              <div className="col-3">
-                                <div className="row p-1">
-                                  <span>
+                              <div className="col-3 d-flex justify-content-center align-items-center">
                                     <i
                                       className={
-                                        'bi bi-meta fs-2 ' +
+                                        'bi bi-meta fs-1 ' +
                                         obtenerColorDeEstadoDistribucion(
                                           'primer_dato_en_meta',
                                           data
                                         )
                                       }
                                     ></i>
-                                  </span>
-                                </div>
-                                <div className="row p-1">
-                                  <span>
                                     <i
                                       className={
-                                        'bi bi-google fs-2 ' +
+                                        'bi bi-google fs-1 ml-5 ' +
                                         obtenerColorDeEstadoDistribucion(
                                           'primer_dato_en_360',
                                           data
                                         )
                                       }
                                     ></i>
-                                  </span>
-                                </div>
                               </div>
                             </div>
                           </button>
@@ -375,7 +364,7 @@ const goToPage = (newPage) => {
                               {data.notas.map((nota) => (
                                 <li key={nota.id} className="list-group-item">
                                   {/* COLUMNA 1 DE LA NOTA */}
-                                  <div className='row'>
+                                  <div className='row p-0'>
                                     <div className="col-3">
                                       <div className="row p-1">
                                         <span>
@@ -386,17 +375,20 @@ const goToPage = (newPage) => {
                                       </div>
                                       <div className="row p-1">
                                         <span>
-                                          {'Publicacion: ' + nota.f_pub}
+                                          <strong>Publicación: </strong>
+                                          {nota.f_pub}
                                         </span>
                                       </div>
                                       <div className="row p-1">
                                         <span>
-                                          {'Ultima version: ' + nota.update_date}
+                                          <strong>Ultima versión: </strong>
+                                          {nota.update_date}
                                         </span>
                                       </div>
                                       <div className="row p-1">
                                         <span>
-                                          {'Fecha vencimiento: ' + nota.fecha_vencimiento}
+                                          <strong>Fecha vencimiento: </strong>
+                                          {nota.fecha_vencimiento}
                                         </span>
                                       </div>
                                     </div>
@@ -406,7 +398,7 @@ const goToPage = (newPage) => {
                                           <span>
                                           <a
                                             href={decodeURI(
-                                              `https://builder.ntcias.de/single.php?name=-wp${nota.cliente}-${nota.term_id}_v:${formatearFechaDDMMAAAA(nota.fecha_vencimiento)}&nota_id=${nota.term_id}`
+                                              `https://builder.ntcias.de/single.php?name=-wp${nota.term_id}-${nota.cliente}_v:${formatearFechaDDMMAAAA(nota.fecha_vencimiento)}&nota_id=${nota.term_id}`
                                             )}
                                             target="_blank"
                                             rel="noopener noreferrer"
@@ -417,10 +409,12 @@ const goToPage = (newPage) => {
                                       </div>
                                       <div className="row p-1">
                                         <span>
-                                          {'Comentarios: ' + nota.comentarios || 'No hay comentarios'}
+                                          <strong>Comentarios: </strong>
+                                          {nota.comentarios != null ? nota.comentarios : 'No hay comentarios'}
                                         </span>
                                       </div>
                                     </div>
+                                    {/* COLUMNA 3 DE LA NOTA */}
                                     <div className="col-3">
                                       <div className="row p-1">
                                         <span>
@@ -438,33 +432,18 @@ const goToPage = (newPage) => {
                                         </span>
                                       </div>
                                     </div>
-                                    <div className="col-3">
-                                      <div className="row p-1">
-                                        <span>
-                                          <i
-                                            className={
-                                              'bi bi-meta fs-2 ' +
-                                              obtenerColorDeEstadoDistribucionDeNota(
-                                                'primer_dato_en_meta',
-                                                nota
-                                              )
-                                            }
-                                          ></i>
-                                        </span>
-                                      </div>
-                                      <div className="row p-1">
-                                        <span>
-                                          <i
-                                            className={
-                                              'bi bi-google fs-2 ' +
-                                              obtenerColorDeEstadoDistribucionDeNota(
-                                                'primer_dato_en_360',
-                                                nota
-                                              )
-                                            }
-                                          ></i>
-                                        </span>
-                                      </div>
+                                    {/* COLUMNA 4 DE LA NOTA */}
+                                    <div className="col-3 d-flex justify-content-center align-items-center">
+                                      <i
+                                        className={
+                                          'bi bi-meta fs-1 ' + obtenerColorDeEstadoDistribucionDeNota('primer_dato_en_meta', nota)
+                                        }
+                                      ></i>
+                                      <i
+                                        className={
+                                          'bi bi-google fs-1 ms-3 ' + obtenerColorDeEstadoDistribucionDeNota('primer_dato_en_360', nota)
+                                        }
+                                      ></i>
                                     </div>
                                   </div>
                                 </li>

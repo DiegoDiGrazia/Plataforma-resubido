@@ -1,20 +1,28 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import './Sidebar.css';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
+import { obtenerPaginas } from '../administrador/gestores/apisUsuarios';
 
 const Sidebar = ({ estadoActual }) => {
   const esEditor = useSelector((state) => state.formulario.es_editor);
   const cliente = useSelector((state) => state.formulario.cliente);
   const PerfilUsuario = useSelector((state) => state.formulario.usuario.perfil);
+  const TOKEN = useSelector((state) => state.formulario.token);
+  const [paginasDelPerfil, setPaginasPerfil]= useState([]);
+
+  // Cargar usuarios
+  useEffect(() => {
+    if (!PerfilUsuario ) return;
+    obtenerPaginas(TOKEN, PerfilUsuario).then(setPaginasPerfil);
+}, [PerfilUsuario]);
 
 
   const location = useLocation();
 
   estadoActual = location.pathname.split('/')[1] || 'dashboard'; // Obtiene el estado actual desde la URL
-  console.log("Estado actual desde Sidebar:", estadoActual);
   const [isOpen, setIsOpen] = useState(true);
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -25,8 +33,6 @@ const Sidebar = ({ estadoActual }) => {
     navigate(`/${url}`);
   };
 
-
-  // Función para generar botones del sidebar
   const renderSidebarButton = (estado, url, icono, texto, iconoBootstrap) => (
     <li
       className={`${
@@ -34,7 +40,6 @@ const Sidebar = ({ estadoActual }) => {
       } ${isOpen ? 'openBoton' : 'closedBoton'}`}
     >
       <Button className="botonSidebar" variant="none" onClick={() => handleClickBotonSidebar(url)}>
-        {/* <img src={icono} alt={`Icono ${texto}`} className="icon me-2" /> */}
         <i class={`fs-4 mb-4 ${iconoBootstrap}`} style={{color: '#3e4658ff', marginRight: '5px', bottom: '10px'}}></i>
         <span className={`descripcion_boton ${isOpen ? 'open' : 'closed'}`}>{texto}</span>
       </Button>
@@ -104,19 +109,13 @@ const Sidebar = ({ estadoActual }) => {
               'Administrador',
               'bi bi-gear-fill'
             )}
-            {PerfilUsuario == '1' && renderSidebarButton(
+            {paginasDelPerfil.find((pagina) => pagina.nombre == "Distribucion") && renderSidebarButton(
               'distribucion',
               'distribucion',
               '/images/auto_entrevistas_icon.png',
               'Distribucion',
               'bi bi-clipboard2-check-fill'
             )}
-            {/* {renderSidebarButton(
-              'notificaciones',
-              'notificaciones',
-              '/images/notificacion_icon.png',
-              'Notificaciones'
-            )} */}
 
             <ul className="list-group list-unstyled botones_inferiories">
               {renderSidebarButton(

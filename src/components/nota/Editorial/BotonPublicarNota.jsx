@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { ArchivoContext } from '../../../context/archivoContext';
 import  store  from '../../../redux/store'; // o la ruta que tengas definida
+import BotonModalIframes from './BotonModalframes';
+
 
 const BotonPublicarNota = ({ status }) => {
     const [isLoading, setIsLoading] = useState(false);
@@ -13,6 +15,7 @@ const BotonPublicarNota = ({ status }) => {
     const [errorMessage, setErrorMessage] = useState("");
     const { archivo } = useContext(ArchivoContext); // video es tipo File
     const [showConfirmModal, setShowConfirmModal] = useState(false);
+    
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -184,6 +187,8 @@ const BotonPublicarNota = ({ status }) => {
                     ) : (
                         <div className="text-center">
                             <p>Tu nota ha sido enviada correctamente.</p>
+
+                            
                             <Button
                                 variant="primary"
                                 onClick={() => {
@@ -211,6 +216,7 @@ const BotonPublicarNota = ({ status }) => {
                     <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>
                         Cancelar
                     </Button>
+                    {/* <BotonModalIframes/> */}
                     <Button variant="primary" onClick={() => {
                         setShowConfirmModal(false);
                         clickear_en_publicar_nota();

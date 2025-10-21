@@ -42,6 +42,12 @@ const MediosMasRelevantes = ({datosLocales}) => {
     const ultimaFechaCargadaBarplot = useSelector((state) => state.barplot.ultimaFechaCargadaBarplot);
     console.log("datos adentro de medios", datosLocales)
 
+    let periodos = periodos_api.split(",");
+    let fecha_inicio_creacion = `${periodos[0]}-01`;
+    let [anio, mes] = periodos[periodos.length - 1].split("-");
+    let ultimo_dia = new Date(anio, mes, 0).getDate(); // mes siguiente (implícito) y día 0 => último día del mes anterior
+    let fecha_fin_creacion = `${anio}-${mes}-${ultimo_dia.toString().padStart(2, '0')}`;
+
 
     useEffect(() => {
         axios.post(
@@ -49,7 +55,9 @@ const MediosMasRelevantes = ({datosLocales}) => {
             {
                 cliente: nombreCliente,
                 periodos: periodos_api,
-                token: token
+                token: token,
+                f_pub_desde: fecha_inicio_creacion,
+                f_pub_hasta: fecha_fin_creacion,
             },
             {
                 headers: {

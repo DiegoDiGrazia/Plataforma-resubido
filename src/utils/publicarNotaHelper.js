@@ -1,10 +1,12 @@
 import axios from 'axios';
 
 
-function escapeHTML(str) {
+function reemplazarComillasSimplePorDoble(str) {
+    if(!str) return str;
     return str
         .replace(/'/g, '"'); // Reemplaza comillas simples por comillas dobles
 }
+
 export const clickearEnPublicarNota = async ({
     status,
     TOKEN,
@@ -52,16 +54,16 @@ export const clickearEnPublicarNota = async ({
                 token: TOKEN,
                 status: status,
                 id: id_noti ? id_noti : "0",
-                titulo: titulo,
+                titulo: reemplazarComillasSimplePorDoble(titulo),
                 categorias: categoriasActivas,
-                copete: notaCargada.copete,
-                parrafo: escapeHTML(contenidoHTMLSTR),
+                copete: reemplazarComillasSimplePorDoble(notaCargada.copete),
+                parrafo: reemplazarComillasSimplePorDoble(contenidoHTMLSTR),
                 estado: status,
                 cliente: demo || datosUsuario.cliente || cliente,
                 email: "",
                 base_principal: image,
                 base_feed: imagefeed,
-                comentarios: comentario,
+                comentarios: reemplazarComillasSimplePorDoble(comentario),
                 autor_cliente: datosUsuario.email,
                 con_distribucion: selectedOptionDistribucion,
                 distribucion: selectedOptionDistribucion === 'normal'
@@ -81,8 +83,8 @@ export const clickearEnPublicarNota = async ({
                 f_pub: fechaPublicacion,
                 fecha_vencimiento: fecha,
                 etiquetas: itemsEtiquetas,
-                engagement: engagementText,
-                extracto: bajadaText,
+                engagement: reemplazarComillasSimplePorDoble(engagementText),
+                extracto: reemplazarComillasSimplePorDoble(bajadaText),
                 autor: tipoAutor,
                 provincia: provincia?.nombre || "", // Usa el operador opcional `?.`
                 municipio: municipio?.nombre || "", // Usa el operador opcional `?.`
