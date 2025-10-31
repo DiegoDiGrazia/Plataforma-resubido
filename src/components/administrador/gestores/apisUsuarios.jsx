@@ -20,7 +20,6 @@ const fetchData = async (url, token, extraParams = {}) => {
   }
 };
 
-// Función para obtener la geolocalización
 export const obtenerGeo = async () => {
   try {
     const response = await axios.get(`https://api.noticiasd.com/app_obtener_geo`);
@@ -68,3 +67,19 @@ export const obtenerPlanesMarketing = (token, desde, hasta) =>
   fetchData("https://panel.serviciosd.com/app_obtener_planes_marketing", token, {
     desde, hasta
 });
+
+export const guardar_posicion_iframes = (token, id, datos) =>
+  fetchData("http://147.182.243.56:3000/api/guardar_posicion_creativos", token, {
+    id, datos
+});
+
+export const editar_o_crear_cliente = (token, id, name, 
+      authors, provincia_cliente, municipio_cliente, pais_cliente, tipo_cliente, juridisccion_cliente, muestra_consumo, id_plan) =>
+      console.log('token', token, 'id', id, 'name', name, 
+      'authors', authors, 'provincia_cliente', provincia_cliente, 'municipio_cliente', municipio_cliente, 
+      'pais_cliente', pais_cliente, 'tipo_cliente', tipo_cliente, 'juridisccion_cliente', juridisccion_cliente, 
+      'muestra_consumo', muestra_consumo, 'id_plan', id_plan);
+//   fetchData("https://panel.serviciosd.com/app_cliente_edit", token, {
+//     id, name, authors, provincia_cliente, municipio_cliente, pais_cliente, tipo_cliente, juridisccion_cliente, muestra_consumo, id_plan
+// });  
+

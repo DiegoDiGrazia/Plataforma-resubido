@@ -20,6 +20,11 @@ const DEF = {
         "url": "perfiles",
         "titulo": "Perfil"
         },
+    "clientes": {
+        "descripcion": "Gestiona la creacion y edicion de nuevos Clientes.",
+        "url": "clientes",
+        "titulo": "Clientes"
+        },
     }
 const Administrador = () => {
     const [searchQuery, setSearchQuery] = useState('');

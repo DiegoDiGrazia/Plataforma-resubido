@@ -101,19 +101,14 @@ const NotasParaEditorial = () => {
     const id_pais = useSelector((state) => state.formulario.usuario.id_pais);
     const paises = useSelector((state) =>state.formulario.geo);
     const nombrePaisUsuario = paises.find(pais => pais.pais_id === id_pais)?.nombre || null;
-
-
-
     let CantidadDeNotasPorPagina = 200;
     const botones = [
-        { id: 1, nombre: 'Todas las publicaciones' },
-        { id: 2, nombre: 'Publicaciones editables' },
+        { id: 2, nombre: 'Publicaciones' },
         { id: 3, nombre: 'En revision' },
         { id: 4, nombre: 'Borradores' },
         { id: 5, nombre: 'Eliminadas' },
     ];
     
-    // Mapeo de categorías
     const categorias = {
         1: "todas",
         2: "PUBLICADO",
@@ -185,8 +180,6 @@ const NotasParaEditorial = () => {
     
         const categoria = categorias[id] || "";
         const limite = verMasCantidadPaginacion;
-    
-        // IMPORTANTE: usar una variable local para calcular offset
         let nuevoOffset = 0;
         let nuevoVerMasUltimo = verMasUltimo;
     
@@ -289,218 +282,216 @@ const NotasParaEditorial = () => {
     }, [CLIENTE, filtroSeleccionado]);
 
     return (
-                <div className="content flex-grow-1 p-3">
-                            <div className='row'>
-                                <h4 id="nota">Notas</h4>
-                            </div>
-                            <div className='row'>
-                                <div className='col'>
-                                    <h3 id="saludo" className='headerTusNotas'>
-                                        <img src="/images/tusNotasIcon.png" alt="Icono 1" className="icon me-2 icono_tusNotas" /> Tus Notas
-                                    </h3>
-                                    {es_editor &&
-                                    <SelectorCliente/> 
-                                    }          
-                                    <div className='abajoDeTusNotas'> Crea, gestiona y monitorea tus notas</div>
-                                </div>
-                                <div className='col boton'>
-                                    <BotonCrearNota
-                                        onClick={() => ClickearEnCrearNota(CLIENTE)}
-                                        cliente={CLIENTE}
-                                    />
-                                </div>
-                            </div>
+            <div className="content flex-grow-1 p-3">
+                <div className='row'>
+                    <h4 id="nota">Notas</h4>
+                </div>
+                <div className='row'>
+                    <div className='col'>
+                        <h3 id="saludo" className='headerTusNotas'>
+                            <img src="/images/tusNotasIcon.png" alt="Icono 1" className="icon me-2 icono_tusNotas" /> Tus Notas
+                        </h3>
+                        {es_editor &&
+                        <SelectorCliente/> 
+                        }          
+                        <div className='abajoDeTusNotas'> Crea, gestiona y monitorea tus notas</div>
+                    </div>
+                    <div className='col boton'>
+                        <BotonCrearNota
+                            onClick={() => ClickearEnCrearNota(CLIENTE)}
+                            cliente={CLIENTE}
+                        />
+                    </div>
+                </div>
 
-                        <div className='row'>
-                            <div className="container">
-                            <div className="row">
-                            {botones
-                                .filter((boton) => !(CLIENTE === "" && boton.id === 1)) // Filtra el botón con id 1 si CLIENTE es ""
-                                .map((boton) => (
-                                    <div key={boton.id} className="col-auto">
-                                        <button
-                                            className={`boton_filtro_notas ${
-                                                filtroSeleccionado === boton.id ? 'active' : ''
-                                            }`}
-                                            onClick={() => setFiltroSeleccionado(boton.id)}
-                                        >
-                                            {boton.nombre}
-                                        </button>
-                                    </div>
-                                ))}
+                <div className='row'>
+                    <div className="container">
+                    <div className="row">
+                    {botones
+                        .filter((boton) => !(CLIENTE === "" && boton.id === 1)) // Filtra el botón con id 1 si CLIENTE es ""
+                        .map((boton) => (
+                            <div key={boton.id} className="col-auto">
+                                <button
+                                    className={`boton_filtro_notas ${
+                                        filtroSeleccionado === boton.id ? 'active' : ''
+                                    }`}
+                                    onClick={() => setFiltroSeleccionado(boton.id)}
+                                >
+                                    {boton.nombre}
+                                </button>
                             </div>
-                        </div>
-                        </div>
-                        {/* todas las notas mas buscador */}
-                        <div className='row sin-margin'>
-                            <div className="container-notas">
-                                <div className='row'>
-                                    <div className='col todasLasNotas'>
-                                        Todas Las Notas
-                                    </div>
-                                    <div className='col buscadorNotas'>
-                                        <form onSubmit={handleSearch} className='buscadorNotasForm'>
-                                            <input
-                                                className='inputBuscadorNotas'
-                                                type="text"
-                                                value={searchQuery}
-                                                onChange={handleInputChange}
-                                                placeholder="      Buscar por titulo de la nota"
-                                            />
-                                            <Button type="submit" className="btn btn-danger ml-3">
-                                                Buscar
-                                            </Button>
-                                        </form>
-                                        
-                                    </div>
+                        ))}
+                    </div>
+                </div>
+                    </div>
+                    {/* todas las notas mas buscador */}
+                    <div className='row sin-margin'>
+                        <div className="container-notas">
+                            <div className='row'>
+                                <div className='col todasLasNotas'>
+                                    Todas Las Notas
                                 </div>
-                                <div className='row'>
-                                    <div className='col-auto' style={{width: "70px"}}></div>
-                                    <div className='col-4 columna_interaccion' style={{fontSize: "12px", color: "#667085", fontWeight: "bold"}}>Título de la Nota</div>
-                                    {/* <div className='col-1 categoriasNotas text-aling-center'>Estado</div> */}
-                                    <div className='col categoriasNotas d-flex align-items-center justify-content-center'>Categorías</div> 
-                                    { (filtroSeleccionado != 1) ?
-                                        <>
-                                            <div className='col categoriasNotas text-end'>Cliente</div>
-                                            <div className='col categoriasNotas text-end'>Ver Nota</div>
-                                        </>
-                                        :
-                                        <>
-                                            <div className='col categoriasNotas text-end'>Amplificacion</div>
-                                        </>
+                                <div className='col buscadorNotas'>
+                                    <form onSubmit={handleSearch} className='buscadorNotasForm'>
+                                        <input
+                                            className='inputBuscadorNotas'
+                                            type="text"
+                                            value={searchQuery}
+                                            onChange={handleInputChange}
+                                            placeholder="      Buscar por titulo de la nota"
+                                        />
+                                        <Button type="submit" className="btn btn-danger ml-3">
+                                            Buscar
+                                        </Button>
+                                    </form>
+                                    
+                                </div>
+                            </div>
+                            <div className='row'>
+                                <div className='col-auto' style={{width: "70px"}}></div>
+                                <div className='col-4 columna_interaccion' style={{fontSize: "12px", color: "#667085", fontWeight: "bold"}}>Título de la Nota</div>
+                                {/* <div className='col-1 categoriasNotas text-aling-center'>Estado</div> */}
+                                <div className='col categoriasNotas d-flex align-items-center justify-content-center'>Categorías</div> 
+                                { (filtroSeleccionado != 1) ?
+                                    <>
+                                        <div className='col categoriasNotas text-end'>Cliente</div>
+                                        <div className='col categoriasNotas text-end'>Acciones</div>
+                                    </>
+                                    :
+                                    <>
+                                        <div className='col categoriasNotas text-end'>Amplificacion</div>
+                                    </>
+                                }
+                            </div>
+                            {notasEnPaginaActual.map((nota, index) => (
+                                    <div
+                                        key={nota.id_noti || nota.term_id || `nota-${index}`}
+                                        className={`row pt-1 borderNotas ${nota.editable == '1' ? '' : 'notaNoEditable'}`}
+                                        >
+                                    <div className='col-auto'>
+                                        {nota.imagen  ? (
+                                            nota.imagen.includes('wp-content/uploads') ? 
+                                            <img src={nota.imagen} alt="Icono Nota" className='imagenWidwetInteracciones2' /> : 
+                                            <img src={'https://noticiasd.com/img' + nota.imagen} alt="Icono Nota" className='imagenWidwetInteracciones2' />
+                                        ) : (
+                                            <img src={"https://panel.serviciosd.com/img/" + nota.imagen_principal} alt="Icono Nota" className='imagenWidwetInteracciones2' />
+                                        )}
+                                    </div>
+                                    <div className='col-4 pt-1 columna_interaccion nuevoFont'>
+                                        
+                                    {filtroSeleccionado === 1 ? (
+                                        <Link
+                                            className="link-sin-estilos"
+                                            to={nota?.editable == '1' ? `/verNota` : `#`}
+                                            state={{ id: nota.id_noti ? nota.id_noti : nota.term_id, notaABM: nota }}
+                                        >
+                                            <div className='row p-0 nombre_plataforma'>
+                                                {formatearTitulo(nota.titulo, 45)}
+                                            </div>
+                                        </Link>
+                                    ) :  (
+                                        <Link
+                                            className="link-sin-estilos"
+                                            onClick={(e) => {
+                                                if(nota?.editable == '1') {
+                                                e.preventDefault();
+                                                editarNota(nota);
+                                                } 
+                                            }}
+                                        >
+                                            <div className='row p-0 nombre_plataforma'>
+                                                {formatearTitulo(nota.titulo, 45)}
+                                            </div>
+                                        </Link>
+                                    )}
+
+                                        <div className='row p-0'>
+                                            <span className='FechaPubNota'>{nota.f_pub ? formatearFecha(nota.f_pub) : formatearFecha(nota.update_date)}</span>
+                                        </div>
+                                    </div>
+                                    {/* <div className='col-auto d-flex align-items-center'>
+                                        <span className="publicada">
+                                            <img src="./images/puntoVerde.png" alt="Icono Nota" className='' />
+                                            {nota.estado ? " " + nota.estado : " Publicada"}
+                                        </span>
+                                    </div> */}
+                                    <div className='col-2'>
+                                        <span className="categoria_notas">{nota.categorias}</span>
+                                    </div>
+
+                                    {filtroSeleccionado != 1 ? (
+                                    <>
+                                        <div className='col totales_widget'>
+                                            <p>{nota.cliente}</p>
+                                        </div>
+                                        {nota.estado === "PUBLICADO" && (
+                                        <div className='col totales_widget' style={{ color: "#464d55ff"}}>
+                                            <a href={`http://noticiasd.com/nota/${nota.term_id}`} title="Ver nota" target="_blank" rel="noopener noreferrer"><i class="bi bi-eye-fill m-2 fs-2"></i></a>
+                                        <Link
+                                            title="Grafico de Interacciones"
+                                            className="link-sin-estilos"
+                                            to={nota?.editable == '1' ? `/verNota` : `#`}
+                                            state={{ id: nota.id_noti ? nota.id_noti : nota.term_id, notaABM: nota }}
+                                        >
+                                            <i class="bi bi-bar-chart-line-fill m-2 fs-2"></i>
+                                        </Link>
+                                        <button title="Duplicar Nota"
+                                        onClick={() => editarNota(nota, true)}
+                                        style={{background: "none", border: "none",padding: 0,
+                                            margin: 0,
+                                            cursor: "pointer",
+                                        }}
+                                        >
+                                        <i className="bi bi-back m-2 fs-2"></i>
+                                        </button>
+                                        <BotonEliminarNota id={nota.id} token={TOKEN}></BotonEliminarNota>
+
+                                        </div>
+                                        )}
+                                    </>
+                                    ) : (
+                                    <div className='col totales_widget'>
+                                        <p>{nota.amplificacion}</p>
+                                    </div>
+                                    )
                                     }
 
                                 </div>
-                                {/* aca va la nota */}
-
-                                {notasEnPaginaActual.map((nota, index) => (
-                                        <div
-                                            key={nota.id_noti || nota.term_id || `nota-${index}`}
-                                            className={`row pt-1 borderNotas ${nota.editable == '1' ? '' : 'notaNoEditable'}`}
-                                            >
-                                            {((filtroSeleccionado == 2 || filtroSeleccionado == 3) && ///SOlO EN BOTONES 1 y 2
-                                                !(filtroSeleccionado == 2 && !es_editor)) && nota?.editable == '1'  &&        /// SI NO ES EDITOR NO PUEDE BORRAR NOTAS PUBLICADAS
-                                            <div className='col-auto'>
-                                            <div class="dropdown">
-                                                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                </button>
-                                                <ul class="dropdown-menu">
-                                                    <li><BotonEliminarNota id={nota.id} token={TOKEN}></BotonEliminarNota></li>
-                                                    <li>      
-                                                        <button onClick={() => editarNota(nota, true)} className='p-0 m-2 border-0 bg-transparent'>
-                                                            Duplicar 
-                                                        </button>
-                                                    </li>
-
-                                                </ul>
-                                                </div>
-                                            </div>
-                                            }
-                                        <div className='col-auto'>
-                                            {nota.imagen  ? (
-                                               nota.imagen.includes('wp-content/uploads') ? 
-                                                <img src={nota.imagen} alt="Icono Nota" className='imagenWidwetInteracciones2' /> : 
-                                                <img src={'https://noticiasd.com/img' + nota.imagen} alt="Icono Nota" className='imagenWidwetInteracciones2' />
-                                            ) : (
-                                                <img src={"https://panel.serviciosd.com/img/" + nota.imagen_principal} alt="Icono Nota" className='imagenWidwetInteracciones2' />
-                                            )}
-                                        </div>
-                                        <div className='col-4 pt-1 columna_interaccion nuevoFont'>
-                                            
-                                        {filtroSeleccionado === 1 ? (
-                                            <Link
-                                                className="link-sin-estilos"
-                                                to={nota?.editable == '1' ? `/verNota` : `#`}
-                                                state={{ id: nota.id_noti ? nota.id_noti : nota.term_id, notaABM: nota }}
-                                            >
-                                                <div className='row p-0 nombre_plataforma'>
-                                                    {formatearTitulo(nota.titulo, 45)}
-                                                </div>
-                                            </Link>
-                                        ) :  (
-                                            <Link
-                                                className="link-sin-estilos"
-                                                onClick={(e) => {
-                                                    if(nota?.editable == '1') {
-                                                    e.preventDefault();
-                                                    editarNota(nota);
-                                                    } 
-                                                }}
-                                            >
-                                                <div className='row p-0 nombre_plataforma'>
-                                                    {formatearTitulo(nota.titulo, 45)}
-                                                </div>
-                                            </Link>
-                                        )}
-
-                                            <div className='row p-0'>
-                                                <span className='FechaPubNota'>{nota.f_pub ? formatearFecha(nota.f_pub) : formatearFecha(nota.update_date)}</span>
-                                            </div>
-                                        </div>
-                                        {/* <div className='col-auto d-flex align-items-center'>
-                                            <span className="publicada">
-                                                <img src="./images/puntoVerde.png" alt="Icono Nota" className='' />
-                                                {nota.estado ? " " + nota.estado : " Publicada"}
-                                            </span>
-                                        </div> */}
-                                        <div className='col-2'>
-                                            <span className="categoria_notas">{nota.categorias}</span>
-                                        </div>
-
-                                        {filtroSeleccionado != 1 ? (
-                                        <>
-                                            <div className='col totales_widget'>
-                                                <p>{nota.cliente}</p>
-                                            </div>
-                                            {nota.estado === "PUBLICADO" && (
-                                                <div className='col totales_widget' style={{ color: "#007bff"}}>
-                                                    <a href={`http://noticiasd.com/nota/${nota.term_id}`} target="_blank" rel="noopener noreferrer">VER NOTA</a>
-                                                </div>
-                                            )}
-                                        </>
-                                        ) : (
-                                        <div className='col totales_widget'>
-                                            <p>{nota.amplificacion}</p>
-                                        </div>
-                                        )
-                                        }
-
-                                    </div>
-                                ))}
-                                {cargandoNotas && 
-                                
-                                <div
-                                    className='totales'
-                                    style={{
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        margin: "20px",
-                                        marginLeft: "40px"
-                                    }}
-                                    >
-                                    <Spinner color='blue' />
-                                </div>
-
-                                }
-
-
-                            {/* Botonera de paginación */}
-                            <div className='row'>
-                                <div className="container">
-                                <div className="row justify-content-center">
-                                    <div className="col-auto text-center my-4">
-                                        <button
-                                            className="boton_filtro_notas"
-                                            onClick={() => filtroSeleccionado != 1 ?  handleFiltroClick(filtroSeleccionado, true) : handleFiltroClick_todasLasNotas(filtroSeleccionado, true)}
-                                        >
-                                            Ver más
-                                        </button>
-                                    </div>
-                                </div> 
-                                </div> 
-                                </div>
+                            ))}
+                            {cargandoNotas && 
+                            
+                            <div
+                                className='totales'
+                                style={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    margin: "20px",
+                                    marginLeft: "40px"
+                                }}
+                                >
+                                <Spinner color='blue' />
                             </div>
-                        </div>   
+
+                            }
+
+
+                        {/* Botonera de paginación */}
+                        <div className='row'>
+                            <div className="container">
+                            <div className="row justify-content-center">
+                                <div className="col-auto text-center my-4">
+                                    <button
+                                        className="boton_filtro_notas"
+                                        onClick={() => filtroSeleccionado != 1 ?  handleFiltroClick(filtroSeleccionado, true) : handleFiltroClick_todasLasNotas(filtroSeleccionado, true)}
+                                    >
+                                        Ver más
+                                    </button>
+                                </div>
+                            </div> 
+                            </div> 
+                            </div>
+                        </div>
+                    </div>   
                 </div>
 
     );

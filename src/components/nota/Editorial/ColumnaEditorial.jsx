@@ -9,6 +9,7 @@ import TextareaWithCounter from './textAreaConContador';
 import SelectorAutor from './SelectorAutor';
 import "./colEditorial.css"
 import { useDispatch, useSelector } from 'react-redux';
+import { setPais, setProvincia, setMunicipio } from '../../../redux/crearNotaSlice';
 import { setDistribucionProioritaria,setNoHome, setFechaVencimiento, setFechaPublicacion} from '../../../redux/crearNotaSlice';
 import SelectorCliente2 from './SelectorCliente2';
 import EsDemo from './EsDemo';
@@ -20,6 +21,11 @@ const ColumnaEditorial = ({ indice }) => {
     const isCheckedNoHome = useSelector((state) => state.crearNota.es_home)
     const fechaVence = useSelector((state) => state.crearNota.f_vence)
     const fechaPublicacion = useSelector((state) => state.crearNota.f_pub)
+    const provincia = useSelector((state) => state.crearNota.provincia);
+    const municipio = useSelector((state) => state.crearNota.municipio);
+    const pais = useSelector((state) => state.crearNota.pais);
+    const TOKEN = useSelector((state) => state.formulario.token);
+
 
 
     const dispatch = useDispatch();
@@ -84,7 +90,15 @@ const ColumnaEditorial = ({ indice }) => {
                 />
         </div>
                     <SelectorAutor/>
-                    <ArbolDistribucion/>
+                        <ArbolDistribucion
+                        TOKEN={TOKEN}
+                        pais={pais}
+                        provincia={provincia}
+                        municipio={municipio}
+                        onSetPais={(p) => dispatch(setPais(p))}
+                        onSetProvincia={(p) => dispatch(setProvincia(p))}
+                        onSetMunicipio={(m) => dispatch(setMunicipio(m))}
+                        />
                     <SelectorTipoContenido/>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: "20px", padding: "0px" }}>
                     <span style={{ fontSize: "20px", fontWeight: "bold"}}>Fecha Publicacion:</span>

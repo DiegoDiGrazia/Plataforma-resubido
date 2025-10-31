@@ -83,8 +83,7 @@ const Sidebar = ({ estadoActual }) => {
                 '/images/barchar_icon.png',
                 'Dashboard',
                 'bi bi-bar-chart-fill'
-              )}
-
+              )}  
             {esEditor === false
               ? renderSidebarButton('notas', 'notas', '/images/notas_icon.png', 'Notas', 'bi bi-stack')
               : renderSidebarButton(
@@ -94,7 +93,6 @@ const Sidebar = ({ estadoActual }) => {
                   'Notas',
                   'bi bi-stack'
                 )}
-
             {renderSidebarButton(
               'autoEntrevistas',
               'autoEntrevistas',
@@ -109,14 +107,13 @@ const Sidebar = ({ estadoActual }) => {
               'Administrador',
               'bi bi-gear-fill'
             )}
-            {paginasDelPerfil.find((pagina) => pagina.nombre == "Distribucion") && renderSidebarButton(
+            {paginasDelPerfil.find((pagina) => pagina.nombre == "Distribucion" || pagina.nombre == "Monitor Distribucion" ) && renderSidebarButton(
               'distribucion',
               'distribucion',
               '/images/auto_entrevistas_icon.png',
               'Distribucion',
               'bi bi-clipboard2-check-fill'
             )}
-
             <ul className="list-group list-unstyled botones_inferiories">
               {renderSidebarButton(
                 'soporte-y-ayuda',

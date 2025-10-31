@@ -21,6 +21,7 @@ const PublicarNota = lazy(() => import('./components/nota/PublicarNota'));
 const VerNota = lazy(() => import('./components/nota/VerNota'));
 const Perfil = lazy(() => import('./components/miPerfil/miPerfil'));
 const Soporte = lazy(() => import('./components/miPerfil/soporte'));
+const AbmClientes = lazy(() => import('./components/administrador/gestores/AbmClientes'));
 const NotasParaEditorial = lazy(() => import('./components/nota/NotasParaEditorial'));
 const RecuperarContraseña = lazy(() => import('./components/login/RecuperarContraseña'));
 const UpdatePassword = lazy(() => import('./components/login/updatePassword'));
@@ -46,6 +47,7 @@ function App() {
               <Route path="/usuarios" element={<UsuariosAdmin />} />
               <Route path="/perfiles" element={<PerfilesAdmin />} />
               <Route path="/distribucion" element={<DistribucionAdmin />} />
+              <Route path="/clientes" element={<AbmClientes />} />
           
 
 

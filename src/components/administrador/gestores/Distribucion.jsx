@@ -3,12 +3,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "../../miPerfil/miPerfil.css";
 import { useSelector } from 'react-redux';
-import axios from 'axios';
 import ModalMensaje from '../gestores/ModalMensaje';
-import { obtenerUsuarios, obtenerClientes, obtenerPerfiles, obtenerGeo, obtenerNotasDeGeneraciones, obtenerPlanesMarketing } from './apisUsuarios'; // Importa la función para obtener usuarios
-import { use } from 'react';
+import {obtenerClientes, obtenerNotasDeGeneraciones, obtenerPlanesMarketing } from './apisUsuarios'; 
 import CopiarTexto from './CopiarTexto';
-
+import { Accordion } from 'react-bootstrap';
 
 const obtenerMesActual = () => {
   const hoy = new Date();
@@ -16,6 +14,9 @@ const obtenerMesActual = () => {
   const mes = String(hoy.getMonth() + 1).padStart(2, '0');
   return `${año}-${mes}`;
 }
+const obtenerUltimoDiaMes = (año, mes) => {
+  return new Date(año, mes, 0).getDate(); 
+};
 
 function formatearFechaDDMMAAAA(fechaStr) {
   if (!fechaStr) return "";
@@ -50,21 +51,16 @@ const filtrarClientesSegunPendientes = (clientesObj, pendientes) => {
     if (pendientes === 'solo en Meta') {
       return datos.notas.some(nota => nota.primer_dato_en_meta == null);
     }
-
     if (pendientes === 'solo en GAM') {
       return datos.notas.some(nota => nota.primer_dato_en_360 == null);
     }
-
     if (pendientes === 'GAM o Meta') {
       return datos.notas.some(
         nota => nota.primer_dato_en_meta == null || nota.primer_dato_en_360 == null
       );
     }
-
-    return true; // fallback
+    return true;
   });
-
-  // Convertimos el array de nuevo a objeto
   return Object.fromEntries(clientesFiltradosEntries);
 };
 const obtenerColorDeEstadoDistribucionDeNota = (campoAChequear, nota) => {
@@ -73,10 +69,10 @@ const obtenerColorDeEstadoDistribucionDeNota = (campoAChequear, nota) => {
   if (!campoAChequear || !nota) {
     return 'text-muted';
   }
-  if (nota[campoAChequear] == null && fechaVencimiento > fechaHoy) {  
+  if (nota[campoAChequear] == null && fechaVencimiento < fechaHoy) {  
     return 'text-danger'
-  }
-  else if(nota[campoAChequear] == null && fechaVencimiento < fechaHoy){
+  } 
+  else if(nota[campoAChequear] == null && fechaVencimiento > fechaHoy){
     return 'text-warning'
   }
   else if(nota[campoAChequear] != null){
@@ -100,9 +96,6 @@ function agregarPlanAlDiccionarioDeNotas(dicNotas, clientes, planes) {
 
   return nuevoDic;
 }
-
-
-
 const agruparNotasPorCliente = (notas) => {
   if(!notas || notas.length === 0) return {};
   return notas.reduce((acc, nota) => {
@@ -117,7 +110,6 @@ const agruparNotasPorCliente = (notas) => {
     return acc;
   }, {});
 };
-
 const DistribucionAdmin = () => {
   const [clientes, setClientes] = useState([]);
   const [fechaDesde, setFechaDesde] = useState(obtenerMesActual());
@@ -131,22 +123,31 @@ const DistribucionAdmin = () => {
   const [page, setPage] = useState(1);
   const itemsPerPage = 10;  
   const TOKEN = useSelector((state) => state.formulario.token);
+  const [loading, setLoading] = useState(false); // 👈 nuevo estado
 
   useEffect(() => {
     obtenerClientes(TOKEN).then(setClientes);
-    obtenerPlanesMarketing(TOKEN, fechaDesde+'-01', fechaHasta+'-31').then(setPlanes);
+    const [añoHasta, mesHasta] = fechaHasta.split("-");
+    const ultimoDiaHasta = obtenerUltimoDiaMes(añoHasta, mesHasta);
+    obtenerPlanesMarketing(TOKEN, fechaDesde+'-01',  `${fechaHasta}-${ultimoDiaHasta}`)
+    .then(setPlanes)
+    .finally(() => setLoading(false)); // 👈 termina la carga
+    ;
 }, [TOKEN]);  
 
 useEffect(() => {
   if(planes.length === 0 || clientes.length === 0) return;
-  obtenerNotasDeGeneraciones(TOKEN, '', '', '', 'PUBLICADO', '150', '0', '', '', fechaDesde+'-01', fechaHasta+'-31')
-    .then((res) => {
-      const diccionarioDeCLientesConSusNotas = agruparNotasPorCliente(res);
-      const agrupadasConPlanes = agregarPlanAlDiccionarioDeNotas(diccionarioDeCLientesConSusNotas, 
-                                                                 clientes, planes);
-      console.log('agrupadasConPlanes: ',agrupadasConPlanes);
-      setNotasGeneracionesAgrupadas(agrupadasConPlanes);
-    });
+  const [añoHasta, mesHasta] = fechaHasta.split("-");
+  const ultimoDiaHasta = obtenerUltimoDiaMes(añoHasta, mesHasta);
+  setLoading(true); // 👈 comienza la carga
+  obtenerNotasDeGeneraciones(TOKEN, '', '', '', 'PUBLICADO', '150', '0', '', '', fechaDesde+'-01', `${fechaHasta}-${ultimoDiaHasta}`)
+  .then((res) => {
+  const diccionarioDeCLientesConSusNotas = agruparNotasPorCliente(res);
+  const agrupadasConPlanes = agregarPlanAlDiccionarioDeNotas(diccionarioDeCLientesConSusNotas, clientes, planes);
+  console.log('agrupadasConPlanes: ', agrupadasConPlanes);
+  setNotasGeneracionesAgrupadas(agrupadasConPlanes);
+  })
+  .finally(() => setLoading(false)); 
 }, [TOKEN, clientes, planes, fechaDesde, fechaHasta]);
 
 const filteredClientes = useMemo(() => {
@@ -187,8 +188,7 @@ const goToPage = (newPage) => {
           </h3>
           <h4 className='infoCuenta'>Distribucion</h4>
           <div className='abajoDeTusNotas'>
-            En esta seccion podras gestionar la creacion, eliminacion y edicion <br />
-            de todos los usuarios de la plataforma.
+            En esta seccion podras gestionar la distribucion de tu contenido <br />
           </div>
         </div>
       </div>
@@ -238,247 +238,119 @@ const goToPage = (newPage) => {
       {/* Lista */}
       <div className='row miPerfilContainer soporteContainer mt-4 p-0'>
         <div>
-          <ul className="list-group">
-            {Object.keys(notasGeneracionesAgrupadas).length === 0 ? (
+          {loading ? (
+          <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '200px' }}>
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Cargando...</span>
+            </div>
+          </div>
+         ) : Object.keys(notasGeneracionesAgrupadas).length === 0 ? (
+            <ul className="list-group">
               <li className="list-group-item">No hay resultados.</li>
-            ) : (
-              <div className="accordion" id="accordionExample">
-                {pagedClientes.map((cliente, index) => {
-                  const collapseId = `collapse-${index}`;
-                  const headingId = `heading-${index}`;
-                  const data = notasGeneracionesAgrupadas[cliente];
-                  if (!data) return null;
+            </ul>
+          ) : (
+            <Accordion defaultActiveKey="">
+              {pagedClientes.map((cliente, index) => {
+                const data = notasGeneracionesAgrupadas[cliente];
+                if (!data) return null;
 
-                  return (
-                    <li key={cliente} className="list-group-item p-0">
-                      <div className="accordion-item">
-                        <h2 className="accordion-header" id={headingId}>
-                          <button
-                            className="accordion-button collapsed"
-                            type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target={`#${collapseId}`}
-                            aria-expanded="false"
-                            aria-controls={collapseId}
-                          >
-                            <div className="row pt-0 w-100">
-                              <div className="col-2">
-                                <div className="row pt-0">
-                                    <strong className='text-primary' style={{fontSize: '18px'}}>{cliente}</strong>
-                                </div>
-                                <div className="row p-1">
-                                  <span>
-                                    <strong>Distribuibles: </strong>
-                                    {(data.plan ? data.plan.notas_x_mes : 0)}
-                                  </span>
-
-                                </div>
-                                <div className="row p-1">
-                                    <span>
-                                      <strong>Por publicar: </strong>
-                                      {data.plan ? Number(data.plan.notas_x_mes) - data.notas.length : 0}
-                                    </span>
-                                </div>
-                              </div>
-
-                              <div className="col-3">
-                                <div className="row pt-0">
-                                  <strong>Meta</strong>
-                                </div>
-                                <div className="row p-1">
-                                  <span>
-                                    <strong>Distribuidas: </strong>
-                                    {data.notas.filter(
-                                        (n) => n.primer_dato_en_meta != null
-                                      ).length}
-                                  </span>
-                                </div>
-                                <div className="row p-1">
-                                  <span>
-                                    <strong>Vencidas: </strong>
-                                    {data.notas.filter(
-                                        (n) =>
-                                          new Date(n.fecha_vencimiento) < new Date() &&
-                                          n.primer_dato_en_meta != null
-                                      ).length}
-                                  </span>
-                                </div>
-                              </div>
-
-                              <div className="col-3">
-                                <div className="row pt-0">
-                                  <strong>DV360</strong>
-                                </div>
-                                <div className="row p-1">
-                                  <span>
-                                    <strong>Distribuidas: </strong>
-                                    {data.notas.filter(
-                                        (n) => n.primer_dato_en_360 != null
-                                      ).length}
-                                  </span>
-                                </div>
-                                <div className="row p-1">
-                                  <span>
-                                    <strong>Vencidas: </strong>
-                                    {data.notas.filter(
-                                        (n) =>
-                                          new Date(n.fecha_vencimiento) < new Date() &&
-                                          n.primer_dato_en_360 != null
-                                      ).length}
-                                  </span>
-                                </div>
-                              </div>
-
-                              <div className="col-3 d-flex justify-content-center align-items-center">
-                                    <i
-                                      className={
-                                        'bi bi-meta fs-1 ' +
-                                        obtenerColorDeEstadoDistribucion(
-                                          'primer_dato_en_meta',
-                                          data
-                                        )
-                                      }
-                                    ></i>
-                                    <i
-                                      className={
-                                        'bi bi-google fs-1 ml-5 ' +
-                                        obtenerColorDeEstadoDistribucion(
-                                          'primer_dato_en_360',
-                                          data
-                                        )
-                                      }
-                                    ></i>
-                              </div>
-                            </div>
-                          </button>
-                        </h2>
-
-                        <div
-                          id={collapseId}
-                          className="accordion-collapse collapse"
-                          aria-labelledby={headingId}
-                          data-bs-parent="#accordionExample"
-                        >
-                          <div className="accordion-body">
-                            <ul className="list-group">
-                              {data.notas.map((nota) => (
-                                <li key={nota.id} className="list-group-item">
-                                  {/* COLUMNA 1 DE LA NOTA */}
-                                  <div className='row p-0'>
-                                    <div className="col-3">
-                                      <div className="row p-1">
-                                        <span>
-                                          <a href={`https://www.noticiasd.com/${nota.term_id}`} target="_blank" rel="noopener noreferrer">
-                                            {nota.term_id}
-                                          </a>  
-                                        </span>
-                                      </div>
-                                      <div className="row p-1">
-                                        <span>
-                                          <strong>Publicación: </strong>
-                                          {nota.f_pub}
-                                        </span>
-                                      </div>
-                                      <div className="row p-1">
-                                        <span>
-                                          <strong>Ultima versión: </strong>
-                                          {nota.update_date}
-                                        </span>
-                                      </div>
-                                      <div className="row p-1">
-                                        <span>
-                                          <strong>Fecha vencimiento: </strong>
-                                          {nota.fecha_vencimiento}
-                                        </span>
-                                      </div>
-                                    </div>
-                                    {/* COLUMNA 2 DE LA NOTA */}
-                                    <div className="col-3">
-                                      <div className="row p-1">
-                                          <span>
-                                          <a
-                                            href={decodeURI(
-                                              `https://builder.ntcias.de/single.php?name=-wp${nota.term_id}-${nota.cliente}_v:${formatearFechaDDMMAAAA(nota.fecha_vencimiento)}&nota_id=${nota.term_id}`
-                                            )}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                          >
-                                            CREATIVO
-                                          </a>
-                                        </span>
-                                      </div>
-                                      <div className="row p-1">
-                                        <span>
-                                          <strong>Comentarios: </strong>
-                                          {nota.comentarios != null ? nota.comentarios : 'No hay comentarios'}
-                                        </span>
-                                      </div>
-                                    </div>
-                                    {/* COLUMNA 3 DE LA NOTA */}
-                                    <div className="col-3">
-                                      <div className="row p-1">
-                                        <span>
-                                            <CopiarTexto textoACopiar= {nota.titulo} TituloBoton={'Copiar Titulo'}/>
-                                        </span>
-                                      </div>
-                                      <div className="row p-1">
-                                        <span>
-                                            <CopiarTexto textoACopiar= {nota.extracto} TituloBoton={'Copiar Bajada'}/>
-                                        </span>
-                                      </div>
-                                      <div className="row p-1">
-                                        <span>
-                                            <CopiarTexto textoACopiar= {nota.engagement} TituloBoton={'Copiar Engagement'}/>
-                                        </span>
-                                      </div>
-                                    </div>
-                                    {/* COLUMNA 4 DE LA NOTA */}
-                                    <div className="col-3 d-flex justify-content-center align-items-center">
-                                      <i
-                                        className={
-                                          'bi bi-meta fs-1 ' + obtenerColorDeEstadoDistribucionDeNota('primer_dato_en_meta', nota)
-                                        }
-                                      ></i>
-                                      <i
-                                        className={
-                                          'bi bi-google fs-1 ms-3 ' + obtenerColorDeEstadoDistribucionDeNota('primer_dato_en_360', nota)
-                                        }
-                                      ></i>
-                                    </div>
-                                  </div>
-                                </li>
-                              ))}
-                            </ul>
+                return (
+                  <Accordion.Item eventKey={index.toString()} key={cliente}>
+                    <Accordion.Header>
+                      <div className="row pt-0 w-100">
+                        <div className="col-2">
+                          <strong className='text-primary' style={{ fontSize: '18px' }}>{cliente}</strong>
+                          <div className="row p-1">
+                            <span><strong>Distribuibles: </strong>{data.plan ? data.plan.notas_x_mes : 0}</span>
+                          </div>
+                          <div className="row p-1">
+                            <span><strong>Por publicar: </strong>{data.plan ? Number(data.plan.notas_x_mes) - data.notas.length : 0}</span>
                           </div>
                         </div>
+                        <div className="col-3">
+                          <strong>Meta</strong>
+                          <div className="row p-1">
+                            <span><strong>Distribuidas: </strong>{data.notas.filter(n => n.primer_dato_en_meta != null).length}</span>
+                          </div>
+                          <div className="row p-1">
+                            <span><strong>Vencidas: </strong>{data.notas.filter(n => new Date(n.fecha_vencimiento) < new Date() && n.primer_dato_en_meta != null).length}</span>
+                          </div>
+                        </div>
+                        <div className="col-3">
+                          <strong>DV360</strong>
+                          <div className="row p-1">
+                            <span><strong>Distribuidas: </strong>{data.notas.filter(n => n.primer_dato_en_360 != null).length}</span>
+                          </div>
+                          <div className="row p-1">
+                            <span><strong>Vencidas: </strong>{data.notas.filter(n => new Date(n.fecha_vencimiento) < new Date() && n.primer_dato_en_360 != null).length}</span>
+                          </div>
+                        </div>
+                        <div className="col-3 d-flex justify-content-center align-items-center">
+                          <i className={'bi bi-meta fs-1 ' + obtenerColorDeEstadoDistribucion('primer_dato_en_meta', data)}></i>
+                          <i className={'bi bi-google fs-1 ms-3 ' + obtenerColorDeEstadoDistribucion('primer_dato_en_360', data)}></i>
+                        </div>
                       </div>
-                    </li>
-                  );
-                })}
-              </div>
-            )}
-          </ul>
+                    </Accordion.Header>
 
+                    <Accordion.Body>
+                      <ul className="list-group">
+                        {data.notas.map(nota => (
+                          <li key={nota.id} className="list-group-item">
+                            <div className='row p-0'>
+                              {/* Columna 1 */}
+                              <div className="col-3">
+                                <div className="row p-1">
+                                  <span>
+                                    <a href={`https://www.noticiasd.com/${nota.term_id}`} target="_blank" rel="noopener noreferrer">{nota.term_id}</a>
+                                  </span>
+                                </div>
+                                <div className="row p-1">
+                                  <span><strong>Publicación: </strong>{nota.f_pub}</span>
+                                </div>
+                                <div className="row p-1">
+                                  <span><strong>Ultima versión: </strong>{nota.update_date}</span>
+                                </div>
+                                <div className="row p-1">
+                                  <span><strong>Fecha vencimiento: </strong>{nota.fecha_vencimiento}</span>
+                                </div>
+                              </div>
 
+                              {/* Columna 2 */}
+                              <div className="col-3">
+                                <div className="row p-1">
+                                  <span>
+                                    <a href={decodeURI(`https://builder.ntcias.de/single.php?name=-wp${nota.term_id}-${nota.cliente}_v:${formatearFechaDDMMAAAA(nota.fecha_vencimiento)}&nota_id=${nota.term_id}`)} target="_blank" rel="noopener noreferrer">
+                                      CREATIVO
+                                    </a>
+                                  </span>
+                                </div>
+                                <div className="row p-1">
+                                  <span><strong>Comentarios: </strong>{nota.comentarios ?? 'No hay comentarios'}</span>
+                                </div>
+                              </div>
 
-          {/* Paginación */}
-          <div className="d-flex justify-content-center mt-3">
-            <button
-              className="btn btn-secondary btn-sm me-2"
-              onClick={() => goToPage(page - 1)}
-              disabled={page === 1}
-            >
-              Anterior
-            </button>
-            <span>Página {page} de {totalPages}</span>
-            <button
-              className="btn btn-secondary btn-sm ms-2"
-              onClick={() => goToPage(page + 1)}
-              disabled={page === totalPages}
-            >
-              Siguiente
-            </button>
-          </div>
+                              {/* Columna 3 */}
+                              <div className="col-3">
+                                <div className="row p-1"><CopiarTexto textoACopiar={nota.titulo} TituloBoton={'Copiar Titulo'} /></div>
+                                <div className="row p-1"><CopiarTexto textoACopiar={nota.extracto} TituloBoton={'Copiar Bajada'} /></div>
+                                <div className="row p-1"><CopiarTexto textoACopiar={nota.engagement} TituloBoton={'Copiar Engagement'} /></div>
+                              </div>
+
+                              {/* Columna 4 */}
+                              <div className="col-3 d-flex justify-content-center align-items-center">
+                                <i className={'bi bi-meta fs-1 ' + obtenerColorDeEstadoDistribucionDeNota('primer_dato_en_meta', nota)}></i>
+                                <i className={'bi bi-google fs-1 ms-3 ' + obtenerColorDeEstadoDistribucionDeNota('primer_dato_en_360', nota)}></i>
+                              </div>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </Accordion.Body>
+                  </Accordion.Item>
+                );
+              })}
+            </Accordion>
+          )}
         </div>
       </div>
 

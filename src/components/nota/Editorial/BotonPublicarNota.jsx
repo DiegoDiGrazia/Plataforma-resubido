@@ -15,6 +15,7 @@ const BotonPublicarNota = ({ status }) => {
     const [errorMessage, setErrorMessage] = useState("");
     const { archivo } = useContext(ArchivoContext); // video es tipo File
     const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [idNotaPublicada, setIdNotaPublicada] = useState(null);
     
 
     const navigate = useNavigate();
@@ -138,6 +139,9 @@ const BotonPublicarNota = ({ status }) => {
             });
 
             if (response.status === "true") {
+                console.log("Nota publicada con éxito");
+                console.log('response en boton: ', response);
+                setIdNotaPublicada(response.item);
                 setShowModal(true); // Muestra el modal de éxito
             } else {
                 throw new Error("Hemos tenido un problema en el servidor, por favor comuníquese con el soporte.");
@@ -198,6 +202,8 @@ const BotonPublicarNota = ({ status }) => {
                             >
                                 Ir a Notas
                             </Button>
+                            <BotonModalIframes id_nota={idNotaPublicada} token={TOKEN} />
+
                         </div>
                     )}
                 </Modal.Body>
