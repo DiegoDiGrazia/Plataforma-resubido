@@ -80,7 +80,7 @@ const ArbolDistribucion = ({
       }
     })
     .catch((error) => console.error('Error al obtener municipios:', error));
-  }, [TOKEN, provincia, onSetMunicipio, municipio]);
+  }, [TOKEN, provincia]);
 
   return (
     <div className="dropdown p-0">
@@ -115,7 +115,6 @@ const ArbolDistribucion = ({
         onClear={() => onSetMunicipio(null)}
         />
     }
-
     {!jurisdiccion && (
     <>
         <SelectorConBuscador
@@ -125,7 +124,6 @@ const ArbolDistribucion = ({
         onSelect={onSetPais}
         onClear={() => onSetPais(null)}
         />
-
         <SelectorConBuscador
         title="Provincia"
         options={provincias}
@@ -147,8 +145,7 @@ const ArbolDistribucion = ({
         />
     </>
     )}
-     
-     </div>
+    </div>
     
   );
 };

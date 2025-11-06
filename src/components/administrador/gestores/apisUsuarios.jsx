@@ -68,7 +68,8 @@ export const obtenerPlanesMarketing = (token, desde, hasta) =>
     desde, hasta
 });
 
-export const guardar_posicion_iframes = (token, id, datos) =>
+// guardar_posicion_iframes
+export const guardar_dato_en_banner_data = (token, id, datos) =>
   fetchData("http://147.182.243.56:3000/api/guardar_posicion_creativos", token, {
     id, datos
 });

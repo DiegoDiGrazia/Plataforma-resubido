@@ -6,7 +6,9 @@ import { useSelector } from 'react-redux';
 import ModalMensaje from '../gestores/ModalMensaje';
 import {obtenerClientes, obtenerNotasDeGeneraciones, obtenerPlanesMarketing } from './apisUsuarios'; 
 import CopiarTexto from './CopiarTexto';
+import IconosDistribucionConMonto from './IconosDistribucionConMonto';
 import { Accordion } from 'react-bootstrap';
+
 
 const obtenerMesActual = () => {
   const hoy = new Date();
@@ -14,6 +16,7 @@ const obtenerMesActual = () => {
   const mes = String(hoy.getMonth() + 1).padStart(2, '0');
   return `${año}-${mes}`;
 }
+
 const obtenerUltimoDiaMes = (año, mes) => {
   return new Date(año, mes, 0).getDate(); 
 };
@@ -63,23 +66,6 @@ const filtrarClientesSegunPendientes = (clientesObj, pendientes) => {
   });
   return Object.fromEntries(clientesFiltradosEntries);
 };
-const obtenerColorDeEstadoDistribucionDeNota = (campoAChequear, nota) => {
-  const fechaHoy = new Date();
-  const fechaVencimiento = new Date(nota['fecha_vencimiento']);
-  if (!campoAChequear || !nota) {
-    return 'text-muted';
-  }
-  if (nota[campoAChequear] == null && fechaVencimiento < fechaHoy) {  
-    return 'text-danger'
-  } 
-  else if(nota[campoAChequear] == null && fechaVencimiento > fechaHoy){
-    return 'text-warning'
-  }
-  else if(nota[campoAChequear] != null){
-    return 'text-success'
-  }
-  return 'text-muted';
-}
 
 function agregarPlanAlDiccionarioDeNotas(dicNotas, clientes, planes) {
   const nuevoDic = {};
@@ -149,6 +135,14 @@ useEffect(() => {
   })
   .finally(() => setLoading(false)); 
 }, [TOKEN, clientes, planes, fechaDesde, fechaHasta]);
+
+  const irANotasDelCliente = (data, cliente, fechaDesde, fechaHasta) => {
+    data.cliente = cliente;
+    data.desde = fechaDesde;
+    data.hasta = fechaHasta;
+    localStorage.setItem("datosDelCliente", JSON.stringify(data));
+    window.open("/notas-cliente", "_blank");
+  };
 
 const filteredClientes = useMemo(() => {
   const allKeys = Object.keys(notasGeneracionesAgrupadas || {});
@@ -259,7 +253,10 @@ const goToPage = (newPage) => {
                     <Accordion.Header>
                       <div className="row pt-0 w-100">
                         <div className="col-2">
-                          <strong className='text-primary' style={{ fontSize: '18px' }}>{cliente}</strong>
+                          <button onClick={() => irANotasDelCliente(data, cliente, fechaDesde, fechaHasta)} className="btn btn-link p-0 m-0 text-start">
+                            <strong className='text-primary' style={{ fontSize: '18px' }}>{cliente}</strong>
+                          </button>
+                          
                           <div className="row p-1">
                             <span><strong>Distribuibles: </strong>{data.plan ? data.plan.notas_x_mes : 0}</span>
                           </div>
@@ -337,10 +334,7 @@ const goToPage = (newPage) => {
                               </div>
 
                               {/* Columna 4 */}
-                              <div className="col-3 d-flex justify-content-center align-items-center">
-                                <i className={'bi bi-meta fs-1 ' + obtenerColorDeEstadoDistribucionDeNota('primer_dato_en_meta', nota)}></i>
-                                <i className={'bi bi-google fs-1 ms-3 ' + obtenerColorDeEstadoDistribucionDeNota('primer_dato_en_360', nota)}></i>
-                              </div>
+                              <IconosDistribucionConMonto nota= {nota} token = {TOKEN} />
                             </div>
                           </li>
                         ))}

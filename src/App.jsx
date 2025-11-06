@@ -26,6 +26,7 @@ const NotasParaEditorial = lazy(() => import('./components/nota/NotasParaEditori
 const RecuperarContraseña = lazy(() => import('./components/login/RecuperarContraseña'));
 const UpdatePassword = lazy(() => import('./components/login/updatePassword'));
 const AutoEntrevistasVideoAsk = lazy(() => import('./components/miPerfil/AutoEntrevistasVideoAsk'));
+const NotasCliente = lazy(() => import('./components/administrador/gestores/NotasCliente'));
 
 function App() {
   return (
@@ -48,10 +49,7 @@ function App() {
               <Route path="/perfiles" element={<PerfilesAdmin />} />
               <Route path="/distribucion" element={<DistribucionAdmin />} />
               <Route path="/clientes" element={<AbmClientes />} />
-          
-
-
-
+              <Route path="/notas-cliente" element={<NotasCliente />} />
               <Route path="/mi-perfil" element={<Perfil />} />
               <Route path="/autoEntrevistas" element={<AutoEntrevistasVideoAsk />} />
               <Route path="/soporte-y-ayuda" element={<Soporte />} />

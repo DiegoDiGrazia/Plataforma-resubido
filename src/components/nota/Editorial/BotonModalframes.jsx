@@ -3,7 +3,7 @@ import { Button, Modal } from 'react-bootstrap';
 import './modal.css'
 import GoogleStyleSlider from './GoogleStyleSlider';
 import SliderVertical from './SliderVertical';
-import { guardar_posicion_iframes } from '../../administrador/gestores/apisUsuarios';
+import { guardar_dato_en_banner_data } from '../../administrador/gestores/apisUsuarios';
 
     const BotonModalIframes = ({id_nota, token}) => {
 
@@ -16,7 +16,7 @@ import { guardar_posicion_iframes } from '../../administrador/gestores/apisUsuar
         }, [posicion]);
 
         const guardarPosicion = async (token, id_nota, posicion) => {
-            await guardar_posicion_iframes(token, id_nota, `{vp:${posicion}}`);
+            await guardar_dato_en_banner_data(token, id_nota, `{vp:${posicion}}`);
         }
 
     return (
