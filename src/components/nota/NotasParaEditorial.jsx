@@ -19,7 +19,7 @@ import { editarNota } from './VerNota';
 import { resetCrearNota, setClienteNota, setIdNoti } from '../../redux/crearNotaSlice';
 import { analizarHTML, convertirImagenBase64, setContenidoAEditar, setContenidoNota, setImagenPrincipal, setImagenRRSS, setNotaAEditar } from '../../redux/crearNotaSlice';
 import BotonEliminarNota from './Editorial/botonEliminarNota';
-import { updateCliente } from '../../redux/formularioSlice';
+import { updateCliente, updateNotaFreemiumDistribucion } from '../../redux/formularioSlice';
 import BotonCrearNota from './Editorial/BotonCrearNota';
 
   function obtenerFechaDeManana() {
@@ -86,6 +86,10 @@ const NotasParaEditorial = () => {
     // ✅ Solo después de que todo se haya procesado, se navega
     navigate("/crearNota");
 };
+    const editarNotaFreemium = async (notaABM, seDuplica) => {
+        dispatch(updateNotaFreemiumDistribucion(notaABM));
+        navigate("/distribuir-nota-freemium");
+    }
 
     const CLIENTE = useSelector((state) => state.formulario.cliente);
     const navigate = useNavigate()
@@ -95,12 +99,13 @@ const NotasParaEditorial = () => {
     const [verMasUltimo, setVerMasUltimo] = useState(1)
     const idPais = useSelector((state) => state.formulario.usuario.id_pais)
     const verMasCantidadPaginacion = 15
-    const [traerNotas, setTraerNotas] = useState(true)
     const [cargandoNotas, setCargandoNotas] = useState(true)
     const es_editor = useSelector((state) => state.formulario.es_editor);
     const id_pais = useSelector((state) => state.formulario.usuario.id_pais);
     const paises = useSelector((state) =>state.formulario.geo);
     const nombrePaisUsuario = paises.find(pais => pais.pais_id === id_pais)?.nombre || null;
+    const perfilUsuario = useSelector((state) => state.formulario.usuario.perfil);
+    
     let CantidadDeNotasPorPagina = 200;
     const botones = [
         { id: 2, nombre: 'Publicaciones' },
@@ -427,6 +432,18 @@ const NotasParaEditorial = () => {
                                         {nota.estado === "PUBLICADO" && (
                                         <div className='col totales_widget' style={{ color: "#464d55ff"}}>
                                             <a href={`http://noticiasd.com/nota/${nota.term_id}`} title="Ver nota" target="_blank" rel="noopener noreferrer"><i class="bi bi-eye-fill m-2 fs-2"></i></a>
+                                        {perfilUsuario === "9" && ///MODIFICAR A 9 DESPUES DE LAS PRUEBAS
+                                        <button title="distribuir nota"
+                                            onClick={() => editarNotaFreemium(nota, true)}
+                                            style={{background: "none", border: "none",padding: 0,
+                                                margin: 0,
+                                                cursor: "pointer",
+                                            }}
+                                        >
+                                            <img src="/images/prisma.png" alt="Duplicar Nota" className='mb-3' />
+                                        </button>
+                                        }
+                                        { nota.con_distribucion === "1" &&
                                         <Link
                                             title="Grafico de Interacciones"
                                             className="link-sin-estilos"
@@ -435,14 +452,15 @@ const NotasParaEditorial = () => {
                                         >
                                             <i class="bi bi-bar-chart-line-fill m-2 fs-2"></i>
                                         </Link>
+                                        }
                                         <button title="Duplicar Nota"
-                                        onClick={() => editarNota(nota, true)}
-                                        style={{background: "none", border: "none",padding: 0,
-                                            margin: 0,
-                                            cursor: "pointer",
-                                        }}
-                                        >
-                                        <i className="bi bi-back m-2 fs-2"></i>
+                                            onClick={() => editarNota(nota, true)}
+                                            style={{background: "none", border: "none",padding: 0,
+                                                margin: 0,
+                                                cursor: "pointer",
+                                            }}
+                                            >
+                                            <i className="bi bi-back m-2 fs-2"></i>
                                         </button>
                                         <BotonEliminarNota id={nota.id} token={TOKEN}></BotonEliminarNota>
 

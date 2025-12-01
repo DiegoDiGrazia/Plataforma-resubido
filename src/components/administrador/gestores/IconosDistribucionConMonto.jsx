@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { guardar_dato_en_banner_data } from './apisUsuarios';
 import { useRef } from 'react';
+import { useSelector } from 'react-redux';
 
 const obtenerColorDeEstadoDistribucionDeNota = (campoAChequear, nota) => {
   const fechaHoy = new Date();
@@ -23,29 +24,25 @@ const IconosDistribucionConMonto = ({ nota, token }) => {
     const banner_data = nota['banner_data'] ? JSON.parse(nota['banner_data']) : null;
     const [montoDv, setMontoDv] = useState(banner_data?.presupuesto?.dv || 0);
     const [montoMeta, setMontoMeta] = useState(banner_data?.presupuesto?.meta || 0);
+    const Usuario = useSelector((state) => state.formulario.usuario);
+    useEffect(() => {
+      if (isFirstRender.current) {
+          isFirstRender.current = false;
+          return; // no ejecutar en el primer render
+      }
+      const handler = setTimeout(() => {
+          const dato_a_guardar = JSON.stringify({
+          vp: banner_data?.vp || '50',
+          presupuesto: {
+              meta: montoMeta,
+              dv: montoDv,
+          },
+          });
+          guardar_dato_en_banner_data(token, nota.id, dato_a_guardar);
+      }, 2000); // espera 3 segundos después del último cambio
 
-  useEffect(() => {
-
-    if (isFirstRender.current) {
-        isFirstRender.current = false;
-        return; // no ejecutar en el primer render
-    }
-    const handler = setTimeout(() => {
-        const dato_a_guardar = JSON.stringify({
-        vp: banner_data?.vp || '50',
-        presupuesto: {
-            meta: montoMeta,
-            dv: montoDv,
-        },
-        });
-        guardar_dato_en_banner_data(token, nota.id, dato_a_guardar);
-        console.log('nota:', nota);
-        console.log('Dato a guardar en banner_data:', dato_a_guardar);
-    }, 2000); // espera 3 segundos después del último cambio
-
-    // Si el usuario vuelve a tipear antes de los 3 segundos, se limpia el timeout
-    return () => clearTimeout(handler);
-  }, [montoDv, montoMeta]);
+      return () => clearTimeout(handler);
+    }, [montoDv, montoMeta]);
 
   return (
     <div className="col-3 d-flex justify-content-center align-items-center">
@@ -62,8 +59,13 @@ const IconosDistribucionConMonto = ({ nota, token }) => {
           type="number"
           className="form-control mt-2 text-center"
           placeholder="Meta"
-          value={montoMeta} 
-          onChange={(e) => setMontoMeta(e.target.value)}
+          value={montoMeta}
+          readOnly={!(Usuario.nombre === 'Santiago Iván Rossi' || Usuario.perfil === '1')}
+          onChange={(e) => {
+            if (Usuario.nombre === 'Santiago Iván Rossi' || Usuario.perfil === '1') {
+              setMontoMeta(e.target.value);
+            }
+          }}
           style={{ width: '120px', fontSize: '0.9rem' }}
         />
       </div>
@@ -82,10 +84,16 @@ const IconosDistribucionConMonto = ({ nota, token }) => {
           className="form-control mt-2 text-center"
           placeholder="DV"
           value={montoDv}
-          onChange={(e) => setMontoDv(e.target.value)}
+          readOnly={!(Usuario.nombre === 'Santiago Iván Rossi' || Usuario.perfil === '1')}
+          onChange={(e) => {
+            if (Usuario.nombre === 'Santiago Iván Rossi' || Usuario.perfil === '1') {
+              setMontoDv(e.target.value); // ✅ corregido
+            }
+          }}
           style={{ width: '120px', fontSize: '0.9rem' }}
         />
       </div>
+
     </div>
   );
 };

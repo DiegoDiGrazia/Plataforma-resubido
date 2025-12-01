@@ -5,52 +5,70 @@ const SelectorConBuscador = ({ title, options = [], selectedOption, onSelect, on
 
     // Filtrar las opciones según el texto ingresado
     const filteredOptions = (options || []).filter(option => {
-  const text = option?.nombre ?? option?.name ?? '';
-  return text.toLowerCase().includes(searchQuery.toLowerCase());
-});
+        const text = option?.nombre ?? option?.name ?? '';
+        return text.toLowerCase().includes(searchQuery.toLowerCase());
+    });
 
     return (
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: "10px" }}>
-            <span style={{ fontSize: "20px", fontWeight: "bold" }}>{title}</span>
-            <button 
-                className="btn custom-dropdown-button dropdown-toggle boton_cliente mb-2 ml-5" 
-                type="button" 
-                data-bs-toggle="dropdown"
-            >
-                {selectedOption?.nombre || selectedOption?.name || "Ninguno"}
-            </button>
-            <ul className="dropdown-menu listaClientes">
-                {/* Campo de búsqueda */}
-                <li>
-                    <input
-                        type="text"
-                        className="form-control mb-2"
-                        placeholder="Buscar..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                </li>
-                {/* Opción para limpiar la selección */}
-                <li>
+        <div className="mb-2">
+            {/* Título + Dropdown en la misma línea */}
+            <div className="d-flex justify-content-between align-items-center mb-2">
+                <span className="fw-bold">{title}</span>
+
+                <div className="dropdown">
                     <button 
-                        className="dropdown-item" 
-                        onClick={onClear}
+                        className="btn custom-dropdown-button dropdown-toggle boton_cliente" 
+                        type="button" 
+                        data-bs-toggle="dropdown"
                     >
-                        Ninguno
+                        {selectedOption?.nombre || selectedOption?.name || "Ninguno"}
                     </button>
-                </li>
-                {/* Opciones dinámicas filtradas */}
-                {filteredOptions.map((option, index) => (
-                    <li key={index}>
-                        <button 
-                            className="dropdown-item" 
-                            onClick={() => onSelect(option)}
-                        >
-                            {option.nombre || option.name}
-                        </button>
-                    </li>
-                ))}
-            </ul>
+
+                    <ul className="dropdown-menu listaClientes p-2" style={{ minWidth: "220px" }}>
+                        
+                        {/* Buscador */}
+                        <li className="mb-2">
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Buscar..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </li>
+
+                        {/* Opción para limpiar */}
+                        <li>
+                            <button 
+                                className="dropdown-item"
+                                onClick={() => {
+                                    onClear();
+                                    setSearchQuery('');
+                                }}
+                            >
+                                Ninguno
+                            </button>
+                        </li>
+
+                        <li><hr className="dropdown-divider" /></li>
+
+                        {/* Opciones filtradas */}
+                        {filteredOptions.map((option, index) => (
+                            <li key={index}>
+                                <button 
+                                    className="dropdown-item"
+                                    onClick={() => {
+                                        onSelect(option);
+                                        setSearchQuery('');
+                                    }}
+                                >
+                                    {option.nombre || option.name}
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
         </div>
     );
 };

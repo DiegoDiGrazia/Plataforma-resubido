@@ -7,6 +7,8 @@ import { setMediosMayorInteraccion } from '../../../redux/interaccionesPorNotaSl
 import { formatNumberMiles } from '../Dashboard';
 import { seleccionPorFiltro } from '../../barplot/Barplot';
 
+const multiplicador = 1
+
 function formatearTextoNombre(texto) {
     if (texto) {
         let textoCortado = texto.split('.')[0];
@@ -23,7 +25,7 @@ function reduceBykeyMedios(lista_medios) {
         if (!sitios[medio.sitio]) {
             sitios[medio.sitio] = {
                 ...medio,
-                impresiones: Number(medio.impresiones) * 5
+                impresiones: Number(medio.impresiones) * multiplicador
             };
         } else {
             sitios[medio.sitio].impresiones += Number(medio.impresiones);

@@ -18,6 +18,8 @@ const formularioSlice = createSlice({
         paisUsuario: "",
         provinciaUsuario: "",
         municipioUsuario: "",
+        paginasDelUsuario: [],
+        notaFreemiumDistribucion: {},
         geo: {},
 
     },
@@ -61,12 +63,18 @@ const formularioSlice = createSlice({
         updateMunicipioUsuario: (state, action) => {
             state.municipioUsuario = action.payload;  // Asignación directa para cadenas de texto
         },
+        updateNotaFreemiumDistribucion: (state, action) => {
+            state.notaFreemiumDistribucion = action.payload;  // Asignación directa para cadenas de texto
+        },
 
         updateActivarTodosLosClientes: (state,action ) =>{
             state.todosLosClientesActivado = action.payload;
         },
         updateGeo: (state, action) => {
             state.geo = action.payload;  // Asignación directa para cadenas de texto
+        },
+        updatePaginasDelUsuario: (state, action) => {
+            state.paginasDelUsuario = action.payload;  // Asignación directa para cadenas de texto
         },
         resetFormulario: (state) => {
             state.email = "";
@@ -83,11 +91,13 @@ const formularioSlice = createSlice({
             state.paisUsuario = "";
             state.provinciaUsuario = "";
             state.municipioUsuario = "";
+            state.paginasDelUsuario = [];
+            state.notaFreemiumDistribucion = {};
         },
     }
 });
 
 export const { updateEmail, updateContraseña,updateEsEditor, updateCodigoRecuperacion, updateMunicipioUsuario,
-    updatePaisUsuario, updateProvinciaUsuario, updateGeo,
+    updatePaisUsuario,updatePaginasDelUsuario, updateNotaFreemiumDistribucion, updateProvinciaUsuario, updateGeo,
     updateToken, updateCliente, updateIdCliente, setTodosLosClientes,updateUsuario, updateActivarTodosLosClientes,updateIdUsuario, resetFormulario } = formularioSlice.actions;
 export default formularioSlice.reducer;

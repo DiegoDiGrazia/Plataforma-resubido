@@ -20,6 +20,7 @@ import { setSelectedOptionDistribucion } from '../../redux/crearNotaSlice';
 const PublicarNota = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch();
+    const perfilUsuario = useSelector((state) => state.formulario.usuario.perfil);
     const TOKEN = useSelector((state) => state.formulario.token);
     const imageRef = useRef(null);
     const [cropper, setCropper] = useState(null);
@@ -31,11 +32,9 @@ const PublicarNota = () => {
     const comentario = useSelector((state) => state.crearNota.comentarios); // Comentario de la nota
     const con_distribucion = useSelector((state) => state.crearNota.con_distribucion); // Comentario de la nota
 
-
     const manejarCambioComentarios = (e) => {
         dispatch(setComentario(e.target.value));
     };
-
 
     useEffect(() => {
         console.log(categoriasActivas)
@@ -184,9 +183,13 @@ const PublicarNota = () => {
                                         >
                                             {isClickedRecorte ? "Guardar recorte" : "Editar recorte"}
                                         </Button>
+
+                                {/* SI NO ES FREEMIUM LO MUESTRO */}
+                                {perfilUsuario != '9' && 
+                                <>
                                 <div className='hDistribucionContenido'>Distribucion de contenido</div>
                                 <div className='abajoDeAgregarCategoria mlRRSS'>Selecciona el recorte de tu imagen</div>
-
+                                
                                 <div>
                                     <div className= {selectedOptionDistribucion === 'normal' ? 'containerFormCheckActive' : 'containerFormCheck'}>
                                         <div className="form-check">
@@ -224,8 +227,8 @@ const PublicarNota = () => {
                                             </label>
                                         </div>
                                     </div>
-                                
-                                </div>
+                                    </div>
+                                </>}
                                 <h4 className='imagenParaRRSSHeader fw-bold mt-3'>Comentarios</h4>
                                 <p className='abajoDeAgregarCategoria'>Deja comentarios para el el equipo de Noticias 'd' pueda ayudarte a potenciar tus contenidos
                                     y entender mejor tus objetivos

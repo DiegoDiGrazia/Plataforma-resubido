@@ -12,6 +12,7 @@ import Administrador from './components/administrador/Administrador';
 import UsuariosAdmin from './components/administrador/gestores/UsuariosAdmin';
 import PerfilesAdmin from './components/administrador/gestores/PerfilesAdmin';
 import DistribucionAdmin from './components/administrador/gestores/Distribucion';
+import NotaFreemiumDistribucion from './components/notaFreemium/NotaFreemiumDistribucion';
 
 // 👇 Acá van tus componentes con lazy
 const Formulario = lazy(() => import('./components/login/Formulario'));
@@ -39,6 +40,7 @@ function App() {
             <Route path="/recuperar-contraseña" element={<RecuperarContraseña />} />
             <Route path="/actualizar-contraseña" element={<UpdatePassword />} />
 
+
             {/* Rutas con Sidebar */}
             <Route element={<LayoutConSidebar />}>
               <Route path="/dashboard" element={<Dashboard />} />
@@ -49,6 +51,7 @@ function App() {
               <Route path="/perfiles" element={<PerfilesAdmin />} />
               <Route path="/distribucion" element={<DistribucionAdmin />} />
               <Route path="/clientes" element={<AbmClientes />} />
+              <Route path="/distribuir-nota-freemium" element={<NotaFreemiumDistribucion />} />
               <Route path="/notas-cliente" element={<NotasCliente />} />
               <Route path="/mi-perfil" element={<Perfil />} />
               <Route path="/autoEntrevistas" element={<AutoEntrevistasVideoAsk />} />

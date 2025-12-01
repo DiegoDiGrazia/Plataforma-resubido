@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import "./InteraccionPorNota.css";
 import axios from 'axios';
 import { formatNumberMiles } from '../Dashboard';
+const multiplicador= 1
 
 function formatearTextoNombre(texto) {
     const textoCortado = texto.split('.')[0];
@@ -14,7 +15,7 @@ function reduceByKeyMedios(lista_medios) {
         if (!sitios[medio.sitio]) {
             sitios[medio.sitio] = {
                 ...medio,
-                impresiones: Number(medio.impresiones) * 10,
+                impresiones: Number(medio.impresiones) * multiplicador,
             };
         } else {
             sitios[medio.sitio].impresiones += Number(medio.impresiones);

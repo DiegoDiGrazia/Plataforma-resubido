@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { obtenerPaginas } from '../administrador/gestores/apisUsuarios';
+import { updatePaginasDelUsuario } from '../../redux/formularioSlice';
+import { useDispatch } from 'react-redux';
 
 const Sidebar = ({ estadoActual }) => {
   const esEditor = useSelector((state) => state.formulario.es_editor);
@@ -12,12 +14,23 @@ const Sidebar = ({ estadoActual }) => {
   const PerfilUsuario = useSelector((state) => state.formulario.usuario.perfil);
   const TOKEN = useSelector((state) => state.formulario.token);
   const [paginasDelPerfil, setPaginasPerfil]= useState([]);
+  const dispatch = useDispatch();
 
   // Cargar usuarios
   useEffect(() => {
-    if (!PerfilUsuario ) return;
-    obtenerPaginas(TOKEN, PerfilUsuario).then(setPaginasPerfil);
-}, [PerfilUsuario]);
+    if (!PerfilUsuario) return;
+
+    const cargarPaginas = async () => {
+      try {
+        const res = await obtenerPaginas(TOKEN, PerfilUsuario);
+        setPaginasPerfil(res);
+        dispatch(updatePaginasDelUsuario(res));
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    cargarPaginas();
+  }, [PerfilUsuario]);
 
 
   const location = useLocation();
