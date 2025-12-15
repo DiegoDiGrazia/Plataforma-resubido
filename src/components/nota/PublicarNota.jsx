@@ -15,6 +15,7 @@ import { videos } from '../miPerfil/soporte';
 import CardTutorial from '../miPerfil/CardTutorial';
 import { setComentario } from '../../redux/crearNotaSlice';
 import { setSelectedOptionDistribucion } from '../../redux/crearNotaSlice';
+import GuardarNotaCada10SG from './GuardarNotaCada10SG';
 
 
 const PublicarNota = () => {
@@ -23,6 +24,7 @@ const PublicarNota = () => {
     const perfilUsuario = useSelector((state) => state.formulario.usuario.perfil);
     const TOKEN = useSelector((state) => state.formulario.token);
     const imageRef = useRef(null);
+    const actual = useSelector((state) => state.crearNota);
     const [cropper, setCropper] = useState(null);
     const es_editor = useSelector((state) => state.formulario.es_editor);
     const image = useSelector((state) => state.crearNota.imagenPrincipal); // Imagen seleccionada
@@ -102,6 +104,9 @@ const PublicarNota = () => {
 
     return (
                 <>
+                {actual.estado !== "PUBLICADO" &&
+                    <GuardarNotaCada10SG />
+                }
                 <div className="content flex-grow-1">
                     <header id="head_dash" className='header_dash'>
                         <div className='row'>

@@ -139,6 +139,7 @@ const initialState = {
   id_att: "",
   cliente: "",
   demo: '',
+  id_nota_borrador: "",
 };
 
 const crearNotaSlice = createSlice({
@@ -147,6 +148,9 @@ const crearNotaSlice = createSlice({
   reducers: {
     setCopete: (state, action) => {
       state.copete = action.payload;
+    },
+    setIdNotaBorrador: (state, action) => {
+      state.id_nota_borrador = action.payload;
     },
     setEpigrafeImagenPpal: (state, action) => {
       state.epigrafeImagenPpal = action.payload;
@@ -356,7 +360,7 @@ const crearNotaSlice = createSlice({
 });
 
 export const {
-  setTituloNota, setCambiarEstadoActual, setAttachmentArchivo,setAttachmentArchivoToNull, setClienteNota, setContenidoNota, setAttachment_video1, DeleteContenidoPorIndice, setContenidoPorIndice,setFechaPublicacion, setAttachmentToNull,
+  setTituloNota, setIdNotaBorrador, setCambiarEstadoActual, setAttachmentArchivo,setAttachmentArchivoToNull, setClienteNota, setContenidoNota, setAttachment_video1, DeleteContenidoPorIndice, setContenidoPorIndice,setFechaPublicacion, setAttachmentToNull,
   SubirContenidoPorIndice, BajarContenidoPorIndice, setCategorias, setImagenPrincipal, setImagenRRSS, setImagenesDeCarrusel,
   setCopete, setNotaAEditar, setContenidoAEditar, setItemsEtiquetas, setEsDemo, setNoHome, setCategoriasActivasEnStore,
   setDistribucionProioritaria, setTipoContenido, setFechaVencimiento, setBajada, setEngagement, setComentario, setSelectedOptionDistribucion,

@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'cropperjs/dist/cropper.css';
 import { useSelector, useDispatch } from 'react-redux';
-import { setCopete } from '../../../redux/crearNotaSlice';
+import { setBajada, setCopete } from '../../../redux/crearNotaSlice';
 
 const CopeteNota = ({ indice }) => {
     const tituloRef = useRef(null);
@@ -17,6 +17,7 @@ const CopeteNota = ({ indice }) => {
         if (true) {
             dispatch(setCopete(value));
             setCharCount(value.length);
+            dispatch(setBajada(value));
             ajustarAltura();
         }
     };

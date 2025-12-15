@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { Button, Modal } from 'react-bootstrap';
-import Sidebar from '../sidebar/Sidebar';
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
 import '../../App.css'
@@ -37,6 +36,7 @@ import { comprimirPDFaBase64 } from '../../utils/convertirPDFaBase64';
 import CarruselEnNota from './componetesNota/CarruselEnNota';
 import FormFranquicias from './componetesNota/FormFranquicias';
 import ImagePickerModal from './componetesNota/ImagePickerModal';
+import GuardarNotaCada10sg from './GuardarNotaCada10SG';
 
 
 const CrearNota = () => {
@@ -205,6 +205,9 @@ const CrearNota = () => {
     return (
 
                 <div className="content flex-grow-1 crearNotaGlobal">
+                    {actual.estado !== "PUBLICADO" &&
+                    <GuardarNotaCada10sg />
+                    }
                     <div className='row'>
                         <div className='col'>
                             <h4 id="nota">

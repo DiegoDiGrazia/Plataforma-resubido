@@ -383,18 +383,6 @@ const NotasParaEditorial = () => {
                                         )}
                                     </div>
                                     <div className='col-4 pt-1 columna_interaccion nuevoFont'>
-                                        
-                                    {filtroSeleccionado === 1 ? (
-                                        <Link
-                                            className="link-sin-estilos"
-                                            to={nota?.editable == '1' ? `/verNota` : `#`}
-                                            state={{ id: nota.id_noti ? nota.id_noti : nota.term_id, notaABM: nota }}
-                                        >
-                                            <div className='row p-0 nombre_plataforma'>
-                                                {formatearTitulo(nota.titulo, 45)}
-                                            </div>
-                                        </Link>
-                                    ) :  (
                                         <Link
                                             className="link-sin-estilos"
                                             onClick={(e) => {
@@ -408,30 +396,26 @@ const NotasParaEditorial = () => {
                                                 {formatearTitulo(nota.titulo, 45)}
                                             </div>
                                         </Link>
-                                    )}
-
                                         <div className='row p-0'>
                                             <span className='FechaPubNota'>{nota.f_pub ? formatearFecha(nota.f_pub) : formatearFecha(nota.update_date)}</span>
                                         </div>
                                     </div>
-                                    {/* <div className='col-auto d-flex align-items-center'>
-                                        <span className="publicada">
-                                            <img src="./images/puntoVerde.png" alt="Icono Nota" className='' />
-                                            {nota.estado ? " " + nota.estado : " Publicada"}
-                                        </span>
-                                    </div> */}
                                     <div className='col-2'>
                                         <span className="categoria_notas">{nota.categorias}</span>
                                     </div>
 
-                                    {filtroSeleccionado != 1 ? (
+                                    
                                     <>
                                         <div className='col totales_widget'>
                                             <p>{nota.cliente}</p>
                                         </div>
-                                        {nota.estado === "PUBLICADO" && (
+                                        
                                         <div className='col totales_widget' style={{ color: "#464d55ff"}}>
-                                            <a href={`http://noticiasd.com/nota/${nota.term_id}`} title="Ver nota" target="_blank" rel="noopener noreferrer"><i class="bi bi-eye-fill m-2 fs-2"></i></a>
+                                            {nota.estado === "PUBLICADO" && (
+                                                <a href={`http://noticiasd.com/nota/${nota.term_id}`} title="Ver nota" target="_blank" rel="noopener noreferrer">
+                                                    <i class="bi bi-eye-fill m-2 fs-2"></i>
+                                                </a>
+                                            )}
                                         {perfilUsuario === "9" && ///MODIFICAR A 9 DESPUES DE LAS PRUEBAS
                                         <button title="distribuir nota"
                                             onClick={() => editarNotaFreemium(nota, true)}
@@ -465,15 +449,8 @@ const NotasParaEditorial = () => {
                                         <BotonEliminarNota id={nota.id} token={TOKEN}></BotonEliminarNota>
 
                                         </div>
-                                        )}
+                                        
                                     </>
-                                    ) : (
-                                    <div className='col totales_widget'>
-                                        <p>{nota.amplificacion}</p>
-                                    </div>
-                                    )
-                                    }
-
                                 </div>
                             ))}
                             {cargandoNotas && 

@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'cropperjs/dist/cropper.css';
 import { useSelector, useDispatch } from 'react-redux';
-import { setTituloNota } from '../../../redux/crearNotaSlice';
+import { setEngagement, setTituloNota } from '../../../redux/crearNotaSlice';
 
 const TituloNota = ({ indice }) => {
     const tituloRef = useRef(null);
@@ -16,6 +16,7 @@ const TituloNota = ({ indice }) => {
         const value = e.target.value;
         if (true) {
             dispatch(setTituloNota(value));
+            dispatch(setEngagement(value));
             setCharCount(value.length);
             ajustarAltura();
         }

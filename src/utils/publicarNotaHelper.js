@@ -1,6 +1,4 @@
 import axios from 'axios';
-
-
 function reemplazarComillasSimplePorDoble(str) {
     if(!str) return str;
     return str
@@ -47,6 +45,7 @@ export const clickearEnPublicarNota = async ({
     try {
         setIsLoading(true); // Muestra el overlay
         setShowModal(true); // Muestra el modal de carga
+        console.log('ID NOTI ADENTRO DE LA FUNCION publicarNotaHelper: ', id_noti);
 
         const response = await axios.post(
             "https://panel.serviciosd.com/app_subir_nota",
@@ -78,6 +77,7 @@ export const clickearEnPublicarNota = async ({
                     : "Ninguna",
                 es_demo: isCheckedDemo,
                 epigrafe_ppal: epigrafeImagenPpal,
+                es_home: isCheckedNoHome,
                 no_home: isCheckedNoHome,
                 tipo_contenido: tipoContenido,
                 f_pub: fechaPublicacion,
