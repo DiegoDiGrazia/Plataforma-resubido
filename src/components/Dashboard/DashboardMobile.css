@@ -1,0 +1,61 @@
+@media (max-width: 768px) {
+
+    #botonCrearNota { 
+        margin: 11px -20px 0px 16px;
+        height: 55px;
+        float: none;
+        align-items: normal;
+    }
+
+    #subtitulo_performance {
+        display: flex;
+        position: relative;
+        top: -35px;
+    }
+
+    .botones_subtitulo {
+        float: none;
+        gap: 20px;
+        margin-right: 40px;
+    }
+
+    .accordion-body.pt-0 {
+        width: 300px;
+    }
+
+    .col.d-flex.align-items-center {
+        margin-right: 15px;
+    }
+
+    .d-block {
+        width: 70px;
+        margin-left: -10px;
+    }
+
+    .row.g-1 {
+        margin-top: 50px;
+        margin-left: -25px;
+        width: 380px;
+    }
+
+    .row.seccionInteracciones.pt-1 {
+        width: 350px;
+    }
+
+    .col-lg-12.col-xl.col-6.m-2.back-white {
+        width: 350px;
+    }
+
+    #titulo_relevantes {
+        width: 700px;
+    }
+
+    .info-icon.no-print {
+        position: relative;
+        margin-right: -25px;
+        margin-top: 0px;
+    }
+}
+
+
+

@@ -17,6 +17,8 @@ import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { traerDatosDeNota } from '../../utils/buscarEnLocal';
 import "./nota_print.css"
+import './verNotaMobile.css'
+
 export const RUTA = "http://localhost:4000/"
 const VerNota = () => {
 

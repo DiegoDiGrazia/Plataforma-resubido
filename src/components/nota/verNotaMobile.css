@@ -1,0 +1,57 @@
+@media (max-width: 768px) {
+
+    .row.margin_vn  {
+        display: flex;
+        width: 380px;
+        height: 200px;
+    }
+
+    .imagen_col {
+        margin-left: -15px;
+        width: 100px;
+        height: 100px;
+    }
+    
+    .imagen_nota {
+        width: 80px;
+        height: 110px;
+    }
+
+    .col-6.d-flex.flex-column {
+        align-items: start;
+        width: 280px;
+        height: 100px;
+        gap: 20px;
+    }
+
+    .row.vn_titulo {
+        margin-top: -105px;
+        margin-left: 65px;
+        width: 270px;
+        height: 100px;
+        font-size: 20px;
+    }
+
+    .row.vn_fecha {
+        margin-left: -22px;
+    }
+
+    .row.publicada {
+        margin: -30px 0px 0px -22px;  
+    }
+
+    .row.order-last.flex-grow-1 {
+        width: 400px;
+        margin-top: -70px;
+        margin-left: 220px;
+    }
+
+    
+
+}
+
+
+
+
+
+

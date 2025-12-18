@@ -8,10 +8,11 @@ import axios from 'axios';
 import { formatNumberMiles } from '../Dashboard/Dashboard.jsx';
 import Barplot_Carga from './Barplot_mejorado_carga.jsx';
 import { formatDate } from './Barplot.jsx';
+import './BarplotMobile.css'
+import './BarplotNotaMobile.css'
 const RUTA = "http://localhost:4000/"
 
  export function generarPeriodosDesde(f_pub, cantidadDeMesesAGenerar){
-    console.log(f_pub, "adentro de generar periodos")
     if(f_pub){
         const months = [];
         const currentDate = new Date(f_pub );

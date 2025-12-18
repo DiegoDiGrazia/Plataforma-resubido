@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Formulario.css';
+import './FormularioMobile.css';
 import { updateEmail, updateGeo, updateContraseña, updateToken, updateCliente, updateIdCliente, updateEsEditor, updateUsuario, updateIdUsuario, resetFormulario } from '../../redux/formularioSlice';
 import { obtenerGeo } from '../administrador/gestores/apisUsuarios';
 import axios from 'axios';
@@ -20,6 +21,7 @@ const Formulario = () => {
     useEffect(() => {
         obtenerGeo().then(setGeo);
     }, []);
+
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
@@ -73,8 +75,6 @@ const Formulario = () => {
             }
         }
     };
-
-
     const mostrarFormularioRecuperarContraseña = () => {
         navigate('/recuperar-contraseña'); // Redirige al Dashboard
     };
@@ -82,13 +82,12 @@ const Formulario = () => {
     return (
         <div className="container-fluid">
             <div className="row" id="imagenLogo">
-                <div className="col-6" id='imagen'>
+                <div className="col" id='imagen'>
                     <div className="image-container">
                         <img src="/images/foto-login.png" alt="Imagen de ejemplo" className="img-fluid" />
                     </div>
                 </div>
-
-                <div className="col-4" id='formulario'>
+                <div className="col" id='formulario'>
                     <div className="text-center mb-4">
                         <img src="/images/logoNdNegroNaranja.png" alt="Imagen de ejemplo" className="img-fluid mb-4" id='logo-nd'/>
                         <h2>Bienvenidos</h2>

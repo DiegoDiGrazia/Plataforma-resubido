@@ -1,0 +1,61 @@
+@media (max-width: 768px) {
+    
+    #dropdownMenuButton2 {
+        margin-top: -90px; /* -140px */
+        margin-right: -20px;
+    }
+    
+    .row.order-last.flex-grow-1 {
+        width: 100px;
+    }
+    
+    #subtitulo_performance {
+        top: -10px;
+        left: 20px;
+    }
+    
+    .mb-2.tamaño_barplot {
+        width: 343px;
+        height: 350px;
+    }
+
+    .container-fluid.ml-5 {
+        width: 343px;
+        height: 419px;
+    }
+    .row.cantidades.mt-3.back-white {
+        width: 343px;
+        height: 190px;        
+        margin-left: -35px;
+    }
+
+    .col-2.barra_lateral {
+        width: 114px; 
+        height: 199px;
+    }
+
+    .row.g-1.align-items-start {
+        width: 380px;
+        position: relative;
+        left: 15px;
+        gap: 0px;
+    }
+
+    .col-6.m-2.p-3.back-white {
+        width: 380px;
+    }
+
+    .accordion-body.pt-0 {
+        width: 348px;
+    }
+
+}
+
+
+
+
+
+
+
+
+

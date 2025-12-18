@@ -6,6 +6,7 @@ import '../../App.css'
 import '../../components/nota/nota_print.css'
 import '../../components/nota/nota.css'
 import './Dashboard.css';
+import './DashboardMobile.css'
 import Barplot from '../barplot/Barplot.jsx';
 import InteraccionPorNota from './datosRelevantes/InteraccionPorNota.jsx';
 import { useDispatch, useSelector } from 'react-redux';

@@ -1,0 +1,49 @@
+@media (max-width: 768px) {
+
+    .row.cantidades.mt-3.back-white {
+        padding: 0px;
+        gap: 24px;
+    }
+
+    .leyenda_barplot {
+        align-items: flex-start;
+        width: 70px;
+        height: 90px;
+    }
+
+    .totales {
+        margin-top: 45px;
+    }
+
+    .blue-dot-impresiones {
+        margin-top: 9px;
+        min-width: 10px;
+    }
+
+    .blue-dot-user {
+        margin-top: 9px;
+        min-width: 10px;
+        height: 10px;
+    }
+
+    .info-icon{
+        margin-top: 6px;
+    } 
+
+    .row.cantidades .barra_lateral {
+        border-right: none;
+        position: relative;
+        overflow: visible;
+    }
+
+    .row.cantidades .barra_lateral::after {
+        content: "";
+        position: absolute;
+        top: 10px; 
+        bottom: 30px;              
+        width: 1px;             
+        right: -66px;           
+        background-color: rgb(226, 218, 218);  
+    }
+
+}
