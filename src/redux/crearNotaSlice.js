@@ -140,6 +140,8 @@ const initialState = {
   cliente: "",
   demo: '',
   id_nota_borrador: "",
+  es_ia: '0',
+  term_id: '',
 };
 
 const crearNotaSlice = createSlice({
@@ -236,6 +238,8 @@ const crearNotaSlice = createSlice({
     },
     setNotaAEditar: (state, action) => {
       const nota = action.payload;
+      state.es_ia = nota.es_ia; 
+      state.term_id = nota.term_id;
       state.tituloNota = nota.titulo;
       state.copete = nota.copete;
       state.comentarios = nota.comentarios;
@@ -346,7 +350,11 @@ const crearNotaSlice = createSlice({
     setCategoriasActivasEnStore: (state, action) => {
       state.categoriasActivas = action.payload;
     },
-
+    setContenidoDeNotaDeIa: (state, action) => {
+    state.contenidoNota = [
+      ['parrafo', action.payload]
+      ];
+    },
     setClienteNota: (state,action) => {
       state.cliente = action.payload;
     },
@@ -360,7 +368,7 @@ const crearNotaSlice = createSlice({
 });
 
 export const {
-  setTituloNota, setIdNotaBorrador, setCambiarEstadoActual, setAttachmentArchivo,setAttachmentArchivoToNull, setClienteNota, setContenidoNota, setAttachment_video1, DeleteContenidoPorIndice, setContenidoPorIndice,setFechaPublicacion, setAttachmentToNull,
+  setTituloNota,setContenidoDeNotaDeIa, setIdNotaBorrador, setCambiarEstadoActual, setAttachmentArchivo,setAttachmentArchivoToNull, setClienteNota, setContenidoNota, setAttachment_video1, DeleteContenidoPorIndice, setContenidoPorIndice,setFechaPublicacion, setAttachmentToNull,
   SubirContenidoPorIndice, BajarContenidoPorIndice, setCategorias, setImagenPrincipal, setImagenRRSS, setImagenesDeCarrusel,
   setCopete, setNotaAEditar, setContenidoAEditar, setItemsEtiquetas, setEsDemo, setNoHome, setCategoriasActivasEnStore,
   setDistribucionProioritaria, setTipoContenido, setFechaVencimiento, setBajada, setEngagement, setComentario, setSelectedOptionDistribucion,

@@ -8,6 +8,7 @@ function reemplazarComillasSimplePorDoble(str) {
 export const clickearEnPublicarNota = async ({
     status,
     TOKEN,
+    es_ia,
     titulo,
     categoriasActivas,
     notaCargada,
@@ -52,6 +53,7 @@ export const clickearEnPublicarNota = async ({
             {
                 token: TOKEN,
                 status: status,
+                es_ia: es_ia,
                 id: id_noti ? id_noti : "0",
                 titulo: reemplazarComillasSimplePorDoble(titulo),
                 categorias: categoriasActivas,

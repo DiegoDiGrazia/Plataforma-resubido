@@ -37,6 +37,8 @@ import CarruselEnNota from './componetesNota/CarruselEnNota';
 import FormFranquicias from './componetesNota/FormFranquicias';
 import ImagePickerModal from './componetesNota/ImagePickerModal';
 import GuardarNotaCada10sg from './GuardarNotaCada10SG';
+import BotonRegenerarDataConIa from './botonesIa/BotonRegenerarTextoConIa';
+import { setContenidoDeNotaDeIa } from '../../redux/crearNotaSlice';
 
 
 const CrearNota = () => {
@@ -52,6 +54,7 @@ const CrearNota = () => {
     const inputFileRef = useRef(null);
     const inputFileRefArchivoPDF = useRef(null);
     const [show, setShow] = useState(false);
+    const TOKEN = useSelector((state) => state.formulario.token);
 
     const inputVideoRef = useRef(null);
     const { setArchivo } = useContext(ArchivoContext);
@@ -205,7 +208,8 @@ const CrearNota = () => {
     return (
 
                 <div className="content flex-grow-1 crearNotaGlobal">
-                    {actual.estado !== "PUBLICADO" &&
+                    {(actual.estado !== "PUBLICADO" && actual.es_ia === '0') &&
+                    
                     <GuardarNotaCada10sg />
                     }
                     <div className='row'>
@@ -265,6 +269,10 @@ const CrearNota = () => {
 
                                     return Componente ? <Componente key={index} indice={index} numeroDeAtachmentAUsar = {numeroDeAtachmentAUsar} /> : null; // Renderiza el componente si existe
                                 })}
+                                {actual.es_ia === '1' &&
+                                <BotonRegenerarDataConIa token = {TOKEN} term_id={actual.term_id} nombreBoton={'Regenerar contenido'} 
+                                    action = {setContenidoDeNotaDeIa} endpoint={'app_obtener_texto_ia'}/>
+                                }
                                 <ImagePickerModal
                                     isOpen={show}
                                     onClose={() => setShow(false)}

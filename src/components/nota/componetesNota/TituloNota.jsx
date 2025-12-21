@@ -4,6 +4,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'cropperjs/dist/cropper.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { setEngagement, setTituloNota } from '../../../redux/crearNotaSlice';
+import BotonRegenerarDataConIa from '../botonesIa/BotonRegenerarTextoConIa';
 
 const TituloNota = ({ indice }) => {
     const tituloRef = useRef(null);
@@ -11,6 +12,8 @@ const TituloNota = ({ indice }) => {
     const dispatch = useDispatch();
     const [charCount, setCharCount] = useState(tituloGlobalNota.length);
     const MAX_CHARS = 90;
+    const nota = useSelector((state) => state.crearNota);
+    const TOKEN = useSelector((state) => state.formulario.token);
 
     const handleInputChange = (e) => {
         const value = e.target.value;
@@ -51,6 +54,11 @@ const TituloNota = ({ indice }) => {
                 }}
             ></textarea>
             <div className="text-end mt-1" style={{ fontSize: '0.9rem', marginRight: "50px" }}>
+                {nota.es_ia === '1' &&
+                    <BotonRegenerarDataConIa token = {TOKEN} term_id={nota.term_id} 
+                    nombreBoton={'Regenerar titulo con ia'}  endpoint = "app_obtener_titulo_ia" action={setTituloNota}
+                    />
+                }
                 <span style={{ color: charCount > MAX_CHARS ? 'red' : 'gray' }}>
                     Caracteres: {charCount}/{MAX_CHARS}
                 </span>

@@ -104,8 +104,8 @@ const PublicarNota = () => {
 
     return (
                 <>
-                {actual.estado !== "PUBLICADO" &&
-                    <GuardarNotaCada10SG />
+                {(actual.estado !== "PUBLICADO" && actual.es_ia === '0') &&    
+                    <GuardarNotaCada10sg />
                 }
                 <div className="content flex-grow-1">
                     <header id="head_dash" className='header_dash'>

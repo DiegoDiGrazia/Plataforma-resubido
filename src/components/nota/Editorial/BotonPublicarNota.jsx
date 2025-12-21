@@ -23,6 +23,8 @@ const BotonPublicarNota = ({ status }) => {
 
     // Obtener los datos necesarios desde el estado global
     const es_editor = useSelector((state) => state.formulario.es_editor);
+    const es_ia = useSelector((state) => state.formulario.es_ia);
+
     const TOKEN = useSelector((state) => state.formulario.token);
     const titulo = useSelector((state) => state.crearNota.tituloNota);
     const contenidoNota = useSelector((state) => state.crearNota.contenidoNota);
@@ -103,6 +105,7 @@ const BotonPublicarNota = ({ status }) => {
             const response = await clickearEnPublicarNota({
                 status,
                 TOKEN,
+                es_ia,
                 titulo,
                 categoriasActivas,
                 notaCargada,

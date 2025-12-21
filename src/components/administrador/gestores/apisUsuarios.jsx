@@ -20,6 +20,26 @@ const fetchData = async (url, token, extraParams = {}) => {
   }
 };
 
+const fetchDataDevolviendoMensaje = async (url, token, extraParams = {}) => {
+  try {
+    const formData = new FormData();
+    formData.append("token", token);
+
+    Object.entries(extraParams).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+
+    const response = await axios.post(url, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
+    return response.data.message || '';
+  } catch (err) {
+    console.error(`Error al obtener datos de ${url}:`, err);
+    return [];
+  }
+};
+
 export const obtenerGeo = async () => {
   try {
     const response = await axios.get(`https://api.noticiasd.com/app_obtener_geo`);
@@ -80,7 +100,10 @@ export const editar_o_crear_cliente = (token, id, name,
       'authors', authors, 'provincia_cliente', provincia_cliente, 'municipio_cliente', municipio_cliente, 
       'pais_cliente', pais_cliente, 'tipo_cliente', tipo_cliente, 'juridisccion_cliente', juridisccion_cliente, 
       'muestra_consumo', muestra_consumo, 'id_plan', id_plan);
-//   fetchData("https://panel.serviciosd.com/app_cliente_edit", token, {
-//     id, name, authors, provincia_cliente, municipio_cliente, pais_cliente, tipo_cliente, juridisccion_cliente, muestra_consumo, id_plan
-// });  
+
+export const obtenerTextoRegeneradoConIa = (token, term_id, endpoint) =>
+  fetchDataDevolviendoMensaje("https://panel.serviciosd.com/" + endpoint, token, {
+    term_id
+});
+
 

@@ -16,11 +16,21 @@ const Etiquetas = () => {
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === "Enter" && inputValue.trim()) {
-      dispatch(setItemsEtiquetas([inputValue, ...itemsEtiquetas])); // Usar dispatch
+  if (e.key === "Enter") {
+    e.preventDefault();
+
+    const value = inputValue.trim();
+    if (!value) return;
+
+    if (itemsEtiquetas.includes(value)) {
       setInputValue("");
+      return;
     }
-  };
+
+    dispatch(setItemsEtiquetas([value, ...itemsEtiquetas]));
+    setInputValue("");
+  }
+};
 
   const handleDelete = (indexToDelete) => {
     dispatch(setItemsEtiquetas(itemsEtiquetas.filter((_, index) => index !== indexToDelete)));
