@@ -4,6 +4,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { Button } from 'react-bootstrap';
 import Sidebar from '../sidebar/Sidebar'; // Importa el Sidebar
 import "./nota.css";
+import "./verNotaMobile.css";
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
@@ -17,8 +18,6 @@ import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { traerDatosDeNota } from '../../utils/buscarEnLocal';
 import "./nota_print.css"
-import './verNotaMobile.css'
-
 export const RUTA = "http://localhost:4000/"
 const VerNota = () => {
 
@@ -130,10 +129,10 @@ const VerNota = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className='col boton_nota d-flex justify-content-end align-items-start no_print'>
+                            <div className='col boton_nota d-flex justify-content-center align-items-center no_print'>
                                 {!es_demo &&
                                 <button className="btn custom-dropdown-button dropdown-toggle boton_compartir" onClick={() => window.print()}
-                                type="button" id="dropdownMenuButton2">
+                                type="button" id="descargar-reporte">
                                     <img src="/images/share_icon.png" alt="Icono 1" className="icon me-2" />
                                     Descargar reporte
                                 </button>

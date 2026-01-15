@@ -3,32 +3,20 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Sidebar from '../sidebar/Sidebar';
 import "../miPerfil/miPerfil.css";
-import "./AdministradorMobile.css";
-import "./gestores/AbmsMobile.css"
 import { useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 
 
 
 const DEF = {
-    "usuarios": {
-        "descripcion": "Gestiona los usuarios de la plataforma, incluyendo su creación, edición y eliminación.",
-        "url": "usuarios",
-        "titulo": "Usuarios"
+    "Calculadora de ventas": {
+        "descripcion": "Aquí encontrará una calculadora donde podrá visualizar el precio de la distribución de su contenido.",
+        "url": "comercial/calculadora-ventas",
+        "titulo": "Calculadora"
         },
 
-    "perfiles": {
-        "descripcion": "Gestiona los perfiles de los usuarios, asignando roles y permisos específicos.",
-        "url": "perfiles",
-        "titulo": "Perfil"
-        },
-    "clientes": {
-        "descripcion": "Gestiona la creacion y edicion de nuevas Cuentas.",
-        "url": "clientes",
-        "titulo": "Cuentas"
-        },
     }
-const Administrador = () => {
+const Comercial = () => {
     const [searchQuery, setSearchQuery] = useState('');
 
     const handleInputChange = (e) => {
@@ -44,19 +32,19 @@ const Administrador = () => {
             <div className='row miPerfilContainer soporteContainer'>
                 <div className='col p-0'>
                     <h3 id="saludo" className='headerTusNotas ml-0'>
-                        <img src="/images/auto_entrevistas_icon.png" alt="Icono 1" className="icon me-2 icono_tusNotas" /> Administración
+                        <img src="/images/auto_entrevistas_icon.png" alt="Icono 1" className="icon me-2 icono_tusNotas" /> Comercial
                     </h3>
                     <h4 className='infoCuenta'>Configuracion</h4>
                     <div className='abajoDeTusNotas'>
                         Aquí encontrarás contenidos que te ayudarán a potenciar el uso de nuestra plataforma. <br />
-                        Tips, consejos, tutoriales y ayuda para tus contenidos.
+                        Tips, consejos, tutoriales y ayuda para tus contenidos
                     </div>
                 </div>
             </div>
 
             <div className='row miPerfilContainer soporteContainer mt-4 p-0 mb-5'>
                 <div className='col todasLasNotas p-0 pt-2'>
-                    Herramientas
+                    Todas las entrevistasas
                 </div>
                 <div className='col buscadorNotas'>
                     <form className='buscadorNotasForm'>
@@ -71,7 +59,7 @@ const Administrador = () => {
                 </div>
             </div>
 
-            <div className='row miPerfilContainer soporteContainer mt-4 p-0 admin'>
+            <div className='row miPerfilContainer soporteContainer mt-4 p-0'>
                 {filteredCategories.map((categoriaKey, index) => {
                 const categoria = DEF[categoriaKey]; // Accedemos a la info de esa categoría
                 return (
@@ -80,16 +68,15 @@ const Administrador = () => {
                     className="card"
                     style={{
                         width: "250px",
-                        height: "80%",
                         backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.81)), url('/images/${categoriaKey}.png')`,
                         backgroundPosition: "center",
                         backgroundSize: "cover",
                     }}
                     >
-                    <div className="card-body d-flex justify-content-between">
+                    <div className="card-body d-flex flex-column justify-content-between">
                         <Button variant='' href={categoria.url}>
-                            <div className='card-content h-100'>
-                            <h5 className="card-title justify-content-center">{categoria.titulo}</h5>
+                            <div>
+                            <h5 className="card-title">{categoria.titulo}</h5>
                             <p className="card-text">{categoria.descripcion}</p>
                             </div>
                         </Button>
@@ -104,4 +91,4 @@ const Administrador = () => {
     );
 };
 
-export default Administrador;
+export default Comercial;

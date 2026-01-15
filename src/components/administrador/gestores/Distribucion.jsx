@@ -223,7 +223,7 @@ const goToPage = (newPage) => {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="       Buscar clientes"
+              placeholder="       Buscar cuentas"
             />
           </form>
         </div>

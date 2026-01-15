@@ -359,7 +359,7 @@ const NotasParaEditorial = () => {
                                 <div className='col categoriasNotas d-flex align-items-center justify-content-center'>Categorías</div> 
                                 { (filtroSeleccionado != 1) ?
                                     <>
-                                        <div className='col categoriasNotas text-end'>Cliente</div>
+                                        <div className='col categoriasNotas text-end'>Cuenta</div>
                                         <div className='col categoriasNotas text-end'>Acciones</div>
                                     </>
                                     :

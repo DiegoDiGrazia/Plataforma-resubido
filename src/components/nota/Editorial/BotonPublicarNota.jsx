@@ -23,8 +23,6 @@ const BotonPublicarNota = ({ status }) => {
 
     // Obtener los datos necesarios desde el estado global
     const es_editor = useSelector((state) => state.formulario.es_editor);
-    const es_ia = useSelector((state) => state.formulario.es_ia);
-
     const TOKEN = useSelector((state) => state.formulario.token);
     const titulo = useSelector((state) => state.crearNota.tituloNota);
     const contenidoNota = useSelector((state) => state.crearNota.contenidoNota);
@@ -105,7 +103,6 @@ const BotonPublicarNota = ({ status }) => {
             const response = await clickearEnPublicarNota({
                 status,
                 TOKEN,
-                es_ia,
                 titulo,
                 categoriasActivas,
                 notaCargada,
@@ -219,7 +216,7 @@ const BotonPublicarNota = ({ status }) => {
                 <Modal.Body>
                     <p>¿Estás seguro de que querés {status === "EN REVISION" ? "enviar esta nota a revisión" : status === "BORRADOR" ? "guardar el borrador" : "publicar esta nota"}?</p>
                     <p>{ status === "PUBLICADO" && `En la home de ${municipio?.nombre ? municipio?.nombre.toUpperCase() : provincia?.nombre ? provincia?.nombre.toUpperCase() : pais?.nombre.toUpperCase()  }`}</p>
-                    {status === "PUBLICADO" && <p>{ clienteDeLaNota ? `y con cliente ${clienteDeLaNota}` : 'y SIN CLIENTE'}</p>}
+                    {status === "PUBLICADO" && <p>{ clienteDeLaNota ? `y con cuenta ${clienteDeLaNota}` : 'y SIN CUENTA'}</p>}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>

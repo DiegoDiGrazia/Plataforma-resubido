@@ -94,6 +94,11 @@ export const guardar_dato_en_banner_data = (token, id, datos) =>
     id, datos
 });
 
+export const obtenerPoblacion = (token, division, id) =>
+  fetchData("https://panel.serviciosd.com/app_get_estimacion", token, {
+    division, id
+});
+
 export const editar_o_crear_cliente = (token, id, name, 
       authors, provincia_cliente, municipio_cliente, pais_cliente, tipo_cliente, juridisccion_cliente, muestra_consumo, id_plan) =>
       console.log('token', token, 'id', id, 'name', name, 
@@ -105,5 +110,6 @@ export const obtenerTextoRegeneradoConIa = (token, term_id, endpoint) =>
   fetchDataDevolviendoMensaje("https://panel.serviciosd.com/" + endpoint, token, {
     term_id
 });
+
 
 

@@ -4,7 +4,7 @@ import { Button } from 'react-bootstrap';
 const BotonCrearNota = ({ onClick, cliente }) => (
     <Button onClick={onClick} id="botonPublicar" variant="none">
         {"Crear nota "}
-        {cliente ? "de " + cliente : "sin cliente"}
+        {cliente ? "de " + cliente : "sin cuenta"}
     </Button>
 );
 

@@ -6,7 +6,7 @@ import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link} from 'react-router-dom';
-import {setCategoriasActivasEnStore, setImagenRRSS } from '../../redux/crearNotaSlice'; // Asegúrate de importar setImagenPrincipal
+import { setCategoriasActivasEnStore, setImagenRRSS } from '../../redux/crearNotaSlice'; // Asegúrate de importar setImagenPrincipal
 import { useNavigate } from 'react-router-dom';
 import ColumnaEditorial from './Editorial/ColumnaEditorial';
 import useCategorias from '../../hooks/useCategorias';
@@ -15,8 +15,7 @@ import { videos } from '../miPerfil/soporte';
 import CardTutorial from '../miPerfil/CardTutorial';
 import { setComentario } from '../../redux/crearNotaSlice';
 import { setSelectedOptionDistribucion } from '../../redux/crearNotaSlice';
-import GuardarNotaCada10SG from './GuardarNotaCada10SG';
-
+import GuardarNotaCada10sg from './GuardarNotaCada10SG';
 
 const PublicarNota = () => {
     const navigate = useNavigate()
@@ -68,9 +67,8 @@ const PublicarNota = () => {
             setIsClickedRecorte(false); // Cambia el estado a "clicked"
         }
     };
-
     const categoriasPorNombre = useSelector((state) => state.crearNota.categoriasNombres) || [];
-
+    
     useEffect(() => {
     if (categoriasPorNombre.length > 0) {
         const cat_activas = categorias.filter((categoria) => categoriasPorNombre.includes(categoria.unidad))
@@ -104,9 +102,7 @@ const PublicarNota = () => {
 
     return (
                 <>
-                {(actual.estado !== "PUBLICADO" && actual.es_ia === '0') &&    
-                    <GuardarNotaCada10sg />
-                }
+                <GuardarNotaCada10sg nota={actual} />
                 <div className="content flex-grow-1">
                     <header id="head_dash" className='header_dash'>
                         <div className='row'>

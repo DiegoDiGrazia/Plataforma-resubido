@@ -6,7 +6,8 @@ import '../../App.css'
 import '../../components/nota/nota_print.css'
 import '../../components/nota/nota.css'
 import './Dashboard.css';
-import './DashboardMobile.css'
+import './DashboardMobile.css';
+
 import Barplot from '../barplot/Barplot.jsx';
 import InteraccionPorNota from './datosRelevantes/InteraccionPorNota.jsx';
 import { useDispatch, useSelector } from 'react-redux';
@@ -87,10 +88,6 @@ const Dashboard = () => {
     };
 
     return (
-        // <div className="container-fluid sinPadding">
-        //     <GuardarUbicacionDeCliente id_cliente={id_cliente}/>
-        //     <div className="d-flex h-100">
-        //         <Sidebar estadoActual={"dashboard"} className='no-print' />
                 <div className="content flex-grow-1" ref={componenteRef}>
                     <div id="print-header">
                             <row>
@@ -100,7 +97,7 @@ const Dashboard = () => {
                         <h5 className='resenaReporte'>Reporte emitido el {fecha} de {FiltroActual.toLowerCase()} de la cuenta </h5>
                     </div>
                     <div className="p-3 mt-4">
-                        <header id="head_dash no-print">
+                        <header className="head_dash no-print">
                             {es_editor ? (
                                 <SelectorCliente />
                             ) : (
@@ -148,26 +145,25 @@ const Dashboard = () => {
                         <div className="mb-2 tamaño_barplot">
                             <Barplot datosLocales={datosLocalmente}/>
                         </div>
-                        <div className='row g-1'>
-                            <div className='col-lg-12 col-xl col-6 m-2 back-white'>
-                                <InteraccionPorNota datosLocales={datosLocalmente}/>
+                        <div className= "tops">
+                            <div className='row g-1'>
+                                <div className='col-lg-12 col-xl col-6 m-2 back-white'>
+                                    <InteraccionPorNota datosLocales={datosLocalmente}/>
+                                </div>
+                                <div className='col-lg-12 col-xl col-6 m-2 back-white'>
+                                    <MediosMasRelevantes datosLocales={datosLocalmente}/>
+                                </div>
                             </div>
-                            <div className='col-lg-12 col-xl col-6 m-2 back-white'>
-                                <MediosMasRelevantes datosLocales={datosLocalmente}  
-                                />
-                            </div>
-                        </div>
-                        <div className='row g-1'>
-                            <div className='col-lg-12 col-xl col-6 m-2 p-3 back-white'>
-                                <PlataformaMasImpresiones/>
-                            </div>
-                            <div className='col-lg-12 col-xl col-6 m-2 p-3 back-white'>
-                                <CategoriasMasRelevantes datosLocales={datosLocalmente}/>
+                            <div className='row g-1'>
+                                <div className='col-lg-12 col-xl col-6 m-2 back-white'>
+                                    <PlataformaMasImpresiones/>
+                                </div>
+                                <div className='col-lg-12 col-xl col-6 m-2 back-white'>
+                                    <CategoriasMasRelevantes datosLocales={datosLocalmente}/>
+                                </div>
                             </div>
                         </div>
                     </div>
-                {/* </div> */}
-            {/* </div> */}
         </div>
     );
 };

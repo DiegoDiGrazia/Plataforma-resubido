@@ -72,9 +72,9 @@ const ArbolDistribucion = ({
     .then((response) => {
       if (response.data.status === "true") {
         setMunicipios(response.data.item);
-        if (!municipio || !municipio.municipio_id) {
-          onSetMunicipio(response.data.item[0] || {});
-        }
+        // if (!municipio || !municipio.municipio_id) {
+        //   onSetMunicipio(response.data.item[0] || {});
+        // }
       } else {
         console.error('Error en la respuesta de la API:', response.data.message);
       }

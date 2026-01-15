@@ -84,7 +84,7 @@ const SelectorCliente2= () => {
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
             >
-                {nombreCliente == "" ? "Nota sin cliente" : nombreCliente }
+                {nombreCliente == "" ? "Nota sin cuenta" : nombreCliente }
             </button>
             <ul className="dropdown-menu listaClientes" aria-labelledby="dropdownMenuButton1" style={{ maxHeight: '200px', overflowY: 'auto' }}>
                 {/* Campo de búsqueda */}
@@ -95,14 +95,14 @@ const SelectorCliente2= () => {
                     <input
                         type="text"
                         className="form-control dropdown-search"
-                        placeholder="Buscar cliente..."
+                        placeholder="Buscar cuenta..."
                         value={filtro}
                         onChange={(e) => setFiltro(e.target.value)}
                         style={{ margin: '0.5rem', maxHeight: "250px !important" }}
                     
                     />
                 </li>
-                <li key={"Sin Cliente"}>
+                <li key={"Sin Cuenta"}>
                         <button
                             className="dropdown-item"
                             onClick={() => TodosLosClientesParaEditor("")}
@@ -123,7 +123,7 @@ const SelectorCliente2= () => {
                 ))}
                 {/* Mensaje si no hay clientes coincidentes */}
                 {clientesFiltrados.length === 0 && (
-                    <li className="text-center text-muted">No se encontraron clientes</li>
+                    <li className="text-center text-muted">No se encontraron cuentas</li>
                 )}
             </ul>
         </div>

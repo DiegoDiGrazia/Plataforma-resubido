@@ -1,0 +1,101 @@
+@media (max-width: 768px) {
+    
+    .sidebar.no-print.closed {
+        width: 0px;
+
+        .list-group.list-group-flush.no-border.list-unstyled {
+            display: none;
+        }
+
+        .sidebar-toggle.btn.btn-none {
+            top: -20px;
+            left: -5px;
+        }
+
+        .sidebar-toggle.btn.btn-none.img-fluid {
+            top: 0px;
+        }
+
+    }
+
+    .sidebar.no-print.open {
+        width: 100%;
+        box-shadow: none;
+        
+        .flex-grow-1 {
+            height: 100%;
+        }
+        
+        .sidebar-toggle.btn.btn-none {
+            left: 85%;
+            margin-top: -5%;
+            
+        }
+
+        #logo-nd-sidebar {
+            left: 26%;
+            top: 3.5%;
+        }
+
+        .list-group.list-group-flush.no-border.list-unstyled {
+            height: 75%;
+            margin-top: 10%;
+        }
+
+        .openBoton {
+            width: 85%;
+            height: 20%;
+        }
+
+        .fs-4.mb-4.bi {
+            height: 60px;
+            width: 60px;
+            font-size: 300% !important;
+        }
+
+        .descripcion_boton {
+            font-size: 140%;
+            margin-top: 6%;
+            margin-left: 7px;
+        }
+
+        .list-group.list-unstyled.botones_inferiories {
+            height: 50px;
+            margin-bottom: 15%;
+            margin-left: -8%;
+
+            .openBoton {
+                width: 200px;
+                height: 50px;
+                margin-left: 10%;
+            }
+
+            .descripcion_boton {
+                width: 200px;
+                font-size: 17px;
+                margin-top: 0%;
+                margin-left: -15px;
+            }
+
+            
+
+            .fs-4.mb-4.bi {
+                height: 60px;
+                width: 60px;
+                font-size: 25px !important;
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+

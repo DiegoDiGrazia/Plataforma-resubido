@@ -1,0 +1,61 @@
+@media (max-width: 768px) {
+
+    .row.miPerfilContainer.soporteContainer {
+        margin: 15px 20px 20px 20px; 
+        padding-bottom: 10px;
+    }
+
+    .row.miPerfilContainer.soporteContainer.mt-4.p-0.mb-5 {
+        margin: 0px !important;
+        width: 100% !important;
+        gap: 15px;
+    }
+
+    .col.todasLasNotas.p-0.pt-2 {
+        display: flex;
+        justify-content: center;
+    }
+
+    .col.buscadorNotas {
+        display: flex;
+        justify-content: center;
+        padding: 0px;
+        width: 110%;
+        margin-right: 20px;
+    }
+
+    .buscadorNotasForm {
+        width: auto !important;
+    }
+
+    .inputBuscadorNotas {
+        padding-right: 0px !important;
+        font-size: 15px !important;
+    }
+
+    .row.miPerfilContainer.soporteContainer.mt-4.p-0.admin {
+        width: 70% !important;
+        margin-left: 15% !important;
+        margin-top: 20px !important;
+    }
+}
+
+/* Para todas las pantallas */ 
+.card-body.d-flex.justify-content-between {
+    padding: 0px;
+}
+.card-body.d-flex.justify-content-between .btn {
+    padding: 12px;
+}
+
+
+
+
+
+
+
+
+
+
+
+

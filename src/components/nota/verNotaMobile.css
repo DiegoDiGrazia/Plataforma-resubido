@@ -1,53 +1,169 @@
 @media (max-width: 768px) {
+    
+    .row.p-0 {
+        margin-top: 25px;
+    }
 
     .row.margin_vn  {
         display: flex;
-        width: 380px;
-        height: 200px;
-    }
-
-    .imagen_col {
-        margin-left: -15px;
-        width: 100px;
-        height: 100px;
+        position: relative !important;
+        width: 100%;
+        height: 50%;
     }
     
+    .col.imagen_col {
+        padding: 0px;
+    }
+
     .imagen_nota {
-        width: 80px;
-        height: 110px;
+        width: 100%;
+        height: 50%;
     }
-
-    .col-6.d-flex.flex-column {
-        align-items: start;
-        width: 280px;
-        height: 100px;
-        gap: 20px;
-    }
-
-    .row.vn_titulo {
-        margin-top: -105px;
-        margin-left: 65px;
-        width: 270px;
-        height: 100px;
-        font-size: 20px;
-    }
-
-    .row.vn_fecha {
-        margin-left: -22px;
-    }
-
-    .row.publicada {
-        margin: -30px 0px 0px -22px;  
-    }
-
-    .row.order-last.flex-grow-1 {
-        width: 400px;
-        margin-top: -70px;
-        margin-left: 220px;
-    }
-
     
+    .col-6.d-flex.flex-column {
+        width: 80%;
+        height: 80% !important;
+        align-items: end;
+    }
+    
+    .row.vn_titulo {
+        padding: 0px;
+    }
+    
+    .row.vn_fecha {
+        padding: 0px;
+    }
+    
+    .row.publicada {
+        width: 100%;
+        left: -35%;
+        top: 0%;
+    }
+    
+    .publicada {
+        width: 100%;
+        position: relative;
+    }
+    
+    .row.order-last.flex-grow-1 {
+        padding: 0px;
+    }
+    
+    .vn_categoria {
+        position: relative;
+        width: auto;
+        top: -80%;
+        justify-content: center;
+    }
+    
+    .col.boton_nota.d-flex.justify-content-center.align-items-center.no_print {
+        position: absolute !important;
+        top: -40px !important;    
+        right: 20px !important;  
+        width: auto !important;
+        margin: 0 !important;
+    }
 
+    #descargar-reporte {
+        display: contents;
+        position: relative !important;
+        top: 110%;
+    }
+
+    .subtitulo {
+        width: 100%;
+        margin-top: 0%;
+    }
+
+    #subtitulo_performance {
+        width: 100% !important;
+        height: 100%;
+        margin: 0px;
+        margin-left: -12px;
+    }
+    
+    .mb-2.tamaño_barplot {
+        width: 100% !important;
+        height: 100% !important;
+        margin-left: 5% !important;
+    }
+
+    .container-fluid.ml-5 {
+        width: 100% !important;
+        padding: 0px;
+        margin: 0px !important;
+    }
+
+    .row.cantidades.mt-3.back-white {
+        width: 101% !important;
+        gap: 0px;
+    }
+    .col-2.barra_lateral {
+        width: 40% !important;
+        margin-left: 5%;
+    }
+
+    .col {
+        width: 40% !important;
+        padding: 0px; 
+    }
+
+    .barra_lateral::after {
+        left: 115%;
+    }
+
+    .row.g-1.align-items-start {
+        width: 90% !important;
+        margin-left: 0px;
+    }
+
+    .col-6.m-2.p-3.back-white {
+        width: 100% !important;
+        padding: 0px 0px 0px 10px !important;
+        margin: 0px !important;
+    }
+
+    .row.p-0.nombre_plataforma {
+        margin: 0px !important;
+    }
+
+    .col.pt-1 .row.p-0 {
+        margin: 0px !important;
+    }
+
+    .col.totales_widget {
+        justify-content: start !important;
+    }
+
+    .col.totales_widget p {
+        margin: 0px;
+        display: flex;
+        position: relative;
+        top: 40%;
+    }
+
+    #titulo_relevantes {
+        font-size: 120%;
+    }
+
+    .accordion-body.pt-0 {
+        padding: 0px;
+        margin-bottom: 10px;
+    }
+
+    .col-auto.d-flex.align-items-center {
+        padding-right: 20px;
+    }
+
+    ::after {
+        position: relative;
+        top: 15px;
+    }
+
+    .row.medioRowNota {
+        padding-left: 0px;
+        padding-right: 0px;
+    }
 }
 
 

@@ -100,11 +100,11 @@ const SelectorCliente= () => {
             <button
                 className="btn custom-dropdown-button dropdown-toggle boton_cliente mb-2 ml-5"
                 type="button"
-                id="dropdownMenuButton1"
+                id="dropdownMenuButtonSelectorCliente"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
             >
-                {nombreCliente == "" ? "Todos los clientes" : nombreCliente }
+                {nombreCliente == "" ? "Todas las cuentas" : nombreCliente }
             </button>
             <ul className="dropdown-menu listaClientes" aria-labelledby="dropdownMenuButton1" style={{ maxHeight: '200px', overflowY: 'auto' }}>
                 {/* Campo de búsqueda */}
@@ -115,19 +115,19 @@ const SelectorCliente= () => {
                     <input
                         type="text"
                         className="form-control dropdown-search"
-                        placeholder="Buscar cliente..."
+                        placeholder="Buscar cuenta..."
                         value={filtro}
                         onChange={(e) => setFiltro(e.target.value)}
                         style={{ margin: '0.5rem', maxHeight: "250px !important" }}
                     
                     />
                 </li>
-                <li key={"Todos los clientes"}>
+                <li key={"Todas las cuentas"}>
                         <button
                             className="dropdown-item"
                             onClick={() => TodosLosClientesParaEditor("")}
                         >
-                            {"Todos los clientes"}
+                            {"Todas las cuentas"}
                         </button>
                     </li>
                 {/* Renderizar clientes filtrados */}
@@ -143,7 +143,7 @@ const SelectorCliente= () => {
                 ))}
                 {/* Mensaje si no hay clientes coincidentes */}
                 {clientesFiltrados.length === 0 && (
-                    <li className="text-center text-muted">No se encontraron clientes</li>
+                    <li className="text-center text-muted">No se encontraron cuentas</li>
                 )}
             </ul>
         </div>

@@ -55,15 +55,14 @@ const CrearNota = () => {
     const inputFileRefArchivoPDF = useRef(null);
     const [show, setShow] = useState(false);
     const TOKEN = useSelector((state) => state.formulario.token);
-
     const inputVideoRef = useRef(null);
     const { setArchivo } = useContext(ArchivoContext);
-    const { archivo } = useContext(ArchivoContext); // video es tipo File
-
     const actual = useSelector((state) => state.crearNota);
-
-  const [historial, setHistorial] = useState([]);
-  const [futuros, setFuturos] = useState([]);
+    const [historial, setHistorial] = useState([]);
+    const [futuros, setFuturos] = useState([]);
+    const esEditor = useSelector((state) => state.formulario.es_editor);
+    const contenidoNota = useSelector((state) => state.crearNota.contenidoNota);
+    const numeroDeAtachmentAUsar= useSelector((state) => state.crearNota.numeroDeAtachment);
 
   // ⚠️ Esta ref indica si el cambio fue por undo/redo (entonces NO guardamos en historial)
   const saltoDeHistorial = useRef(false);
@@ -110,13 +109,6 @@ const CrearNota = () => {
     saltoDeHistorial.current = true;
     dispatch(setCambiarEstadoActual(copiar(siguiente)));
   };
-
-  const handleAddForm = () => {
-    const valor = window.prompt("Escribí algo:");
-    console.log("Valor ingresado:", valor);
-    dispatch(setContenidoNota(['formFranquicia', valor]));
-  }
-
 
     const toggleButtons = () => {
       setShowButtons(!showButtons);
@@ -200,18 +192,13 @@ const CrearNota = () => {
     };
 
 
-    const esEditor = useSelector((state) => state.formulario.es_editor);
-    const contenidoNota = useSelector((state) => state.crearNota.contenidoNota);
-    const numeroDeAtachmentAUsar= useSelector((state) => state.crearNota.numeroDeAtachment);
+  
 
 
     return (
 
                 <div className="content flex-grow-1 crearNotaGlobal">
-                    {(actual.estado !== "PUBLICADO" && actual.es_ia === '0') &&
-                    
-                    <GuardarNotaCada10sg />
-                    }
+                    <GuardarNotaCada10sg nota={actual} />
                     <div className='row'>
                         <div className='col'>
                             <h4 id="nota">

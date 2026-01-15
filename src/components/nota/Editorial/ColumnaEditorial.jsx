@@ -42,7 +42,7 @@ const ColumnaEditorial = ({ indice }) => {
         <div className='col-4 align-self-start col_editorial'>
                 <Etiquetas />
                     <span style={{ fontSize: "20px", fontWeight: "bold", padding: "0px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-                        Cliente de la nota:
+                        Cuenta de la nota:
                         <div style={{ marginLeft: "auto" }}>
                             <SelectorCliente2/>
                         </div>

@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArchivoContext } from '../../context/archivoContext';
 import { setIdNotaBorrador } from '../../redux/crearNotaSlice';
 
-const GuardarNotaCada10sg = () => {
+const GuardarNotaCada10sg = ({nota}) => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -149,11 +149,14 @@ const GuardarNotaCada10sg = () => {
     // --------------------------------------------------------------
 
     useEffect(() => {
-        const intervalo = setInterval(() => {
-            clickear_en_publicar_nota();
-        }, 10000);
+        if (!nota) return;
+        if (nota.estado !== "PUBLICADO" && nota.es_ia === '0') {
+            const intervalo = setInterval(() => {
+                clickear_en_publicar_nota();
+            }, 10000);
+            return () => clearInterval(intervalo);
+        }
 
-        return () => clearInterval(intervalo);
     }, []);
 
     return null;

@@ -7,6 +7,7 @@ import { useLocation } from 'react-router-dom';
 import { obtenerPaginas } from '../administrador/gestores/apisUsuarios';
 import { updatePaginasDelUsuario } from '../../redux/formularioSlice';
 import { useDispatch } from 'react-redux';
+import './SidebarMobile.css';
 
 const Sidebar = ({ estadoActual }) => {
   const esEditor = useSelector((state) => state.formulario.es_editor);
@@ -16,7 +17,6 @@ const Sidebar = ({ estadoActual }) => {
   const [paginasDelPerfil, setPaginasPerfil]= useState([]);
   const dispatch = useDispatch();
 
-  // Cargar usuarios
   useEffect(() => {
     if (!PerfilUsuario) return;
 
@@ -44,6 +44,7 @@ const Sidebar = ({ estadoActual }) => {
 
   const handleClickBotonSidebar = (url) => {
     navigate(`/${url}`);
+    isOpen && toggleSidebar();
   };
 
   const renderSidebarButton = (estado, url, icono, texto, iconoBootstrap) => (
@@ -126,6 +127,13 @@ const Sidebar = ({ estadoActual }) => {
               '/images/auto_entrevistas_icon.png',
               'Distribucion',
               'bi bi-clipboard2-check-fill'
+            )}
+            {renderSidebarButton(
+              'comercial',
+              'comercial',
+              '/images/auto_entrevistas_icon.png',
+              'Comercial',
+              'bi bi-bag-fill'
             )}
             <ul className="list-group list-unstyled botones_inferiories">
               {renderSidebarButton(

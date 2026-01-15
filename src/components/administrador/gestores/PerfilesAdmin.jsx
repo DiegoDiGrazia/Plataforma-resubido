@@ -19,7 +19,6 @@ const perfilVacio = {
 const PerfilesAdmin = () => {
   const [paginasPerfil, setPaginasPerfil] = useState([]);
   const [paginasFaltantes, setPaginasFaltantes] = useState([]);
-
   const [paginasTodas, setPaginasTodas] = useState([]);
   const [perfiles, setPerfiles] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -154,8 +153,7 @@ const handleAgregarPaginaDelPerfil = (id_perfil, id_pagina) => {
           </h3>
           <h4 className='infoCuenta'>Gestiona tus perfiles</h4>
           <div className='abajoDeTusNotas'>
-            En esta seccion podras gestionar la creacion, eliminacion y edicion <br />
-            de todos los usuarios de la plataforma.
+            En esta seccion podrás gestionar la creación, eliminación y edición de todos los usuarios de la plataforma.
           </div>
         </div>
       </div>
@@ -256,7 +254,7 @@ const handleAgregarPaginaDelPerfil = (id_perfil, id_pagina) => {
 
                   {/* Email */}
                   <div className="mb-3">
-                    <label className="form-label">descripcion</label>
+                    <label className="form-label">Descripcion</label>
                     <input
                       type="text"
                       className="form-control"

@@ -7,6 +7,7 @@ import axios from 'axios';
 import ModalMensaje from '../gestores/ModalMensaje';
 import { obtenerUsuarios, obtenerClientes, obtenerPerfiles, obtenerGeo, obtenerPlanesMarketing } from './apisUsuarios'; // Importa la función para obtener usuarios
 import ArbolDistribucion from '../../nota/Editorial/ArbolDistribucion';
+import './AbmsMobile.css';
 
 const tiposUsuario = [
   {'id': "1", 'nombre': "ENTE"},

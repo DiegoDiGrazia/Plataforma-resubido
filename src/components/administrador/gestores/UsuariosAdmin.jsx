@@ -46,6 +46,7 @@ const UsuariosAdmin = () => {
   const [mensajeModalExito, setMensajeModalExito] = useState("Los cambios se realizaron correctamente.");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [inputPage, setInputPage] = useState(page);
   const [selectedUser, setSelectedUser] = useState(null);
   const [formData, setFormData] = useState({});
   const itemsPerPage = 10;  
@@ -177,8 +178,24 @@ const generarContrasenia= (id, contrasenia) => {
     });
 };
 
+/* input para la paginación
+const handleInputChange = (e) => {
+    setInputPage(e.target.value);
+};
 
+const handleInputKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      let newPage = parseInt(inputPage, 10);
 
+      if (isNaN(newPage) || newPage < 1) {
+        newPage = 1;
+      } else if (newPage > totalPages) {
+        newPage = totalPages;
+      }
+      goToPage(newPage);
+    }
+  };
+*/
   return (
     <div className="content flex-grow-1 crearNotaGlobal">
       <div className='row miPerfilContainer soporteContainer'>
@@ -188,8 +205,7 @@ const generarContrasenia= (id, contrasenia) => {
           </h3>
           <h4 className='infoCuenta'>Gestiona tus usuarios</h4>
           <div className='abajoDeTusNotas'>
-            En esta seccion podras gestionar la creacion, eliminacion y edicion <br />
-            de todos los usuarios de la plataforma.
+            En esta seccion podras gestionar la creación, eliminación y edición de todos los usuarios de la plataforma.
           </div>
         </div>
       </div>
@@ -203,7 +219,7 @@ const generarContrasenia= (id, contrasenia) => {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="       Buscar usuario por nombre o email"
+              placeholder="       Buscar por nombre o email"
             />
           </form>
         </div>
@@ -224,14 +240,14 @@ const generarContrasenia= (id, contrasenia) => {
                         className="btn btn-link p-0"
                         onClick={() => handleEditClick(item)}
                       >
-                        <strong>{item.nombre}</strong>
+                        <div className='user-name-text text-start'>{item.nombre}</div>
                       </button>
                     </div>
                     <div className='col-3'>
                       <small>{item.email}</small>
                     </div>
                     <div className='col-3'>
-                      {item.cliente && <em>Cliente: {item.cliente}</em>}
+                      {item.cliente && <em className='cuenta-text'>Cuenta: {item.cliente}</em>}
                     </div>
                     <div className='col-3'>
                       <span className="text-muted">Creado: {item.fecha_creacion}</span>
@@ -252,6 +268,23 @@ const generarContrasenia= (id, contrasenia) => {
               Anterior
             </button>
             <span>Página {page} de {totalPages}</span>
+            {/* input para paginación 
+            <div className="d-flex align-items-center">
+              <span className="me-1">Página</span>
+              <input
+                type="number"
+                className="form-control form-control-sm text-center"
+                style={{ width: '55px' }}
+                value={inputPage}
+                onChange={handleInputChange}
+                onKeyDown={handleInputKeyDown}
+                onBlur={() => setInputPage(page)}
+                min="1"
+                max={totalPages}
+              />
+              <span className="ms-1">de {totalPages}</span>
+            </div>
+            */}
             <button
               className="btn btn-secondary btn-sm ms-2"
               onClick={() => goToPage(page + 1)}
@@ -269,7 +302,7 @@ const generarContrasenia= (id, contrasenia) => {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title">
-                {selectedUser ? "Editar Usuario" : "Nuevo Usuario"}
+                {selectedUser?.id === "0" ? "Nuevo Usuario" : "Editar Usuario"}
               </h5>
               <button
                 type="button"
@@ -309,7 +342,7 @@ const generarContrasenia= (id, contrasenia) => {
 
                   {/* Email Reporte */}
                   <div className="mb-3">
-                    <label className="form-label">Email para envio de reporte(Opcional)</label>
+                    <label className="form-label">Email para envio de reporte (opcional)</label>
                     <input
                       type="email"
                       className="form-control"
@@ -320,9 +353,9 @@ const generarContrasenia= (id, contrasenia) => {
                     />
                   </div>
 
-                  {/* Email Reporte */}
+                  {/* Celular */}
                   <div className="mb-3">
-                    <label className="form-label">Numero de celular(opcional)</label>
+                    <label className="form-label">Numero de celular (opcional)</label>
                     <input
                       type="email"
                       className="form-control"
@@ -344,7 +377,7 @@ const generarContrasenia= (id, contrasenia) => {
                         data-bs-toggle="dropdown"
                         aria-expanded="false"
                       >
-                      {llevaCliente ? "Limitado a cientes" : "Acceso a todos los clientes"}
+                      {llevaCliente ? "Limitado a cuentas" : "Acceso a todas las cuentas"}
                       </button>
                       <ul className="dropdown-menu w-100">
                         <li>
@@ -355,7 +388,7 @@ const generarContrasenia= (id, contrasenia) => {
                               setLlevaCliente(true)
                             }
                           >
-                            Limitado a cientes
+                            Limitado a cuentas
                           </button>
                         </li>
                         <li>
@@ -372,7 +405,7 @@ const generarContrasenia= (id, contrasenia) => {
                             }}
                             
                           >
-                            Acceso a todos los clientes
+                            Acceso a todas las cuentas
                           </button>
                         </li>
                       </ul>
@@ -382,23 +415,24 @@ const generarContrasenia= (id, contrasenia) => {
                   
 
 
-                  {/* Cliente (dropdown) */}
+                  {/* Cuenta (dropdown) */}
                   {llevaCliente && (
                   <div className="mb-3">
-                    <label className="form-label">Cliente</label>
+                    <label className="form-label">Cuenta</label>
                     <div className="dropdown">
                       <button
                         className="btn btn-secondary dropdown-toggle w-100 text-start"
                         type="button"
                         data-bs-toggle="dropdown"
+                        data-bs-display="static"
                         aria-expanded="false"
                       >
                         {formData.cliente
                           ? formData.cliente
-                          : "Seleccionar cliente..."}
+                          : "Seleccionar cuenta..."}
                         </button>
 
-                      <ul className="dropdown-menu w-100">
+                      <ul className="dropdown-menu w-100" style={{maxHeight: "170px", overflowY: "auto", marginTop: "12px",}}>
                         {clientes.map((c) => (
                           <li key={c.id}>
                             <button
@@ -512,14 +546,15 @@ const generarContrasenia= (id, contrasenia) => {
                         className="btn btn-secondary dropdown-toggle w-100 text-start"
                         type="button"
                         data-bs-toggle="dropdown"
+                        data-bs-display="static"
                         aria-expanded="false"
                       >
                         {formData.tipo
                           ? (perfiles.find((p) => p.id == formData.tipo)).nombre
-                          : "Seleccionar cliente..."}
+                          : "Seleccionar cuenta..."}
                       </button>
 
-                      <ul className="dropdown-menu w-100">
+                      <ul className="dropdown-menu w-100" style={{maxHeight: "170px", overflowY: "auto", marginTop: "12px",}}>
                         {perfiles.map((p) => (
                           <li key={p.id}>
                             <button
@@ -548,11 +583,12 @@ const generarContrasenia= (id, contrasenia) => {
                         className="btn btn-secondary dropdown-toggle w-100 text-start"
                         type="button"
                         data-bs-toggle="dropdown"
+                        data-bs-display="static"
                         aria-expanded="false"
                       >
                         {formData.reporte_acceso == '0' ? "No" : "Si"}
                       </button>
-                      <ul className="dropdown-menu w-100">
+                      <ul className="dropdown-menu w-100" style={{marginTop: "12px",}}>
                         <li>
                           <button
                             type="button"
@@ -587,11 +623,12 @@ const generarContrasenia= (id, contrasenia) => {
                         className="btn btn-secondary dropdown-toggle w-100 text-start"
                         type="button"
                         data-bs-toggle="dropdown"
+                        data-bs-display="static"
                         aria-expanded="false"
                       >
                         {formData.reporte_whatsapp == '0' ? "No" : "Si"}
                       </button>
-                      <ul className="dropdown-menu w-100">
+                      <ul className="dropdown-menu w-100" style={{marginTop: "12px",}}>
                         <li>
                           <button
                             type="button"

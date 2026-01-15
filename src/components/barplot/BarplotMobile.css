@@ -2,6 +2,7 @@
 
     .row.cantidades.mt-3.back-white {
         padding: 0px;
+        width: 105%;
         gap: 24px;
     }
 
