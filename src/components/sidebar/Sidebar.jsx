@@ -4,7 +4,7 @@ import './Sidebar.css';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import { obtenerPaginas } from '../administrador/gestores/apisUsuarios';
+import { obtenerConsolidacionCliente, obtenerPaginas } from '../administrador/gestores/apisUsuarios';
 import { updatePaginasDelUsuario } from '../../redux/formularioSlice';
 import { useDispatch } from 'react-redux';
 import './SidebarMobile.css';
@@ -14,7 +14,9 @@ const Sidebar = ({ estadoActual }) => {
   const cliente = useSelector((state) => state.formulario.cliente);
   const PerfilUsuario = useSelector((state) => state.formulario.usuario.perfil);
   const TOKEN = useSelector((state) => state.formulario.token);
+  const id_cliente = useSelector((state) => state.formulario.id_cliente);
   const [paginasDelPerfil, setPaginasPerfil]= useState([]);
+  const [respuestaCreditos, setRespuestaCreditos] = useState(null);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -31,6 +33,19 @@ const Sidebar = ({ estadoActual }) => {
     };
     cargarPaginas();
   }, [PerfilUsuario]);
+
+  useEffect(() => {
+    if (!id_cliente) return;
+    const cargarCredito = async () => {
+      try {
+        const res = await obtenerConsolidacionCliente(TOKEN, id_cliente);
+        setRespuestaCreditos(res);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    cargarCredito();
+  }, [id_cliente]);
 
 
   const location = useLocation();
@@ -128,7 +143,8 @@ const Sidebar = ({ estadoActual }) => {
               'Distribucion',
               'bi bi-clipboard2-check-fill'
             )}
-            {renderSidebarButton(
+            
+            {paginasDelPerfil.find((pagina) => pagina.nombre == "Comercial" ) && renderSidebarButton(
               'comercial',
               'comercial',
               '/images/auto_entrevistas_icon.png',
@@ -136,6 +152,16 @@ const Sidebar = ({ estadoActual }) => {
               'bi bi-bag-fill'
             )}
             <ul className="list-group list-unstyled botones_inferiories">
+              {(respuestaCreditos && isOpen) && (
+                <>
+                <h3 style={{marginTop: '0px'}}>credito:</h3>
+                <h3 style={{marginTop: '0px'}}>$ {respuestaCreditos.credito[0].monto_mensual}</h3>
+                <h3 style={{marginTop: '0px'}}><a target="_blank" style={{marginLeft: ''}} href={`https://noticiasd.mitiendanube.com/autogestion/?clid=${id_cliente}`} style={{textDecoration: 'none'}}> 
+                recargar credito </a>
+                </h3>
+
+                </>
+              )}
               {renderSidebarButton(
                 'soporte-y-ayuda',
                 'soporte-y-ayuda',

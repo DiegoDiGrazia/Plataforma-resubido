@@ -47,21 +47,19 @@ const CalculadoraVentas
   const [clientes, setClientes] = useState([]);
   const [canalSelected, setCanalSelected] = useState(null);
   const [geo, setGeo] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [mensajeModalExito, setMensajeModalExito] = useState("Los cambios se realizaron correctamente.");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [selectedClient, setSelectedClient] = useState(null);
-  const [formData, setFormData] = useState({});
   const itemsPerPage = 10;  
   const TOKEN = useSelector((state) => state.formulario.token);
   const [cantidadDeNotas, setCantidadDeNotas] = useState(20);
-  const [alcancePorNota, setalcancePorNota] = useState(60);
+  const [alcancePorNota, setalcancePorNota] = useState(null);
   const [margen, setMargen] = useState(1);
   const [data, setData] = useState([[]]);
+  const [margenAgencia, setMargenAgencia] = useState(15);
   const costoPorNota = 100;
 
-  const columns = ["CPM", "Costo por nota", "Costo total", 'Precio por nota', 'Precio total']
+
+  const columns = ["CPM", 'CPM AGENCIA', "Costo por nota", "Costo total", 'Precio por nota', 'Precio total']
   const rows = ["dv 360", "Meta", "Total seleccionado"]
 
   // const data = [
@@ -108,16 +106,10 @@ const CalculadoraVentas
     const modal = new window.bootstrap.Modal(document.getElementById('editModal'));
     modal.show();
 };
-  const obtenerPaisId = (geo, nombrePais) => {
+ const obtenerPaisId = (geo, nombrePais) => {
     const paisEncontrado = geo.find((p) => p.nombre.toLowerCase() === nombrePais.toLowerCase());
     return paisEncontrado ? paisEncontrado.pais_id : null;
   }
-  const obtenerProvinciaId = (geo, nombrePais, nombreProvincia) => {
-    const paisEncontrado = geo.find((p) => p.nombre.toLowerCase() === nombrePais.toLowerCase());
-    const provinciaEncontrada = paisEncontrado?.provincias.find((prov) => prov.nombre.toLowerCase() === nombreProvincia.toLowerCase());
-
-    return provinciaEncontrada ? provinciaEncontrada.provincia_id : null;
-  } 
 
 useEffect(() => {
     const fetchPoblacion = async () => {
@@ -141,29 +133,34 @@ useEffect(() => {
 useEffect(() => {
   console.log(poblacionEstimada);
   if(!poblacionEstimada) return;
+  // setalcancePorNota(Math.floor(poblacionEstimada.poblacion * 0.6));
+
   const dv_cpm = Number(poblacionEstimada.gv.cpm) || 0;
-  const dv_costo_por_nota = dv_cpm * alcancePorNota * 3/1000;
+  const cpm_agencia = dv_cpm / (1 - margenAgencia/100);
+  const dv_costo_por_nota = cpm_agencia * alcancePorNota * 3/1000;
   const dv_costo_total = dv_costo_por_nota * cantidadDeNotas;
   const dv_precio_por_nota = dv_costo_por_nota / (1-margen/100)
   const dv_precio_total = dv_precio_por_nota * cantidadDeNotas;
 
   const meta_cpm = Number(poblacionEstimada.meta.cpm) || 0;
-  const meta_costo_por_nota = meta_cpm * alcancePorNota * 2/1000;
+  const meta_cpm_agencia = meta_cpm / (1 - margenAgencia/100);
+  const meta_costo_por_nota = meta_cpm_agencia * alcancePorNota * 2/1000;
   const meta_costo_total = meta_costo_por_nota * cantidadDeNotas;
   const meta_precio_por_nota = meta_costo_por_nota / (1-margen/100)
   const meta_precio_total = meta_precio_por_nota * cantidadDeNotas;
 
   const totales_cpm = dv_cpm + meta_cpm;
+  const totales_cpm_agencia = cpm_agencia + meta_cpm_agencia;
   const totales_costo_por_nota = dv_costo_por_nota + meta_costo_por_nota;
   const totales_costo_total = dv_costo_total + meta_costo_total;
   const totales_precio_por_nota = dv_precio_por_nota + meta_precio_por_nota;
   const totales_precio_total = dv_precio_total + meta_precio_total;
 
-  setData([[dv_cpm.toFixed(2), dv_costo_por_nota.toFixed(2), dv_costo_total.toFixed(2), dv_precio_por_nota.toFixed(2), dv_precio_total.toFixed(2)],
-          [meta_cpm.toFixed(2), meta_costo_por_nota.toFixed(2), meta_costo_total.toFixed(2), meta_precio_por_nota.toFixed(2), meta_precio_total.toFixed(2)],
-          [totales_cpm.toFixed(2), totales_costo_por_nota.toFixed(2), totales_costo_total.toFixed(2), totales_precio_por_nota.toFixed(2), totales_precio_total.toFixed(2)]]);
-    
-}, [poblacionEstimada])
+  setData([[dv_cpm.toFixed(2), cpm_agencia.toFixed(2), dv_costo_por_nota.toFixed(2), dv_costo_total.toFixed(2), dv_precio_por_nota.toFixed(2), dv_precio_total.toFixed(2)],
+          [meta_cpm.toFixed(2), meta_cpm_agencia.toFixed(2),meta_costo_por_nota.toFixed(2), meta_costo_total.toFixed(2), meta_precio_por_nota.toFixed(2), meta_precio_total.toFixed(2)],
+          [totales_cpm.toFixed(2), totales_cpm_agencia.toFixed(2), totales_costo_por_nota.toFixed(2), totales_costo_total.toFixed(2), totales_precio_por_nota.toFixed(2), totales_precio_total.toFixed(2)]]);
+
+}, [poblacionEstimada, alcancePorNota, cantidadDeNotas, margen, margenAgencia]);
 
 
   return (
@@ -195,7 +192,7 @@ useEffect(() => {
             <h3>población: {Number(poblacionEstimada?.poblacion || 0).toLocaleString('es-AR') || 0} </h3>
           </div>
           <div className='col-6 '>
-              <div className="dropdown p-0">
+              {/* <div className="dropdown p-0">
                 <SelectorConBuscador
                   title="Plataformas"
                   options={tiposPlataformas}
@@ -203,7 +200,7 @@ useEffect(() => {
                   onSelect={setCanalSelected}
                   onClear={() => setCanalSelected(null)}
                 />  
-              </div>
+              </div> */}
               <div className="dropdown p-0">
                 <SelectorNumerosEnteros
                   title="Cantidad de notas"
@@ -214,11 +211,11 @@ useEffect(() => {
                   onClear={() => setCantidadDeNotas(1)}
                 /> 
                 <InputNumerico
-                  title="Alcance por nota"
+                  title="Usuarios a alcanzar por nota"
                   selectedValue={alcancePorNota}
-                  isPercentual ={true}
+                  isPercentual={false}
                   min={1}
-                  max={20}
+                  max={Number(poblacionEstimada?.poblacion || 0)}
                   onSelect={setalcancePorNota}
                   onClear={() => setalcancePorNota(1)}
                   isDecimal={false}
@@ -231,6 +228,16 @@ useEffect(() => {
                   max={99.9}
                   onSelect={setMargen}
                   onClear={() => setMargen(null)}
+                  isDecimal={true}
+                />
+                <InputNumerico
+                  title="Margen agencia"
+                  selectedValue={margenAgencia}
+                  isPercentual ={true}
+                  min={0}
+                  max={99.9}
+                  onSelect={setMargenAgencia}
+                  onClear={() => setMargenAgencia(null)}
                   isDecimal={true}
                 />
               </div>

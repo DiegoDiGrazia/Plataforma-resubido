@@ -19,38 +19,7 @@ const Perfil = () => {
     const navigate = useNavigate();
     const UsuarioActual =  useSelector((state) => state.formulario.usuario);
 
-    // useEffect(() => {
-    //     axios.post(
-    //         "https://panel.serviciosd.com/app_editar_usuario",
-    //         {
-    //             nombre: nombre,
-    //             email: email,
-    //             id: "id del usuario a editar",
-    //             cliente: "nombre del cliente que tiene el usuario",
-    //             reporte_whatsapp: "0 o 1 si recibe los reportes por whatsapp",
-    //             reporte_email: "0 o 1 si recibe los reportes por email",
-    //             recibe_solo_notas: "",
-    //             celular_reporte: '',
-    //             email_reporte: '',
-    //             frecuencia: '',
-    //         },
-    //         {
-    //             headers: {
-    //                 'Content-Type': 'multipart/form-data'
-    //             }
-    //         }
-    //     )
-    //     .then((response) => {
-    //         if (response.data.status === "true") {
-    //             console.log(response.data.item);
-    //         } else {
-    //             console.error('Error en la respuesta de la API:', response.data.message);
-    //         }
-    //     })
-    //     .catch((error) => {
-    //         console.error('Error al hacer la solicitud:', error);
-    //     });
-    // }, []);
+
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];

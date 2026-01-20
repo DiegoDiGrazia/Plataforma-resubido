@@ -416,7 +416,7 @@ const NotasParaEditorial = () => {
                                                     <i class="bi bi-eye-fill m-2 fs-2"></i>
                                                 </a>
                                             )}
-                                        {perfilUsuario === "9" && ///MODIFICAR A 9 DESPUES DE LAS PRUEBAS
+                                        {perfilUsuario === "1" && ///MODIFICAR A 9 DESPUES DE LAS PRUEBAS
                                         <button title="distribuir nota"
                                             onClick={() => editarNotaFreemium(nota, true)}
                                             style={{background: "none", border: "none",padding: 0,

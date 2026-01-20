@@ -6,7 +6,9 @@ const fetchData = async (url, token, extraParams = {}) => {
     formData.append("token", token);
 
     Object.entries(extraParams).forEach(([key, value]) => {
+      if (value !== undefined && value !== null){
       formData.append(key, value);
+      }
     });
 
     const response = await axios.post(url, formData, {
@@ -97,6 +99,20 @@ export const guardar_dato_en_banner_data = (token, id, datos) =>
 export const obtenerPoblacion = (token, division, id) =>
   fetchData("https://panel.serviciosd.com/app_get_estimacion", token, {
     division, id
+});
+
+export const obtenerPrecioUsuario = (token, division, id, id_cliente, fecha=null) =>
+  fetchData("https://panel.serviciosd.com/app_get_precio_usuario", token, {
+    division, id, id_cliente, fecha
+});
+export const obtenerConsolidacionCliente = (token, id_cliente) =>
+  fetchData("https://panel.serviciosd.com/app_get_consolidacion_cliente", token, {
+    id_cliente
+  });
+
+export const setComprarDistribucion = (token, id_usuario, usuarios, id_cliente, id_noti, monto_dv360=null, monto_meta= null) =>
+  fetchData("https://panel.serviciosd.com/app_set_comprar_distribución", token, {
+    id_usuario, usuarios, id_cliente, id_noti, monto_dv360, monto_meta  
 });
 
 export const editar_o_crear_cliente = (token, id, name, 
