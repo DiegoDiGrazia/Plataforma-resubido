@@ -210,6 +210,7 @@ const NotasParaEditorial = () => {
                 offset: verMas ? nuevoOffset : 0,  // este es el valor real que irá a la API
                 titulo: searchQuery,
                 pais: nombrePaisUsuario || "",
+                full: "1",
             },
             { headers: { 'Content-Type': 'multipart/form-data' } }
         )

@@ -125,7 +125,7 @@ useEffect(() => {
   if(planes.length === 0 || clientes.length === 0) return;
   const [añoHasta, mesHasta] = fechaHasta.split("-");
   const ultimoDiaHasta = obtenerUltimoDiaMes(añoHasta, mesHasta);
-  setLoading(true); // 👈 comienza la carga
+  setLoading(true);
   obtenerNotasDeGeneraciones(TOKEN, '', '', '', 'PUBLICADO', '150', '0', '', '', fechaDesde+'-01', `${fechaHasta}-${ultimoDiaHasta}`)
   .then((res) => {
   const diccionarioDeCLientesConSusNotas = agruparNotasPorCliente(res);

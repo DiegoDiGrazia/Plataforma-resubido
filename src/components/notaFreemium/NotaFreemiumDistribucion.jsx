@@ -38,8 +38,8 @@ const NotaFreemiumDistribucion
   const [precioEstimado, setPrecioEstimado] = useState(0);
   const id_cliente = useSelector((state) => state.formulario.id_cliente);
   const id_usuario = useSelector((state) => state.formulario.usuario.id);
-  const [fechaInicio, setFechaInicio] = useState(null);
-  const [fechaFin, setFechaFin] = useState(null);
+  const [fecha_inicio, setFechaInicio] = useState(null);
+  const [fecha_vencimiento, setFechaVencimiento] = useState(null);
   const [porcentajeUsuarios, setPorcentajeUsuarios] = useState(20);
   const [consolidacionCliente, setConsolidacionCliente] = useState(null);
   const [usuariosSeleccionados, setUsuariosSeleccionados] = useState(0);
@@ -129,12 +129,16 @@ useEffect(() => {
   try {
     const item = await setComprarDistribucion(
       TOKEN,
+      municipio ? 'municipio' : provincia ? 'provincia' : 'pais',
+      municipio ? municipio.municipio_id : provincia ? provincia.provincia_id : obtenerPaisId(geo.paises, pais.nombre),
       id_usuario,
       usuarios,
       id_cliente,
       id_noti,
       monto_dv360,
-      monto_meta
+      monto_meta,
+      fecha_vencimiento,
+      fecha_inicio,
     );
 
     setRespuestaDistribuirBoton(item);
@@ -161,7 +165,7 @@ useEffect(() => {
           <img src="/images/prisma.png" alt="Icono 1" className="icon me-2 icono_tusNotas" /> 
             {" Distribuye esta nota "}
         </h3>
-        <h4>Credito disponible: {consolidacionCliente?.credito[0].monto_mensual || 0}</h4>
+        <h4>Credito disponible: {consolidacionCliente?.credito[0]?.monto_mensual || 0}</h4>
         <div className='col-4 p-0 me-3 align-self-center'>
           <img 
             src={'https://panel.serviciosd.com/img' + notaFreemium.imagen_principal } 
@@ -207,14 +211,14 @@ useEffect(() => {
               <InputFecha
                 label="Fecha inicio:"
                 name="fecha_publicacion"
-                value={fechaInicio}
+                value={fecha_inicio}
                 onChange={(e) => setFechaInicio(e.target.value)}
               />
               <InputFecha
                 label="Fecha fin:"
                 name="fecha_fin"
-                value={fechaFin}
-                onChange={(e) => setFechaFin(e.target.value)}
+                value={fecha_vencimiento}
+                onChange={(e) => setFechaVencimiento(e.target.value)}
               />
               <div className="d-flex">
                 <div className="ms-auto">

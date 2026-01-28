@@ -21,14 +21,22 @@ const obtenerColorDeEstadoDistribucionDeNota = (campoAChequear, nota) => {
 
 const IconosDistribucionConMonto = ({ nota, token }) => {
     const isFirstRender = useRef(true);
-    const banner_data = nota['banner_data'] ? JSON.parse(nota['banner_data']) : null;
+    const parseBannerData = () => {
+        try {
+            return nota['banner_data'] && nota['banner_data'].trim() ? JSON.parse(nota['banner_data']) : null;
+        } catch (error) {
+            console.error('Error parsing banner_data:', error);
+            return null;
+        }
+    };
+    const banner_data = parseBannerData();
     const [montoDv, setMontoDv] = useState(banner_data?.presupuesto?.dv || 0);
     const [montoMeta, setMontoMeta] = useState(banner_data?.presupuesto?.meta || 0);
     const Usuario = useSelector((state) => state.formulario.usuario);
     useEffect(() => {
       if (isFirstRender.current) {
           isFirstRender.current = false;
-          return; // no ejecutar en el primer render
+          return; 
       }
       const handler = setTimeout(() => {
           const dato_a_guardar = JSON.stringify({

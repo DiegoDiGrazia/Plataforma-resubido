@@ -14,6 +14,11 @@ const DEF = {
         "url": "comercial/calculadora-ventas",
         "titulo": "Calculadora"
         },
+    "ABM Perfiles": {
+        "descripcion": "Aquí encontrará una calculadora donde podrá visualizar el precio de la distribución de su contenido.",
+        "url": "comercial/abm-perfiles",
+        "titulo": "ABM Perfiles"
+        },
 
     }
 const Comercial = () => {

@@ -51,22 +51,17 @@ const CalculadoraVentas
   const [page, setPage] = useState(1);
   const itemsPerPage = 10;  
   const TOKEN = useSelector((state) => state.formulario.token);
-  const [cantidadDeNotas, setCantidadDeNotas] = useState(20);
+  const [cantidadDeNotas, setCantidadDeNotas] = useState(1);
   const [alcancePorNota, setalcancePorNota] = useState(null);
-  const [margen, setMargen] = useState(1);
+  const [margen, setMargen] = useState(70);
   const [data, setData] = useState([[]]);
   const [margenAgencia, setMargenAgencia] = useState(15);
   const costoPorNota = 100;
 
 
-  const columns = ["CPM", 'CPM AGENCIA', "Costo por nota", "Costo total", 'Precio por nota', 'Precio total']
+  const columns = ["CPM", 'CPM + AGENCIA', "Costo por nota", "Costo total", 'Precio por nota', 'Precio total']
   const rows = ["dv 360", "Meta", "Total seleccionado"]
 
-  // const data = [
-  //   [10, 20, 30],
-  //   [40, 50, 60],
-  //   [70, 80, 90]
-  // ]
 
   useEffect(() => {
     obtenerClientes(TOKEN).then(setClientes);
@@ -106,10 +101,23 @@ const CalculadoraVentas
     const modal = new window.bootstrap.Modal(document.getElementById('editModal'));
     modal.show();
 };
- const obtenerPaisId = (geo, nombrePais) => {
-    const paisEncontrado = geo.find((p) => p.nombre.toLowerCase() === nombrePais.toLowerCase());
-    return paisEncontrado ? paisEncontrado.pais_id : null;
-  }
+
+const obtenerPaisId = (paises = [], nombrePais) => {
+  if (!Array.isArray(paises) || !nombrePais) return null;
+
+  const nombre =
+    typeof nombrePais === 'string'
+      ? nombrePais
+      : nombrePais?.nombre;
+
+  if (!nombre) return null;
+
+  const paisEncontrado = paises.find(
+    (p) => p.nombre?.toLowerCase() === nombre.toLowerCase()
+  );
+
+  return paisEncontrado?.pais_id ?? null;
+};
 
 useEffect(() => {
     const fetchPoblacion = async () => {
@@ -120,7 +128,7 @@ useEffect(() => {
         const poblacion = await obtenerPoblacion(
             TOKEN,
             municipio ? 'municipio' : provincia ? 'provincia' : 'pais',
-            municipio ? municipio.municipio_id : provincia ? provincia.provincia_id : obtenerPaisId(geo.paises, pais.nombre)
+            municipio ? municipio.municipio_id : provincia ? provincia.provincia_id : obtenerPaisId(geo.paises, pais)
             // obtenerPaisId(geo.paises, pais.nombre) || provincia.provincia_id || municipio.municipio_id
         );
 
@@ -132,17 +140,17 @@ useEffect(() => {
 
 useEffect(() => {
   console.log(poblacionEstimada);
-  if(!poblacionEstimada) return;
+  if(!poblacionEstimada ) return;
   // setalcancePorNota(Math.floor(poblacionEstimada.poblacion * 0.6));
 
-  const dv_cpm = Number(poblacionEstimada.gv.cpm) || 0;
+  const dv_cpm = Number(poblacionEstimada?.gv?.cpm ?? 0);
   const cpm_agencia = dv_cpm / (1 - margenAgencia/100);
   const dv_costo_por_nota = cpm_agencia * alcancePorNota * 3/1000;
   const dv_costo_total = dv_costo_por_nota * cantidadDeNotas;
   const dv_precio_por_nota = dv_costo_por_nota / (1-margen/100)
   const dv_precio_total = dv_precio_por_nota * cantidadDeNotas;
 
-  const meta_cpm = Number(poblacionEstimada.meta.cpm) || 0;
+  const meta_cpm = Number(poblacionEstimada?.meta?.cpm ?? 0);
   const meta_cpm_agencia = meta_cpm / (1 - margenAgencia/100);
   const meta_costo_por_nota = meta_cpm_agencia * alcancePorNota * 2/1000;
   const meta_costo_total = meta_costo_por_nota * cantidadDeNotas;

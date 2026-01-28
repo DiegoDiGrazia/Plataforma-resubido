@@ -23,9 +23,9 @@ const DEF = {
         "titulo": "Perfil"
         },
     "clientes": {
-        "descripcion": "Gestiona la creacion y edicion de nuevas Cuentas.",
+        "descripcion": "Gestiona la creacion y edicion de nuevos Clientes.",
         "url": "clientes",
-        "titulo": "Cuentas"
+        "titulo": "Clientes"
         },
     }
 const Administrador = () => {

@@ -155,8 +155,8 @@ const Sidebar = ({ estadoActual }) => {
               {(respuestaCreditos && isOpen) && (
                 <>
                 <h3 style={{marginTop: '0px'}}>credito:</h3>
-                <h3 style={{marginTop: '0px'}}>$ {respuestaCreditos.credito[0].monto_mensual}</h3>
-                <h3 style={{marginTop: '0px'}}><a target="_blank" style={{marginLeft: ''}} href={`https://noticiasd.mitiendanube.com/autogestion/?clid=${id_cliente}`} style={{textDecoration: 'none'}}> 
+                <h3 style={{marginTop: '0px'}}>$ {respuestaCreditos?.credito[0]?.monto_mensual}</h3>
+                <h3 style={{marginTop: '0px'}}><a target="_blank" href={`https://noticiasd.mitiendanube.com/autogestion/?clid=${id_cliente}`} style={{textDecoration: 'none'}}> 
                 recargar credito </a>
                 </h3>
 

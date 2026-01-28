@@ -15,6 +15,7 @@ import DistribucionAdmin from './components/administrador/gestores/Distribucion'
 import NotaFreemiumDistribucion from './components/notaFreemium/NotaFreemiumDistribucion';
 import Comercial from './components/comercial/comercial';
 import CalculadoraVentas from './components/comercial/calculadoraDeVentas';
+import AbmPerfiles from './components/comercial/AbmPerfiles';
 
 // 👇 Acá van tus componentes con lazy
 const Formulario = lazy(() => import('./components/login/Formulario'));
@@ -61,10 +62,12 @@ function App() {
               <Route path="/verNota/:id_ruta?" element={<VerNota />} />
               <Route path="/notas" element={<NotasParaEditorial />} />
               <Route path="/notasEditorial" element={<NotasParaEditorial />} />
+              
 
               {/* COMERCIAL */}
               <Route path="/comercial" element={<Comercial />} />
               <Route path="/comercial/calculadora-ventas" element={<CalculadoraVentas />} />
+              <Route path="/comercial/abm-perfiles" element={<AbmPerfiles />} />
 
             </Route>
           </Routes>
