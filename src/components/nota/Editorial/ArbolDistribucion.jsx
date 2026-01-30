@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import axios from 'axios';
 import SelectorConBuscador from './SelectorConBuscador';
+import { useSelector } from 'react-redux';
 
 const ArbolDistribucion = ({
   TOKEN,
@@ -18,47 +19,20 @@ const ArbolDistribucion = ({
 }) => {
   const [provincias, setProvincias] = useState([]);
   const [municipios, setMunicipios] = useState([]);
-  const [Paises] = useState([
-    { nombre: "Argentina" },
-    { nombre: "Bolivia" },
-    { nombre: "Brasil" },
-    { nombre: "Chile" },
-    { nombre: "Colombia" },
-    { nombre: "Costa Rica" },
-    { nombre: "Cuba" },
-    { nombre: "Ecuador" },
-    { nombre: "El Salvador" },
-    { nombre: "Guatemala" },
-    { nombre: "Honduras" },
-    { nombre: "México" },
-    { nombre: "Nicaragua" },
-    { nombre: "Panamá" },
-    { nombre: "Paraguay" },
-    { nombre: "Perú" },
-    { nombre: "Puerto Rico" },
-    { nombre: "República Dominicana" },
-    { nombre: "Uruguay" },
-    { nombre: "Venezuela" },
-    { nombre: "Miami" },
-    { nombre: "España" }
-  ]);
+  const geo = useSelector((state) => state.formulario.geo);
+  const Paises = geo?.map((pais) => ({ nombre: pais.nombre, pais_id: pais.pais_id })) || [];
+
+
 
   // Obtener provincias
   useEffect(() => {
-    axios.post(
-      "https://panel.serviciosd.com/app_obtener_provincias",
-      { token: TOKEN },
-      { headers: { 'Content-Type': 'multipart/form-data' } }
-    )
-    .then((response) => {
-      if (response.data.status === "true") {
-        setProvincias(response.data.item);
-      } else {
-        console.error('Error en la respuesta de la API:', response.data.message);
-      }
-    })
-    .catch((error) => console.error('Error al obtener provincias:', error));
-  }, [TOKEN]);
+    if (!Paises || !pais) return;
+    const ProvinciasDelPais = geo
+      .find((p) => p.pais_id === (pais?.pais_id || '1')) /// default pais argentina
+      ?.provincias.map((prov) => ({ nombre: prov.nombre, provincia_id: prov.provincia_id })) || [];
+    setProvincias(ProvinciasDelPais);
+
+  }, [TOKEN, pais]);
 
   // Obtener municipios cuando cambia la provincia
   useEffect(() => {

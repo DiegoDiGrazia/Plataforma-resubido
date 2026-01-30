@@ -19,6 +19,11 @@ const DEF = {
         "url": "comercial/abm-perfiles",
         "titulo": "ABM Perfiles"
         },
+    "ABM Comisionistas": {
+        "descripcion": "Alta y baja de comisionistas.",
+        "url": "comercial/abm-comisionistas",
+        "titulo": "ABM Comisionistas"
+        },
 
     }
 const Comercial = () => {

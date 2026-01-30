@@ -55,6 +55,9 @@ export const obtenerGeo = async () => {
 export const obtenerUsuarios = (token) =>
   fetchData("https://panel.serviciosd.com/app_obtener_usuarios_abm", token);
 
+export const obtenerComisionistas = (token) =>
+  fetchData("https://panel.serviciosd.com/app_get_comisionistas", token);
+
 export const obtenerClientes = (token) =>
   fetchData("https://panel.serviciosd.com/app_obtener_clientes", token, {
     cliente: "",
