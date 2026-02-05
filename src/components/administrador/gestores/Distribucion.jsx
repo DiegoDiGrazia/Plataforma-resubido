@@ -10,7 +10,7 @@ import IconosDistribucionConMonto from './IconosDistribucionConMonto';
 import { Accordion } from 'react-bootstrap';
 
 
-const obtenerMesActual = () => {
+export const obtenerMesActual = () => {
   const hoy = new Date();
   const año = hoy.getFullYear();
   const mes = String(hoy.getMonth() + 1).padStart(2, '0');

@@ -71,6 +71,10 @@ export const obtenerPaginas = (token, id_perfil) =>
     id_perfil,
   });
 
+  export const obtenerContratos = (token) =>
+  fetchData("https://panel.serviciosd.com/app_get_contratos", token, {
+  });
+
 export const eliminarPaginaDelPerfil = (token, id_perfil, id_pagina) =>
   fetchData("https://panel.serviciosd.com/app_acceso_eliminar", token, {
     id_perfil, id_pagina

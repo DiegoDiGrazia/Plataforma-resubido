@@ -14,15 +14,20 @@ const DEF = {
         "url": "comercial/calculadora-ventas",
         "titulo": "Calculadora"
         },
-    "ABM Perfiles": {
+    "ABM Planes": {
         "descripcion": "Aquí encontrará una calculadora donde podrá visualizar el precio de la distribución de su contenido.",
-        "url": "comercial/abm-perfiles",
-        "titulo": "ABM Perfiles"
+        "url": "comercial/abm-planes",
+        "titulo": "ABM Planes"
         },
     "ABM Comisionistas": {
         "descripcion": "Alta y baja de comisionistas.",
         "url": "comercial/abm-comisionistas",
         "titulo": "ABM Comisionistas"
+        },
+    "Contratos": {
+        "descripcion": "Alta y baja de contratos.",
+        "url": "comercial/abm-contratos",
+        "titulo": "ABM Contratos"
         },
 
     }

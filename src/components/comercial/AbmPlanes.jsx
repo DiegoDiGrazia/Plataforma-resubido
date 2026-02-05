@@ -21,7 +21,7 @@ const perfilVacio = {
   notas_x_mes: "0",
 };
 
-const AbmPerfiles
+const AbmPlanes
  = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [planes, setPlanes] = useState([]);
@@ -46,7 +46,7 @@ const AbmPerfiles
 
   // Filtrar por búsqueda
   const filteredClientes = useMemo(() => {
-    return planes.filter((item) =>  //-- Cambia esto a usuarios cuando tengas la API
+    return planes.filter((item) =>  
       item.nombre.toLowerCase().includes(search.toLowerCase()) 
     );
   }, [search, planes]);
@@ -105,19 +105,19 @@ const handleSave = () => {
       <div className='row miPerfilContainer soporteContainer'>
         <div className='col p-0'>
           <h3 id="saludo" className='headerTusNotas ml-0'>
-            <img src="/images/auto_entrevistas_icon.png" alt="Icono 1" className="icon me-2 icono_tusNotas" /> Gestiona tus perfiles
+            <img src="/images/auto_entrevistas_icon.png" alt="Icono 1" className="icon me-2 icono_tusNotas" /> Gestiona tus Planes
           </h3>
-          <h4 className='infoCuenta'>Gestiona tus Perfiles</h4>
+          <h4 className='infoCuenta'>Gestiona tus Planes</h4>
           <div className='abajoDeTusNotas'>
             En esta seccion podras gestionar la creacion, eliminacion y edicion <br />
-            de todos los perfiles de la plataforma.
+            de todos los planes de la plataforma.
           </div>
         </div>
       </div>
       {/* Búsqueda */}
       <div className='row miPerfilContainer soporteContainer mt-4 p-0 mb-3'>
         <div className='col buscadorNotas'> 
-          <button className="mb-2 btn btn-primary" onClick={() => handleEditClick(perfilVacio)}>Crear nuevo perfil</button>
+          <button className="mb-2 btn btn-primary" onClick={() => handleEditClick(perfilVacio)}>Crear nuevo plan</button>
           <form className='buscadorNotasForm'>
             <input
               className = 'inputBuscadorNotas'
@@ -149,10 +149,10 @@ const handleSave = () => {
                       </button>
                     </div>
                     <div className='col-3'>
-                      <em>plan: {(planes.find((plan) => plan.id == item.id_plan))?.nombre}</em>
+                      <em>notas por mes: {item.notas_x_mes}</em>
                     </div>
                     <div className='col-3'>
-                      <span className="text-muted">Creado: {item.fecha_creacion}</span>
+                      <span className="text-muted">id: {item.id}</span>
                     </div>
                   </div>
                 </li>
@@ -294,5 +294,5 @@ const handleSave = () => {
   );
 };
 
-export default AbmPerfiles
+export default AbmPlanes
 ;
