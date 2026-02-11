@@ -13,6 +13,8 @@ import { obtenerMesActual } from '../administrador/gestores/Distribucion';
 import SelectorConBuscador from '../nota/Editorial/SelectorConBuscador';
 import InputFecha from '../nota/Editorial/InputFecha';
 import InputNumerico from '../nota/Editorial/InputNumerico';
+import Checkbox from '../nota/Editorial/checkbox';
+import FileInput from '../nota/Editorial/FileInput';
 
 const Modalidades = [
   {'id': "1", 'nombre': "Facturación mensual", 'unica_factura': "NO", 'bonificado': "NO", 'abierto': "NO"},
@@ -26,13 +28,14 @@ const Emisor = [
   {'id': "2", 'nombre': "GUIAD SA"},
 ];
 
+
 const contratoVacio = {
   id: "0",
   id_cliente: "",
-  id_usuario: null,
-  id_pais: null,
-  id_provincia: null,
-  id_municipio: null,
+  id_usuario: '',
+  id_pais: '1',
+  id_provincia: '1',
+  id_municipio: '1',
 
   nombre: "",
   empresa: "GUIAD SA",
@@ -68,10 +71,10 @@ const contratoVacio = {
   com1: "",
   com2: "",
 
-  con_meta: "",
-  con_search: "",
-  con_dv360: "",
-  con_orden: "",
+  con_meta: "NO",
+  con_search: "NO",
+  con_dv360: "NO",
+  con_orden: "SI",
 
   orden_compra: "",
 
@@ -87,6 +90,7 @@ const contratoVacio = {
   tiene_facturas_con_numero: "0",
   donde: "",
   comentarios: "",
+  id_plan: "",
 };
 
 const AbmContratos
@@ -113,6 +117,7 @@ const AbmContratos
     const [EmisorSeleccionado, setEmisorSeleccionado] = useState(null);
     const [comisionistas, setComisionistas] = useState([]);
     const [comisionistasSeleccionados, setComisionistasSeleccionados] = useState([]);
+    const id_usuario = useSelector((state) => state.formulario.usuario.id);
 
     const seleccionarComisionista = (option) => {
       setComisionistasSeleccionados(prev => {
@@ -124,56 +129,56 @@ const AbmContratos
         if (nuevo.length === 1) {
           setFormData(fd => ({
             ...fd,
-            comisionista1: option.nombre,
-            com1: fd.com1 || '0',
+            comisionista1: option.id,
+            comision: fd.comision || '0',
           }));
         }
 
         if (nuevo.length === 2) {
           setFormData(fd => ({
             ...fd,
-            comisionista2: option.nombre,
-            com2: fd.com2 || '0',
+            comisionista2: option.id,
+            comision2: fd.comision2 || '0',
           }));
         }
 
         return nuevo;
       });
     };
+    const SeleccionarPlan = (plan) => {
+      setFormData({ ...formData, id_plan: plan.id, 
+        alcance_x_nota: plan.alcance_x_nota, 
+        notas_x_mes: plan.notas_x_mes,
+        con_meta: plan.con_meta,
+        con_dv360: plan.con_dv360,
+        con_search: plan.con_search,
+
+      });
+
+    }
 
     const eliminarComisionista = (id) => {
-      setComisionistasSeleccionados(prev => {
-        const nuevos = prev.filter(c => c.id !== id);
+    setComisionistasSeleccionados(prev => {
+    const nuevos = prev.filter(c => c.id !== id);
 
-        if (nuevos.length === 0) {
-          setFormData(fd => ({
-            ...fd,
-            comisionista1: '',
-            comisionista2: '',
-            com1: '',
-            com2: '',
-          }));
-        }
+    setFormData(fd => ({
+      ...fd,
+      comisionista1: nuevos[0]?.id || '',
+      comision: nuevos[0] ? fd.comision : '0',
 
-        if (nuevos.length === 1) {
-          setFormData(fd => ({
-            ...fd,
-            comisionista1: nuevos[0].nombre,
-            com1: fd.com1 || fd.com2 || '',
-            comisionista2: '',
-            com2: '',
-          }));
-        }
+      comisionista2: nuevos[1]?.id || '',
+      comision2: nuevos[1] ? fd.comision2 : '0',
+    }));
 
-        return nuevos;
-      });
-    };
+    return nuevos;
+  });
+};
     const actualizarPorcentajeComisionista = (posicion, value) => {
       if (posicion === 1) {
-        setFormData(fd => ({ ...fd, com1: value }));
+        setFormData(fd => ({ ...fd, comision: value }));
       }
       if (posicion === 2) {
-        setFormData(fd => ({ ...fd, com2: value }));
+        setFormData(fd => ({ ...fd, comision2: value }));
       }
     };    
 
@@ -198,7 +203,7 @@ const AbmContratos
     const finContrato = new Date(item.fecha_fin);
 
     const cumpleBusqueda =
-      item.name.toLowerCase().includes(search.toLowerCase());
+      item.name?.toLowerCase().includes(search.toLowerCase());
 
     const cumpleFecha =
       inicioContrato <= hasta && finContrato >= desde;
@@ -235,12 +240,33 @@ const AbmContratos
   }
 , [formData, comisionistasSeleccionados]);
 
+  const obtenerModalidadDelContrato = (contrato) => {
+    if (!contrato) return '';
+    if (contrato.bonificado === "SI") return Modalidades.find(m => m.bonificado === "SI");
+    if (contrato.unica_factura === "SI") return Modalidades.find(m => m.unica_factura === "SI");
+    if(contrato.abierto === "SI") return Modalidades.find(m => m.abierto === "SI");
+    return Modalidades.find(m => m.nombre === "Facturación mensual");
+
+  }
+
   const handleEditClick = (contrato) => {
-    console.log(contrato);
-    setContratoSeleccionado(contrato);
-    setFormData(contrato);
+    const comisionista1 = contrato.com1
+      ? comisionistas.find(c => contrato.com1.includes(c.apellido))
+      : null;
+
+    const comisionista2 = contrato.com2
+      ? comisionistas.find(c => contrato.com2.includes(c.apellido))
+      : null;
+
+    setComisionistasSeleccionados(
+      [comisionista1, comisionista2].filter(Boolean) /// solo los que existan
+    );
+    setModalidadSeleccionada(obtenerModalidadDelContrato(contrato));
+    setClienteSeleccionado(clientes.find(c => c.id === contrato.id_cliente) || '');
+    setContratoSeleccionado({...contrato, id_usuario: id_usuario});
+    setFormData({...contrato, id_usuario: id_usuario});
     const emisorObj = Emisor.find(
-      e => e.nombre === contrato.empresa
+      e => e.nombre === contrato.empresa  
     );
     setEmisorSeleccionado(emisorObj || null);
     const modal = new window.bootstrap.Modal(document.getElementById('editModal'));
@@ -250,7 +276,7 @@ const AbmContratos
 const handleSave = () => {
   axios
     .post(
-      "https://panel.serviciosd.com/app_plan_edit",
+      "https://panel.serviciosd.com/app_contrato_edit",
       {
         token: TOKEN,
         ...formData,
@@ -406,8 +432,20 @@ const handleSave = () => {
                     title="Cliente"
                     options={clientes}
                     selectedOption={clienteSeleccionado}
-                    onSelect={setClienteSeleccionado}
-                    onClear={() => setClienteSeleccionado(null)} 
+                    onSelect={(cliente) => {
+                      setClienteSeleccionado(cliente);
+                      setFormData(prev => ({
+                        ...prev,
+                        id_cliente: cliente.id
+                      }));
+                    }}
+                    onClear={(cliente) => {
+                      setClienteSeleccionado('');
+                      setFormData(prev => ({
+                        ...prev,
+                        id_cliente: ''
+                      }));
+                    }}
                     />
                   {clienteSeleccionado && (
                   <div className="mb-3">
@@ -422,29 +460,7 @@ const handleSave = () => {
                   </div>
                   )}
 
-                  <SelectorConBuscador
-                    title="Modalidad"
-                    options={Modalidades}
-                    selectedOption={ModalidadSeleccionada}
-                    onSelect={(option) => {
-                      setModalidadSeleccionada(option);
-                      setFormData(prev => ({
-                        ...prev,
-                        bonificado: option.bonificado,
-                        unica_factura: option.unica_factura,
-                        abierto: option.abierto,
-                      }));
-                    }}
-                    onClear={() => {
-                      setModalidadSeleccionada(null);
-                      setFormData(prev => ({
-                        ...prev,
-                        bonificado: "NO",
-                        unica_factura: "NO",
-                        abierto: "NO",
-                      }));
-                    }}
-                  />
+                  
                   <InputFecha
                     label="Fecha inicio:"
                     name="fecha_inicio"
@@ -493,9 +509,9 @@ const handleSave = () => {
                   <div className="mb-3">
                     <label className="form-label">Cuit</label>
                     <input
-                      type="number"
+                      type="text"
                       className="form-control"
-                      value={formData.cuit || ""}
+                      value={formData.cuit}
                       onChange={(e) =>
                         setFormData({ ...formData, cuit: e.target.value })
                       }
@@ -513,7 +529,32 @@ const handleSave = () => {
                       }
                     />
                   </div>
-                    {}
+
+                  <SelectorConBuscador
+                    title="Modalidad"
+                    options={Modalidades}
+                    selectedOption={ModalidadSeleccionada}
+                    onSelect={(option) => {
+                      setModalidadSeleccionada(option);
+                      setFormData(prev => ({
+                        ...prev,
+                        bonificado: option.bonificado,
+                        unica_factura: option.unica_factura,
+                        abierto: option.abierto,
+                      }));
+                    }}
+                    onClear={() => {
+                      setModalidadSeleccionada(null);
+                      setFormData(prev => ({
+                        ...prev,
+                        bonificado: "NO",
+                        unica_factura: "NO",
+                        abierto: "NO",
+                      }));
+                    }}
+                  />
+              { ModalidadSeleccionada?.abierto === "SI" && (
+                <>
                 {/* Margen */}
                   <div className="mb-3">
                   <InputNumerico
@@ -528,37 +569,31 @@ const handleSave = () => {
                   />
                   </div>  
 
+
                   {/* Comision */}
                   <div className="mb-3">
                   <InputNumerico
-                    title="Comision"
-                    selectedValue={Number(formData.com1) + Number(formData.com2)}
+                    title="Comision total ($)"
+                    selectedValue={Number(formData.comision) + Number(formData.comision2)}
                     isPercentual ={true}
                     min={0}
                     max={99.9}
                     isDecimal={true}
                   />
-                  <InputNumerico
-                    title="Monto ($)"
-                    selectedValue={formData.monto || '0'}
-                    isPercentual ={false}
-                    onSelect={(value) => setFormData({ ...formData, monto  : value })}
-                    onClear={() => setFormData({ ...formData, monto: '0' })}
-                    isDecimal={true}
-                    max={999999999999}
-                  />
-                  </div> 
+
                   <SelectorConBuscador
                     title="Comisionistas (Max 2)"
                     options={comisionistas}
                     selectedOption={''}
                     onSelect={(option) => { seleccionarComisionista(option)}}
                   />
-                  {comisionistasSeleccionados && (
+                  {comisionistasSeleccionados.length > 0 && (
                   <div className="mb-3">
                     <ul>
                       {comisionistasSeleccionados.map((comisionista, index) => {
-                        const posicion = index + 1; // 1 o 2
+                        const posicion = index == 0 ? "" : 2; // 1 o 2
+                        console.log('posicion:', posicion, formData[`comision${posicion}`]);
+
 
                         return (
                           <li
@@ -572,7 +607,7 @@ const handleSave = () => {
                             <span style={{ width: '90px' }}>
                               <InputNumerico
                                 title=""
-                                selectedValue={formData[`com${posicion}`] || '0'}
+                                selectedValue={formData[`comision${posicion}`] || '0'}
                                 isPercentual={true}
                                 min={0}
                                 max={100}
@@ -602,30 +637,126 @@ const handleSave = () => {
                     </ul>
                   </div>
                   )}
-                    
-                  
-                {/* con meta */}
-                  <DropdawnSiNo
-                    label="Con Meta"
-                    name="con_meta"
-                    value={formData.con_meta || "0"}
-                    setFormData={setFormData}
-                  />
-                {/* con dv360 */}
-                  <DropdawnSiNo
-                    label="Con dv360"
-                    name="con_dv360"
-                    value={formData.con_dv360 || "0"}
-                    setFormData={setFormData}
-                  />
-                {/* con search */}
-                  <DropdawnSiNo
-                    label="Con search"
-                    name="con_search"
-                    value={formData.con_search || "0"}
-                    setFormData={setFormData}
+                  </div> 
+                    </>
+                  )}
+                  {(ModalidadSeleccionada?.nombre == "Facturación mensual" 
+                    || ModalidadSeleccionada?.nombre == "Unica factura") && 
+                  (<>
+                  <InputNumerico
+                    title="Monto ($)"
+                    selectedValue={formData.monto || '0'}
+                    isPercentual ={false}
+                    onSelect={(value) => setFormData({ ...formData, monto  : value })}
+                    onClear={() => setFormData({ ...formData, monto: '0' })}
+                    isDecimal={true}
+                    max={999999999999}
                   />
 
+                  <InputNumerico
+                    title="Comision total ($)"
+                    selectedValue={(Number(formData.monto) * (Number(formData.comision) / 100) + (Number(formData.monto) * Number(formData.comision2) / 100))}
+                    isPercentual ={false}
+                    min={0}
+                    max={99.9}
+                    isDecimal={true}
+                  />
+                  <SelectorConBuscador
+                    title="Comisionistas (Max 2)"
+                    options={comisionistas}
+                    selectedOption={''}
+                    onSelect={(option) => { seleccionarComisionista(option)}}
+                  />
+                  {comisionistasSeleccionados.length > 0 && (
+                    console.log('comisionistasSeleccionados adentro de lenght:', comisionistasSeleccionados) ||
+                  <div className="mb-3">
+                    <ul>
+                      {comisionistasSeleccionados.map((comisionista, index) => {
+                        const posicion = index == 0 ? "" : 2; // 1 o 2
+                        console.log('posicion:', posicion, formData[`comision${posicion}`]);
+
+                        return (
+                          <li 
+                            key={comisionista.id}
+                            style={{ display: 'flex', alignItems: 'start', gap: '7px' }}
+                          >
+                            <span style={{ marginTop: '8px', fontSize: '16px' }}>
+                              {comisionista.nombre}
+                            </span>
+
+
+
+                            <span style={{ width: '90px' }}>
+                              <InputNumerico
+                                title=""
+                                selectedValue={formData[`comision${posicion}`] || '0'}
+                                isPercentual={true}
+                                min={0}
+                                max={99.9}
+                                onSelect={(value) =>
+                                  actualizarPorcentajeComisionista(posicion, value)
+                                }
+                              />
+                            </span>
+                            <span style={{ marginTop: '8px', fontSize: '16px' }}>
+                              {"$" +(Number(formData.monto) * (Number(formData[`comision${posicion}`]) / 100)) }
+                            </span>
+
+                            <button
+                              type="button"
+                              onClick={() => eliminarComisionista(comisionista.id)}
+                              style={{
+                                border: 'none',
+                                background: 'transparent',
+                                cursor: 'pointer',
+                                color: 'red',
+                                fontWeight: 'bold',
+                                marginTop: '8px',
+                              }}
+                            >
+                              ✕
+                            </button>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                  )}
+                  </>)}
+                    
+                <Checkbox 
+                  title="Requiere pago de sellos"
+                  value={formData.requiere_pago === "SI"}
+                  onChange={(value) => setFormData({ ...formData, requiere_pago: value ? "SI" : "NO" })}
+                />
+                <Checkbox 
+                  title="Lleva certificacion"
+                  value={formData.lleva_certificacion === "SI"}
+                  onChange={(value) => setFormData({ ...formData, lleva_certificacion: value ? "SI" : "NO" })}
+                />
+                <Checkbox 
+                  title="El contrato se aprueba sin orden"
+                  value={formData.con_orden === "NO"}
+                  onChange={(value) => setFormData({ ...formData, con_orden: value ? "NO" : "SI" })}
+                />
+                {formData.con_orden === "SI" && (
+                <FileInput
+                  title="Orden de compra"
+                  accept = "*"
+                  onChange={(file) => setFormData({ ...formData, orden_compra: file })}
+                  multiple={false}
+                  onClear={() => setFormData({ ...formData, orden_compra: '' })}
+                />
+                )}
+                {formData.orden_compra &&  formData.orden_compra.includes('http') && (
+                <span>Ultima orden: <a href={formData.orden_compra} target="_blank" rel="noopener noreferrer">{formData.orden_compra}</a></span>
+                )}
+                <SelectorConBuscador title={'Plan'} options={planes} 
+                  selectedOption={planes.find(p => p.id === formData.id_plan) || ''}
+                  onSelect={(plan) => SeleccionarPlan(plan)}
+                  onClear={() => setFormData({ ...formData, id_plan: ''})} 
+                  >
+                </SelectorConBuscador>
                   {/* notas por mes */}
                   <div className="mb-3">
                     <label className="form-label">Notas por mes</label>
@@ -652,6 +783,30 @@ const handleSave = () => {
                     />
                   </div>
 
+                {/* con meta */}
+                  <DropdawnSiNo
+                    label="Con Meta"
+                    name="con_meta"
+                    value={formData.con_meta}
+                    setFormData={setFormData}
+                  />
+                {/* con dv360 */}
+                  <DropdawnSiNo
+                    label="Con dv360"
+                    name="con_dv360"
+                    value={formData.con_dv360}
+                    setFormData={setFormData}
+                  />
+                {/* con search */}
+                  <DropdawnSiNo
+                    label="Con search"
+                    name="con_search"
+                    value={formData.con_search}
+                    setFormData={setFormData}
+                  />
+
+                
+
 
                 </>
               )}
@@ -669,7 +824,7 @@ const handleSave = () => {
                 type="button"
                 className="btn btn-primary"
                 onClick={() => handleSave()}
-                disabled={!formData.name}
+                disabled={!formData.razon_social}
               >
                 Guardar
               </button>
