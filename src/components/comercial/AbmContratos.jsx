@@ -15,6 +15,10 @@ import InputFecha from '../nota/Editorial/InputFecha';
 import InputNumerico from '../nota/Editorial/InputNumerico';
 import Checkbox from '../nota/Editorial/checkbox';
 import FileInput from '../nota/Editorial/FileInput';
+import ModalConListado from '../administrador/gestores/ModalConListado';
+import { obtenerArchivosDelContrato, obtenerComentariosDelContrato } from '../administrador/gestores/apisUsuarios';
+import ModalConInputTexto from '../administrador/gestores/ModalConInputTexto';
+import { guardarComentarioDeUnContrato } from '../administrador/gestores/apisUsuarios';
 
 const Modalidades = [
   {'id': "1", 'nombre': "Facturación mensual", 'unica_factura': "NO", 'bonificado': "NO", 'abierto': "NO"},
@@ -27,6 +31,18 @@ const Emisor = [
   {'id': "1", 'nombre': "ADLATAM SA"},
   {'id': "2", 'nombre': "GUIAD SA"},
 ];
+
+export const primerMesDelAnio = () => {
+  const hoy = new Date();
+  const anio = hoy.getFullYear();
+  return `${anio}-01`;
+};
+
+export const ultimoMesDelAnio = () => {
+  const hoy = new Date();
+  const anio = hoy.getFullYear();
+  return `${anio}-12`;
+};
 
 
 const contratoVacio = {
@@ -110,14 +126,20 @@ const AbmContratos
     const desdeMarketing = new Date().toISOString().split('T')[0];
     const TOKEN = useSelector((state) => state.formulario.token);
     const [pendientes, setPendientes] = useState('GAM o Meta');
-    const [fechaDesde, setFechaDesde] = useState(obtenerMesActual());
-    const [fechaHasta, setFechaHasta] = useState(obtenerMesActual());
+    const [fechaDesde, setFechaDesde] = useState(primerMesDelAnio());
+    const [fechaHasta, setFechaHasta] = useState(ultimoMesDelAnio());
     const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
     const [ModalidadSeleccionada, setModalidadSeleccionada] = useState(null);
     const [EmisorSeleccionado, setEmisorSeleccionado] = useState(null);
     const [comisionistas, setComisionistas] = useState([]);
     const [comisionistasSeleccionados, setComisionistasSeleccionados] = useState([]);
     const id_usuario = useSelector((state) => state.formulario.usuario.id);
+    const [showModalComentariosDelContrato, setShowModalComentariosDelContrato] = useState(false);
+    const [comentariosContrato, setComentariosDelContrato] = useState([]);
+    const [showModalArchivosDelContrato, setShowModalArchivosDelContrato] = useState(false);
+    const [archivosContrato, setArchivosDelContrato] = useState([]);
+    const [showModalInputTexto, setShowModalInputTexto] = useState(false);
+    const [comentarioAAgregar, setComentarioAAgregar] = useState('');
 
     const seleccionarComisionista = (option) => {
       setComisionistasSeleccionados(prev => {
@@ -191,6 +213,7 @@ const AbmContratos
     obtenerComisionistas(TOKEN).then(setComisionistas);
   }, [TOKEN]);  
 
+
   // Filtrar por búsqueda
   const contratosFiltrados = useMemo(() => {
   if (!fechaDesde || !fechaHasta) return contratos;
@@ -204,11 +227,13 @@ const AbmContratos
 
     const cumpleBusqueda =
       item.name?.toLowerCase().includes(search.toLowerCase());
+    
+    const cumpleID = item.id.toString().includes(search);
 
     const cumpleFecha =
       inicioContrato <= hasta && finContrato >= desde;
 
-    return cumpleBusqueda && cumpleFecha;
+    return cumpleBusqueda || cumpleID && cumpleFecha;
   });
 }, [search, contratos, fechaDesde, fechaHasta]);
 
@@ -297,6 +322,25 @@ const handleSave = () => {
     });
   };
 
+  const verComentariosDelContrato = async (contrato) => {
+    setShowModalComentariosDelContrato(true);
+    const comentarios = await obtenerComentariosDelContrato(TOKEN, contrato.id); // Aquí deberías hacer una llamada a la API para obtener los comentarios relacionados con el contrato
+    setComentariosDelContrato(comentarios);
+  }
+  const cargarComentario = (contrato) => {
+    setShowModalInputTexto(true);
+    setContratoSeleccionado(contrato);
+  }
+  const clickearGuardarContrato = async (contrato, comentario) => {
+    setShowModalInputTexto(true);
+    const respuesta = await guardarComentarioDeUnContrato(TOKEN, contratoSeleccionado.id, comentario, id_usuario);
+  }
+
+  const verArchivosDelContrato = async (contrato) => {
+    setShowModalArchivosDelContrato(true);
+    const archivos = await obtenerArchivosDelContrato(TOKEN, contrato.id); // Aquí deberías hacer una llamada a la API para obtener los archivos relacionados con el contrato
+    setArchivosDelContrato(archivos);
+  }
 
   return (
     <div className="content flex-grow-1 crearNotaGlobal">
@@ -318,7 +362,7 @@ const handleSave = () => {
         <div className='col buscadorNotas'>
              
           <button className="mb-2 btn btn-primary" onClick={() => handleEditClick(contratoVacio)}>Crear nuevo contrato</button>
-          <span style={{ fontSize: "14px"}}>Vencimiendo desde:
+          <span style={{ fontSize: "14px", marginLeft: "10px"}}>Vencimiendo desde:
           <input 
               type="month" 
               value={fechaDesde} 
@@ -334,24 +378,13 @@ const handleSave = () => {
                 style={{ fontSize: "14px", border: "1px solid #ccc", borderRadius: "4px", padding: "2px 5px"}}
             />
           </span>
-          <div className="dropdown">
-            <a className="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              {pendientes}
-            </a>
-            <ul className="dropdown-menu">
-              <li><button className="dropdown-item" onClick={() => setPendientes('Todos los casos')} >Todos los casos</button></li>
-              <li><button className="dropdown-item" onClick={() => setPendientes('solo en Meta')} >solo en Meta</button></li>
-              <li><button className="dropdown-item" onClick={() => setPendientes('solo en GAM')} >solo en GAM</button></li>
-              <li><button className="dropdown-item" onClick={() => setPendientes('GAM o Meta')} >GAM o Meta</button></li>
-            </ul>
-          </div>
           <form className='buscadorNotasForm'>
             <input
               className = 'inputBuscadorNotas'
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="       Buscar contratos por nombre"
+              placeholder="       Buscar contratos por cliente o id..."
             />
           </form>
         </div>
@@ -372,16 +405,47 @@ const handleSave = () => {
                         className="btn btn-link p-0"
                         onClick={() => handleEditClick(item)}
                       >
-                        <strong>{item.name}</strong>
+                        <strong>{item.name == null ? 'Sin cliente' : item.name}</strong>
                       </button>
+                      <div>Cuit: {item.cuit}</div>
+                      <div>Empresa: {item.empresa}</div>
+                      <div>ID: {item.id}</div>
+                      <div>Modalidad: {obtenerModalidadDelContrato(item).nombre}</div>
                     </div>
                     <div className='col-3'>
-                      <div>inicio: {item.fecha_inicio}</div>
-                      <div>fin: {item.fecha_fin}</div   >
+                      <div>Monto total: {item.monto}</div>
+                      <div>Avance: {item.avance}</div>
+                      {item.orden_compra != '' && <a href={item.orden_compra}>Ver orden de compra</a>}
+                      {item.orden_compra == '' && <div>Sin orden de compra</div>}
                     </div>
                     <div className='col-3'>
-                      <span className="text-muted">id: {item.id}</span>
-                    </div>
+                      <div>Fecha inicio: {item.fecha_inicio}</div>
+                      <div>Fecha fin: {item.fecha_fin}</div>
+                      <div>Facturas Emitidas: {item.facturado}/{item.facturas}</div>
+                      <div>
+                        <button className="mb-2 btn btn-primary" onClick={() => cargarArchivos()}>
+                          Cargar archivo
+                        </button>
+                      </div>
+                      <div>
+                        <button className="mb-2 btn btn-primary" disabled={showModalArchivosDelContrato} onClick={() => verArchivosDelContrato(item)}>
+                          Ver Archivos
+                        </button>
+                      </div>
+                    </div> 
+                    <div className='col-3'>
+                      <div>Distribucion: {item.estado}</div>
+                      <div>
+                        <button className="mb-2 btn btn-primary" onClick={() => cargarComentario(item)}>
+                          ingresar comentarios
+                        </button>
+                      </div>
+                      <div>
+                        <button className="mb-2 btn btn-primary" disabled={showModalComentariosDelContrato} onClick={() => verComentariosDelContrato(item)}>
+                          Ver comentarios
+                        </button>
+                      </div>
+                    </div> 
                   </div>
                 </li>
               ))
@@ -748,7 +812,7 @@ const handleSave = () => {
                   onClear={() => setFormData({ ...formData, orden_compra: '' })}
                 />
                 )}
-                {formData.orden_compra &&  formData.orden_compra.includes('http') && (
+                {formData.orden_compra && (typeof formData.orden_compra === "string") &&  formData.orden_compra.includes('http') && (
                 <span>Ultima orden: <a href={formData.orden_compra} target="_blank" rel="noopener noreferrer">{formData.orden_compra}</a></span>
                 )}
                 <SelectorConBuscador title={'Plan'} options={planes} 
@@ -805,9 +869,6 @@ const handleSave = () => {
                     setFormData={setFormData}
                   />
 
-                
-
-
                 </>
               )}
 
@@ -836,6 +897,29 @@ const handleSave = () => {
         show={showModal}
         mensaje={mensajeModalExito}
         onClose={() => setShowModal(false)}  // 👈 cierra solo con la cruz
+      />
+      <ModalConListado
+        show={showModalComentariosDelContrato}
+        titulo="Comentarios del contrato"
+        lista={comentariosContrato.flatMap(a => [a.comentario, 'fecha: ' + a.fecha, 'usuario: ' + a.usuario])}
+        onClose={() => setShowModalComentariosDelContrato(false)}
+      />
+      <ModalConListado
+        show={showModalArchivosDelContrato}
+        titulo="Archivos del contrato"
+        lista={archivosContrato.flatMap(a => ['nombre archivo: ' + a.nombre_file, 'https://panel.serviciosd.com/contratos/' + a.archivo])}
+        onClose={() => setShowModalArchivosDelContrato(false)}
+      />
+      <ModalConInputTexto
+        show={showModalInputTexto}
+        titulo="Agregar Comentario"
+        actualTexto={comentarioAAgregar}
+        setTexto={setComentarioAAgregar}
+        AlGuardar={() => {
+          clickearGuardarContrato(contratoSeleccionado, comentarioAAgregar);
+          setShowModalInputTexto(false);
+        }}
+        onClose={() => setShowModalInputTexto(false)}
       />
 
     </div>

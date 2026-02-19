@@ -117,6 +117,22 @@ export const obtenerConsolidacionCliente = (token, id_cliente) =>
     id_cliente
   });
 
+  export const obtenerArchivosDelContrato = (token, id) =>
+  fetchData("https://panel.serviciosd.com/app_obtener_contratos_archivos", token, {
+    id
+  });
+
+  export const obtenerComentariosDelContrato = (token, id) =>
+  fetchData("https://panel.serviciosd.com/app_obtener_contratos_comentarios", token, {
+    id
+  });
+
+  export const guardarComentarioDeUnContrato = (token, id, comentario_in, id_usuario) =>
+  fetchData("https://panel.serviciosd.com/app_comentario_edit", token, {
+    id, comentario_in, id_usuario
+  });
+
+
 export const setComprarDistribucion = (token, division, id, id_usuario, usuarios, id_cliente, id_noti, monto_dv360=null, monto_meta= null, fecha_vencimiento, fecha_inicio) =>
   fetchData("https://panel.serviciosd.com/app_set_comprar_distribución", token, {
     division, id, id_usuario, usuarios, id_cliente, id_noti, monto_dv360, monto_meta, fecha_vencimiento, fecha_inicio
