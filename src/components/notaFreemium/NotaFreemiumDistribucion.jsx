@@ -14,6 +14,17 @@ import BarraVolumen from './BarraVolumen';
 import BotonDistribuirNota from './BotonDistribuir';
 import { obtenerConsolidacionCliente } from '../administrador/gestores/apisUsuarios';
 
+export const formatearARS = (valor) => {
+  if (valor === null || valor === undefined || isNaN(valor)) return "$ 0,00";
+
+  return new Intl.NumberFormat("es-AR", {
+    style: "currency",
+    currency: "ARS",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(Number(valor));
+};
+
 const canales = [
   {'id': "1", 'nombre': "DV360"},
   {'id': "2", 'nombre': "META"},
@@ -39,11 +50,14 @@ const NotaFreemiumDistribucion
   const id_cliente = useSelector((state) => state.formulario.id_cliente);
   const id_usuario = useSelector((state) => state.formulario.usuario.id);
   const [fecha_inicio, setFechaInicio] = useState(null);
-  const [fecha_vencimiento, setFechaVencimiento] = useState(null);
+  const [fecha_fin, setFechaFin] = useState(null);
   const [porcentajeUsuarios, setPorcentajeUsuarios] = useState(20);
   const [consolidacionCliente, setConsolidacionCliente] = useState(null);
   const [usuariosSeleccionados, setUsuariosSeleccionados] = useState(0);
   const [respuestaDistribuirBoton, setRespuestaDistribuirBoton] = useState(null);
+  const [valorMeta, setValorMeta] = useState(0);
+  const [valorDv, setValorDv] = useState(0);
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
     obtenerClientes(TOKEN).then(setClientes);
@@ -137,7 +151,7 @@ useEffect(() => {
       id_noti,
       monto_dv360,
       monto_meta,
-      fecha_vencimiento,
+      fecha_fin,
       fecha_inicio,
     );
 
@@ -147,17 +161,14 @@ useEffect(() => {
   }
 };
 
-  const poblacion = Number(precioEstimado?.poblacion) || 0;
+useEffect(() => {
+    const poblacion = Number(precioEstimado?.poblacion) || 0;
 
-  const valorMeta =
-    Number(precioEstimado?.precio_por_usuario_meta || 0) * poblacion;
+    setValorMeta(Number(precioEstimado?.precio_por_usuario_meta || 0) * poblacion * porcentajeUsuarios / 100);
 
-  const valorDv =
-    Number(precioEstimado?.precio_por_usuario_dv360 || 0) * poblacion;
-
-  // Si el total es la suma de ambos (ajustá si la lógica es otra)
-  const total = valorMeta + valorDv;
-
+    setValorDv(Number(precioEstimado?.precio_por_usuario_dv360 || 0) * poblacion * porcentajeUsuarios / 100);
+    setTotal(valorMeta + valorDv);
+  }, [precioEstimado, porcentajeUsuarios]); 
   return (
     <div className="content flex-grow-1 crearNotaGlobal">
       <div className='row miPerfilContainer soporteContainer d-flex align-items-stretch'>
@@ -165,7 +176,8 @@ useEffect(() => {
           <img src="/images/prisma.png" alt="Icono 1" className="icon me-2 icono_tusNotas" /> 
             {" Distribuye esta nota "}
         </h3>
-        <h4>Credito disponible: {consolidacionCliente?.credito[0]?.monto_mensual || 0}</h4>
+        <h4>Credito disponible:
+                  {formatearARS(consolidacionCliente?.credito?.reduce((acc, item) => acc + Number(item.monto_mensual), 0))}</h4>
         <div className='col-4 p-0 me-3 align-self-center'>
           <img 
             src={'https://panel.serviciosd.com/img' + notaFreemium.imagen_principal } 
@@ -217,8 +229,8 @@ useEffect(() => {
               <InputFecha
                 label="Fecha fin:"
                 name="fecha_fin"
-                value={fecha_vencimiento}
-                onChange={(e) => setFechaVencimiento(e.target.value)}
+                value={fecha_fin}
+                onChange={(e) => setFechaFin(e.target.value)}
               />
               <div className="d-flex">
                 <div className="ms-auto">
@@ -231,9 +243,9 @@ useEffect(() => {
               justifyContent: "space-between", 
               width: "100%" 
             }}>
-              <h3>Valor en Meta: {valorMeta}</h3>
-              <h3>Valor en DV: {valorDv}</h3>
-              <h3>Total: {total}</h3>
+              <h3>Valor en Meta: {formatearARS(valorMeta)}</h3>
+              <h3>Valor en DV: {formatearARS(valorDv)}</h3>
+              <h3>Total: {formatearARS(total)}</h3>
             </div>
 
       </div>

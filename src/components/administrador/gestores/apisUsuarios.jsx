@@ -97,7 +97,7 @@ export const obtenerPlanesMarketing = (token, desde, hasta) =>
     desde, hasta
 });
 
-// guardar_posicion_iframes
+//guardar_posicion_iframes
 export const guardar_dato_en_banner_data = (token, id, datos) =>
   fetchData("https://reporte.noticiasd.com/api/guardar_posicion_creativos", token, {
     id, datos
@@ -127,18 +127,21 @@ export const obtenerConsolidacionCliente = (token, id_cliente) =>
     id
   });
 
-  export const guardarComentarioDeUnContrato = (token, id, comentario_in, id_usuario) =>
+  export const guardarComentarioDeUnContrato = (token, id, comentarios_in, id_usuario) =>
   fetchData("https://panel.serviciosd.com/app_comentario_edit", token, {
-    id, comentario_in, id_usuario
+    id, comentarios_in, id_usuario
+  });
+  export const guardarArchivoDeUnContrato = (token, id_contrato_archivo, id_usuario, archivo) =>
+  fetchData("https://panel.serviciosd.com/app_contrato_archivo_edit", token, {
+    id_contrato_archivo, id_usuario, archivo
   });
 
+  export const setComprarDistribucion = (token, division, id, id_usuario, usuarios, id_cliente, id_noti, monto_dv360=null, monto_meta= null, fecha_fin, fecha_inicio) =>
+    fetchData("https://panel.serviciosd.com/app_set_comprar_distribución", token, {
+      division, id, id_usuario, usuarios, id_cliente, id_noti, monto_dv360, monto_meta, fecha_fin, fecha_inicio
+  });
 
-export const setComprarDistribucion = (token, division, id, id_usuario, usuarios, id_cliente, id_noti, monto_dv360=null, monto_meta= null, fecha_vencimiento, fecha_inicio) =>
-  fetchData("https://panel.serviciosd.com/app_set_comprar_distribución", token, {
-    division, id, id_usuario, usuarios, id_cliente, id_noti, monto_dv360, monto_meta, fecha_vencimiento, fecha_inicio
-});
-
-export const editar_o_crear_cliente = (token, id, name, 
+  export const editar_o_crear_cliente = (token, id, name,   
       authors, provincia_cliente, municipio_cliente, pais_cliente, tipo_cliente, juridisccion_cliente, muestra_consumo, id_plan) =>
       console.log('token', token, 'id', id, 'name', name, 
       'authors', authors, 'provincia_cliente', provincia_cliente, 'municipio_cliente', municipio_cliente, 

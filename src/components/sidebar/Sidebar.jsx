@@ -4,13 +4,14 @@ import './Sidebar.css';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import { obtenerConsolidacionCliente, obtenerPaginas } from '../administrador/gestores/apisUsuarios';
-import { updatePaginasDelUsuario } from '../../redux/formularioSlice';
+import { obtenerConsolidacionCliente, obtenerContratos, obtenerPaginas } from '../administrador/gestores/apisUsuarios';
+import { updateContratoConFacturacionAbierta, updatePaginasDelUsuario } from '../../redux/formularioSlice';
 import { useDispatch } from 'react-redux';
 import './SidebarMobile.css';
 
 const Sidebar = ({ estadoActual }) => {
   const esEditor = useSelector((state) => state.formulario.es_editor);
+  const esContratoConFacturacionAbierta = useSelector((state) => state.formulario.contratoConFacturacionAbierta);
   const cliente = useSelector((state) => state.formulario.cliente);
   const PerfilUsuario = useSelector((state) => state.formulario.usuario.perfil);
   const TOKEN = useSelector((state) => state.formulario.token);
@@ -44,10 +45,20 @@ const Sidebar = ({ estadoActual }) => {
         console.error(err);
       }
     };
+    const tieneContratoConFacturacionAbierta = async () => {
+      try {
+        const contratos = await obtenerContratos(TOKEN);
+        const contratoAbierto = contratos.find(contrato => 
+        contrato.id_cliente === id_cliente && contrato.abierto === 'SI');
+        console.log('Contrato', contratoAbierto);
+        dispatch(updateContratoConFacturacionAbierta(contratoAbierto ? true : false));
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    tieneContratoConFacturacionAbierta();
     cargarCredito();
   }, [id_cliente]);
-
-
   const location = useLocation();
 
   estadoActual = location.pathname.split('/')[1] || 'dashboard'; // Obtiene el estado actual desde la URL
@@ -55,6 +66,7 @@ const Sidebar = ({ estadoActual }) => {
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
+
   const navigate = useNavigate();
 
   const handleClickBotonSidebar = (url) => {
@@ -74,6 +86,25 @@ const Sidebar = ({ estadoActual }) => {
       </Button>
     </li>
   );
+
+  const obtenerCreditoDisponible = (respuestaCreditos) => {
+    const creditoTotal = respuestaCreditos?.credito?.reduce(
+    (acc, item) => acc + Number(item.monto_mensual),
+    0
+  ) ?? 0;
+
+  const consumoTotal = respuestaCreditos?.consumo?.reduce(
+    (acc, item) =>
+      acc + Number(item.monto_dv360 || 0) + Number(item.monto_meta || 0),
+    0
+  ) ?? 0;
+
+  const totalFormateado = (creditoTotal - consumoTotal).toLocaleString('es-AR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+    })
+    return totalFormateado;
+  }
 
   return (
     <>
@@ -152,14 +183,16 @@ const Sidebar = ({ estadoActual }) => {
               'bi bi-bag-fill'
             )}
             <ul className="list-group list-unstyled botones_inferiories">
-              {(respuestaCreditos && isOpen) && (
+              {(respuestaCreditos && isOpen && esContratoConFacturacionAbierta) && (
                 <>
                 <h3 style={{marginTop: '0px'}}>credito:</h3>
-                <h3 style={{marginTop: '0px'}}>$ {respuestaCreditos?.credito[0]?.monto_mensual}</h3>
+                <h3 style={{ marginTop: '0px' }}>
+                  ${' '}
+                  {obtenerCreditoDisponible(respuestaCreditos)}
+                </h3>
                 <h3 style={{marginTop: '0px'}}><a target="_blank" href={`https://noticiasd.mitiendanube.com/autogestion/?clid=${id_cliente}`} style={{textDecoration: 'none'}}> 
                 recargar credito </a>
                 </h3>
-
                 </>
               )}
               {renderSidebarButton(

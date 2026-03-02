@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react';
 const InputNumerico = ({
     title,
     selectedValue,
-    onSelect,
-    onClear,
+    onSelect = () => {},
+    onClear = () => {},
     isPercentual = false,
     isDecimal = false,
     min = 0,

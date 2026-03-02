@@ -5,7 +5,7 @@ import "../miPerfil/miPerfil.css";
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import ModalMensaje from '../administrador/gestores/ModalMensaje';
-import { obtenerUsuarios, obtenerClientes, obtenerContratos, obtenerGeo, obtenerPlanesMarketing, obtenerComisionistas } from '../administrador/gestores/apisUsuarios'; // Importa la función para obtener usuarios
+import { obtenerUsuarios, obtenerClientes, obtenerContratos, obtenerGeo, obtenerPlanesMarketing, obtenerComisionistas, guardarArchivoDeUnContrato } from '../administrador/gestores/apisUsuarios'; // Importa la función para obtener usuarios
 import ArbolDistribucion from '../nota/Editorial/ArbolDistribucion';
 import '../administrador/gestores/AbmsMobile.css';
 import DropdawnSiNo from './DropdawnSiNo'
@@ -19,6 +19,8 @@ import ModalConListado from '../administrador/gestores/ModalConListado';
 import { obtenerArchivosDelContrato, obtenerComentariosDelContrato } from '../administrador/gestores/apisUsuarios';
 import ModalConInputTexto from '../administrador/gestores/ModalConInputTexto';
 import { guardarComentarioDeUnContrato } from '../administrador/gestores/apisUsuarios';
+import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import ModalConInputFile from '../administrador/gestores/ModalConInputFile';
 
 const Modalidades = [
   {'id': "1", 'nombre': "Facturación mensual", 'unica_factura': "NO", 'bonificado': "NO", 'abierto': "NO"},
@@ -140,6 +142,8 @@ const AbmContratos
     const [archivosContrato, setArchivosDelContrato] = useState([]);
     const [showModalInputTexto, setShowModalInputTexto] = useState(false);
     const [comentarioAAgregar, setComentarioAAgregar] = useState('');
+    const [showModalInputFile, setShowModalInputFile] = useState(false);
+    const [fileAAgregar, setFileAAgregar] = useState(null);
 
     const seleccionarComisionista = (option) => {
       setComisionistasSeleccionados(prev => {
@@ -195,14 +199,14 @@ const AbmContratos
     return nuevos;
   });
 };
-    const actualizarPorcentajeComisionista = (posicion, value) => {
-      if (posicion === 1) {
-        setFormData(fd => ({ ...fd, comision: value }));
-      }
-      if (posicion === 2) {
-        setFormData(fd => ({ ...fd, comision2: value }));
-      }
-    };    
+
+ ///
+    const actualizarPorcentajeComisionista = (campo, value) => {
+  setFormData(prev => ({
+    ...prev,
+    [campo]: value
+  }));
+}; 
 
   useEffect(() => {
     obtenerUsuarios(TOKEN).then(setUsuarios);
@@ -331,8 +335,20 @@ const handleSave = () => {
     setShowModalInputTexto(true);
     setContratoSeleccionado(contrato);
   }
-  const clickearGuardarContrato = async (contrato, comentario) => {
-    setShowModalInputTexto(true);
+  const cargarArchivos = (contrato) => {
+    setShowModalInputFile(true);
+    setContratoSeleccionado(contrato);
+  }
+  const clickearEnGuardarUnArchivoContrato = async (contrato, archivo) => {
+    console.log("Guardando archivo para contrato", contrato, "Archivo:", archivo);
+    setShowModalInputFile(false);
+    const respuesta = await guardarArchivoDeUnContrato(TOKEN, contratoSeleccionado.id, id_usuario, archivo);
+
+  }
+
+  const clickearGuardarComentarioContrato = async (contrato, comentario) => {
+    console.log("Guardando comentario para contrato", contrato, "Comentario:", comentario);
+    setShowModalInputTexto(false);
     const respuesta = await guardarComentarioDeUnContrato(TOKEN, contratoSeleccionado.id, comentario, id_usuario);
   }
 
@@ -423,7 +439,7 @@ const handleSave = () => {
                       <div>Fecha fin: {item.fecha_fin}</div>
                       <div>Facturas Emitidas: {item.facturado}/{item.facturas}</div>
                       <div>
-                        <button className="mb-2 btn btn-primary" onClick={() => cargarArchivos()}>
+                        <button className="mb-2 btn btn-primary" onClick={() => cargarArchivos(item)}>
                           Cargar archivo
                         </button>
                       </div>
@@ -655,8 +671,7 @@ const handleSave = () => {
                   <div className="mb-3">
                     <ul>
                       {comisionistasSeleccionados.map((comisionista, index) => {
-                        const posicion = index == 0 ? "" : 2; // 1 o 2
-                        console.log('posicion:', posicion, formData[`comision${posicion}`]);
+                        const campo = index === 0 ? "comision" : "comision2";
 
 
                         return (
@@ -670,13 +685,12 @@ const handleSave = () => {
 
                             <span style={{ width: '90px' }}>
                               <InputNumerico
-                                title=""
-                                selectedValue={formData[`comision${posicion}`] || '0'}
+                                selectedValue={formData[campo] || '0'}
                                 isPercentual={true}
                                 min={0}
-                                max={100}
+                                max={99.9}
                                 onSelect={(value) =>
-                                  actualizarPorcentajeComisionista(posicion, value)
+                                  actualizarPorcentajeComisionista(campo, value)
                                 }
                               />
                             </span>
@@ -714,7 +728,7 @@ const handleSave = () => {
                     onSelect={(value) => setFormData({ ...formData, monto  : value })}
                     onClear={() => setFormData({ ...formData, monto: '0' })}
                     isDecimal={true}
-                    max={999999999999}
+                    max={999999999999}  
                   />
 
                   <InputNumerico
@@ -736,8 +750,7 @@ const handleSave = () => {
                   <div className="mb-3">
                     <ul>
                       {comisionistasSeleccionados.map((comisionista, index) => {
-                        const posicion = index == 0 ? "" : 2; // 1 o 2
-                        console.log('posicion:', posicion, formData[`comision${posicion}`]);
+                       const campo = index === 0 ? "comision" : "comision2";
 
                         return (
                           <li 
@@ -747,23 +760,18 @@ const handleSave = () => {
                             <span style={{ marginTop: '8px', fontSize: '16px' }}>
                               {comisionista.nombre}
                             </span>
-
-
-
                             <span style={{ width: '90px' }}>
                               <InputNumerico
                                 title=""
-                                selectedValue={formData[`comision${posicion}`] || '0'}
+                                selectedValue={formData[campo] || '0'}
                                 isPercentual={true}
                                 min={0}
                                 max={99.9}
-                                onSelect={(value) =>
-                                  actualizarPorcentajeComisionista(posicion, value)
-                                }
+                                onSelect={(value) => actualizarPorcentajeComisionista(campo, value)}
                               />
                             </span>
                             <span style={{ marginTop: '8px', fontSize: '16px' }}>
-                              {"$" +(Number(formData.monto) * (Number(formData[`comision${posicion}`]) / 100)) }
+                              {"$" +(Number(formData.monto) * (Number(formData[campo]) / 100)) }
                             </span>
 
                             <button
@@ -916,10 +924,21 @@ const handleSave = () => {
         actualTexto={comentarioAAgregar}
         setTexto={setComentarioAAgregar}
         AlGuardar={() => {
-          clickearGuardarContrato(contratoSeleccionado, comentarioAAgregar);
+          clickearGuardarComentarioContrato(contratoSeleccionado, comentarioAAgregar);
           setShowModalInputTexto(false);
         }}
         onClose={() => setShowModalInputTexto(false)}
+      />
+      <ModalConInputFile
+        show={showModalInputFile}
+        titulo="Cargar archivo del contrato"
+        actualFile={fileAAgregar}
+        setFile={setFileAAgregar}
+        AlGuardar={() => {
+          clickearEnGuardarUnArchivoContrato(contratoSeleccionado, fileAAgregar);
+          setShowModalInputFile(false);
+        }}
+        onClose={() => setShowModalInputFile(false)}
       />
 
     </div>

@@ -105,6 +105,7 @@ const NotasParaEditorial = () => {
     const paises = useSelector((state) =>state.formulario.geo);
     const nombrePaisUsuario = paises.find(pais => pais.pais_id === id_pais)?.nombre || null;
     const perfilUsuario = useSelector((state) => state.formulario.usuario.perfil);
+    const esContratoConFacturacionAbierta = useSelector((state) => state.formulario.contratoConFacturacionAbierta);
     
     let CantidadDeNotasPorPagina = 200;
     const botones = [
@@ -256,9 +257,6 @@ const NotasParaEditorial = () => {
 
     const TOKEN = useSelector((state) => state.formulario.token);
 
-        
-
-        
     const notasFiltradas = todasLasNotas2.filter(nota =>
         nota.titulo.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -417,7 +415,7 @@ const NotasParaEditorial = () => {
                                                     <i class="bi bi-eye-fill m-2 fs-2"></i>
                                                 </a>
                                             )}
-                                        {perfilUsuario === "1" && ///MODIFICAR A 9 DESPUES DE LAS PRUEBAS
+                                        {perfilUsuario === "1" && CLIENTE != ""  && ///MODIFICAR A 9 DESPUES DE LAS PRUEBAS
                                         <button title="distribuir nota"
                                             onClick={() => editarNotaFreemium(nota, true)}
                                             style={{background: "none", border: "none",padding: 0,
@@ -428,7 +426,7 @@ const NotasParaEditorial = () => {
                                             <img src="/images/prisma.png" alt="Duplicar Nota" className='mb-3' />
                                         </button>
                                         }
-                                        { nota.con_distribucion === "1" &&
+                                        {nota.con_distribucion === "1" &&
                                         <Link
                                             title="Grafico de Interacciones"
                                             className="link-sin-estilos"

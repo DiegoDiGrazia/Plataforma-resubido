@@ -21,11 +21,15 @@ const formularioSlice = createSlice({
         paginasDelUsuario: [],
         notaFreemiumDistribucion: {},
         geo: {},
+        contratoConFacturacionAbierta: true,
 
     },
     reducers: {
         updateEmail: (state, action) => {
             state.email = action.payload;  // Asignación directa para cadenas de texto
+        },
+        updateContratoConFacturacionAbierta: (state, action) => {
+            state.contratoConFacturacionAbierta = action.payload;  // Asignación directa para cadenas de texto
         },
         updateIdUsuario: (state, action) => {
             state.email = action.payload;  // Asignación directa para cadenas de texto
@@ -86,6 +90,7 @@ const formularioSlice = createSlice({
             state.id_cliente = "";
             state.id_usuario = "";
             state.es_editor = false;
+            state.contratoConFacturacionAbierta = true;
             state.usuario = "";
             state.todosLosClientesActivado = false;
             state.paisUsuario = "";
@@ -97,7 +102,7 @@ const formularioSlice = createSlice({
     }
 });
 
-export const { updateEmail, updateContraseña,updateEsEditor, updateCodigoRecuperacion, updateMunicipioUsuario,
+export const { updateEmail,updateContratoConFacturacionAbierta, updateContraseña,updateEsEditor, updateCodigoRecuperacion, updateMunicipioUsuario,
     updatePaisUsuario,updatePaginasDelUsuario, updateNotaFreemiumDistribucion, updateProvinciaUsuario, updateGeo,
     updateToken, updateCliente, updateIdCliente, setTodosLosClientes,updateUsuario, updateActivarTodosLosClientes,updateIdUsuario, resetFormulario } = formularioSlice.actions;
 export default formularioSlice.reducer;
