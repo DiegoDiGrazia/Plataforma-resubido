@@ -57,7 +57,7 @@ function App() {
               <Route path="/distribucion" element={<DistribucionAdmin />} />
               <Route path="/clientes" element={<AbmClientes />} />
               <Route path="/distribuir-nota-freemium" element={<NotaFreemiumDistribucion />} />
-              <Route path="/notas-cliente" element={<NotasCliente />} />
+              <Route path="/notas-cliente/:cliente/:desde/:hasta" element={<NotasCliente />} />
               <Route path="/mi-perfil" element={<Perfil />} />
               <Route path="/autoEntrevistas" element={<AutoEntrevistasVideoAsk />} />
               <Route path="/soporte-y-ayuda" element={<Soporte />} />

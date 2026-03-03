@@ -5,6 +5,10 @@ import "../../miPerfil/miPerfil.css";
 import CopiarTexto from './CopiarTexto';
 import IconosDistribucionConMonto from './IconosDistribucionConMonto';
 import { useSelector } from 'react-redux';
+import { obtenerUltimoDiaMes } from './Distribucion';
+import { obtenerNotasDeGeneraciones } from './apisUsuarios';
+import { useParams } from 'react-router-dom';
+
 function formatearFechaDDMMAAAA(fechaStr) {
   if (!fechaStr) return "";
   const [año, mes, dia] = fechaStr.split("-");
@@ -12,41 +16,26 @@ function formatearFechaDDMMAAAA(fechaStr) {
 }
 
 
-
-const obtenerColorDeEstadoDistribucionDeNota = (campoAChequear, nota) => {
-  const fechaHoy = new Date();
-  const fechaVencimiento = new Date(nota['fecha_vencimiento']);
-  if (!campoAChequear || !nota) {
-    return 'text-muted';
-  }
-  if (nota[campoAChequear] == null && fechaVencimiento < fechaHoy) {  
-    return 'text-danger'
-  } 
-  else if(nota[campoAChequear] == null && fechaVencimiento > fechaHoy){
-    return 'text-warning'
-  }
-  else if(nota[campoAChequear] != null){
-    return 'text-success'
-  }
-  return 'text-muted';
-} 
 const NotasCliente = () => {
   const [loading, setLoading] = useState(false); // 👈 nuevo estado
-    const TOKEN = useSelector((state) => state.formulario.token);
-  
-
+  const TOKEN = useSelector((state) => state.formulario.token);
+  const [notasGeneracionesAgrupadas, setNotasGeneracionesAgrupadas] = useState(null);
   const [datosDelCliente, setDatosDelCliente] = useState([])
+  const { cliente, desde, hasta } = useParams();
 
   useEffect(() => {
-    const datos = localStorage.getItem("datosDelCliente");
-    if (datos) {
-      setDatosDelCliente(JSON.parse(datos));
-      console.log("Datos del cliente cargados:", JSON.parse(datos));
-      localStorage.removeItem("datosDelCliente"); // opcional: limpiar después
-    }
-  }, []);
+      setLoading(true);
+      obtenerNotasDeGeneraciones(TOKEN, cliente, '', '', 'PUBLICADO', '150', '0', '', '', desde, hasta)
+      .then((res) => {
+      setNotasGeneracionesAgrupadas(res);
+      console.log("Respuesta de notas de generaciones agrupadas:", res);
+      })
+      .finally(() => setLoading(false)); 
+    }, [cliente, desde, hasta]);
 
-
+    useEffect(() => {    console.log("Notas de generaciones agrupadas:", notasGeneracionesAgrupadas);
+    }, [notasGeneracionesAgrupadas]);
+  
 
 
 return (
@@ -54,9 +43,9 @@ return (
     <div className='row miPerfilContainer soporteContainer'>
         <div className='col p-0'>
           <h3 id="saludo" className='headerTusNotas ml-0'>
-             Noticias para amplificar del cliente: {datosDelCliente.cliente}
+             Noticias para amplificar del cliente: {cliente}
           </h3>
-          <h4 className='infoCuenta'>En el rango de fechas {datosDelCliente.desde} a {datosDelCliente.hasta}</h4>
+          <h4 className='infoCuenta'>En el rango de fechas {desde} a {hasta}</h4>
         </div>
       </div>
     {/* Lista */}
@@ -74,7 +63,7 @@ return (
         ) : (
           <>
             <ul className="list-group">
-              {datosDelCliente.notas?.map(nota => (
+              {notasGeneracionesAgrupadas && notasGeneracionesAgrupadas.map(nota => (
                 <li key={nota.id} className="list-group-item">
                   <div className="row p-0">
                     {/* Columna 1 */}

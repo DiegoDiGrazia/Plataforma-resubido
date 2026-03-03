@@ -17,7 +17,7 @@ export const obtenerMesActual = () => {
   return `${año}-${mes}`;
 }
 
-const obtenerUltimoDiaMes = (año, mes) => {
+export const obtenerUltimoDiaMes = (año, mes) => {
   return new Date(año, mes, 0).getDate(); 
 };
 
@@ -137,11 +137,9 @@ useEffect(() => {
 }, [TOKEN, clientes, planes, fechaDesde, fechaHasta]);
 
   const irANotasDelCliente = (data, cliente, fechaDesde, fechaHasta) => {
-    data.cliente = cliente;
-    data.desde = fechaDesde;
-    data.hasta = fechaHasta;
-    localStorage.setItem("datosDelCliente", JSON.stringify(data));
-    window.open("/notas-cliente", "_blank");
+    const [añoHasta, mesHasta] = fechaHasta.split("-");
+    const ultimoDiaHasta = obtenerUltimoDiaMes(añoHasta, mesHasta);
+    window.open(`/notas-cliente/${cliente}/${fechaDesde}-01/${fechaHasta}-${ultimoDiaHasta}`, "_blank");
   };
 
 const filteredClientes = useMemo(() => {

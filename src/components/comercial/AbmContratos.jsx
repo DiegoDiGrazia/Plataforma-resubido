@@ -144,6 +144,7 @@ const AbmContratos
     const [comentarioAAgregar, setComentarioAAgregar] = useState('');
     const [showModalInputFile, setShowModalInputFile] = useState(false);
     const [fileAAgregar, setFileAAgregar] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     const seleccionarComisionista = (option) => {
       setComisionistasSeleccionados(prev => {
@@ -209,13 +210,42 @@ const AbmContratos
 }; 
 
   useEffect(() => {
-    obtenerUsuarios(TOKEN).then(setUsuarios);
-    obtenerClientes(TOKEN).then(setClientes);
-    obtenerPlanesMarketing(TOKEN, desdeMarketing, desdeMarketing).then(setPlanes);
-    obtenerGeo().then(setGeo);
-    obtenerContratos(TOKEN).then(setContratos);
-    obtenerComisionistas(TOKEN).then(setComisionistas);
-  }, [TOKEN]);  
+  const cargarDatos = async () => {
+    setLoading(true);
+
+    try {
+      const [
+        usuariosData,
+        clientesData,
+        planesData,
+        geoData,
+        contratosData,
+        comisionistasData
+      ] = await Promise.all([
+        obtenerUsuarios(TOKEN),
+        obtenerClientes(TOKEN),
+        obtenerPlanesMarketing(TOKEN, desdeMarketing, desdeMarketing),
+        obtenerGeo(),
+        obtenerContratos(TOKEN),
+        obtenerComisionistas(TOKEN)
+      ]);
+
+      setUsuarios(usuariosData);
+      setClientes(clientesData);
+      setPlanes(planesData);
+      setGeo(geoData);
+      setContratos(contratosData);
+      setComisionistas(comisionistasData);
+
+    } catch (error) {
+      console.log("Error cargando datos:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+    cargarDatos();
+  }, [TOKEN]); 
 
 
   // Filtrar por búsqueda
@@ -237,7 +267,7 @@ const AbmContratos
     const cumpleFecha =
       inicioContrato <= hasta && finContrato >= desde;
 
-    return cumpleBusqueda || cumpleID && cumpleFecha;
+    return (cumpleBusqueda || cumpleID) && cumpleFecha;
   });
 }, [search, contratos, fechaDesde, fechaHasta]);
 
@@ -410,7 +440,17 @@ const handleSave = () => {
       <div className='row miPerfilContainer soporteContainer mt-4 p-0'>
         <div>
           <ul className="list-group">
-            {pagedItems.length === 0 ? (
+            
+             {loading ? (
+                <li className="list-group-item text-center" style={{ height: "200px" }}>
+                  <div className="d-flex justify-content-center align-items-center h-100">
+                    <div className="spinner-border text-primary" role="status">
+                      <span className="visually-hidden">Cargando...</span>
+                    </div>
+                  </div>
+                </li>
+              ) :
+            pagedItems.length === 0 ? (
               <li className="list-group-item">No hay resultados.</li>
             ) : (
               pagedItems.map((item) => (

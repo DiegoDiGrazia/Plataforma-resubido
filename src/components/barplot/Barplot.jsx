@@ -4,6 +4,7 @@ import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { useDispatch, useSelector } from 'react-redux';
 import "./Barplot.css";
+import "./BarplotMobile.css";
 import { setImpresionesTotalesInstagram, setImpresionesTotalesGoogle, setImpresionesTotalesFacebook, 
     setUsuariosTotales, setUsuariosTotalesGoogle, setUsuariosTotalesMeta, setFechas, 
     setultimaFechaCargadaBarplot,
@@ -211,14 +212,14 @@ const Barplot = ({datosLocales}) => {
                 <div className='col-4 barra_lateral'>
                     <p className='leyenda_barplot'>
                         <span className="blue-dot-user"></span> Usuarios Redes Sociales
-                        <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "aca va el texto"/>  
+                        <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "Son las personas que llegaron a tus notas desde nuestra difusión en redes sociales."/>  
                     </p>
                     <p className='totales'>{formatNumberMiles(totalUsuariosMeta)}</p>
                 </div>
                 <div className='col' style={{ paddingLeft: '20px' }}>
                     <p className='leyenda_barplot'>
                         <span className="blue-dot-impresiones"></span>Usuarios Medios
-                        <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "aca va el texto"/>  
+                        <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "Son las personas que llegaron a tus notas desde nuestra difusión en otros medios de noticias."/>  
                     </p>
                     <p className='totales'>{formatNumberMiles(totalUsuariosGoogle)}</p>
                 </div>
