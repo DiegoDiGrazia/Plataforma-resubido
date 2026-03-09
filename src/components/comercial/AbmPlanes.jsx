@@ -44,6 +44,31 @@ const AbmPlanes
     obtenerGeo().then(setGeo);
 }, [TOKEN]);
 
+
+const eliminarPlan = (id) => {
+  axios
+    .post(
+      "https://panel.serviciosd.com/app_plan_eliminar",
+      {
+        token: TOKEN,
+        id: id,
+      },
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      }
+    )
+      .then(() => {
+        setMensajeModalExito('El usuario se elimino correctamente');
+        setShowModal(true); // mostrar modal
+        setTimeout(() => {
+          window.location.reload(); // recargar luego de 3s
+        }, 1500);
+      })
+    .catch((err) => {
+      console.log("Error al guardar cambios:", err);
+    });
+};
+
   // Filtrar por búsqueda
   const filteredClientes = useMemo(() => {
     return planes.filter((item) =>  
@@ -265,6 +290,16 @@ const handleSave = () => {
 
             </div>
             <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                data-bs-dismiss="modal"
+                onClick={() => eliminarPlan(formData.id)}
+                disabled={formData.id == '0'}
+
+              >
+                Eliminar
+              </button>
               <button
                 type="button"
                 className="btn btn-secondary"
