@@ -1,9 +1,5 @@
 import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { Button } from 'react-bootstrap';
-import Sidebar from '../sidebar/Sidebar'; // Importa el Sidebar
-import "./nota.css";
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
@@ -12,15 +8,16 @@ import { Link, useNavigate } from 'react-router-dom';
 import { formatearFecha } from '../Dashboard/datosRelevantes/InteraccionPorNota';
 import { formatearTitulo } from '../Dashboard/datosRelevantes/InteraccionPorNota';
 import { Spinner } from 'react-bootstrap';
-import { left } from '@popperjs/core';
 import SelectorCliente from '../Dashboard/SelectorCliente';
 import { useCallback } from 'react';
-import { editarNota } from './VerNota';
 import { resetCrearNota, setClienteNota, setIdNoti } from '../../redux/crearNotaSlice';
 import { analizarHTML, convertirImagenBase64, setContenidoAEditar, setContenidoNota, setImagenPrincipal, setImagenRRSS, setNotaAEditar } from '../../redux/crearNotaSlice';
 import BotonEliminarNota from './Editorial/botonEliminarNota';
 import { updateCliente, updateNotaFreemiumDistribucion } from '../../redux/formularioSlice';
 import BotonCrearNota from './Editorial/BotonCrearNota';
+import "./nota.css";
+import "./NotasParaEditorialMobile.css";
+import './verNotaMobile.css'
 
   function obtenerFechaDeManana() {
     const hoy = new Date();
@@ -256,7 +253,7 @@ const NotasParaEditorial = () => {
     const dispatch = useDispatch();
 
     const TOKEN = useSelector((state) => state.formulario.token);
-
+    
     const notasFiltradas = todasLasNotas2.filter(nota =>
         nota.titulo.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -290,7 +287,7 @@ const NotasParaEditorial = () => {
                 <div className='row'>
                     <h4 id="nota">Notas</h4>
                 </div>
-                <div className='row'>
+                <div className='row' id='menu-boton'>
                     <div className='col'>
                         <h3 id="saludo" className='headerTusNotas'>
                             <img src="/images/tusNotasIcon.png" alt="Icono 1" className="icon me-2 icono_tusNotas" /> Tus Notas
@@ -308,7 +305,7 @@ const NotasParaEditorial = () => {
                     </div>
                 </div>
 
-                <div className='row'>
+                <div className='row' id='filtroNotas'>
                     <div className="container">
                     <div className="row">
                     {botones
@@ -331,7 +328,7 @@ const NotasParaEditorial = () => {
                     {/* todas las notas mas buscador */}
                     <div className='row sin-margin'>
                         <div className="container-notas">
-                            <div className='row'>
+                            <div className='row' id='buscador'>
                                 <div className='col todasLasNotas'>
                                     Todas Las Notas
                                 </div>
@@ -351,7 +348,7 @@ const NotasParaEditorial = () => {
                                     
                                 </div>
                             </div>
-                            <div className='row'>
+                            <div className='row' id='headerListadoNotas'>
                                 <div className='col-auto' style={{width: "70px"}}></div>
                                 <div className='col-4 columna_interaccion' style={{fontSize: "12px", color: "#667085", fontWeight: "bold"}}>Título de la Nota</div>
                                 {/* <div className='col-1 categoriasNotas text-aling-center'>Estado</div> */}
@@ -392,7 +389,7 @@ const NotasParaEditorial = () => {
                                             }}
                                         >
                                             <div className='row p-0 nombre_plataforma'>
-                                                {formatearTitulo(nota.titulo, 45)}
+                                                {formatearTitulo(nota.titulo, 67)}
                                             </div>
                                         </Link>
                                         <div className='row p-0'>
@@ -405,17 +402,17 @@ const NotasParaEditorial = () => {
 
                                     
                                     <>
-                                        <div className='col totales_widget'>
+                                        <div className='col totales_widget' id= 'cuenta'>
                                             <p>{nota.cliente}</p>
                                         </div>
                                         
-                                        <div className='col totales_widget' style={{ color: "#464d55ff"}}>
+                                        <div className='col totales_widget' id= 'botonesInteraccionNota' style={{ color: "#464d55ff"}}>
                                             {nota.estado === "PUBLICADO" && (
                                                 <a href={`http://noticiasd.com/nota/${nota.term_id}`} title="Ver nota" target="_blank" rel="noopener noreferrer">
                                                     <i class="bi bi-eye-fill m-2 fs-2"></i>
                                                 </a>
                                             )}
-                                        {perfilUsuario === "1" && CLIENTE != ""  && ///MODIFICAR A 9 DESPUES DE LAS PRUEBAS
+                                        {perfilUsuario === "1" &&  CLIENTE != ""  && ///MODIFICAR A 9 DESPUES DE LAS PRUEBAS
                                         <button title="distribuir nota"
                                             onClick={() => editarNotaFreemium(nota, true)}
                                             style={{background: "none", border: "none",padding: 0,
@@ -426,7 +423,7 @@ const NotasParaEditorial = () => {
                                             <img src="/images/prisma.png" alt="Duplicar Nota" className='mb-3' />
                                         </button>
                                         }
-                                        {nota.con_distribucion === "1" &&
+                                        { nota.con_distribucion === "1" &&
                                         <Link
                                             title="Grafico de Interacciones"
                                             className="link-sin-estilos"
@@ -470,7 +467,7 @@ const NotasParaEditorial = () => {
 
 
                         {/* Botonera de paginación */}
-                        <div className='row'>
+                        <div className='row' id='verMas'>
                             <div className="container">
                             <div className="row justify-content-center">
                                 <div className="col-auto text-center my-4">

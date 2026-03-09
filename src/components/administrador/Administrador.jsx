@@ -23,9 +23,9 @@ const DEF = {
         "titulo": "Perfil"
         },
     "clientes": {
-        "descripcion": "Gestiona la creacion y edicion de nuevos Clientes.",
+        "descripcion": "Gestiona la creación y edición de nuevas cuentas.",
         "url": "clientes",
-        "titulo": "Clientes"
+        "titulo": "Cuentas"
         },
     }
 const Administrador = () => {
@@ -46,7 +46,7 @@ const Administrador = () => {
                     <h3 id="saludo" className='headerTusNotas ml-0'>
                         <img src="/images/auto_entrevistas_icon.png" alt="Icono 1" className="icon me-2 icono_tusNotas" /> Administración
                     </h3>
-                    <h4 className='infoCuenta'>Configuracion</h4>
+                    <h4 className='infoCuenta'>Configuración</h4>
                     <div className='abajoDeTusNotas'>
                         Aquí encontrarás contenidos que te ayudarán a potenciar el uso de nuestra plataforma. <br />
                         Tips, consejos, tutoriales y ayuda para tus contenidos.
@@ -65,7 +65,7 @@ const Administrador = () => {
                             type="text"
                             value={searchQuery}
                             onChange={handleInputChange}
-                            placeholder="      Buscar por entrevista"
+                            placeholder="      Buscar por herramienta"
                         />
                     </form>
                 </div>

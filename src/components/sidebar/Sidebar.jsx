@@ -164,14 +164,14 @@ const Sidebar = ({ estadoActual }) => {
               'Administrador',
               'administrador',
               '/images/auto_entrevistas_icon.png',
-              'Administrador',
+              'Administración',
               'bi bi-gear-fill'
             )}
             {paginasDelPerfil.find((pagina) => pagina.nombre == "Distribucion" || pagina.nombre == "Monitor Distribucion" ) && renderSidebarButton(
               'distribucion',
               'distribucion',
               '/images/auto_entrevistas_icon.png',
-              'Distribucion',
+              'Distribución',
               'bi bi-clipboard2-check-fill'
             )}
             
@@ -206,7 +206,7 @@ const Sidebar = ({ estadoActual }) => {
                 'mi-perfil',
                 'mi-perfil',
                 '',
-                'Mi perfl',
+                'Mi perfil',
                 'bi bi-person-fill'
               )}
             </ul>

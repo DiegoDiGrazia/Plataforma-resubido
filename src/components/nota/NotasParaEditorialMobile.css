@@ -1,0 +1,185 @@
+@media (max-width: 768px) {
+
+    .row {
+        width: 100%;
+        padding-top: 10px;
+    }
+
+    #saludo {
+        display: block !important;
+        width: 104% !important;
+        margin: 0px;
+        order: 1 !important;
+    }
+
+    .col:has(#saludo) {
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    .abajoDeTusNotas {
+        width: 160% !important;
+        position: relative !important;
+        padding: 0px;
+        margin-left: 5px;
+        order: 2 !important;
+        top: 0px !important;
+    }
+
+    #dropdownMenuButtonSelectorCliente {
+        margin-left: 0px !important;
+        position: relative;
+        top: 30px;
+        left: 0% !important;
+        white-space: normal !important; 
+        word-wrap: break-word !important; 
+        text-align: center !important;
+        max-width: 100%;
+        padding-right: 27px !important;
+        font-size: 15px;
+    }
+
+    .dropdown.no-print {
+        order: 3 !important; 
+    }
+    #dropdownMenuButtonSelectorCliente::after {
+        position: absolute !important;
+        right: 15px !important; 
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+    }
+
+    #menu-boton {
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    #botonPublicar {
+        white-space: normal !important; 
+        word-wrap: break-word !important;
+        height: auto !important;
+        min-height: 38px !important;
+        padding: 8px 10px !important;
+        width: 95% !important; 
+        margin-right: 5px;
+        font-size: 13px; 
+    }
+
+    .col.boton {
+        display: flex !important;
+        align-items: flex-start !important; 
+        justify-content: flex-end !important; 
+        height: 100% !important;
+        position: relative;
+        top: 50px !important;
+    }
+
+    #filtroNotas {
+        margin-top: 8%;
+    }
+
+    #filtroNotas .container {
+        width: 100% !important;
+        padding: 0px;
+    }
+
+    #filtroNotas .container .row {
+        width: 100%;
+        justify-content: space-between !important;
+    }
+
+    #filtroNotas .container .row .col-auto {
+        padding: 0px;
+    }
+
+    .boton_filtro_notas {
+        margin: 0px;
+        padding: 0px;
+        font-size: 90%;
+    }
+
+    .container-notas {
+        margin: 0px !important;
+        padding: 0px;
+    }
+
+    .col.buscadorNotas {
+        margin-left: 0px;
+    }
+    .inputBuscadorNotas {
+        display: block !important;
+        width: 147px !important;
+        position: relative;
+        left: -18px !important;
+    }
+
+    .btn.btn-danger.ml-3.btn.btn-primary {
+        position: relative;    
+        left: -10px;
+    }
+
+    #buscador {
+        margin-bottom: 7px;
+    }
+
+    .todasLasNotas {
+        position: relative !important;
+        top: 8px;
+        margin-left: 5px;
+        font-size: 15px;
+    }
+
+    #headerListadoNotas {
+        display: none;
+    }
+    
+    .row.pt-1.borderNotas {
+        padding-top: 10px !important;
+
+    }
+
+    .row.pt-1.borderNotas .col-auto {
+        width: 20% !important;
+        height: 70px !important;
+        padding: 0px;
+    }
+
+    .imagenWidwetInteracciones2 {
+        width: 100%;
+        height: 100%;
+    }
+
+
+    .row.pt-1.borderNotas .col-4.pt-1.columna_interaccion.nuevoFont {
+        padding: 0px !important;
+        width: 75%;
+        margin-left: 10px;
+    }
+    
+    .col-4.pt-1.columna_interaccion.nuevoFont .row.p-0 {
+        margin-top: 5px;
+        width: 104%;
+    }
+
+    #cuenta {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+        text-align: left !important;
+        margin: 0px 0px 0px 5px !important;
+    }
+
+    #botonesInteraccionNota {
+        margin-left: 0px;
+        margin-top: 1%;
+        align-items: start !important;
+        justify-content: start !important;
+    }
+
+    .categoria_notas {
+        font-size: 14px !important;
+    }
+
+    #verMas {
+        padding: 0px;
+    }
+}

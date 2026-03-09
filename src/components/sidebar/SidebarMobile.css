@@ -27,7 +27,7 @@
         }
         
         .sidebar-toggle.btn.btn-none {
-            left: 85%;
+            left: 83%;
             margin-top: -5%;
             
         }
@@ -35,16 +35,33 @@
         #logo-nd-sidebar {
             left: 26%;
             top: 3.5%;
+            margin-top: 5px !important;
+        }
+
+        .descripcion_boton {
+            margin-top: 15px !important;   
         }
 
         .list-group.list-group-flush.no-border.list-unstyled {
-            height: 75%;
-            margin-top: 10%;
+            margin-top: 17%;
+            gap: 5px;
         }
 
         .openBoton {
             width: 85%;
-            height: 20%;
+            height: 75px !important;
+            margin-bottom: 0px !important; 
+        }
+        
+        .botones_inferiories {
+            width: 85%;
+            height: 75px !important;
+            margin-bottom: 0px !important; 
+            margin-top: 0px;
+        }
+
+        .botonSidebar.btn.btn-none {
+            height: 100%;
         }
 
         .fs-4.mb-4.bi {
@@ -59,31 +76,33 @@
             margin-left: 7px;
         }
 
-        .list-group.list-unstyled.botones_inferiories {
-            height: 50px;
-            margin-bottom: 15%;
-            margin-left: -8%;
+        .sidebar {
+            position: relative !important;
+        }
 
-            .openBoton {
-                width: 200px;
-                height: 50px;
-                margin-left: 10%;
-            }
+        ul.botones_inferiories {
+            position: static !important; 
+        }
 
-            .descripcion_boton {
-                width: 200px;
-                font-size: 17px;
-                margin-top: 0%;
-                margin-left: -15px;
-            }
+        ul.botones_inferiories > h3 {
+            position: absolute !important;
+            left: 20px !important; 
+            margin: 0 !important;
+            z-index: 10 !important;
+            text-align: left !important;
+            width: 60%;
+        }
 
-            
+        ul.botones_inferiories > h3:nth-of-type(1) {
+            top: 45px !important; 
+        }
 
-            .fs-4.mb-4.bi {
-                height: 60px;
-                width: 60px;
-                font-size: 25px !important;
-            }
+        ul.botones_inferiories > h3:nth-of-type(2) {
+            top: 65px !important;
+        }
+
+        ul.botones_inferiories > h3:nth-of-type(3) {
+            top: 85px !important;
         }
     }
 }

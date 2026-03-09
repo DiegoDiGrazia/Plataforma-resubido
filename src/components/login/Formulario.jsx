@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import './Formulario.css';
 import './FormularioMobile.css';
 import { updateEmail, updateGeo, updateContraseña, updateToken, updateCliente, updateIdCliente, updateEsEditor, updateUsuario, updateIdUsuario, resetFormulario } from '../../redux/formularioSlice';
@@ -80,7 +79,7 @@ const Formulario = () => {
     };
 
     return (
-        <div className="container-fluid">
+        <div className="container-fluid containerFormulario">
             <div className="row" id="imagenLogo">
                 <div className="col" id='imagen'>
                     <div className="image-container">

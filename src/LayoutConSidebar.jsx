@@ -3,7 +3,8 @@ import React from 'react';
 import Sidebar from '../src/components/sidebar/Sidebar'; // Ajustá el path
 import { Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import GuardarUbicacionDeCliente from '../src/components/Dashboard/GuardarUbicacionDeCliente'; // Ajustá el path
+import GuardarUbicacionDeCliente from '../src/components/Dashboard/GuardarUbicacionDeCliente'; 
+
 
 const LayoutConSidebar = () => {
     const id_cliente = useSelector((state) => state.formulario.id_cliente);
