@@ -6,10 +6,8 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import ModalMensaje from '../administrador/gestores/ModalMensaje';
 import { obtenerUsuarios, obtenerClientes, obtenerContratos, obtenerGeo, obtenerPlanesMarketing, obtenerComisionistas, guardarArchivoDeUnContrato } from '../administrador/gestores/apisUsuarios'; // Importa la función para obtener usuarios
-import ArbolDistribucion from '../nota/Editorial/ArbolDistribucion';
 import '../administrador/gestores/AbmsMobile.css';
 import DropdawnSiNo from './DropdawnSiNo'
-import { obtenerMesActual } from '../administrador/gestores/Distribucion';
 import SelectorConBuscador from '../nota/Editorial/SelectorConBuscador';
 import InputFecha from '../nota/Editorial/InputFecha';
 import InputNumerico from '../nota/Editorial/InputNumerico';
@@ -19,8 +17,8 @@ import ModalConListado from '../administrador/gestores/ModalConListado';
 import { obtenerArchivosDelContrato, obtenerComentariosDelContrato } from '../administrador/gestores/apisUsuarios';
 import ModalConInputTexto from '../administrador/gestores/ModalConInputTexto';
 import { guardarComentarioDeUnContrato } from '../administrador/gestores/apisUsuarios';
-import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import ModalConInputFile from '../administrador/gestores/ModalConInputFile';
+import { descargarExcel } from '../funciones/creacionCSV';
 
 const Modalidades = [
   {'id': "1", 'nombre': "Facturación mensual", 'unica_factura': "NO", 'bonificado': "NO", 'abierto': "NO"},
@@ -33,6 +31,12 @@ const Emisor = [
   {'id': "1", 'nombre': "ADLATAM SA"},
   {'id': "2", 'nombre': "GUIAD SA"},
 ];
+export const formatearARS = (valor) => {
+  return Number(valor || 0).toLocaleString('es-AR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+};
 
 export const primerMesDelAnio = () => {
   const hoy = new Date();
@@ -127,7 +131,6 @@ const AbmContratos
     const itemsPerPage = 10;  
     const desdeMarketing = new Date().toISOString().split('T')[0];
     const TOKEN = useSelector((state) => state.formulario.token);
-    const [pendientes, setPendientes] = useState('GAM o Meta');
     const [fechaDesde, setFechaDesde] = useState(primerMesDelAnio());
     const [fechaHasta, setFechaHasta] = useState(ultimoMesDelAnio());
     const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
@@ -145,6 +148,30 @@ const AbmContratos
     const [showModalInputFile, setShowModalInputFile] = useState(false);
     const [fileAAgregar, setFileAAgregar] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    const eliminarContrato = (id) => {
+      axios
+        .post(
+          "https://panel.serviciosd.com/app_contrato_eliminar",
+          {
+            token: TOKEN,
+            id: id,
+          },
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        )
+          .then(() => {
+            setMensajeModalExito('El contrato se elimino correctamente');
+            setShowModal(true); // mostrar modal
+            setTimeout(() => {
+              window.location.reload(); // recargar luego de 3s
+            }, 1500);
+          })
+        .catch((err) => {
+          console.log("Error al guardar cambios:", err);
+        });
+    };
 
     const seleccionarComisionista = (option) => {
       setComisionistasSeleccionados(prev => {
@@ -332,6 +359,19 @@ const AbmContratos
     modal.show();
 };
 
+const totales = useMemo(() => {
+  return contratosFiltrados.reduce(
+    (acc, item) => {
+      acc.facturado += Number(item.facturado || 0);
+      acc.facturas += Number(item.facturas || 0);
+      acc.montosTotal += Number(item.monto || 0);
+      acc.totalComision += Number(item.comision || 0) + Number(item.comision2 || 0);
+      return acc;
+    },
+    { facturado: 0, facturas: 0, montosTotal: 0, totalComision: 0 }
+  );
+}, [contratosFiltrados]);
+
 const handleSave = () => {
   axios
     .post(
@@ -435,6 +475,32 @@ const handleSave = () => {
           </form>
         </div>
       </div>
+      <div className='row miPerfilContainer soporteContainer mt-4 p-0 mb-3'>
+        <div className='col buscadorNotas'>
+          <span style={{ fontSize: "14px"}}>
+            Total listado: {
+                formatearARS(totales.montosTotal) 
+            }
+          </span>
+        </div>
+        <div className='col buscadorNotas'>
+          <span style={{ fontSize: "14px"}}>
+            Cantidad facturas: {totales.facturado} / {totales.facturas}
+          </span>
+        </div>
+        <div className='col buscadorNotas'>
+          <span style={{ fontSize: "14px"}}>
+            Total comisión: ${formatearARS(totales.totalComision)}
+          </span>
+        </div>
+        <div className='col buscadorNotas'>
+            <button className="mb-2 btn btn-secondary" onClick={() => {
+              descargarExcel(contratosFiltrados);
+            }}>
+              Descargar Excel
+            </button>
+        </div>
+      </div>
 
       {/* Lista */}
       <div className='row miPerfilContainer soporteContainer mt-4 p-0'>
@@ -469,9 +535,9 @@ const handleSave = () => {
                       <div>Modalidad: {obtenerModalidadDelContrato(item).nombre}</div>
                     </div>
                     <div className='col-3'>
-                      <div>Monto total: {item.monto}</div>
+                      <div>Monto total: {formatearARS(item.monto)}</div>
                       <div>Avance: {item.avance}</div>
-                      {item.orden_compra != '' && <a href={item.orden_compra}>Ver orden de compra</a>}
+                      {item.orden_compra != '' && <a href={item.orden_compra} target='_blank'>Ver orden de compra</a>}
                       {item.orden_compra == '' && <div>Sin orden de compra</div>}
                     </div>
                     <div className='col-3'>
@@ -499,6 +565,20 @@ const handleSave = () => {
                       <div>
                         <button className="mb-2 btn btn-primary" disabled={showModalComentariosDelContrato} onClick={() => verComentariosDelContrato(item)}>
                           Ver comentarios
+                        </button>
+                      </div>
+                      <div>
+                        <button
+                          className="mb-2 btn btn-secondary"
+                          onClick={() => {
+                            handleEditClick(item);
+                            setFormData(prev => ({
+                              ...prev,
+                              id: "0"
+                            }));
+                          }}
+                        >
+                          Duplicar contrato
                         </button>
                       </div>
                     </div> 
@@ -712,6 +792,7 @@ const handleSave = () => {
                     <ul>
                       {comisionistasSeleccionados.map((comisionista, index) => {
                         const campo = index === 0 ? "comision" : "comision2";
+                        const campoPorcentaje = index === 0 ? "porcentaje_comision" : "porcentaje_comision2";
 
 
                         return (
@@ -725,12 +806,12 @@ const handleSave = () => {
 
                             <span style={{ width: '90px' }}>
                               <InputNumerico
-                                selectedValue={formData[campo] || '0'}
+                                selectedValue={formData[campoPorcentaje] || '0'}
                                 isPercentual={true}
                                 min={0}
                                 max={99.9}
                                 onSelect={(value) =>
-                                  actualizarPorcentajeComisionista(campo, value)
+                                  actualizarPorcentajeComisionista(campoPorcentaje, value)
                                 }
                               />
                             </span>
@@ -773,7 +854,7 @@ const handleSave = () => {
 
                   <InputNumerico
                     title="Comision total ($)"
-                    selectedValue={(Number(formData.monto) * (Number(formData.comision) / 100) + (Number(formData.monto) * Number(formData.comision2) / 100))}
+                    selectedValue={(Number(formData.monto) * (Number(formData.porcentaje_comision) / 100) + (Number(formData.monto) * Number(formData.porcentaje_comision2) / 100))}
                     isPercentual ={false}
                     min={0}
                     max={99.9}
@@ -790,7 +871,7 @@ const handleSave = () => {
                   <div className="mb-3">
                     <ul>
                       {comisionistasSeleccionados.map((comisionista, index) => {
-                       const campo = index === 0 ? "comision" : "comision2";
+                       const porcentajeCampo = index === 0 ? "porcentaje_comision" : "porcentaje_comision2";
 
                         return (
                           <li 
@@ -803,15 +884,15 @@ const handleSave = () => {
                             <span style={{ width: '90px' }}>
                               <InputNumerico
                                 title=""
-                                selectedValue={formData[campo] || '0'}
+                                selectedValue={formData[porcentajeCampo] || '0'}
                                 isPercentual={true}
                                 min={0}
                                 max={99.9}
-                                onSelect={(value) => actualizarPorcentajeComisionista(campo, value)}
+                                onSelect={(value) => actualizarPorcentajeComisionista(porcentajeCampo, value)}
                               />
                             </span>
                             <span style={{ marginTop: '8px', fontSize: '16px' }}>
-                              {"$" +(Number(formData.monto) * (Number(formData[campo]) / 100)) }
+                              {"$" +(Number(formData.monto) * (Number(formData[porcentajeCampo]) / 100)) }
                             </span>
 
                             <button
@@ -928,6 +1009,16 @@ const handleSave = () => {
                 data-bs-dismiss="modal"
               >
                 Cerrar
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                data-bs-dismiss="modal"
+                onClick={() => eliminarContrato(formData.id)}
+                disabled={formData.id == '0'}
+
+              >
+                Eliminar
               </button>
               <button
                 type="button"

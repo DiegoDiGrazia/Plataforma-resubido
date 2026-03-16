@@ -1,73 +1,85 @@
 import React, { useState, useEffect } from 'react';
 
 const InputNumerico = ({
-    title,
-    selectedValue,
-    onSelect = () => {},
-    onClear = () => {},
-    isPercentual = false,
-    isDecimal = false,
-    min = 0,
-    max = 100
+  title,
+  selectedValue,
+  onSelect = () => {},
+  onClear = () => {},
+  isPercentual = false,
+  isDecimal = false,
+  min = 0,
+  max = 100
 }) => {
-    const [value, setValue] = useState(selectedValue ?? '');
 
-    useEffect(() => {
-        setValue(selectedValue ?? '');
-    }, [selectedValue]);
+  const formatNumber = (num) => {
+    if (num === '' || num === null || num === undefined) return '';
+    
+    return Number(num).toLocaleString('es-AR', {
+      minimumFractionDigits: isDecimal ? 2 : 0,
+      maximumFractionDigits: isDecimal ? 2 : 0
+    });
+  };
 
-    const handleChange = (e) => {
-        let val = e.target.value;
+  const [value, setValue] = useState(formatNumber(selectedValue));
 
-        // Vacío → limpiar
-        if (val === '') {
-            setValue('');
-            onClear();
-            return;
-        }
+  useEffect(() => {
+    setValue(formatNumber(selectedValue));
+  }, [selectedValue]);
 
-        // Permitir coma como decimal
-        if (isDecimal) {
-            val = val.replace(',', '.');
-        }
+  const handleChange = (e) => {
+    let val = e.target.value;
 
-        // Regex según tipo
-        const regex = isDecimal
-            ? /^\d+(\.\d{0,1})?$/
-            : /^\d+$/;
+    if (val === '') {
+      setValue('');
+      onClear();
+      return;
+    }
 
-        if (!regex.test(val)) return;
+    // quitar separadores de miles
+    val = val.replace(/\./g, '');
 
-        const number = Number(val);
+    // permitir coma decimal
+    if (isDecimal) {
+      val = val.replace(',', '.');
+    }
 
-        if (isNaN(number)) return;
-        if (number < min || number > max) return;
+    const regex = isDecimal
+      ? /^\d+(\.\d{0,2})?$/
+      : /^\d+$/;
 
-        setValue(val);
-        onSelect(number);
-    };
+    if (!regex.test(val)) return;
 
-    return (
-        <div className="mb-2">
-            <div className="d-flex justify-content-between align-items-center mb-2">
-                <span className="fw-bold">{title}</span>
+    const number = Number(val);
 
-                <div className="input-group" style={{ maxWidth: "220px" }}>
-                    <input
-                        type="text"
-                        className="form-control"
-                        placeholder={`${min} - ${max}`}
-                        value={value}
-                        onChange={handleChange}
-                    />
+    if (isNaN(number)) return;
+    if (number < min || number > max) return;
 
-                    {isPercentual && (
-                        <span className="input-group-text">%</span>
-                    )}
-                </div>
-            </div>
+    onSelect(number);
+
+    setValue(formatNumber(number));
+  };
+
+  return (
+    <div className="mb-2">
+      <div className="d-flex justify-content-between align-items-center mb-2">
+        <span className="fw-bold">{title}</span>
+
+        <div className="input-group" style={{ maxWidth: "220px" }}>
+          <input
+            type="text"
+            className="form-control"
+            placeholder={`${min} - ${max}`}
+            value={value}
+            onChange={handleChange}
+          />
+
+          {isPercentual && (
+            <span className="input-group-text">%</span>
+          )}
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default InputNumerico;

@@ -4,7 +4,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "../../miPerfil/miPerfil.css";
 import { useSelector } from 'react-redux';
 import ModalMensaje from '../gestores/ModalMensaje';
-import {obtenerClientes, obtenerNotasDeGeneraciones, obtenerPlanesMarketing } from './apisUsuarios'; 
+import {obtenerClientes, obtenerNotasDeGeneraciones, obtenerPlanesMarketing, obtenerVideosYoutube } from './apisUsuarios'; 
 import CopiarTexto from './CopiarTexto';
 import IconosDistribucionConMonto from './IconosDistribucionConMonto';
 import { Accordion } from 'react-bootstrap';
@@ -110,6 +110,8 @@ const DistribucionAdmin = () => {
   const itemsPerPage = 10;  
   const TOKEN = useSelector((state) => state.formulario.token);
   const [loading, setLoading] = useState(false); // 👈 nuevo estado
+  const nombreAgrupacionVideosNota = 'Notas de Video';
+  const [notasVideosYoutube, setNotasVideosYoutube] = useState([]);
 
   useEffect(() => {
     obtenerClientes(TOKEN).then(setClientes);
@@ -135,6 +137,29 @@ useEffect(() => {
   })
   .finally(() => setLoading(false)); 
 }, [TOKEN, clientes, planes, fechaDesde, fechaHasta]);
+
+useEffect(() => {
+
+  const [añoHasta, mesHasta] = fechaHasta.split("-");
+  const ultimoDiaHasta = obtenerUltimoDiaMes(añoHasta, mesHasta);
+  obtenerVideosYoutube(
+    TOKEN,
+    fechaDesde + '-01',
+    `${fechaHasta}-${ultimoDiaHasta}`,
+    '150',
+    '0'
+  ).then((res) => {
+    setNotasGeneracionesAgrupadas(prev => ({
+      ...prev,
+      nombreAgrupacionVideosNota: {'notas': res, 'plan': null}
+    }));
+  });
+}, [TOKEN, clientes, planes, fechaDesde, fechaHasta]);
+
+  useEffect(() => {
+    console.log('notasGeneracionesAgrupadas actualizadas: ', notasGeneracionesAgrupadas);
+  }, [notasGeneracionesAgrupadas]);
+
 
   const irANotasDelCliente = (data, cliente, fechaDesde, fechaHasta) => {
     const [añoHasta, mesHasta] = fechaHasta.split("-");
