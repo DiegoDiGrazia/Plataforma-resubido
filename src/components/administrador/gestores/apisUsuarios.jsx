@@ -153,5 +153,8 @@ export const obtenerTextoRegeneradoConIa = (token, term_id, endpoint) =>
     term_id
 });
 
+export const obtenerFacturas = (token, desde, hasta) =>
+  fetchData("https://panel.serviciosd.com/app_obtener_facturas", token, {desde, hasta});
+
 
 

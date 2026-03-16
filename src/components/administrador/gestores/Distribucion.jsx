@@ -10,8 +10,9 @@ import IconosDistribucionConMonto from './IconosDistribucionConMonto';
 import { Accordion } from 'react-bootstrap';
 
 
-export const obtenerMesActual = () => {
+export const obtenerMesActual = (mesesDeDiferencia) => {
   const hoy = new Date();
+  hoy.setMonth(hoy.getMonth() + mesesDeDiferencia);
   const año = hoy.getFullYear();
   const mes = String(hoy.getMonth() + 1).padStart(2, '0');
   return `${año}-${mes}`;
@@ -98,8 +99,8 @@ const agruparNotasPorCliente = (notas) => {
 };
 const DistribucionAdmin = () => {
   const [clientes, setClientes] = useState([]);
-  const [fechaDesde, setFechaDesde] = useState(obtenerMesActual());
-  const [fechaHasta, setFechaHasta] = useState(obtenerMesActual());
+  const [fechaDesde, setFechaDesde] = useState(obtenerMesActual(0));
+  const [fechaHasta, setFechaHasta] = useState(obtenerMesActual(0));
   const [pendientes, setPendientes] = useState('GAM o Meta');
   const [planes, setPlanes] = useState([]);
   const [notasGeneracionesAgrupadas, setNotasGeneracionesAgrupadas] = useState({});

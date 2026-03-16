@@ -15,7 +15,7 @@ const DEF = {
         "titulo": "Calculadora"
         },
     "ABM Planes": {
-        "descripcion": "Aquí encontrará una calculadora donde podrá visualizar el precio de la distribución de su contenido.",
+        "descripcion": "Alta y baja de Planes.",
         "url": "comercial/abm-planes",
         "titulo": "ABM Planes"
         },
@@ -29,6 +29,11 @@ const DEF = {
         "url": "comercial/abm-contratos",
         "titulo": "ABM Contratos"
         },
+    "Administración de facturas": {
+        "descripcion": "Listado y administración de facturas.",
+        "url": "comercial/facturas",
+        "titulo": "Administración de facturas"
+    },
 
     }
 const Comercial = () => {
@@ -49,7 +54,7 @@ const Comercial = () => {
                     <h3 id="saludo" className='headerTusNotas ml-0'>
                         <img src="/images/auto_entrevistas_icon.png" alt="Icono 1" className="icon me-2 icono_tusNotas" /> Comercial
                     </h3>
-                    <h4 className='infoCuenta'>Configuracion</h4>
+                    <h4 className='infoCuenta'>Configuración</h4>
                     <div className='abajoDeTusNotas'>
                         Aquí encontrarás contenidos que te ayudarán a potenciar el uso de nuestra plataforma. <br />
                         Tips, consejos, tutoriales y ayuda para tus contenidos
@@ -59,7 +64,7 @@ const Comercial = () => {
 
             <div className='row miPerfilContainer soporteContainer mt-4 p-0 mb-5'>
                 <div className='col todasLasNotas p-0 pt-2'>
-                    Todas las entrevistasas
+                    Todas las herramientas
                 </div>
                 <div className='col buscadorNotas'>
                     <form className='buscadorNotasForm'>
@@ -68,7 +73,7 @@ const Comercial = () => {
                             type="text"
                             value={searchQuery}
                             onChange={handleInputChange}
-                            placeholder="      Buscar por entrevista"
+                            placeholder="      Buscar por herramienta"
                         />
                     </form>
                 </div>
