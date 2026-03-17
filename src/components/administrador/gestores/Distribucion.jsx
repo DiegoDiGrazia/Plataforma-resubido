@@ -49,10 +49,18 @@ const filtrarClientesSegunPendientes = (clientesObj, pendientes) => {
   const clientesFiltradosEntries = Object.entries(clientesObj).filter(([nombre, datos]) => {
     if (!datos.notas || datos.notas.length === 0) return false;
 
+    // 👇 siempre mostrar youtube
+    if (nombre === "Notas de Video") {
+      return true;
+    }
+
     if (pendientes === 'Todos los casos') return true;
 
     if (pendientes === 'solo en Meta') {
       return datos.notas.some(nota => nota.primer_dato_en_meta == null);
+    }
+    if (pendientes === 'solo en GAM') {
+      return datos.notas.some(nota => nota.primer_dato_en_360 == null);
     }
     if (pendientes === 'solo en GAM') {
       return datos.notas.some(nota => nota.primer_dato_en_360 == null);
@@ -100,18 +108,17 @@ const DistribucionAdmin = () => {
   const [clientes, setClientes] = useState([]);
   const [fechaDesde, setFechaDesde] = useState(obtenerMesActual());
   const [fechaHasta, setFechaHasta] = useState(obtenerMesActual());
-  const [pendientes, setPendientes] = useState('GAM o Meta');
+  const [pendientes, setPendientes] = useState('Todos los casos');
   const [planes, setPlanes] = useState([]);
   const [notasGeneracionesAgrupadas, setNotasGeneracionesAgrupadas] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [mensajeModalExito, setMensajeModalExito] = useState("Los cambios se realizaron correctamente.");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const itemsPerPage = 10;  
+  const itemsPerPage = 100;  
   const TOKEN = useSelector((state) => state.formulario.token);
   const [loading, setLoading] = useState(false); // 👈 nuevo estado
   const nombreAgrupacionVideosNota = 'Notas de Video';
-  const [notasVideosYoutube, setNotasVideosYoutube] = useState([]);
 
   useEffect(() => {
     obtenerClientes(TOKEN).then(setClientes);
@@ -119,7 +126,7 @@ const DistribucionAdmin = () => {
     const ultimoDiaHasta = obtenerUltimoDiaMes(añoHasta, mesHasta);
     obtenerPlanesMarketing(TOKEN, fechaDesde+'-01',  `${fechaHasta}-${ultimoDiaHasta}`)
     .then(setPlanes)
-    .finally(() => setLoading(false)); // 👈 termina la carga
+    .finally(() => setLoading(false));
     ;
 }, [TOKEN]);  
 
@@ -151,15 +158,15 @@ useEffect(() => {
   ).then((res) => {
     setNotasGeneracionesAgrupadas(prev => ({
       ...prev,
-      nombreAgrupacionVideosNota: {'notas': res, 'plan': null}
+      [nombreAgrupacionVideosNota]: {'notas': res, 'plan': null}
     }));
   });
-}, [TOKEN, clientes, planes, fechaDesde, fechaHasta]);
+  
+}, [TOKEN, fechaDesde, fechaHasta]);
 
   useEffect(() => {
     console.log('notasGeneracionesAgrupadas actualizadas: ', notasGeneracionesAgrupadas);
   }, [notasGeneracionesAgrupadas]);
-
 
   const irANotasDelCliente = (data, cliente, fechaDesde, fechaHasta) => {
     const [añoHasta, mesHasta] = fechaHasta.split("-");
@@ -318,6 +325,7 @@ const goToPage = (newPage) => {
                           <li key={nota.id} className="list-group-item">
                             <div className='row p-0'>
                               {/* Columna 1 */}
+                              {cliente !== nombreAgrupacionVideosNota && (
                               <div className="col-3">
                                 <div className="row p-1">
                                   <span>
@@ -334,8 +342,29 @@ const goToPage = (newPage) => {
                                   <span><strong>Fecha vencimiento: </strong>{nota.fecha_vencimiento}</span>
                                 </div>
                               </div>
+                              )}
+                              {cliente == nombreAgrupacionVideosNota && (
+                              <div className="col-3">
+                                <div className="row p-1">
+                                  <span><strong>Fecha vencimiento: </strong>{nota.fecha_vencimiento_video}</span>
+                                </div>
+                              </div>
+                              )}
+                              {cliente == nombreAgrupacionVideosNota && (
+                              <div className="col-3">
+                                <div className="row p-1">
+                                  <span>
+                                    <a href={decodeURI(`https://builder.ntcias.de/single.php?name=-wp${nota.term_id}-${nota.cliente}_v:${formatearFechaDDMMAAAA(nota.fecha_vencimiento)}&nota_id=${nota.term_id}`)} target="_blank" rel="noopener noreferrer">
+                                      CREATIVO
+                                    </a>
+                                  </span>
+                                </div>
+                              </div>
+                              )}
 
                               {/* Columna 2 */}
+                              {cliente !== nombreAgrupacionVideosNota && (
+                                <>
                               <div className="col-3">
                                 <div className="row p-1">
                                   <span>
@@ -355,9 +384,11 @@ const goToPage = (newPage) => {
                                 <div className="row p-1"><CopiarTexto textoACopiar={nota.extracto} TituloBoton={'Copiar Bajada'} /></div>
                                 <div className="row p-1"><CopiarTexto textoACopiar={nota.engagement} TituloBoton={'Copiar Engagement'} /></div>
                               </div>
-
+                                
                               {/* Columna 4 */}
                               <IconosDistribucionConMonto nota= {nota} token = {TOKEN} />
+                              </>
+                              )}
                             </div>
                           </li>
                         ))}
