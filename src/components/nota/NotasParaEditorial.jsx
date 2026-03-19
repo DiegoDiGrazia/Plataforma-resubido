@@ -18,6 +18,9 @@ import BotonCrearNota from './Editorial/BotonCrearNota';
 import "./nota.css";
 import "./NotasParaEditorialMobile.css";
 import './verNotaMobile.css'
+import ModalConInputFile from '../administrador/gestores/ModalConInputFile';
+import { guardarVideoYoutube } from '../administrador/gestores/apisUsuarios';
+import ModalMensaje from '../administrador/gestores/ModalMensaje';
 
   function obtenerFechaDeManana() {
     const hoy = new Date();
@@ -28,9 +31,32 @@ import './verNotaMobile.css'
     return `${año}-${mes}-${dia}`;
 }
 
+const convertirVideoBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.readAsDataURL(file); // 👈 convierte a base64
+
+    reader.onload = () => {
+      resolve(reader.result); // esto es el base64
+    };
+
+    reader.onerror = (error) => {
+      reject(error);
+    };
+  });
+};
+
 
 const NotasParaEditorial = () => {
     const [searchQuery, setSearchQuery] = useState('');
+    const [mostrarModalYoutube, setMostrarModalYoutube] = useState(false)
+    const [videoYoutube, setVideoYoutube] = useState(null)
+    const [fechaYoutube, setFechaYoutube] = useState('')
+    const [idNotaYoutube, setIdNotaYoutube] = useState('')
+    const [mostrarMensaje, setMostrarMensaje] = useState(false)
+    const [mensaje, setMensaje] = useState('')
+
     const editarNota = async (notaABM, seDuplica) => {
     console.log("entro a editarNota");
     dispatch(resetCrearNota());
@@ -250,6 +276,25 @@ const NotasParaEditorial = () => {
     };
     
 
+    const subirVideo = async (id) => {
+    setMostrarMensaje(true)
+    try {
+        if (!videoYoutube) {
+        setMensaje('No hay video')
+        return;
+        }
+        setMensaje('Cargando video')
+
+        const videob64 = await convertirVideoBase64(videoYoutube);
+        await guardarVideoYoutube(TOKEN, videob64, fechaYoutube, id);
+        setMensaje('Video subido correctamente')
+
+    } catch (error) {
+        setMensaje('No se ha pudido subir el video')
+        console.error(error);
+    }
+    };
+
     const dispatch = useDispatch();
 
     const TOKEN = useSelector((state) => state.formulario.token);
@@ -280,7 +325,7 @@ const NotasParaEditorial = () => {
         } else {
             handleFiltroClick_todasLasNotas(filtroSeleccionado); // Llama a la función específica para el caso de id = 1
         }
-    }, [CLIENTE, filtroSeleccionado]);
+    }, [filtroSeleccionado]);
 
     return (
             <div className="content flex-grow-1 p-3">
@@ -422,7 +467,8 @@ const NotasParaEditorial = () => {
                                         >
                                             <img src="/images/prisma.png" alt="Duplicar Nota" className='mb-3' />
                                         </button>
-                                        }
+                                        } 
+
                                         { nota.con_distribucion === "1" &&
                                         <Link
                                             title="Grafico de Interacciones"
@@ -442,6 +488,21 @@ const NotasParaEditorial = () => {
                                             >
                                             <i className="bi bi-back m-2 fs-2"></i>
                                         </button>
+                                        {perfilUsuario === "1" || perfilUsuario === "5" &&
+                                        <button title="video youtube"
+                                            onClick={() => {
+                                            setMostrarModalYoutube(true);
+                                            setIdNotaYoutube(nota.id);
+                                            console.log(nota.id)
+                                            }}
+                                            style={{background: "none", border: "none",padding: 0,
+                                                margin: 0,
+                                                cursor: "pointer",
+                                            }}
+                                            >
+                                            <i className="bi bi-youtube m-2 fs-2"></i>
+                                        </button>
+                                        }
                                         <BotonEliminarNota id={nota.id} token={TOKEN}></BotonEliminarNota>
 
                                         </div>
@@ -464,6 +525,12 @@ const NotasParaEditorial = () => {
                             </div>
 
                             }
+
+                        <ModalConInputFile show={mostrarModalYoutube} titulo={'Elija un video para youtube'} actualFile={videoYoutube}
+                                            setFile={setVideoYoutube} AlGuardar={() => subirVideo(idNotaYoutube)} onClose={() =>setMostrarModalYoutube(false)} youtube={true}
+                                            fecha = {fechaYoutube} setFecha = {setFechaYoutube}>
+                        </ModalConInputFile>
+                        <ModalMensaje show= {mostrarMensaje} mensaje={mensaje} onClose={() => {setMostrarMensaje(false); setMostrarModalYoutube(false)}}></ModalMensaje>
 
 
                         {/* Botonera de paginación */}

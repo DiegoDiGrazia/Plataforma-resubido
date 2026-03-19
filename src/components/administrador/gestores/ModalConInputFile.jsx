@@ -1,6 +1,13 @@
 // ModalConInputFile.jsx
 import React, { useState } from "react";
-export default function ModalConInputFile({ show, titulo, actualFile, setFile, AlGuardar, onClose }) {
+import FormCheckInput from "react-bootstrap/esm/FormCheckInput";
+import Checkbox from "../../nota/Editorial/checkbox";
+import InputFecha from "../../nota/Editorial/InputFecha";
+
+
+export default function ModalConInputFile({ show, titulo, actualFile, setFile, AlGuardar, onClose, youtube = null, fecha, setFecha }) {
+  const [distribuir, setDistribuir] = useState(false)
+
   if (!show) return null; // si no está visible, no se renderiza
 
   return (
@@ -27,8 +34,12 @@ export default function ModalConInputFile({ show, titulo, actualFile, setFile, A
                 className="form-control"
                 onChange={(e) => setFile(e.target.files[0])}
             />
+            <Checkbox title={'Distribuir'}  value = {distribuir} onChange={setDistribuir} ></Checkbox>
+            {distribuir &&
+            <InputFecha label= {'Vencimiento distribucion'} fecha = {'fecha'} value={fecha} onChange={(e) => setFecha(e.target.value)} ></InputFecha>
+            }
             </div>
-            <button className="btn btn-primary" onClick={() => AlGuardar(actualFile)}>
+            <button className="btn btn-primary" onClick={() => AlGuardar()}>
               Guardar
             </button>
           </div>

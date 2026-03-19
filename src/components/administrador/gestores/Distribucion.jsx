@@ -17,6 +17,16 @@ export const obtenerMesActual = () => {
   return `${año}-${mes}`;
 }
 
+const descargar = async (nota) => {
+  const res = await fetch(`https://panel.serviciosd.com/img${nota.video}`);
+  const blob = await res.blob();
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `-wp${nota.term_id}-${nota.cliente}_v:${nota.fecha_vencimiento_video}.mp4`;
+  a.click();
+};
+
 export const obtenerUltimoDiaMes = (año, mes) => {
   return new Date(año, mes, 0).getDate(); 
 };
@@ -48,12 +58,9 @@ const obtenerColorDeEstadoDistribucion = (campoAChequear, datosDelCiente) => {
 const filtrarClientesSegunPendientes = (clientesObj, pendientes) => {
   const clientesFiltradosEntries = Object.entries(clientesObj).filter(([nombre, datos]) => {
     if (!datos.notas || datos.notas.length === 0) return false;
-
-    // 👇 siempre mostrar youtube
     if (nombre === "Notas de Video") {
       return true;
     }
-
     if (pendientes === 'Todos los casos') return true;
 
     if (pendientes === 'solo en Meta') {
@@ -87,9 +94,9 @@ function agregarPlanAlDiccionarioDeNotas(dicNotas, clientes, planes) {
       plan: plan || null
     };
   }
-
   return nuevoDic;
 }
+
 const agruparNotasPorCliente = (notas) => {
   if(!notas || notas.length === 0) return {};
   return notas.reduce((acc, nota) => {
@@ -117,7 +124,7 @@ const DistribucionAdmin = () => {
   const [page, setPage] = useState(1);
   const itemsPerPage = 100;  
   const TOKEN = useSelector((state) => state.formulario.token);
-  const [loading, setLoading] = useState(false); // 👈 nuevo estado
+  const [loading, setLoading] = useState(false); 
   const nombreAgrupacionVideosNota = 'Notas de Video';
 
   useEffect(() => {
@@ -140,13 +147,12 @@ useEffect(() => {
   const diccionarioDeCLientesConSusNotas = agruparNotasPorCliente(res);
   const agrupadasConPlanes = agregarPlanAlDiccionarioDeNotas(diccionarioDeCLientesConSusNotas, clientes, planes);
   console.log('agrupadasConPlanes: ', agrupadasConPlanes);
-  setNotasGeneracionesAgrupadas(agrupadasConPlanes);
+  setNotasGeneracionesAgrupadas(prev => ({ ...prev, ...agrupadasConPlanes}));
   })
   .finally(() => setLoading(false)); 
 }, [TOKEN, clientes, planes, fechaDesde, fechaHasta]);
 
 useEffect(() => {
-
   const [añoHasta, mesHasta] = fechaHasta.split("-");
   const ultimoDiaHasta = obtenerUltimoDiaMes(añoHasta, mesHasta);
   obtenerVideosYoutube(
@@ -354,9 +360,12 @@ const goToPage = (newPage) => {
                               <div className="col-3">
                                 <div className="row p-1">
                                   <span>
-                                    <a href={decodeURI(`https://builder.ntcias.de/single.php?name=-wp${nota.term_id}-${nota.cliente}_v:${formatearFechaDDMMAAAA(nota.fecha_vencimiento)}&nota_id=${nota.term_id}`)} target="_blank" rel="noopener noreferrer">
-                                      CREATIVO
-                                    </a>
+                                    {nota.video && (
+                                    <button className='btn btn-primary' onClick={() => descargar(nota)}> descargar creativo</button>
+                                    )}
+                                    {!nota.video && (
+                                      <strong>Nota sin video</strong>
+                                    )}
                                   </span>
                                 </div>
                               </div>
