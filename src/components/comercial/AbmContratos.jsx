@@ -96,6 +96,7 @@ const contratoVacio = {
   con_meta: "NO",
   con_search: "NO",
   con_dv360: "NO",
+  con_youtube: "NO",
   con_orden: "SI",
 
   orden_compra: "",
@@ -206,6 +207,7 @@ const AbmContratos
         con_meta: plan.con_meta,
         con_dv360: plan.con_dv360,
         con_search: plan.con_search,
+        con_youtube: plan.con_youtube,
 
       });
 
@@ -981,6 +983,13 @@ const handleSave = () => {
                     label="Con Meta"
                     name="con_meta"
                     value={formData.con_meta}
+                    setFormData={setFormData}
+                  />
+                                  {/* con youtube */}
+                <DropdawnSiNo
+                    label="Con Meta"
+                    name="con_youtube"
+                    value={formData.con_youtube}
                     setFormData={setFormData}
                   />
                 {/* con dv360 */}

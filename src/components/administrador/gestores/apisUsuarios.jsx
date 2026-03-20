@@ -135,6 +135,10 @@ export const obtenerConsolidacionCliente = (token, id_cliente) =>
   fetchData("https://panel.serviciosd.com/app_obtener_videos_noticias", token, {
     desde, hasta, limite, desde_limite
   });
+  export const guardarVideoYoutube = (token, video, fecha_vencimiento,id) =>
+    fetchData("https://panel.serviciosd.com/app_subir_video_nota", token, {
+      video, fecha_vencimiento, id
+  });
 
   export const guardarComentarioDeUnContrato = (token, id, comentarios_in, id_usuario) =>
   fetchData("https://panel.serviciosd.com/app_comentario_edit", token, {

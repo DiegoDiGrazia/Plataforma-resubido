@@ -8,7 +8,8 @@ const useCategorias = (TOKEN) => {
     const dispatch = useDispatch();
     const categorias = useSelector((state) => state.crearNota.categorias) || [];
     const categoriasPorNombre = useSelector((state) => state.crearNota.categoriasNombres) || [];
-    const [categoriasActivas, setCategoriasActivas] = useState([]);
+    const categoriasActivas = useSelector((state) => state.crearNota.categoriasActivas) || [];
+    // const [categoriasActivas, setCategoriasActivas] = useState([]);
     const navigate = useNavigate()
 
     // Obtener categorías desde la API
@@ -43,12 +44,12 @@ const useCategorias = (TOKEN) => {
         if (categoriasPorNombre.length > 0) {
             const cat_activas = categorias.filter((categoria) => categoriasPorNombre.includes(categoria.unidad))
                 .map((categoria) => categoria.id);
-            setCategoriasActivas(cat_activas);
+            // setCategoriasActivas(cat_activas);
             dispatch(setCategoriasActivasEnStore(cat_activas))
         }
     }, [categorias, categoriasPorNombre]);
 
-    return { categorias, categoriasActivas, setCategoriasActivas };
+    return { categorias, categoriasActivas, setCategoriasActivasEnStore };
 };
 
 export default useCategorias;

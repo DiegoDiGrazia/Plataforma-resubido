@@ -74,17 +74,17 @@ const PublicarNota = () => {
         const cat_activas = categorias.filter((categoria) => categoriasPorNombre.includes(categoria.unidad))
         .map((categoria) => categoria.id);
 
-        setCategoriasActivas(cat_activas); // Guarda la lista de IDs
+        dispatch(setCategoriasActivasEnStore(cat_activas)); // Guarda la lista de IDs
     }
-    }, []); // Ejecuta cuando cambian las dependencias
+    }, []); 
 
     const actualizarCategoriasActivas = (categoria) => {
 
         if (categoriasActivas.includes(categoria.id)) {
-            setCategoriasActivas(categoriasActivas.filter(item => item !== categoria.id));
+            // setCategoriasActivas(categoriasActivas.filter(item => item !== categoria.id));
             dispatch(setCategoriasActivasEnStore(categoriasActivas.filter(item => item !== categoria.id)));
         } else if (categoriasActivas.length < 3) {
-            setCategoriasActivas([categoria.id]);
+            // setCategoriasActivas([categoria.id]);
             dispatch(setCategoriasActivasEnStore([categoria.id]));
         }
 

@@ -645,7 +645,7 @@ textarea.inputTituloNota {
 }
 
 .imagenRRSS {
-    width: auto !important;
+    width: 100% !important;
     height: 500px !important;
     border-radius: 10px !important;
     contain: contain !important;

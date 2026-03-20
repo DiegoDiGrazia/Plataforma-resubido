@@ -18,6 +18,16 @@ export const obtenerMesActual = (mesesDeDiferencia) => {
   return `${año}-${mes}`;
 }
 
+const descargar = async (nota) => {
+  const res = await fetch(`https://panel.serviciosd.com/img${nota.video}`);
+  const blob = await res.blob();
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `-wp${nota.term_id}-${nota.cliente}_v:${nota.fecha_vencimiento_video}.mp4`;
+  a.click();
+};
+
 export const obtenerUltimoDiaMes = (año, mes) => {
   return new Date(año, mes, 0).getDate(); 
 };
@@ -49,11 +59,16 @@ const obtenerColorDeEstadoDistribucion = (campoAChequear, datosDelCiente) => {
 const filtrarClientesSegunPendientes = (clientesObj, pendientes) => {
   const clientesFiltradosEntries = Object.entries(clientesObj).filter(([nombre, datos]) => {
     if (!datos.notas || datos.notas.length === 0) return false;
-
+    if (nombre === "Notas de Video") {
+      return true;
+    }
     if (pendientes === 'Todos los casos') return true;
 
     if (pendientes === 'solo en Meta') {
       return datos.notas.some(nota => nota.primer_dato_en_meta == null);
+    }
+    if (pendientes === 'solo en GAM') {
+      return datos.notas.some(nota => nota.primer_dato_en_360 == null);
     }
     if (pendientes === 'solo en GAM') {
       return datos.notas.some(nota => nota.primer_dato_en_360 == null);
@@ -80,9 +95,9 @@ function agregarPlanAlDiccionarioDeNotas(dicNotas, clientes, planes) {
       plan: plan || null
     };
   }
-
   return nuevoDic;
 }
+
 const agruparNotasPorCliente = (notas) => {
   if(!notas || notas.length === 0) return {};
   return notas.reduce((acc, nota) => {
@@ -101,18 +116,17 @@ const DistribucionAdmin = () => {
   const [clientes, setClientes] = useState([]);
   const [fechaDesde, setFechaDesde] = useState(obtenerMesActual(0));
   const [fechaHasta, setFechaHasta] = useState(obtenerMesActual(0));
-  const [pendientes, setPendientes] = useState('GAM o Meta');
+  const [pendientes, setPendientes] = useState('Todos los casos');
   const [planes, setPlanes] = useState([]);
   const [notasGeneracionesAgrupadas, setNotasGeneracionesAgrupadas] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [mensajeModalExito, setMensajeModalExito] = useState("Los cambios se realizaron correctamente.");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const itemsPerPage = 10;  
+  const itemsPerPage = 100;  
   const TOKEN = useSelector((state) => state.formulario.token);
-  const [loading, setLoading] = useState(false); // 👈 nuevo estado
+  const [loading, setLoading] = useState(false); 
   const nombreAgrupacionVideosNota = 'Notas de Video';
-  const [notasVideosYoutube, setNotasVideosYoutube] = useState([]);
 
   useEffect(() => {
     obtenerClientes(TOKEN).then(setClientes);
@@ -120,7 +134,7 @@ const DistribucionAdmin = () => {
     const ultimoDiaHasta = obtenerUltimoDiaMes(añoHasta, mesHasta);
     obtenerPlanesMarketing(TOKEN, fechaDesde+'-01',  `${fechaHasta}-${ultimoDiaHasta}`)
     .then(setPlanes)
-    .finally(() => setLoading(false)); // 👈 termina la carga
+    .finally(() => setLoading(false));
     ;
 }, [TOKEN]);  
 
@@ -134,13 +148,12 @@ useEffect(() => {
   const diccionarioDeCLientesConSusNotas = agruparNotasPorCliente(res);
   const agrupadasConPlanes = agregarPlanAlDiccionarioDeNotas(diccionarioDeCLientesConSusNotas, clientes, planes);
   console.log('agrupadasConPlanes: ', agrupadasConPlanes);
-  setNotasGeneracionesAgrupadas(agrupadasConPlanes);
+  setNotasGeneracionesAgrupadas(prev => ({ ...prev, ...agrupadasConPlanes}));
   })
   .finally(() => setLoading(false)); 
 }, [TOKEN, clientes, planes, fechaDesde, fechaHasta]);
 
 useEffect(() => {
-
   const [añoHasta, mesHasta] = fechaHasta.split("-");
   const ultimoDiaHasta = obtenerUltimoDiaMes(añoHasta, mesHasta);
   obtenerVideosYoutube(
@@ -152,15 +165,15 @@ useEffect(() => {
   ).then((res) => {
     setNotasGeneracionesAgrupadas(prev => ({
       ...prev,
-      nombreAgrupacionVideosNota: {'notas': res, 'plan': null}
+      [nombreAgrupacionVideosNota]: {'notas': res, 'plan': null}
     }));
   });
-}, [TOKEN, clientes, planes, fechaDesde, fechaHasta]);
+  
+}, [TOKEN, fechaDesde, fechaHasta]);
 
   useEffect(() => {
     console.log('notasGeneracionesAgrupadas actualizadas: ', notasGeneracionesAgrupadas);
   }, [notasGeneracionesAgrupadas]);
-
 
   const irANotasDelCliente = (data, cliente, fechaDesde, fechaHasta) => {
     const [añoHasta, mesHasta] = fechaHasta.split("-");
@@ -319,6 +332,7 @@ const goToPage = (newPage) => {
                           <li key={nota.id} className="list-group-item">
                             <div className='row p-0'>
                               {/* Columna 1 */}
+                              {cliente !== nombreAgrupacionVideosNota && (
                               <div className="col-3">
                                 <div className="row p-1">
                                   <span>
@@ -335,8 +349,32 @@ const goToPage = (newPage) => {
                                   <span><strong>Fecha vencimiento: </strong>{nota.fecha_vencimiento}</span>
                                 </div>
                               </div>
+                              )}
+                              {cliente == nombreAgrupacionVideosNota && (
+                              <div className="col-3">
+                                <div className="row p-1">
+                                  <span><strong>Fecha vencimiento: </strong>{nota.fecha_vencimiento_video}</span>
+                                </div>
+                              </div>
+                              )}
+                              {cliente == nombreAgrupacionVideosNota && (
+                              <div className="col-3">
+                                <div className="row p-1">
+                                  <span>
+                                    {nota.video && (
+                                    <button className='btn btn-primary' onClick={() => descargar(nota)}> descargar creativo</button>
+                                    )}
+                                    {!nota.video && (
+                                      <strong>Nota sin video</strong>
+                                    )}
+                                  </span>
+                                </div>
+                              </div>
+                              )}
 
                               {/* Columna 2 */}
+                              {cliente !== nombreAgrupacionVideosNota && (
+                                <>
                               <div className="col-3">
                                 <div className="row p-1">
                                   <span>
@@ -356,9 +394,11 @@ const goToPage = (newPage) => {
                                 <div className="row p-1"><CopiarTexto textoACopiar={nota.extracto} TituloBoton={'Copiar Bajada'} /></div>
                                 <div className="row p-1"><CopiarTexto textoACopiar={nota.engagement} TituloBoton={'Copiar Engagement'} /></div>
                               </div>
-
+                                
                               {/* Columna 4 */}
                               <IconosDistribucionConMonto nota= {nota} token = {TOKEN} />
+                              </>
+                              )}
                             </div>
                           </li>
                         ))}

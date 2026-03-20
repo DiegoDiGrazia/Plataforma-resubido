@@ -16,6 +16,7 @@ const perfilVacio = {
   con_dv360: "SI",
   con_meta: "SI",
   con_search: "SI",
+  con_youtube: 'SI',
   id: "0",
   nombre: "",
   notas_x_mes: "0",
@@ -93,27 +94,43 @@ const eliminarPlan = (id) => {
     setPage(1);
   }, [search]);
 
-  const handleEditClick = (perfil) => {
-    console.log(perfil);
-    setselectedPerfil(perfil);
-    setFormData(perfil);
-    const modal = new window.bootstrap.Modal(document.getElementById('editModal'));
-    modal.show();
+const handleEditClick = (perfil) => {
+  const normalizado = {
+    ...perfil,
+    con_youtube: perfil.con_youtube === "SI" ? "1" : "0",
+    con_meta: perfil.con_meta === "SI" ? "1" : "0",
+    con_dv360: perfil.con_dv360 === "SI" ? "1" : "0",
+    con_search: perfil.con_search === "SI" ? "1" : "0",
+  };
+
+  setselectedPerfil(normalizado);
+  setFormData(normalizado);
+
+  const modal = new window.bootstrap.Modal(document.getElementById('editModal'));
+  modal.show();
 };
 
 const handleSave = () => {
+  const dataToSend = {
+    ...formData,
+    con_youtube: formData.con_youtube === "1" ? "SI" : "NO",
+    con_meta: formData.con_meta === "1" ? "SI" : "NO",
+    con_dv360: formData.con_dv360 === "1" ? "SI" : "NO",
+    con_search: formData.con_search === "1" ? "SI" : "NO",
+  };
+
   axios
     .post(
       "https://panel.serviciosd.com/app_plan_edit",
       {
         token: TOKEN,
-        ...formData,
+        ...dataToSend,
       },
       {
         headers: { "Content-Type": "multipart/form-data" },
       }
     )
-    .then(() => {
+        .then(() => {
       setMensajeModalExito('Los cambios se realizaron correctamente.');
       setShowModal(true);
       setTimeout(() => {
@@ -123,7 +140,11 @@ const handleSave = () => {
     .catch((err) => {
       console.log("Error al guardar cambios:", err);
     });
-  };
+};
+
+  useEffect(() => {
+    console.log(formData)
+  }, [formData]);
 
   return (
     <div className="content flex-grow-1 crearNotaGlobal">
@@ -241,6 +262,13 @@ const handleSave = () => {
                     label="Con Meta"
                     name="con_meta"
                     value={formData.con_meta || "0"}
+                    setFormData={setFormData}
+                  />
+                {/* con youtube */}
+                  <DropdawnSiNo
+                    label="Con Youtube"
+                    name="con_youtube"
+                    value={formData.con_youtube || "0"}
                     setFormData={setFormData}
                   />
                 {/* con dv360 */}
