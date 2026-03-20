@@ -1,11 +1,95 @@
 #descargar-excel{
-    background-color: #5da575;
+    background-color: #2ea054;
     border-color: #868e96;
 }
-
-#cargar-factura {
-    background-color: #8096b9;
-    border-color: #868e96;
+.buscadorNotasForm {
+    width: 275px !important;
 }
 
+i {
+    color: #3e4658ff;
+    margin-right: 5px;
+    font-size: 24px;
+}
 
+.vencimiento-desde {
+    width: 260px !important;
+}
+
+.vencimiento-hasta {
+    width: 260px !important;
+}
+
+.form-check-input.flex-shrink-0.mt-0 {
+    margin-left: 1px !important;
+    margin-right: 2px !important;
+}
+
+@media (max-width: 1366px) {
+
+    #cargar-factura, #descargar-excel {
+        width: 35px !important;
+        height: 35px !important;
+        padding: 0 !important; 
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    #cargar-factura i, #descargar-excel i {
+        margin: 0 !important;
+        font-size: 20px !important; 
+    }
+
+    .vencimiento-desde {
+        width: 200px !important;
+        font-size: 11px !important;
+        margin-right: 5px !important;
+    }
+
+    .vencimiento-hasta {
+        width: 200px !important;
+        font-size: 11px !important;
+        left: 0px !important;
+    }
+    
+    .vencimiento-desde input {
+        width: 125px;
+        font-size: 10px !important;
+    }
+    
+    .vencimiento-hasta input {
+        width: 125px;
+        font-size: 10px !important;
+    }
+
+    .row.buscadorNotas.d-flex.flex-wrap.align-items-center.justify-content-between.mt-3.p-0.w-100 {
+        flex-wrap: nowrap !important;
+    }
+
+    .col-3.w-auto.d-flex.align-items-center.gap-2.mt-2.me-4.p-0.text-nowrap {
+        position: relative;
+        left: -8px;
+        gap: 0px !important;
+    }
+    
+    .buscadorNotasForm {
+        width: 142px !important;
+    }
+
+    .inputBuscadorNotas::placeholder {
+        width: 100%;
+        padding-left: 3px !important;
+        font-size: 10px !important; 
+        overflow: hidden !important; 
+    }
+
+    #botones-filtros {
+        padding: 0px;
+    }
+
+    .row.text-start.w-100 .col {
+        padding-right: 0px !important;
+    }
+
+}   

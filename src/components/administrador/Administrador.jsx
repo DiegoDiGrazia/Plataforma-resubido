@@ -7,7 +7,7 @@ import "./AdministradorMobile.css";
 import "./gestores/AbmsMobile.css"
 import { useEffect } from 'react';
 import { Button } from 'react-bootstrap';
-
+import { useNavigate } from 'react-router-dom';
 
 
 const DEF = {
@@ -30,6 +30,7 @@ const DEF = {
     }
 const Administrador = () => {
     const [searchQuery, setSearchQuery] = useState('');
+    const navigate = useNavigate();
 
     const handleInputChange = (e) => {
         setSearchQuery(e.target.value);
@@ -44,7 +45,7 @@ const Administrador = () => {
             <div className='row miPerfilContainer soporteContainer'>
                 <div className='col p-0'>
                     <h3 id="saludo" className='headerTusNotas ml-0'>
-                        <img src="/images/auto_entrevistas_icon.png" alt="Icono 1" className="icon me-2 icono_tusNotas" /> Administración
+                        <i className="icon me-2 icono_tusNotas bi bi-gear-fill" alt="Icono 1" style={{color: '#3e4658ff', marginRight: '5px', bottom: '10px', fontSize: '24px'}} /> Administración 
                     </h3>
                     <h4 className='infoCuenta'>Configuración</h4>
                     <div className='abajoDeTusNotas'>
@@ -87,7 +88,7 @@ const Administrador = () => {
                     }}
                     >
                     <div className="card-body d-flex justify-content-between">
-                        <Button variant='' href={categoria.url}>
+                        <Button variant='' onClick={() => navigate(`/${categoria.url}`)}>
                             <div className='card-content h-100'>
                             <h5 className="card-title justify-content-center">{categoria.titulo}</h5>
                             <p className="card-text">{categoria.descripcion}</p>

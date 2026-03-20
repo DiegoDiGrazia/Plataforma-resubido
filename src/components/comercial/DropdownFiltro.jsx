@@ -1,4 +1,5 @@
 import React from 'react';
+import './DropdownFiltro.css';
 
 const DropdownFiltro = ({ label, opciones, valorActual, onChange }) => {
   return (
@@ -9,6 +10,7 @@ const DropdownFiltro = ({ label, opciones, valorActual, onChange }) => {
         role="button" 
         data-bs-toggle="dropdown" 
         aria-expanded="false"
+        style={{fontSize: "13px"}}
       >
         <strong className='text-start'>{label}:</strong>&nbsp;{valorActual}
       </a>
