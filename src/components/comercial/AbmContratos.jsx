@@ -497,7 +497,7 @@ const handleSave = () => {
         </div>
         <div className='col buscadorNotas'>
             <button className="mb-2 btn btn-secondary" onClick={() => {
-              descargarExcel(contratosFiltrados);
+              descargarExcel(contratosFiltrados, "Contratos");
             }}>
               Descargar Excel
             </button>

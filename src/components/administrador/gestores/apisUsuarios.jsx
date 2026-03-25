@@ -7,7 +7,11 @@ const fetchData = async (url, token, extraParams = {}) => {
 
     Object.entries(extraParams).forEach(([key, value]) => {
       if (value !== undefined && value !== null){
-      formData.append(key, value);
+        if (Array.isArray(value)) {
+          value.forEach(item => formData.append(`${key}[]`, item)); // si es un array, a cada elemento lo junta con []
+        } else {
+          formData.append(key, value);
+        }
       }
     });
 
@@ -162,5 +166,39 @@ export const obtenerTextoRegeneradoConIa = (token, term_id, endpoint) =>
     term_id
 });
 
+export const obtenerFacturas = (token, desde, hasta) =>
+  fetchData("https://panel.serviciosd.com/app_obtener_facturas", token, {desde, hasta});
 
+export const editarFactura = (token, id_factura, numero, estado, mes, fecha_pago) =>
+  fetchData("https://panel.serviciosd.com/app_factura_edit", token, {id_factura, numero, estado, mes, fecha_pago});
 
+export const unificarFacturas = (token, id_factura, id_factura_original) =>
+  fetchData("https://panel.serviciosd.com/app_facturas_unificar", token, {id_factura, id_factura_original});
+
+export const dividirFactura = (token, id_factura, cantidad, mes) =>
+  fetchData("https://panel.serviciosd.com/app_facturas_dividir", token, {id_factura, cantidad, mes});
+
+export const cargarFacturaAbierta = (token, numero, estado, mes, id_contrato , monto_mensual, fecha_pago) =>
+  fetchData("https://panel.serviciosd.com/app_factura_abierta_edit", token, {numero, estado, mes, id_contrato , monto_mensual, fecha_pago});
+
+export const eliminarFacturaAbierta = (token, id) =>
+  fetchData("https://panel.serviciosd.com/app_factura_abierta_eliminar", token, {id});
+
+export const obtenerFacturasDeContrato = (token, id_contrato) =>
+  fetchData("https://panel.serviciosd.com/app_obtener_facturas_contrato", token, {id_contrato});
+
+export const obtenerArchivosDeContrato = (token, id) =>
+  fetchData ("https://panel.serviciosd.com/app_obtener_contratos_archivos", token, {id});
+
+export const cargarArchivo = (token, id_usuario, archivo, id_contrato_archivo) =>
+  fetchData("https://panel.serviciosd.com/app_contrato_archivo_edit", token, {
+    id_usuario, archivo, id_contrato_archivo});
+
+export const eliminarArchivo = (token, id, id_usuario) =>
+  fetchData("https://panel.serviciosd.com/app_contrato_archivo_eliminar", token, {id, id_usuario});
+
+export const obtenerComentariosDeContrato = (token, id) =>
+  fetchData("https://panel.serviciosd.com/app_obtener_contratos_comentarios", token, {id});
+
+export const agregarComentario = (token, id_usuario, comentarios_in, id) =>
+  fetchData("https://panel.serviciosd.com/app_comentario_edit", token, {id_usuario, comentarios_in, id});
