@@ -394,6 +394,7 @@ const Facturas = () =>  {
             "Comisionista 1": factura.com1,
             "Comisionista 2": factura.com2,
             "Id Contrato": factura.id_contrato,
+            "Orden": factura.orden_compra,
             "Inicio Contrato": factura.fecha_inicio,
             "Fin Contrato": factura.fecha_fin,
             "Total Contrato": `${formatearMoneda(factura.monto_mensual * factura.cantidad_facturas)}`,
@@ -408,6 +409,14 @@ const Facturas = () =>  {
             "Generada Como Abierta": factura.abierto,
         }));
         descargarExcel(datosParaExcel, `Facturas (${fechaDesde} - ${fechaHasta})`);
+    };
+
+    {/*FUNCION PARA LIMPIAR EL LINK DEL CONTRATO */}
+    const limpiarNombreOrden = (url) => {
+        if (!url) return "- -";
+        const nombreConExtension = url.split('/').pop();
+        const nombreLimpio = nombreConExtension.split('.')[0];
+        return nombreLimpio.replace(/[-_]/g, ' '); 
     };
 
     return (
@@ -521,40 +530,54 @@ const Facturas = () =>  {
                         <li className= {`list-group-item py-3 ${factura.numero ? "border border-2 border-success px-1" : ""}`} key= {factura.id}>
                             <div className="row text-start w-100" style={{ fontSize: "13px" }}>
                                 <div className="col">
-                                    <strong className="d-block"><span>{factura.mes ? `${String(factura.mes).slice(0, 4)}-${String(factura.mes).slice(4)}` : ""}</span></strong>
-                                    <strong className="d-block mb-2"><span>{factura.cliente}</span></strong>
-                                    <strong className="d-block">Id Factura: <span className="fw-normal">{factura.id}</span></strong>
-                                    <strong className="d-block">Nº Factura: <span className="fw-normal">{factura.numero ? factura.numero : "- -"}</span></strong>
-                                    <strong className="d-block">Monto Factura: <span className="fw-normal">${formatearMoneda(factura.monto_mensual)}</span></strong>
-                                    <strong className="d-block">Fecha de pago: <span className="fw-normal">{factura.fecha_pago ? factura.fecha_pago : "- -"}</span></strong>
+                                    <strong className="datos-factura d-block"><span>{factura.mes ? `${String(factura.mes).slice(0, 4)}-${String(factura.mes).slice(4)}` : ""}</span></strong>
+                                    <strong className="datos-factura d-block mb-2"><span>{factura.cliente}</span></strong>
+                                    <strong className="datos-factura d-block">Id Factura: <span className="fw-normal">{factura.id}</span></strong>
+                                    <strong className="datos-factura d-block">Nº Factura: <span className="fw-normal">{factura.numero ? factura.numero : "- -"}</span></strong>
+                                    <strong className="datos-factura d-block">Monto Factura: <span className="fw-normal">${formatearMoneda(factura.monto_mensual)}</span></strong>
+                                    <strong className="datos-factura d-block">Fecha de pago: <span className="fw-normal">{factura.fecha_pago ? factura.fecha_pago : "- -"}</span></strong>
+                                    <strong className="datos-factura d-block">Cantidad Facturas/Notas: <span className="fw-normal">{factura.cantidad_facturas}</span></strong>
                                 </div>
                                 <div className="col mt-5">
-                                    <strong className="d-block">Id Contrato: <span className="fw-normal">{factura.id_contrato}</span></strong>
-                                    <strong className="d-block">Inicio: <span className="fw-normal">{factura.fecha_inicio}</span></strong>
-                                    <strong className="d-block">Fin: <span className="fw-normal">{factura.fecha_fin}</span></strong>
-                                    <strong className="d-block">Total Contrato: <span className="fw-normal">${formatearMoneda(factura.monto_mensual * factura.cantidad_facturas)}</span></strong>
-                                    <strong className="d-block">Cantidad Facturas/Notas: <span className="fw-normal">{factura.cantidad_facturas}</span></strong>
+                                    <strong className="datos-factura d-block">Id Contrato: <span className="fw-normal">{factura.id_contrato}</span></strong>
+                                    <strong className="datos-factura d-block">Orden: 
+                                        {factura.orden_compra ? (
+                                            <a 
+                                                href={factura.orden_compra} 
+                                                target="_blank" 
+                                                rel="noopener noreferrer"
+                                                className="fw-normal ms-1 text-primary text-decoration-underline"
+                                            >
+                                                {limpiarNombreOrden(factura.orden_compra)}
+                                            </a>
+                                        ) : (
+                                            <span className="fw-normal ms-1">- -</span>
+                                        )}
+                                    </strong>
+                                    <strong className="datos-factura d-block">Inicio: <span className="fw-normal">{factura.fecha_inicio}</span></strong>
+                                    <strong className="datos-factura d-block">Fin: <span className="fw-normal">{factura.fecha_fin}</span></strong>
+                                    <strong className="datos-factura d-block">Total Contrato: <span className="fw-normal">${formatearMoneda(factura.monto_mensual * factura.cantidad_facturas)}</span></strong>
                                 </div>
                                 <div className="col mt-5">
-                                    <strong className="d-block">Razón Social: <span className="fw-normal">{factura.razon_social}</span></strong>
-                                    <strong className="d-block">CUIT: <span className="fw-normal">{factura.cuit}</span></strong>
-                                    <strong className={`d-block ${factura.estado === "PAGADA" ? "border border-2 border-success px-1" : ""}`} style={{ width: "fit-content"}}>
+                                    <strong className="datos-factura d-block">Razón Social: <span className="fw-normal">{factura.razon_social}</span></strong>
+                                    <strong className="datos-factura d-block">CUIT: <span className="fw-normal">{factura.cuit}</span></strong>
+                                    <strong className={`datos-factura d-block ${factura.estado === "PAGADA" ? "border border-2 border-success px-1" : ""}`} style={{ width: "fit-content"}}>
                                         Estado: <span className="fw-normal">{factura.estado}</span></strong>
-                                    <strong className="d-block">Empresa: <span className="fw-normal">{factura.empresa}</span></strong>
+                                    <strong className="datos-factura d-block">Empresa: <span className="fw-normal">{factura.empresa}</span></strong>
                                 </div>
                                 <div className="col mt-5">
-                                    <strong className="d-block">Enviar a: <span className="fw-normal">{factura.donde}</span></strong>
-                                    <strong className="d-block">Paga Sellos: <span className="fw-normal">{factura.requiere_pago}</span></strong>
-                                    <strong className="d-block">Lleva Certificación: <span className="fw-normal">{factura.lleva_certificacion}</span></strong>
-                                    <strong className="d-block">Generada Como Abierta: <span className="fw-normal">{factura.abierto}</span></strong>
+                                    <strong className="datos-factura d-block">Enviar a: <span className="fw-normal">{factura.donde}</span></strong>
+                                    <strong className="datos-factura d-block">Paga Sellos: <span className="fw-normal">{factura.requiere_pago}</span></strong>
+                                    <strong className="datos-factura d-block">Lleva Certificación: <span className="fw-normal">{factura.lleva_certificacion}</span></strong>
+                                    <strong className="datos-factura d-block">Generada Como Abierta: <span className="fw-normal">{factura.abierto}</span></strong>
                                 </div>
-                                <div className="col mt-4">
-                                    <strong className="d-block">Comisión 1: <span className="fw-normal">${formatearMoneda(factura.comision)}</span></strong>
-                                    <strong className="d-block">Porcentaje Comisión 1: <span className="fw-normal">{formatearMoneda(factura.porcentaje_comision)}</span></strong>
-                                    <strong className="d-block">Comisionista 1: <span className="fw-normal">{(factura.com1 || "- -")}</span></strong>
-                                    <strong className="d-block">Comisión 2: <span className="fw-normal">${formatearMoneda(factura.comision2)}</span></strong>
-                                    <strong className="d-block">Porcentaje Comisión 2: <span className="fw-normal">{formatearMoneda(factura.porcentaje_comision2)}</span></strong>
-                                    <strong className="d-block">Comisionista 2: <span className="fw-normal">{(factura.com2 || "- -")}</span></strong>
+                                <div className="col mt-5">
+                                    <strong className="datos-factura d-block">Comisión 1: <span className="fw-normal">${formatearMoneda(factura.comision)}</span></strong>
+                                    <strong className="datos-factura d-block">Porcentaje Comisión 1: <span className="fw-normal">{formatearMoneda(factura.porcentaje_comision)}</span></strong>
+                                    <strong className="datos-factura d-block">Comisionista 1: <span className="fw-normal">{(factura.com1 || "- -")}</span></strong>
+                                    <strong className="datos-factura d-block">Comisión 2: <span className="fw-normal">${formatearMoneda(factura.comision2)}</span></strong>
+                                    <strong className="datos-factura d-block">Porcentaje Comisión 2: <span className="fw-normal">{formatearMoneda(factura.porcentaje_comision2)}</span></strong>
+                                    <strong className="datos-factura d-block">Comisionista 2: <span className="fw-normal">{(factura.com2 || "- -")}</span></strong>
 
                                 </div>
                                 {/* BOTONES ACCIONES */}

@@ -92,4 +92,11 @@ i {
         padding-right: 0px !important;
     }
 
+    a {
+        font-size: 11px !important;
+    }
+
+    .datos-factura {
+        font-size: 11px;
+    }
 }   
