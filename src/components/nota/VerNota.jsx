@@ -19,6 +19,7 @@ import { useParams } from 'react-router-dom';
 import { traerDatosDeNota } from '../../utils/buscarEnLocal';
 import "./nota_print.css"
 import { obtenerResumenDashboardNota } from '../administrador/gestores/apisUsuarios';
+import PlataformaMasImpresiones from '../Dashboard/datosRelevantes/PlataformaMasImpresiones';
 export const RUTA = "http://localhost:4000/"
 const VerNota = () => {
 
@@ -170,14 +171,14 @@ const VerNota = () => {
                     <div className="mb-2 tamaño_barplot">
                             { <BarplotNota id_noti={id_noti} TOKEN={TOKEN} cliente={CLIENTE} fpub={FPUB} dataLocalNota = {dataLocalNota?.usuarioDeNota} resumenNota = {resumenNota}/> } 
                     </div>
-                    <div className='row g-1 align-items-start'>
-                        <div className='col-6 m-2 p-3 back-white'>
-                            { <PlataformaMasImpresionesNota id_noti={id_noti} TOKEN={TOKEN} cliente={CLIENTE} fpub={FPUB} dataLocalNota = {dataLocalNota?.impresionesNoticias}/> }
+                     <div className='row g-1'>
+                        <div className='col-lg-12 col-xl col-6 m-2 back-white'>
+                            <PlataformaMasImpresiones resumenCliente = {resumenNota} loading ={loadingUsuarios}/>
                         </div>
-                        <div className='col-6 m-2 p-3 back-white'>
-                                {<MediosMasRelevantesNotas id_noti={id_noti} TOKEN={TOKEN} cliente={CLIENTE} fpub={FPUB} dataLocalNota = {dataLocalNota?.mediosNoticia}/>}   
+                        <div className='col-lg-12 col-xl col-6 m-2 back-white'>
+                            {<MediosMasRelevantesNotas id_noti={id_noti} TOKEN={TOKEN} cliente={CLIENTE} fpub={FPUB} dataLocalNota = {dataLocalNota?.mediosNoticia}/>}   
                         </div>
-                    </div> 
+                    </div>
                 </div>
                 }
             </>

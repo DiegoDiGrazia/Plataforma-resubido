@@ -95,7 +95,8 @@
     background-color: white;
 }
 .tamaño_barplot{
-    height: 341px;
+    height: auto;
+    width: 90%;
 }
 
 .listaClientes {

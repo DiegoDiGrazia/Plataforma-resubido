@@ -10,6 +10,8 @@ import Barplot_Carga from './Barplot_mejorado_carga.jsx';
 import { formatDate } from './Barplot.jsx';
 import './BarplotMobile.css'
 import './BarplotNotaMobile.css'
+import LineChartTwoLines from './LineChartTwoLines.jsx';
+import { useEffectEvent } from 'react';
 const RUTA = "http://localhost:4000/"
 
  export function generarPeriodosDesde(f_pub, cantidadDeMesesAGenerar){
@@ -36,49 +38,93 @@ const BarplotNota = ({id_noti, TOKEN, cliente, fpub, dataLocalNota, resumenNota 
 
     console.log("LOCAL DATA NOTA", dataLocalNota)
     const [loading, setLoading] = useState(true); // Estado de carga
-    const [usuariosImpresionesNota, setUsuariosImpresionesNota] = useState([]); // Estado de carga
+    const [totales, setTotales] = useState({})
 
-        const [totales, setTotales] = useState({})
-    
-        useEffect(() => {
-            if (resumenNota) {
-                setTotales(
-                resumenNota.reduce((acumulador, mes) => {
-                    ///totalRRSS
-                    acumulador.usuariosTotalesRRSS =
-                    (acumulador.usuariosTotalesRRSS || 0) +
-                    Number(mes.i_instagram_users || 0) +
-                    Number(mes.i_facebook_users || 0) +
-                    Number(mes.i_youtube_users  || 0);
-                    ///totalGOOGLE
-                    acumulador.usuariosTotalesGoogle =
-                    (acumulador.usuariosTotalesGoogle || 0) +
-                    Number(mes.i_dv360_users || 0);
-                    ///totalMetaPorMes
-    
-                    acumulador.usuariosMetaPorMes = [
-                    ...(acumulador.usuariosMetaPorMes || []),
+    useEffect(() => {
+        if (resumenNota) {
+            setTotales(
+            resumenNota.reduce((acumulador, mes) => {
+                ///totalRRSS
+                acumulador.usuariosTotalesRRSS =
+                (acumulador.usuariosTotalesRRSS || 0) +
+                Number(mes.i_instagram_users || 0) +
+                Number(mes.i_facebook_users || 0) +
+                Number(mes.i_youtube_users  || 0);
+                ///totalGOOGLE
+                acumulador.usuariosTotalesGoogle =
+                (acumulador.usuariosTotalesGoogle || 0) +
+                Number(mes.i_dv360_users || 0);
+                ///totalImpresionesGOOGLE
+                acumulador.impresionesTotalesGoogle =
+                (acumulador.impresionesTotalesGoogle || 0) +
+                Number(mes.i_dv360_impressions || 0) +
+                Number(mes.i_search_impressions || 0);
+                ///totalImpresionesRRSS
+                acumulador.impresionesTotalesRRSS =
+                (acumulador.impresionesTotalesRRSS || 0) +
+                Number(mes.i_facebook_impressions || 0) +
+                Number(mes.i_instagram_impressions || 0) +
+                Number(mes.i_youtube_impressions || 0)
+                ///🔥 NUEVO → impresiones RRSS por mes
+                acumulador.impresionesRRSSPorMes = [
+                    ...(acumulador.impresionesRRSSPorMes || []),
+                    Number(mes.i_facebook_impressions || 0) +
+                    Number(mes.i_instagram_impressions || 0) +
+                    Number(mes.i_youtube_impressions || 0)
+                ];
+
+                ///🔥 NUEVO → impresiones Google por mes
+                acumulador.impresionesGooglePorMes = [
+                    ...(acumulador.impresionesGooglePorMes || []),
+                    Number(mes.i_dv360_impressions || 0) +
+                    Number(mes.i_search_impressions || 0)
+                ];
+
+                ///GOGGOLE user (acumulado)
+                const ultimoGoogle = acumulador.usuariosGooglePorMes?.at(-1) || 0;
+
+                acumulador.usuariosGooglePorMes = [
+                ...(acumulador.usuariosGooglePorMes || []),
+                ultimoGoogle + Number(mes.i_dv360_users || 0)
+                ];
+                ///usuariosMetaPorMes (acumulado)
+                const ultimoMeta = acumulador.usuariosMetaPorMes?.at(-1) || 0;
+
+                acumulador.usuariosMetaPorMes = [
+                ...(acumulador.usuariosMetaPorMes || []),
+                ultimoMeta +
                     Number(mes.i_instagram_users || 0) +
                     Number(mes.i_youtube_users || 0) +
                     Number(mes.i_facebook_users || 0)
-                    ];
-                    ///totalMetaPorGoogle
-                    acumulador.usuariosGooglePorMes = [
-                    ...(acumulador.usuariosGooglePorMes || []),
-                    Number(mes.i_dv360_users || 0)
-                    ];
-                    ///meses
-                    acumulador.f_dato = [
-                    ...(acumulador.f_dato|| []),
-                    mes.f_dato
-                    ];
-                    
-    
-                    return acumulador;
-                }, {})
-                );
-            }
-            }, [resumenNota]);
+                ];
+                ///meses
+                acumulador.f_dato = [
+                ...(acumulador.f_dato|| []),
+                mes.f_dato
+                ];
+                
+
+                return acumulador;
+            }, {})
+            );
+        }
+        }, [resumenNota]);
+
+    useEffect(() => {
+        console.log('totales: ', totales)
+    },[totales])
+
+    const datos = {
+    labels: totales.f_dato,
+    line1: {
+        label: `Usuarios Google \n ${totales.usuariosTotalesGoogle}`,
+        values: totales.usuariosGooglePorMes,
+    },  
+    line2: {
+        label: `Usuarios RRSS \n ${totales.usuariosTotalesRRSS}`,
+        values: totales.usuariosMetaPorMes,
+    },
+    };
 
     useEffect(() => {
         axios.post(
@@ -112,27 +158,22 @@ const BarplotNota = ({id_noti, TOKEN, cliente, fpub, dataLocalNota, resumenNota 
     }, [fpub, cliente, TOKEN, id_noti]);
 
 
-    const usuariosPorMes = usuariosImpresionesNota.map(usuario => usuario.usuarios_total);
-    const ImpresionesPorMes = usuariosImpresionesNota.map(usuario => usuario.impresiones_total);
-    const labels = usuariosImpresionesNota.map(usuario => formatDate(usuario.periodo));
-
-    const totalUsuarios = usuariosPorMes.reduce((a, b) => a + b, 0);
-    const totalImpresiones = ImpresionesPorMes.reduce((a, b) => a + b, 0);
-
     const dataReal = {
-        labels: labels,
+        labels: totales.f_dato,
         datasets: [
             {
-                label: `Usuarios totales\n  ${totalUsuarios}`,
-                data: usuariosPorMes,
-                backgroundColor: '#2029FF',
+                label: `impresiones google \n  ${totales.usuariosTotalesGoogle}`,
+                data: totales.impresionesGooglePorMes,
+                backgroundColor: '#34A853',
+
+
                 barPercentage: 1.0,
                 categoryPercentage: 0.7,
             },
             {
-                label: `Impresiones totales\n ${totalImpresiones}`,
-                data: ImpresionesPorMes,
-                backgroundColor: '#666CFF',
+                label: `impresiones RRSS \n ${totales.usuariosTotalesRRSS}`,
+                data: totales.impresionesRRSSPorMes,
+                backgroundColor: '#1877F2',
                 barPercentage: 1.0,
                 categoryPercentage: 0.7,
             },
@@ -194,23 +235,30 @@ const BarplotNota = ({id_noti, TOKEN, cliente, fpub, dataLocalNota, resumenNota 
             <div className="row cantidades mt-3 back-white">
             <div className='col-2 barra_lateral'>
                 <p className='leyenda_barplot'>
-                    <span className="blue-dot-user"></span> Usuarios totales
+                    <span className="blue-dot-user"></span> Impresiones Google
                     <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "aca va el texto"/>  
                 </p>
-                <p className='totales'>{formatNumberMiles(totalUsuarios)}</p>
+                <p className='totales'>{formatNumberMiles(totales.impresionesTotalesGoogle)}</p>
             </div>
                 <div className='col' style={{ paddingLeft: '20px' }}>
                     <p className='leyenda_barplot'>
-                        <span className="blue-dot-impresiones"></span>Impresiones totales
+                        <span className="blue-dot-impresiones"></span>Impresiones Redes
                         <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "aca va el texto"/>  
                     </p>
-                    <p className='totales'>{formatNumberMiles(totalImpresiones)}</p>
+                    <p className='totales'>{formatNumberMiles(totales.impresionesTotalesRRSS)}</p>
                 </div>
             </div>
             <div className="row back-white">
                 <div className="col barplot">
                     <div style={{ height: '100%' }}>
                         <Bar data={dataReal} options={optionsReal} />
+                    </div>
+                </div>
+            </div>
+            <div className="row back-white">
+                <div className="col barplot">
+                    <div style={{ height: '100%', width: 'auto' }}>
+                        <LineChartTwoLines data={datos} ></LineChartTwoLines>
                     </div>
                 </div>
             </div>

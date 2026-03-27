@@ -64,7 +64,7 @@ const MediosMasRelevantesNotas = ({ id_noti, TOKEN, cliente, fpub, dataLocalNota
     const todosLosMediosSinRepetir = Object.values(reduceByKeyMedios(mediosNota));
     const listaTresMedios = todosLosMediosSinRepetir
         .sort((medioA, medioB) => medioB.impresiones - medioA.impresiones)
-        .slice(0, 4);
+        .slice(0, 5);
 
     const renderMedio = (medio, index) => (
         <div key={index} className={`row medioRowNota`}>
@@ -85,7 +85,7 @@ const MediosMasRelevantesNotas = ({ id_noti, TOKEN, cliente, fpub, dataLocalNota
 
     return (
         <div className="">
-            <div className='row'>
+            <div className='row pt-0'>
                 <p id="titulo_relevantes">
                     Medios más relevantes
                     <img src="/images/help-circle.png" alt="Descripción" className="info-icon no-print" title="aca va el texto" />

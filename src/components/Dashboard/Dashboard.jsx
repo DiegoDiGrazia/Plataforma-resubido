@@ -42,10 +42,10 @@ const Dashboard = () => {
     const cliente_id = useSelector((state) => state.formulario.id_cliente);
     const token = useSelector((state) => state.formulario.token);
     const [resumenCliente, setResumenCliente] = useState([])
+    const [loadingUsuarios, setLoadingUsuarios] = useState(false)
     const FiltroActual = useSelector((state) => state.dashboard.filtro);
     const [datosLocalmente, setDatosLocalmente] = useState(null); 
     const componenteRef = useRef(null);
-    const [loadingUsuarios, setLoadingUsuarios] = useState(false)
     const handleClickFiltro = (nuevoFiltro) => {
         dispatch(setFiltro(nuevoFiltro));
     };
