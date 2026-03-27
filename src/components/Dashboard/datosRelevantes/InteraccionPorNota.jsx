@@ -105,12 +105,12 @@ const InteraccionPorNota = ({datosLocales}) => {
             </div>
             {listaTresNotas.map((nota, index) => (
                 <div className='row seccionInteracciones pt-1' key={index}>
-                    <div className='col-auto mr-2'>
+                    <div className='col-1 mr-2'>
                         <img src={seleccionarUrlImagenDeUnaNota(nota.imagen)} alt="Icono" className='imagenWidwetInteracciones2' />
                     </div>
-                    <div className='col-auto pt-1'>
+                    <div className='col-8 pt-1'>
                         <Link className="link-sin-estilos" to={`/verNota`} state={{ id: nota.id_noti ? nota.id_noti : nota.term_id, notaABM: nota }}>
-                            <div className='row p-0 nombre_plataforma'>{formatearTitulo(nota.titulo)}</div>
+                            <div className='row p-0 nombre_plataforma'>{nota.titulo}</div>
                         </Link>
                         <div className='row p-0'>
                             <p className='linkPlataforma'>{formatearFecha(nota.f_pub)}</p>

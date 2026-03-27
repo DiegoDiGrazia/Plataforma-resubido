@@ -25,6 +25,7 @@ import { setFechas } from '../../redux/barplotSlice.js';
 import { formatDate } from '../barplot/Barplot.jsx';
 import { setClienteNota } from '../../redux/crearNotaSlice.js';
 import { traerDatosLocalmente } from '../../utils/buscarEnLocal.js';
+import { obtenerResumenDashboardCliente } from '../administrador/gestores/apisUsuarios.jsx';
 
 export function formatNumberMiles(num) {
     if (num === null || num === undefined || num === "") {
@@ -38,9 +39,13 @@ const Dashboard = () => {
     const dispatch = useDispatch();
     const es_editor = useSelector((state) => state.formulario.es_editor);
     const nombreCliente = useSelector((state) => state.formulario.cliente);
+    const cliente_id = useSelector((state) => state.formulario.id_cliente);
+    const token = useSelector((state) => state.formulario.token);
+    const [resumenCliente, setResumenCliente] = useState([])
     const FiltroActual = useSelector((state) => state.dashboard.filtro);
     const [datosLocalmente, setDatosLocalmente] = useState(null); 
     const componenteRef = useRef(null);
+    const [loadingUsuarios, setLoadingUsuarios] = useState(false)
     const handleClickFiltro = (nuevoFiltro) => {
         dispatch(setFiltro(nuevoFiltro));
     };
@@ -69,6 +74,23 @@ const Dashboard = () => {
     const handlePrint = () => {
         window.print();
     };
+
+    useEffect(() => {
+    setLoadingUsuarios(true);
+
+    obtenerResumenDashboardCliente(token, cliente_id)
+        .then((res) => {
+            setResumenCliente(res);
+        })
+        .catch((err) => {
+            console.error(err);
+        })
+        .finally(() => {
+            setLoadingUsuarios(false);
+        });
+
+    }, [token, cliente_id]);
+
 
     useEffect(() => { 
         const fecha = new Date();
@@ -125,7 +147,7 @@ const Dashboard = () => {
                                             <button className="dropdown-item" onClick={() => handleClickFiltro("Ultimos 6 meses")}>Últimos 6 meses</button>
                                         </li>
                                         <li key="opcion3c">
-                                            <button className="dropdown-item" onClick={() => handleClickFiltro("Ultimo año")}>Último año</button>
+                                            <button className="dropdown-item" onClick={() => handleClickFiltro("Ultimo año")}>Últimos 12 meses</button>
                                         </li>
                                     </ul>
                                 </div>
@@ -143,7 +165,7 @@ const Dashboard = () => {
                             </span>
                         </div>
                         <div className="mb-2 tamaño_barplot">
-                            <Barplot datosLocales={datosLocalmente}/>
+                            <Barplot datosLocales={datosLocalmente} resumenCliente = {resumenCliente} loading ={loadingUsuarios}/>
                         </div>
                         <div className= "tops">
                             <div className='row g-1'>
@@ -156,7 +178,7 @@ const Dashboard = () => {
                             </div>
                             <div className='row g-1'>
                                 <div className='col-lg-12 col-xl col-6 m-2 back-white'>
-                                    <PlataformaMasImpresiones/>
+                                    <PlataformaMasImpresiones resumenCliente = {resumenCliente} loading ={loadingUsuarios}/>
                                 </div>
                                 <div className='col-lg-12 col-xl col-6 m-2 back-white'>
                                     <CategoriasMasRelevantes datosLocales={datosLocalmente}/>

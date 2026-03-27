@@ -32,11 +32,53 @@ const RUTA = "http://localhost:4000/"
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const BarplotNota = ({id_noti, TOKEN, cliente, fpub, dataLocalNota}) => {
+const BarplotNota = ({id_noti, TOKEN, cliente, fpub, dataLocalNota, resumenNota = null}) => {
 
     console.log("LOCAL DATA NOTA", dataLocalNota)
     const [loading, setLoading] = useState(true); // Estado de carga
     const [usuariosImpresionesNota, setUsuariosImpresionesNota] = useState([]); // Estado de carga
+
+        const [totales, setTotales] = useState({})
+    
+        useEffect(() => {
+            if (resumenNota) {
+                setTotales(
+                resumenNota.reduce((acumulador, mes) => {
+                    ///totalRRSS
+                    acumulador.usuariosTotalesRRSS =
+                    (acumulador.usuariosTotalesRRSS || 0) +
+                    Number(mes.i_instagram_users || 0) +
+                    Number(mes.i_facebook_users || 0) +
+                    Number(mes.i_youtube_users  || 0);
+                    ///totalGOOGLE
+                    acumulador.usuariosTotalesGoogle =
+                    (acumulador.usuariosTotalesGoogle || 0) +
+                    Number(mes.i_dv360_users || 0);
+                    ///totalMetaPorMes
+    
+                    acumulador.usuariosMetaPorMes = [
+                    ...(acumulador.usuariosMetaPorMes || []),
+                    Number(mes.i_instagram_users || 0) +
+                    Number(mes.i_youtube_users || 0) +
+                    Number(mes.i_facebook_users || 0)
+                    ];
+                    ///totalMetaPorGoogle
+                    acumulador.usuariosGooglePorMes = [
+                    ...(acumulador.usuariosGooglePorMes || []),
+                    Number(mes.i_dv360_users || 0)
+                    ];
+                    ///meses
+                    acumulador.f_dato = [
+                    ...(acumulador.f_dato|| []),
+                    mes.f_dato
+                    ];
+                    
+    
+                    return acumulador;
+                }, {})
+                );
+            }
+            }, [resumenNota]);
 
     useEffect(() => {
         axios.post(

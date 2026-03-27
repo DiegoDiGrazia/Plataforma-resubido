@@ -42,6 +42,7 @@ const MediosMasRelevantes = ({datosLocales}) => {
     const FiltroActual = useSelector((state) => state.dashboard.filtro);
     let cantidad_meses = seleccionPorFiltro(FiltroActual);
     const ultimaFechaCargadaBarplot = useSelector((state) => state.barplot.ultimaFechaCargadaBarplot);
+    const CANTIDAD_MEDIOS_A_MOSTRAR = 5
     console.log("datos adentro de medios", datosLocales)
 
     let periodos = periodos_api.split(",");
@@ -85,7 +86,7 @@ const MediosMasRelevantes = ({datosLocales}) => {
         todas_los_medios.push(...mes.medios);
     }
     const todos_los_medios_sin_repetir = Object.values(reduceBykeyMedios(todas_los_medios));
-    const listaTresMedios = todos_los_medios_sin_repetir.sort((medioA, medioB) => Number(medioB.impresiones) - Number(medioA.impresiones)).slice(0, 3);
+    const listaTresMedios = todos_los_medios_sin_repetir.sort((medioA, medioB) => Number(medioB.impresiones) - Number(medioA.impresiones)).slice(0, CANTIDAD_MEDIOS_A_MOSTRAR);
     console.log(listaTresMedios);
 
     const renderMedio = (medio) => (

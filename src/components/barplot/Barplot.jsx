@@ -59,97 +59,69 @@ export function seleccionPorFiltro(filtro) {
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const Barplot = ({datosLocales}) => {
-    const dispatch = useDispatch();
-    const token = useSelector((state) => state.formulario.token);
-    const fechas = useSelector((state) => state.barplot.fechas);
+const Barplot = ({datosLocales, resumenCliente = null, loading = false}) => {
     const FiltroActual = useSelector((state) => state.dashboard.filtro);
-    const nombreCliente = useSelector((state) => state.formulario.cliente);
-    const navigate = useNavigate();
     const captureRef = useRef(null);  // Definir el ref para capturar la imagen
-
-    const [loading, setLoading] = useState(true); // Estado de carga
+    const [totales, setTotales] = useState({})
 
     useEffect(() => {
-        setLoading(true);
-        const fecha = new Date();
-        const diaMes = fecha.getDate();
-        dispatch(setultimaFechaCargadaBarplot(diaMes));
-        dispatch(setUltimoClienteCargadoBarplot(nombreCliente));
+        if (resumenCliente) {
+            const cantidad_meses = seleccionPorFiltro(FiltroActual);
+            setTotales(
+            resumenCliente.slice(cantidad_meses).reduce((acumulador, mes) => {
+                ///totalRRSS
+                acumulador.usuariosTotalesRRSS =
+                (acumulador.usuariosTotalesRRSS || 0) +
+                Number(mes.i_instagram_users || 0) +
+                Number(mes.i_facebook_users || 0) +
+                Number(mes.i_youtube_users  || 0);
+                ///totalGOOGLE
+                acumulador.usuariosTotalesGoogle =
+                (acumulador.usuariosTotalesGoogle || 0) +
+                Number(mes.i_dv360_users || 0);
+                ///totalMetaPorMes
 
-        axios.post(
-            "https://panel.serviciosd.com/app_obtener_usuarios",
-            {
-                cliente: nombreCliente,
-                periodos: periodoUltimoAnio(),
-                token: token
-            },
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            }
-        )
-        .then((response) => {
-            if (response.data.message === "Token Invalido") {
-                navigate("/");
-            }
-            if (response.data.status === "true") {
-                dispatch(resetBarplot());
-                let datos = datosLocales ? datosLocales.datosParaBarplot : response.data.item;
-                for (let datoMensual of datos) {
-                    dispatch(setUsuariosTotales(Number(datoMensual.usuarios_total)));
-                    dispatch(setUsuariosTotalesMeta(Number(datoMensual.usuarios_redes)));
-                    dispatch(setUsuariosTotalesGoogle(Number(datoMensual.usuarios_medios)));
-                    dispatch(setImpresionesTotalesInstagram(Number(datoMensual.impresiones_instagram)));
-                    dispatch(setImpresionesTotalesGoogle(Number(datoMensual.impresiones_busqueda)));
-                    dispatch(setImpresionesTotalesFacebook(Number(datoMensual.impresiones_facebook)));
-                    dispatch(setultimaFechaCargadaBarplot(fecha.getDate()));
-                    dispatch(setComentariosFacebook(Number(datoMensual.comentarios_facebook)));
-                    dispatch(setComentariosInstagram(Number(datoMensual.comentarios_instagram)));   
-                    dispatch(setCompartidosFacebook(Number(datoMensual.compartidos_facebook)));
-                    dispatch(setCompartidosInstagram(Number(datoMensual.compartidos_instagram)));
-                    dispatch(setLikesFacebook(Number(datoMensual.likes_facebook)));
-                    dispatch(setLikesInstagram(Number(datoMensual.likes_instagram)));
-                    dispatch(setReaccionesFacebook(Number(datoMensual.reacciones_facebook)));
-                    dispatch(setReaccionesInstagram(Number(datoMensual.reacciones_instagram)));
-                    dispatch(setBusquedaClicks(Number(datoMensual.busqueda_clicks)));
-                }
-            } else {
-                console.error('Error en la respuesta de la API:', response.data.message);
-            }
-        })
-        .catch((error) => {
-            console.error('Error al hacer la solicitud:', error);
-        })
-        .finally(() => {
-            setLoading(false);
-        });
+                acumulador.usuariosMetaPorMes = [
+                ...(acumulador.usuariosMetaPorMes || []),
+                Number(mes.i_instagram_users || 0) +
+                Number(mes.i_youtube_users || 0) +
+                Number(mes.i_facebook_users || 0)
+                ];
+                ///totalMetaPorGoogle
+                acumulador.usuariosGooglePorMes = [
+                ...(acumulador.usuariosGooglePorMes || []),
+                Number(mes.i_dv360_users || 0)
+                ];
+                ///meses
+                acumulador.meses = [
+                ...(acumulador.meses|| []),
+                mes.month
+                ];
+                
 
-        ; // Limpia el intervalo si el componente se desmonta
-    }, [nombreCliente]);
+                return acumulador;
+            }, {})
+            );
+        }
+        }, [resumenCliente, FiltroActual]);
 
-    // Aquí están tus datos reales
-    let cantidad_meses = seleccionPorFiltro(FiltroActual);
-    const usuariosPorMesmeta = (useSelector((state) => state.barplot.usuariosTotalesMeta)).slice(cantidad_meses);
-    const usuariosPorMesgoogle = (useSelector((state) => state.barplot.usuariosTotalesGoogle)).slice(cantidad_meses);
-
-    const totalUsuariosMeta = usuariosPorMesmeta.reduce((a, b) => a + b, 0);
-    const totalUsuariosGoogle = usuariosPorMesgoogle.reduce((a, b) => a + b, 0);
+    useEffect(() => {
+        console.log('totales en barplot:', totales)
+    }, [totales])
 
     const dataReal = {
-        labels: fechas.slice(cantidad_meses),
+        labels: totales.meses,
         datasets: [
             {
-                label: `Usuarios totales\n  ${totalUsuariosMeta}`,
-                data: usuariosPorMesmeta,
+                label: `Usuarios totales`,
+                data: totales.usuariosMetaPorMes,
                 backgroundColor: '#2029FF',
                 barPercentage: 1.0,
                 categoryPercentage: 0.7,
             },
             {
-                label: `Impresiones totales\n ${totalUsuariosGoogle}`,
-                data: usuariosPorMesgoogle,
+                label: `Impresiones totales`,
+                data: totales.usuariosGooglePorMes,
                 backgroundColor: '#666CFF',
                 barPercentage: 1.0,
                 categoryPercentage: 0.7,
@@ -199,13 +171,11 @@ const Barplot = ({datosLocales}) => {
         },
     };
 
-    // Mostrar gráfico de barras animado mientras carga
     if (loading) {
         return (
             <Barplot_Carga />)
     }
     
-    // Mostrar el gráfico real una vez cargados los datos
     return (
         <div className="container-fluid sinPadding" ref={captureRef}>
             <div className="row cantidades mt-3 back-white">
@@ -214,14 +184,14 @@ const Barplot = ({datosLocales}) => {
                         <span className="blue-dot-user"></span> Usuarios Redes Sociales
                         <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "Son las personas que llegaron a tus notas desde nuestra difusión en redes sociales."/>  
                     </p>
-                    <p className='totales'>{formatNumberMiles(totalUsuariosMeta)}</p>
+                    <p className='totales'>{formatNumberMiles(totales.usuariosTotalesRRSS)}</p>
                 </div>
                 <div className='col' style={{ paddingLeft: '20px' }}>
                     <p className='leyenda_barplot'>
                         <span className="blue-dot-impresiones"></span>Usuarios Medios
                         <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "Son las personas que llegaron a tus notas desde nuestra difusión en otros medios de noticias."/>  
                     </p>
-                    <p className='totales'>{formatNumberMiles(totalUsuariosGoogle)}</p>
+                    <p className='totales'>{formatNumberMiles(totales.usuariosTotalesGoogle)}</p>
                 </div>
             </div>
             <div className="row back-white">

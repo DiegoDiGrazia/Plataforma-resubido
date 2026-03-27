@@ -4,63 +4,112 @@ import "./InteraccionPorNota.css";
 import { useSelector } from 'react-redux';
 import { seleccionPorFiltro } from '../../barplot/Barplot';
 import { formatNumberMiles } from '../Dashboard';
+import { useMemo } from 'react';
 
-const PlataformaMasImpresiones = ({datosLocales}) => {
-        const [openIndex, setOpenIndex] = useState(null); // Estado del acordeón
-    const toggle = (index) => {
-        setOpenIndex(openIndex === index ? null : index);
+const CAMPOS_METRICAS = [
+    "i_facebook_clicks",
+    "i_facebook_reaction_like",
+    "i_facebook_comments",
+    "i_facebook_shared",
+    'i_facebook_impressions',
+    "i_instagram_clicks",
+    "i_instagram_reaction_like",
+    "i_instagram_comments",
+    "i_instagram_shared",
+    'i_instagram_impressions',
+    'i_dv360_clicks',
+    'i_dv360_impressions',
+    'i_search_clicks',
+    'i_search_impressions',
+    "i_youtube_clicks",
+    "i_youtube_like",
+    "i_youtube_comments",
+    "i_youtube_shared",
+    'i_youtube_impressions',
+    
+
+];
+
+const PlataformaMasImpresiones = ({datosLocales, resumenCliente= null, loading = false}) => {
+    const FiltroActual = useSelector((state) => state.dashboard.filtro);
+
+    const sumarCampos = (data, campos) => {
+    return data.reduce((acc, item) => {
+        campos.forEach(campo => {
+            acc[campo] += Number(item[campo] || 0);
+        });
+        return acc;
+    }, Object.fromEntries(campos.map(c => [c, 0])));
     };
 
-    const FiltroActual = useSelector((state) => state.dashboard.filtro);
-    let cantidad_meses = seleccionPorFiltro(FiltroActual);
+    const totalesInteracciones = useMemo(() => {
+        if (!resumenCliente) return null;
 
-    // Obtén todo el slice barplot de Redux una sola vez
-    const barplot = useSelector((state) => state.barplot);
+        const cantidad_meses = seleccionPorFiltro(FiltroActual);
 
-    const sumArray = (arr) => arr.reduce((a, b) => a + b, 0);
+        const dataFiltrada = resumenCliente.slice(cantidad_meses);
 
-    // Helper para cortar arrays
-    const sliceArr = (arr, cantidad_meses) =>
-        Array.isArray(arr) ? arr.slice(cantidad_meses) : [];
+        return sumarCampos(dataFiltrada, CAMPOS_METRICAS);
+
+    }, [resumenCliente, FiltroActual]);
 
     const plataformasData = [
         {
             nombre: 'Facebook',
             logo: '/images/logoFB.png',
-            impresiones: sumArray(sliceArr(barplot.impresionesTotalesFacebook, cantidad_meses)),
-            comentarios: sumArray(sliceArr(barplot.comentarios_facebook, cantidad_meses)),
-            meGusta: sumArray(sliceArr(barplot.likes_facebook, cantidad_meses)),
-            clicks: sumArray(sliceArr(barplot.reacciones_facebook, cantidad_meses)),
-            compartido: sumArray(sliceArr(barplot.compartidos_facebook, cantidad_meses))
+            impresiones: totalesInteracciones.i_facebook_impressions,
+            comentarios: totalesInteracciones.i_facebook_comments,
+            meGusta: totalesInteracciones.i_facebook_reaction_like,
+            clicks: totalesInteracciones.i_facebook_clicks,
+            compartido: totalesInteracciones.i_facebook_shared,
         },
         {
             nombre: 'Instagram',
             logo: '/images/logo_ig.png',
-            impresiones: sumArray(sliceArr(barplot.impresionesTotalesInstagram, cantidad_meses)),
-            comentarios: sumArray(sliceArr(barplot.comentarios_instagram, cantidad_meses)),
-            meGusta: sumArray(sliceArr(barplot.likes_instagram, cantidad_meses)),
-            clicks: sumArray(sliceArr(barplot.reacciones_instagram, cantidad_meses)),
-            compartido: sumArray(sliceArr(barplot.compartidos_instagram, cantidad_meses))
+            impresiones: totalesInteracciones.i_instagram_impressions,
+            comentarios: totalesInteracciones.i_instagram_comments,
+            meGusta: totalesInteracciones.i_instagram_reaction_like,
+            clicks: totalesInteracciones.i_instagram_clicks,
+            compartido: totalesInteracciones.i_instagram_shared,
         },
         {
-            nombre: 'Google',
+            nombre: 'Search',
             logo: '/images/logo_google.png',
-            impresiones: sumArray(sliceArr(barplot.impresionesTotalesGoogle, cantidad_meses)),
+            impresiones: totalesInteracciones.i_search_impressions,
             comentarios: 0,
             meGusta: 0,
-            clicks: sumArray(sliceArr(barplot.busqueda_clicks, cantidad_meses)),
+            clicks: totalesInteracciones.i_search_clicks,
             compartido: 0
+        },
+        {
+            nombre: 'DV360',
+            logo: '/images/dv360.png',
+            impresiones: totalesInteracciones.i_dv360_impressions,
+            comentarios: 0,
+            meGusta: 0,
+            clicks: totalesInteracciones.i_dv360_clicks,
+            compartido: 0
+        },
+        {
+            nombre: 'YOUTUBE',
+            logo: '/images/youtube.png',
+            impresiones: totalesInteracciones.i_youtube_impressions,
+            comentarios: totalesInteracciones.i_youtube_comments,
+            meGusta: totalesInteracciones.i_youtube_like,
+            clicks: totalesInteracciones.i_youtube_clicks,
+            compartido: totalesInteracciones.i_youtube_shared,
         }
     ];
 
     const plataformasConDatos = plataformasData.filter(p =>
         p.impresiones != 0
     );
+
     console.log("Plataformas con datos:", plataformasConDatos);
 
     return (
         <div className="">
-            <div className='row '>
+            <div className='row pt-0'>
                 <p id="titulo_relevantes">Plataforma con más impresiones
                     <img src="/images/help-circle.png" alt="Descripción" className="info-icon no-print" title="aca va el texto"/>
                 </p>
@@ -69,10 +118,8 @@ const PlataformaMasImpresiones = ({datosLocales}) => {
                 {plataformasConDatos.map((plataforma, index) => (
                     <div className="accordion-item" key={index}>
                         <button
-                            className={`accordion-button ${openIndex === index ? '' : 'collapsed'}`}
+                            className="accordion-button pt-0 pb-0"
                             type="button"
-                            onClick={() => toggle(index)}
-                            aria-expanded={openIndex === index}
                         >
                             <div className='row pt-0 mb-2'>
                                 <div className='col-1'>
@@ -91,9 +138,10 @@ const PlataformaMasImpresiones = ({datosLocales}) => {
                                 </div>
                             </div>
                         </button>
-                        <div className={`accordion-collapse collapse ${openIndex === index ? 'show' : ''}`}>
+                        <div className={`accordion-collapse collapse show`}>
                             <div className="accordion-body pt-0">
-                                <div className='row'>
+                                <div className='row pt-0'>
+                                    {plataforma.comentarios != 0 &&
                                     <div className='col d-flex align-items-center'>
                                         <img src="/images/logoComentarios.png" alt="Comentarios" className='img-fluid me-2' />
                                         <div className='comentarios'>
@@ -101,6 +149,8 @@ const PlataformaMasImpresiones = ({datosLocales}) => {
                                             <span className='d-block'>{plataforma.comentarios}</span>
                                         </div>
                                     </div>
+                                    }
+                                    {plataforma.meGusta != 0 &&
                                     <div className='col d-flex align-items-center'>
                                         <img src="/images/logoMeGusta.png" alt="Me gusta" className='img-fluid me-2' />
                                         <div className='comentarios'>
@@ -108,6 +158,8 @@ const PlataformaMasImpresiones = ({datosLocales}) => {
                                             <span className='d-block'>{plataforma.meGusta}</span>
                                         </div>
                                     </div>
+                                    }
+                                    {plataforma.clicks != 0 &&
                                     <div className='col d-flex align-items-center'>
                                         <img src="/images/logoClicks.png" alt="Clicks" className='img-fluid me-2' />
                                         <div className='comentarios'>
@@ -115,6 +167,17 @@ const PlataformaMasImpresiones = ({datosLocales}) => {
                                             <span className='d-block'>{plataforma.clicks}</span>
                                         </div>
                                     </div>
+                                    }
+                                    {plataforma.clicks != 0 &&
+                                    <div className='col d-flex align-items-center'>
+                                        <img src="/images/logoClicks.png" alt="Clicks" className='img-fluid me-2' />
+                                        <div className='comentarios'>
+                                            <span className='d-block'>CTR</span>
+                                            <span className='d-block'>{(plataforma.clicks / plataforma.impresiones * 100).toFixed(2)}%</span>
+                                        </div>
+                                    </div>
+                                    }
+                                    {plataforma.compartido != 0 &&
                                     <div className='col d-flex align-items-center'>
                                         <img src="/images/logoCompartir.png" alt="Compartido" className='img-fluid me-2' />
                                         <div className='comentarios'>
@@ -122,6 +185,7 @@ const PlataformaMasImpresiones = ({datosLocales}) => {
                                             <span className='d-block'>{plataforma.compartido}</span>
                                         </div>
                                     </div>
+                                    }
                                 </div>
                             </div>
                         </div>

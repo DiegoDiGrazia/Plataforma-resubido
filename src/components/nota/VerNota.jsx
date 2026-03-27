@@ -18,6 +18,7 @@ import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { traerDatosDeNota } from '../../utils/buscarEnLocal';
 import "./nota_print.css"
+import { obtenerResumenDashboardNota } from '../administrador/gestores/apisUsuarios';
 export const RUTA = "http://localhost:4000/"
 const VerNota = () => {
 
@@ -28,11 +29,12 @@ const VerNota = () => {
     const [FPUB, setFPUB] = useState("");
     const { id_ruta } = useParams();
     const [dataLocalNota, setdataLocalNota] = useState(null);
-
+    const [resumenNota, setResumenNota] = useState([])
+    const [loadingUsuarios, setLoadingUsuarios] = useState(false)
+    
     ///ELEGIR UN ID
     const id_para_api= id_ruta ? id_ruta : id
-    console.log("ID DE LOCATION STATE: ", id, "ID_PARA_API: ", id_para_api)
-
+    const id_noti = id_para_api
     const es_demo = id_ruta ? true : false
     const TOKEN_ESTADO = useSelector((state) => state.formulario.token);
     const [TOKEN, setTOKEN] = useState(TOKEN_ESTADO)
@@ -44,13 +46,30 @@ const VerNota = () => {
         setdataLocalNota(data);
         });
     }, [id_para_api]);
+
+    useEffect(() => {
+        setLoadingUsuarios(true);
+    
+        obtenerResumenDashboardNota(TOKEN, id_noti)
+            .then((res) => {
+                setResumenNota(res);
+            })
+            .catch((err) => {
+                console.error(err);
+            })
+            .finally(() => {
+                setLoadingUsuarios(false);
+            });
+    
+        }, [TOKEN, id_noti]);
+
+        useEffect(() => { 
+            console.log('Resumen Nota:' , resumenNota)
+        }, [resumenNota]);
     
     useEffect(() => {
         // Evita ejecutar si el ID no está definido
         if (!id_para_api) return;
-    
-        // Lógica para obtener el token en modo demo
-            // Lógica para obtener los datos de la noticia
             axios.post("https://panel.serviciosd.com/app_obtener_noticia", {
                 token: TOKEN,
                 id_noti: id_para_api
@@ -78,17 +97,13 @@ const VerNota = () => {
     
     console.log(Nota)
 
-    const id_noti = id_para_api
+
 
     if(!Nota){
         return <div>Cargando...</div>
     }
     return (
-        // <div className="container-fluid  sinPadding">
-        //     <div className="d-flex h-100">
-        //         {!es_demo &&
-        //         <Sidebar estadoActual={"notas"} /> 
-        //         }
+
         <>
              {!cargando && 
                 <div className="content flex-grow-1">
@@ -153,7 +168,7 @@ const VerNota = () => {
                         <h5 id= "subtitulo_performance">Performance de la nota</h5>
                     </div>
                     <div className="mb-2 tamaño_barplot">
-                            { <BarplotNota id_noti={id_noti} TOKEN={TOKEN} cliente={CLIENTE} fpub={FPUB} dataLocalNota = {dataLocalNota?.usuarioDeNota}/> } 
+                            { <BarplotNota id_noti={id_noti} TOKEN={TOKEN} cliente={CLIENTE} fpub={FPUB} dataLocalNota = {dataLocalNota?.usuarioDeNota} resumenNota = {resumenNota}/> } 
                     </div>
                     <div className='row g-1 align-items-start'>
                         <div className='col-6 m-2 p-3 back-white'>
