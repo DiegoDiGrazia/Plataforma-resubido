@@ -67,11 +67,11 @@ export const clickearEnPublicarNota = async ({
                 comentarios: reemplazarComillasSimplePorDoble(comentario),
                 autor_cliente: datosUsuario.email,
                 con_distribucion: selectedOptionDistribucion,
-                distribucion: selectedOptionDistribucion === 'normal'
+                distribucion: selectedOptionDistribucion == 1
                     ? isCheckedDistribucionPrioritaria === '1'
-                        ? "prioritaria"
-                        : "normal"
-                    : "ninguna",
+                        ? "Prioritaria"
+                        : "Normal"
+                    : "Ninguna",
                 distribuicion_prioritaria: selectedOptionDistribucion == 1
                     ? isCheckedDistribucionPrioritaria == '1' || isCheckedDistribucionPrioritaria == 'Prioritaria'
                         ? "Prioritaria"
