@@ -13,6 +13,7 @@ import InputFecha from '../nota/Editorial/InputFecha';
 import BarraVolumen from './BarraVolumen';
 import BotonDistribuirNota from './BotonDistribuir';
 import { obtenerConsolidacionCliente } from '../administrador/gestores/apisUsuarios';
+import ArbolConSelectorMultiple from './ArbolConSelectorMultiple';
 
 export const formatearARS = (valor) => {
   if (valor === null || valor === undefined || isNaN(valor)) return "$ 0,00";
@@ -35,9 +36,9 @@ const canales = [
 
 const NotaFreemiumDistribucion
  = () => {
-  const [pais, setPais] = useState("");
-  const [provincia, setProvincia] = useState("");
-  const [municipio, setMunicipio] = useState("");
+  const [pais, setPais] = useState(null);
+  const [provinciasSeleccionadas, setProvincias] = useState([]);
+  const [municipiosSeleccionados, setMunicipios] = useState([]);
   const [clientes, setClientes] = useState([]);
   const [canalSelected, setCanalSelected] = useState(null);
   const [geo, setGeo] = useState([]);
@@ -85,23 +86,23 @@ useEffect(() => {
     return paisEncontrado ? paisEncontrado.pais_id : null;
   }
 
-useEffect(() => {
-    const fetchPrecio = async () => {
+// useEffect(() => {
+//     const fetchPrecio = async () => {
 
 
-        if(!pais) return; 
-        const precio = await obtenerPrecioUsuario(
-            TOKEN,
-            municipio ? 'municipio' : provincia ? 'provincia' : 'pais',
-            municipio ? municipio.municipio_id : provincia ? provincia.provincia_id : obtenerPaisId(geo.paises, pais.nombre),
-            id_cliente
-        );
+//         if(!pais) return; 
+//         const precio = await obtenerPrecioUsuario(
+//             TOKEN,
+//             municipio ? 'municipio' : provincia ? 'provincia' : 'pais',
+//             municipio ? municipio.municipio_id : provincia ? provincia.provincia_id : obtenerPaisId(geo.paises, pais.nombre),
+//             id_cliente
+//         );
 
-        setPrecioEstimado(precio);
-    };
+//         setPrecioEstimado(precio);
+//     };
 
-    fetchPrecio();
-}, [pais, provincia, municipio, respuestaDistribuirBoton]);
+//     fetchPrecio();
+// }, [pais, provincia, municipio, respuestaDistribuirBoton]);
 
 useEffect(() => {
     const fetchConsolidacionCliente = async () => {
@@ -119,65 +120,115 @@ useEffect(() => {
   const handleDistribuirClick = async () => {
   if (!TOKEN || !canalSelected || !notaFreemium?.term_id) return;
 
-  const usuarios = Math.floor(usuariosSeleccionados);
-  if (usuarios <= 0) return;
+  // const usuarios = Math.floor(usuariosSeleccionados);
+  // if (usuarios <= 0) return;
 
-  const id_noti = notaFreemium.term_id;
+  // const id_noti = notaFreemium.term_id;
 
-  let monto_dv360 = null;
-  let monto_meta = null;
+  // let monto_dv360 = null;
+  // let monto_meta = null;
 
-  if (canalSelected.id === "1") {
-    monto_dv360 = valorDv;
-  }
+  // if (canalSelected.id === "1") {
+  //   monto_dv360 = valorDv;
+  // }
 
-  if (canalSelected.id === "2") {
-    monto_meta = valorMeta;
-  }
+  // if (canalSelected.id === "2") {
+  //   monto_meta = valorMeta;
+  // }
 
-  if (canalSelected.id === "3") {
-    monto_dv360 = valorDv;
-    monto_meta = valorMeta;
-  }
+  // if (canalSelected.id === "3") {
+  //   monto_dv360 = valorDv;
+  //   monto_meta = valorMeta;
+  // }
 
-  try {
-    const item = await setComprarDistribucion(
-      TOKEN,
-      municipio ? 'municipio' : provincia ? 'provincia' : 'pais',
-      municipio ? municipio.municipio_id : provincia ? provincia.provincia_id : obtenerPaisId(geo.paises, pais.nombre),
-      id_usuario,
-      usuarios,
-      id_cliente,
-      id_noti,
-      monto_dv360,
-      monto_meta,
-      fecha_fin,
-      fecha_inicio,
-    );
+  // try {
+  //   const item = await setComprarDistribucion(
+  //     TOKEN,
+  //     municipio ? 'municipio' : provincia ? 'provincia' : 'pais',
+  //     municipio ? municipio.municipio_id : provincia ? provincia.provincia_id : obtenerPaisId(geo.paises, pais.nombre),
+  //     id_usuario,
+  //     usuarios,
+  //     id_cliente,
+  //     id_noti,
+  //     monto_dv360,
+  //     monto_meta,
+  //     fecha_fin,
+  //     fecha_inicio,
+  //   );
 
-    setRespuestaDistribuirBoton(item);
-  } catch (error) {
-    console.error("Error al distribuir la nota:", error);
-  }
+  //   setRespuestaDistribuirBoton(item);
+  // } catch (error) {
+  //   console.error("Error al distribuir la nota:", error);
+  // }
 };
 
 useEffect(() => {
     const poblacion = Number(precioEstimado?.poblacion) || 0;
-
     setValorMeta(Number(precioEstimado?.precio_por_usuario_meta || 0) * poblacion * porcentajeUsuarios / 100);
-
     setValorDv(Number(precioEstimado?.precio_por_usuario_dv360 || 0) * poblacion * porcentajeUsuarios / 100);
     setTotal(valorMeta + valorDv);
   }, [precioEstimado, porcentajeUsuarios]); 
+
   return (
     <div className="content flex-grow-1 crearNotaGlobal">
-      <div className='row miPerfilContainer soporteContainer d-flex align-items-stretch'>
-        <h3 id="saludo" className='headerTusNotas ml-0 mb-3 p-0'>
-          <img src="/images/prisma.png" alt="Icono 1" className="icon me-2 icono_tusNotas" /> 
-            {" Distribuye esta nota "}
-        </h3>
-        <h4>Credito disponible:
-                  {formatearARS(consolidacionCliente?.credito?.reduce((acc, item) => acc + Number(item.monto_mensual), 0))}</h4>
+      <div className='row d-flex align-items-stretch'>
+        <div className='col'>
+          <h3 id="saludo" className='headerTusNotas ml-0 mb-3 p-0 d-flex align-items-center'>
+            <img src="/images/prisma.png" alt="Icono 1" className="icon me-2 icono_tusNotas" /> 
+              {" ¿Como vas a distribuir tu nota? "}
+          </h3>
+        </div>
+        <div className="col d-flex flex-column align-items-end justify-content-center">
+  
+  <div style={{
+    background: "#fff",
+    padding: "12px 16px",
+    borderRadius: "10px",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+    textAlign: "center",
+    minWidth: "250px"
+  }}>
+    
+    <span style={{
+      fontSize: "13px",
+      color: "#5F6368"
+    }}>
+      Crédito disponible
+    </span>
+
+    <h3 style={{
+      margin: "5px 0",
+      fontWeight: "bold",
+      color: "#202124"
+    }}>
+      {formatearARS(
+        consolidacionCliente?.credito?.reduce(
+          (acc, item) => acc + Number(item.monto_mensual), 
+          0
+        )
+      )}
+    </h3>
+
+    <a
+      target="_blank"
+      rel="noreferrer"
+      href={`https://noticiasd.mitiendanube.com/autogestion/?cliente_id=${id_cliente}`}
+      style={{
+        fontSize: "14px",
+        color: "#34A853",
+        textDecoration: "none",
+        fontWeight: "500"
+      }}
+    >
+      Recargar crédito →
+    </a>
+
+  </div>
+
+</div>
+
+        </div>
+        <div className='row miPerfilContainer soporteContainer mt-0 d-flex align-items-stretch'>
         <div className='col-4 p-0 me-3 align-self-center'>
           <img 
             src={'https://panel.serviciosd.com/img' + notaFreemium.imagen_principal } 
@@ -195,15 +246,15 @@ useEffect(() => {
       {/* Búsqueda */}
       <div className='row miPerfilContainer soporteContainer mt-4 p-0 mb-3'>
           <div className='col-6'>
-          <ArbolDistribucion
-            TOKEN={TOKEN}
-            pais={pais}
-            provincia={provincia}
-            municipio={municipio}
-            onSetPais={(p) => setPais(p)}
-            onSetProvincia={(p) => setProvincia(p)}
-            onSetMunicipio={(m) => setMunicipio(m)}
-          />
+              <ArbolConSelectorMultiple
+                TOKEN={TOKEN}
+                pais={pais}
+                provinciasSeleccionadas={provinciasSeleccionadas}
+                municipiosSeleccionados={municipiosSeleccionados}
+                onSetPais={setPais}
+                onSetProvincias={setProvincias}
+                onSetMunicipios={setMunicipios}
+              />
               <div>
                 <h3>Cantidad de usuarios</h3>
                 <BarraVolumen valor={porcentajeUsuarios} setValor={setPorcentajeUsuarios}

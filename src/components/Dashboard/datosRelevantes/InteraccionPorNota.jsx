@@ -26,7 +26,8 @@ function reemplazarUrl(url) {
 }
 
 function seleccionarUrlImagenDeUnaNota(url) {
-    if (url.includes("www.noticiasd.com/wp-content")) 
+
+    if (url?.includes("www.noticiasd.com/wp-content")) 
         return url;
 
     return "https://static.noticiasd.com/img/" + url;
