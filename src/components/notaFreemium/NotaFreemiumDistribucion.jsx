@@ -14,6 +14,8 @@ import BarraVolumen from './BarraVolumen';
 import BotonDistribuirNota from './BotonDistribuir';
 import { obtenerConsolidacionCliente } from '../administrador/gestores/apisUsuarios';
 import ArbolConSelectorMultiple from './ArbolConSelectorMultiple';
+import { use } from 'react';
+import SelectorConBuscadorMult from './SelectorConBuscadorMult';
 
 export const formatearARS = (valor) => {
   if (valor === null || valor === undefined || isNaN(valor)) return "$ 0,00";
@@ -29,7 +31,6 @@ export const formatearARS = (valor) => {
 const canales = [
   {'id': "1", 'nombre': "DV360"},
   {'id': "2", 'nombre': "META"},
-  {'id': "3", 'nombre': "AMBOS"},
 
 ];
 
@@ -40,7 +41,7 @@ const NotaFreemiumDistribucion
   const [provinciasSeleccionadas, setProvincias] = useState([]);
   const [municipiosSeleccionados, setMunicipios] = useState([]);
   const [clientes, setClientes] = useState([]);
-  const [canalSelected, setCanalSelected] = useState(null);
+  const [canalesSeleccionados, setCanalesSeleccionados] = useState(canales);
   const [geo, setGeo] = useState([]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -50,8 +51,15 @@ const NotaFreemiumDistribucion
   const [precioEstimado, setPrecioEstimado] = useState(0);
   const id_cliente = useSelector((state) => state.formulario.id_cliente);
   const id_usuario = useSelector((state) => state.formulario.usuario.id);
-  const [fecha_inicio, setFechaInicio] = useState(null);
-  const [fecha_fin, setFechaFin] = useState(null);
+
+  const hoy = new Date();
+  const fechaInicio = hoy.toISOString().split('T')[0];
+  const fechaMas30 = new Date();
+  fechaMas30.setDate(fechaMas30.getDate() + 30);
+  const fechaFin = fechaMas30.toISOString().split('T')[0];
+  const [fecha_inicio, setFechaInicio] = useState(fechaInicio);
+  const [fecha_fin, setFechaFin] = useState(fechaFin);
+
   const [porcentajeUsuarios, setPorcentajeUsuarios] = useState(20);
   const [consolidacionCliente, setConsolidacionCliente] = useState(null);
   const [usuariosSeleccionados, setUsuariosSeleccionados] = useState(0);
@@ -86,23 +94,25 @@ useEffect(() => {
     return paisEncontrado ? paisEncontrado.pais_id : null;
   }
 
-// useEffect(() => {
-//     const fetchPrecio = async () => {
+useEffect(() => {
+    const fetchPrecio = async () => {
 
 
-//         if(!pais) return; 
-//         const precio = await obtenerPrecioUsuario(
-//             TOKEN,
-//             municipio ? 'municipio' : provincia ? 'provincia' : 'pais',
-//             municipio ? municipio.municipio_id : provincia ? provincia.provincia_id : obtenerPaisId(geo.paises, pais.nombre),
-//             id_cliente
-//         );
+        if(!pais) return; 
+        const precio = await obtenerPrecioUsuario(
+            TOKEN,
+            municipiosSeleccionados.length == 1 ? 'municipio' : provinciasSeleccionadas.length == 1 ? 'provincia' : 'pais',
+            municipiosSeleccionados.length == 1 ? 
+                municipiosSeleccionados[0].municipio_id : provinciasSeleccionadas.length == 1 ? 
+                provinciasSeleccionadas[0].provincia_id : obtenerPaisId(geo.paises, pais.nombre),
+            id_cliente
+        );
 
-//         setPrecioEstimado(precio);
-//     };
+        setPrecioEstimado(precio);
+    };
 
-//     fetchPrecio();
-// }, [pais, provincia, municipio, respuestaDistribuirBoton]);
+    fetchPrecio();
+}, [pais, provinciasSeleccionadas, municipiosSeleccionados, respuestaDistribuirBoton]);
 
 useEffect(() => {
     const fetchConsolidacionCliente = async () => {
@@ -117,49 +127,63 @@ useEffect(() => {
     fetchConsolidacionCliente();
 }, [id_cliente]);
 
+  const comentariosLocalidades = useMemo(() => {
+  if (municipiosSeleccionados.length > 0) {
+    return `Distribuir en los municipios: ${municipiosSeleccionados.map(m => m.nombre).join(', ')}`;
+  } else if (provinciasSeleccionadas.length > 0) {
+    return `Distribuir en las provincias: ${provinciasSeleccionadas.map(p => p.nombre).join(', ')}`;
+  }
+  return "";
+}, [municipiosSeleccionados, provinciasSeleccionadas]);
+
+  
+
   const handleDistribuirClick = async () => {
   if (!TOKEN || !canalSelected || !notaFreemium?.term_id) return;
 
-  // const usuarios = Math.floor(usuariosSeleccionados);
-  // if (usuarios <= 0) return;
+  const usuarios = Math.floor(usuariosSeleccionados);
+  if (usuarios <= 0) return;
 
-  // const id_noti = notaFreemium.term_id;
+  const id_noti = notaFreemium.term_id;
 
-  // let monto_dv360 = null;
-  // let monto_meta = null;
+  let monto_dv360 = null;
+  let monto_meta = null;
 
-  // if (canalSelected.id === "1") {
-  //   monto_dv360 = valorDv;
-  // }
+  if (canalSelected.id === "1") {
+    monto_dv360 = valorDv;
+  }
 
-  // if (canalSelected.id === "2") {
-  //   monto_meta = valorMeta;
-  // }
+  if (canalSelected.id === "2") {
+    monto_meta = valorMeta;
+  }
 
-  // if (canalSelected.id === "3") {
-  //   monto_dv360 = valorDv;
-  //   monto_meta = valorMeta;
-  // }
+  if (canalSelected.id === "3") {
+    monto_dv360 = valorDv;
+    monto_meta = valorMeta;
+  }
 
-  // try {
-  //   const item = await setComprarDistribucion(
-  //     TOKEN,
-  //     municipio ? 'municipio' : provincia ? 'provincia' : 'pais',
-  //     municipio ? municipio.municipio_id : provincia ? provincia.provincia_id : obtenerPaisId(geo.paises, pais.nombre),
-  //     id_usuario,
-  //     usuarios,
-  //     id_cliente,
-  //     id_noti,
-  //     monto_dv360,
-  //     monto_meta,
-  //     fecha_fin,
-  //     fecha_inicio,
-  //   );
+    try {
+      const item = await setComprarDistribucion(
+        TOKEN,
+        municipiosSeleccionados.length == 1 ? 'municipio' : provinciasSeleccionadas.length == 1 ? 'provincia' : 'pais',
+        municipiosSeleccionados.length == 1 ? 
+            municipiosSeleccionados[0].municipio_id : provinciasSeleccionadas.length == 1 ? 
+            provinciasSeleccionadas[0].provincia_id : obtenerPaisId(geo.paises, pais.nombre),
+        id_usuario,
+        usuarios,
+        id_cliente,
+        id_noti,
+        monto_dv360,
+        monto_meta,
+        fecha_fin,
+        fecha_inicio,
+        comentariosLocalidades
+      );
 
-  //   setRespuestaDistribuirBoton(item);
-  // } catch (error) {
-  //   console.error("Error al distribuir la nota:", error);
-  // }
+    setRespuestaDistribuirBoton(item);
+  } catch (error) {
+    console.error("Error al distribuir la nota:", error);
+  }
 };
 
 useEffect(() => {
@@ -263,13 +287,14 @@ useEffect(() => {
           </div>
           <div className='col-6 '>
               <div className="dropdown p-0">
-                <SelectorConBuscador
+                <SelectorConBuscadorMult
                   title="Canales"
                   options={canales}
-                  selectedOption={canalSelected}
-                  onSelect={setCanalSelected}
-                  onClear={() => setCanalSelected(null)}
-                />  
+                  selectedOptions={canalesSeleccionados}
+                  onSelect={setCanalesSeleccionados}
+                  onClear={() => setCanalesSeleccionados([])}
+                  show={true}
+                />
               </div>
               <InputFecha
                 label="Fecha inicio:"
@@ -294,9 +319,9 @@ useEffect(() => {
               justifyContent: "space-between", 
               width: "100%" 
             }}>
-              <h3>Valor en Meta: {formatearARS(valorMeta)}</h3>
-              <h3>Valor en DV: {formatearARS(valorDv)}</h3>
-              <h3>Total: {formatearARS(total)}</h3>
+              <h3> <img src='./images/logoFB.png' style={{width: '25px'}}/> Valor en Meta: {formatearARS(valorMeta)}</h3>
+              <h3> <img src='./images/dv360.png' style={{width: '25px'}}/> Valor en DV: {formatearARS(valorDv)}</h3>
+              <h3> <img src='./images/exitoIcon.png' style={{width: '25px'}}/> Total: {formatearARS(total)}</h3>
             </div>
 
       </div>
