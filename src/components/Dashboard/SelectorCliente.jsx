@@ -11,6 +11,7 @@ import { updateActivarTodosLosClientes, updateCliente, updateIdCliente } from '.
 import './Dashboard.css';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { setClienteNota } from '../../redux/crearNotaSlice';
+import { borrarTildes } from '../comercial/Facturas.jsx';
 
 
 
@@ -87,7 +88,7 @@ const SelectorCliente= () => {
 
     // Filtrar los clientes en base al texto ingresado
     const clientesFiltrados = todosLosClientes.filter((cliente) =>
-        cliente.name.toLowerCase().includes(filtro.toLowerCase())
+        borrarTildes(cliente.name.toLowerCase()).includes(borrarTildes(filtro.toLowerCase()))
     );
 
 

@@ -374,11 +374,11 @@ const NotasParaEditorial = () => {
                     <div className='row sin-margin'>
                         <div className="container-notas">
                             <div className='row' id='buscador'>
-                                <div className='col todasLasNotas'>
+                                <div className='col-4 todasLasNotas'>
                                     Todas Las Notas
                                 </div>
-                                <div className='col buscadorNotas'>
-                                    <form onSubmit={handleSearch} className='buscadorNotasForm'>
+                                <div className='col-8 buscadorNotas'>
+                                    <form onSubmit={handleSearch} className='buscadorNotasForm gap-2 justify-content-end'>
                                         <input
                                             className='inputBuscadorNotas'
                                             type="text"

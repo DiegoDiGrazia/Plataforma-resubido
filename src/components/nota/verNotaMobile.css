@@ -78,7 +78,7 @@
     #subtitulo_performance {
         width: 100% !important;
         height: 100%;
-        margin: 0px;
+        margin-top: 30px;
         margin-left: -12px;
     }
     
@@ -109,7 +109,7 @@
     }
 
     .barra_lateral::after {
-        left: 115%;
+        left: 125% !important;
     }
 
     .row.g-1.align-items-start {
@@ -164,6 +164,42 @@
         padding-left: 0px;
         padding-right: 0px;
     }
+
+    .row.g-1 {
+        width: 90%;
+        margin-left: 10px;
+        margin-top: 220px;
+    }
+    
+    .col.totales_widget.impresionesWidget {
+        display: flex !important;
+        position: relative;
+        bottom: 50px !important;
+        justify-content: flex-end !important;
+        align-self: flex-start !important;
+        padding-top: 0px !important;
+        margin-top: 0px !important;
+    }
+
+    .row.medioRowNota {
+        padding-top: 0px !important; 
+        margin-bottom: 10px !important; 
+        height: 70px !important;
+    }
+
+    .accordion-body {
+        width: 105% !important;
+    }
+
+    .accordion-button .col.totales_widget {
+        margin: 0px !important;
+        padding-top: 10px;
+    }
+}
+
+.publicada {
+    width: 100% !important;
+    margin-bottom: 20px !important;
 }
 
 

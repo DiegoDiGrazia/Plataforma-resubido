@@ -99,9 +99,9 @@ const InteraccionPorNota = ({datosLocales}) => {
 
     return (
         <div className="container-fluid">
-            <div className='row'>
-                <p id="titulo_relevantes">Notas con mayor interacción
-                    <img src="/images/help-circle.png" alt="Descripción" className="info-icon no-print" title="aca va el texto" />  
+            <div className='row titulo_relevantes'>
+                <p>Notas con mayor interacción
+                    <img src="/images/help-circle.png" alt="Descripción" className="info-icon no-print" title="Son las notas que despertaron mayores interacciones como comentarios, reacciones y clics y compartidos." />  
                 </p>
             </div>
             {listaTresNotas.map((nota, index) => (

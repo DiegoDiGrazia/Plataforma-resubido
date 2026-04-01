@@ -103,14 +103,33 @@
         padding: 0px;
     }
 
-    .col.buscadorNotas {
-        margin-left: 0px;
+    .col-8.buscadorNotas {
+        width: 65%;
+        padding-right: 10px !important;
     }
     .inputBuscadorNotas {
-        display: block !important;
-        width: 147px !important;
+        width: 100% !important; 
         position: relative;
-        left: -18px !important;
+        left: 0 !important; 
+        font-size: 12px; 
+        padding-left: 10px;
+    }
+
+    .inputBuscadorNotas {
+        width: 150px !important; 
+        position: relative;
+        left: 0 !important; 
+        font-size: 12px;
+        padding-left: 10px; 
+    }
+
+    .buscadorNotasForm .btn {
+        position: relative;
+        left: 0 !important; 
+        margin-left: 0 !important; 
+        padding: 5px 12px; 
+        font-size: 13px;
+        white-space: nowrap; 
     }
 
     .btn.btn-danger.ml-3.btn.btn-primary {
@@ -124,9 +143,10 @@
 
     .todasLasNotas {
         position: relative !important;
+        padding: 0px !important;
         top: 8px;
         margin-left: 5px;
-        font-size: 15px;
+        font-size: 13px;
     }
 
     #headerListadoNotas {
@@ -162,17 +182,55 @@
     }
 
     #cuenta {
-        flex: 0 0 100% !important;
-        max-width: 100% !important;
+        flex: 1 1 auto !important; 
+        width: 40% !important; 
+        max-width: none !important; /* Volamos el límite que lo apretaba */
         text-align: left !important;
         margin: 0px 0px 0px 5px !important;
+        padding-right: 10px !important; /* Separación con los íconos */
+        display: flex;
+        align-items: center;
+    }
+
+    #cuenta p {
+        margin-bottom: 30px !important; 
+        padding-bottom: 10px !important; 
+        font-size: 13px !important; 
+        line-height: 1.2 !important;
+        white-space: normal !important; /* Permite que baje de renglón */
+        word-break: break-word !important; /* Rompe la palabra si es más larga que la pantalla */
     }
 
     #botonesInteraccionNota {
-        margin-left: 0px;
-        margin-top: 1%;
-        align-items: start !important;
-        justify-content: start !important;
+        flex: 0 0 auto !important; 
+        width: auto !important; 
+        max-width: none !important;
+        margin: 0px !important;
+        display: flex !important;
+        align-items: center !important; 
+        justify-content: flex-end !important; 
+        gap: 15px !important; /* ¡CLAVE! Distancia entre íconos aumentada */
+        padding-right: 5px !important;
+    }
+
+    #botonesInteraccionNota a,
+    #botonesInteraccionNota button {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        margin: 0 !important; 
+    }
+
+    /* TAMAÑO DE ÍCONOS: Los volvemos a agrandar */
+    #botonesInteraccionNota i {
+        font-size: 25px !important; /* Tamaño grande restaurado */
+        margin: 0 !important; 
+    }
+
+    /* TAMAÑO DEL PRISMA: Igualado a los otros */
+    #botonesInteraccionNota img.mb-3 {
+        margin-bottom: 0 !important; 
+        width: 28px !important; /* Prisma grande */
     }
 
     .categoria_notas {
@@ -182,4 +240,9 @@
     #verMas {
         padding: 0px;
     }
+
+    .p-0.m-2.border-0.bg-transparent {
+        margin-left: 0px !important;
+    }
+
 }

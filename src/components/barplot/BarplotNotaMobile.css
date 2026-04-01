@@ -49,6 +49,9 @@
         width: 348px;
     }
 
+    .row.back-white {
+        width: 90% !important;
+    }
 }
 
 

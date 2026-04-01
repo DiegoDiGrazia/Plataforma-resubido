@@ -127,11 +127,23 @@ const Sidebar = ({ estadoActual }) => {
             />
           )}
 
+          {!isOpen && (
+            <div className='logo-nd-mobile'>
+              <img src="/images/logoNdNegroNaranja.png" alt="Logo Noticias" className="img-fluid d-block d-md-none logo-nd" />
+            </div>
+          )}
+
           <Button className="sidebar-toggle" variant="none" onClick={toggleSidebar}>
             {isOpen ? (
-              <img src="/images/sidebar_left_bot.png" alt="Cerrar sidebar" className="img-fluid" />
+              <div className='logo-sidebar-mobile'>
+                <img src="/images/sidebar_left_bot.png" alt="Cerrar sidebar" className="img-fluid d-none d-md-block" />
+                <img src="/images/logo-menu-sidebar.png" alt="Cerrar sidebar mobile" className="img-fluid d-block d-md-none" />
+              </div>
             ) : (
-              <img src="/images/sidebar_right_bot.png" alt="Abrir sidebar" className="img-fluid" />
+              <div className='logo-sidebar-mobile'>
+                <img src="/images/sidebar_right_bot.png" alt="Abrir sidebar" className="img-fluid d-none d-md-block" />
+                <img src="/images/logo-menu-sidebar.png" alt="Abrir sidebar mobile" className="img-fluid d-block d-md-none" />
+              </div>
             )}
           </Button>
 

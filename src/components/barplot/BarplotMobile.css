@@ -1,15 +1,54 @@
 @media (max-width: 768px) {
 
+    #descargar-reporte::after {
+        top: 0px !important;
+    }
+
+    .mb-2.tamaño_barplot {
+        width: 100%;
+    }
+
+    .vn_categoria {
+        position: relative;
+        width: auto;
+        top: 0px !important;
+        justify-content: center;
+    }
+    
+    .row.order-last.flex-grow-1 {
+        margin-top: 10px;
+        order: 3 !important;
+    }
+
+    .row.publicada {
+        order: 4 !important;
+        position: relative;
+        bottom: 50px;
+    }
     .row.cantidades.mt-3.back-white {
         padding: 0px;
         width: 105%;
         gap: 24px;
     }
 
+    .col-6.d-flex.flex-column {
+        max-height: 200px;
+        padding-right: 0px;
+    }
+
+    .col-4.barra_lateral {
+        padding-left: 20px;
+    }
+
     .leyenda_barplot {
         align-items: flex-start;
         width: 70px;
         height: 90px;
+    }
+
+    .col-4::after {
+        position: relative;
+        left: 140% !important;
     }
 
     .totales {
@@ -43,7 +82,7 @@
         top: 10px; 
         bottom: 30px;              
         width: 1px;             
-        right: -66px;           
+        left: 145%;           
         background-color: rgb(226, 218, 218);  
     }
 

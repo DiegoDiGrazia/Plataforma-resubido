@@ -74,7 +74,7 @@ const MediosMasRelevantesNotas = ({ id_noti, TOKEN, cliente, fpub, dataLocalNota
             <div className='col pt-1'>
                 <div className='row p-0 nombre_plataforma'>{formatearTextoNombre(medio.sitio)}</div>
                 <div className='row p-0'>
-                    <a href="https://www.facebook.com" className='linkPlataforma'>{medio.sitio}</a>
+                    <a href={`https://www.${medio.sitio}`}className='linkPlataforma'>{`www.${medio.sitio}`}</a>
                 </div>
             </div>
             <div className='col totales_widget impresionesWidget'>
@@ -84,11 +84,11 @@ const MediosMasRelevantesNotas = ({ id_noti, TOKEN, cliente, fpub, dataLocalNota
     );
 
     return (
-        <div className="">
-            <div className='row pt-0'>
-                <p id="titulo_relevantes">
+        <div className="medios-relevantes">
+            <div className='row pt-3 titulo_relevantes'>
+                <p>
                     Medios más relevantes
-                    <img src="/images/help-circle.png" alt="Descripción" className="info-icon no-print" title="aca va el texto" />
+                    <img src="/images/help-circle.png" alt="Descripción" className="info-icon no-print" title="Son los medios de mayor relevancia en los que difundimos tus notas. Las impresiones son la contabilización de cada vez que una persona abrió una pagina de estos medios donde se encontraba presente la difusión de tu contenido." />
                 </p>
             </div>
             {listaTresMedios.map(renderMedio)}

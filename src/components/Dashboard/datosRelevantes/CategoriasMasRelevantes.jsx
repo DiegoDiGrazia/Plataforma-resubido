@@ -87,9 +87,9 @@ const CategoriasMasRelevantes = ({datosLocales}) => {
 
     return (
         <div className="container-fluid">
-            <div className='row'>
-                <p id="titulo_relevantes">Categorías más relevantes
-                    <img src="/images/help-circle.png" alt="Descripción" className="info-icon no-print" title="aca va el texto" />
+            <div className='row titulo_relevantes'>
+                <p>Categorías más relevantes
+                    <img src="/images/help-circle.png" alt="Descripción" className="info-icon no-print" title="Son las categorías de tu contenido en las que generaste mayores intereses de los usuarios que las vieron." />
                 </p>
             </div>
             {listaTresCategorias.map(renderCategoria)}

@@ -18,6 +18,10 @@ const SpinnerCarga = ({ texto = "Cargando..." }) => (
     </div>
 );
 
+ export const borrarTildes = (texto) => {
+        return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    };
+
 const Facturas = () =>  {
     
     const token = useSelector((state) => state.formulario.token);
@@ -338,9 +342,6 @@ const Facturas = () =>  {
         });
     };
     {/* FUNCIONES FILTROS */}
-    const borrarTildes = (texto) => {
-        return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    };
     
     const filtrarPorBusqueda = (factura) => {
         return borrarTildes(factura.cliente.toLowerCase()).includes(borrarTildes(search.toLowerCase())) || 

@@ -110,9 +110,9 @@ const MediosMasRelevantes = ({datosLocales}) => {
 
     return (
         <div className="container-fluid">
-            <div className='row'>
-                <p id="titulo_relevantes">Impresiones en medios más relevantes
-                    <img src="/images/help-circle.png" alt="Descripción" className="info-icon no-print" title="aca va el texto" />
+            <div className='row titulo_relevantes'>
+                <p>Impresiones en medios más relevantes
+                    <img src="/images/help-circle.png" alt="Descripción" className="info-icon no-print" title="Son los medios de mayor relevancia en los que difundimos tus notas. Las impresiones son la contabilización de cada vez que una persona abrió una pagina de estos medios donde se encontraba presente la difusión de tu contenido." />
                 </p>
             </div>
             {datosLocales

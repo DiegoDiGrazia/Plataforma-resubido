@@ -235,15 +235,15 @@ const BarplotNota = ({id_noti, TOKEN, cliente, fpub, dataLocalNota, resumenNota 
             <div className="row cantidades mt-3 back-white">
             <div className='col-2 barra_lateral'>
                 <p className='leyenda_barplot'>
-                    <span className="blue-dot-user"></span> Impresiones Google
-                    <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "aca va el texto"/>  
+                    <span className="blue-dot-user"></span> Impresiones Medios
+                    <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "dv360 + search + noticias(d)"/>  
                 </p>
                 <p className='totales'>{formatNumberMiles(totales.impresionesTotalesGoogle)}</p>
             </div>
                 <div className='col' style={{ paddingLeft: '20px' }}>
                     <p className='leyenda_barplot'>
                         <span className="blue-dot-impresiones"></span>Impresiones Redes
-                        <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "aca va el texto"/>  
+                        <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "Instagram + Facebook + X"/>  
                     </p>
                     <p className='totales'>{formatNumberMiles(totales.impresionesTotalesRRSS)}</p>
                 </div>
@@ -255,9 +255,9 @@ const BarplotNota = ({id_noti, TOKEN, cliente, fpub, dataLocalNota, resumenNota 
                     </div>
                 </div>
             </div>
-            <div className="row back-white">
+            <div className="row back-white" id='linea'>
                 <div className="col barplot">
-                    <div style={{ height: '100%', width: 'auto' }}>
+                    <div className='line' style={{ height: '100%', width: 'auto' }}>
                         <LineChartTwoLines data={datos} ></LineChartTwoLines>
                     </div>
                 </div>
