@@ -149,9 +149,9 @@ export const obtenerConsolidacionCliente = (token, id_cliente) =>
     id_contrato_archivo, id_usuario, archivo
   });
 
-  export const setComprarDistribucion = (token, division, id, id_usuario, usuarios, id_cliente, id_noti, monto_dv360=null, monto_meta= null, fecha_fin, fecha_inicio) =>
+  export const setComprarDistribucion = (token, division, id, id_usuario, usuarios, id_cliente, id_noti, monto_dv360=null, monto_meta= null, fecha_fin, fecha_inicio, comentarios) =>
     fetchData("https://panel.serviciosd.com/app_set_comprar_distribución", token, {
-      division, id, id_usuario, usuarios, id_cliente, id_noti, monto_dv360, monto_meta, fecha_fin, fecha_inicio
+      division, id, id_usuario, usuarios, id_cliente, id_noti, monto_dv360, monto_meta, fecha_fin, fecha_inicio, comentarios
   });
 
   export const editar_o_crear_cliente = (token, id, name,   

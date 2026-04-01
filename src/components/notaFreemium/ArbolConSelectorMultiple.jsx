@@ -29,24 +29,30 @@ const ArbolConSelectorMultiple = ({
   })) || [];
 
   // Provincias
-  useEffect(() => {
+    useEffect(() => {
     if (!pais) return;
 
     const ProvinciasDelPais = geo
-      .find((p) => p.pais_id === (pais?.pais_id || '1'))
-      ?.provincias.map((prov) => ({
+        .find((p) => p.pais_id === (pais?.pais_id || '1'))
+        ?.provincias.map((prov) => ({
         nombre: prov.nombre,
         provincia_id: prov.provincia_id
-      })) || [];
+        })) || [];
 
     setProvincias(ProvinciasDelPais);
 
-    // limpiar cuando cambia país
-    onSetProvincias([]);
-    onSetMunicipios([]);
+    // ✅ SOLO si hay algo seleccionado
+    if (provinciasSeleccionadas.length > 0) {
+        onSetProvincias([]);
+    }
+
+    if (municipiosSeleccionados.length > 0) {
+        onSetMunicipios([]);
+    }
+
     setMunicipios([]);
 
-  }, [pais]);
+    }, [pais]);
 
   // Municipios (multi provincia)
   useEffect(() => {
@@ -93,6 +99,8 @@ const ArbolConSelectorMultiple = ({
         selectedOptions={pais ? [pais] : []}
         onSelect={(arr) => onSetPais(arr[0] || null)}
         onClear={() => onSetPais(null)}
+        show={true} 
+        isMulti={false}
       />
 
       {/* PROVINCIAS */}
@@ -106,6 +114,7 @@ const ArbolConSelectorMultiple = ({
           onSetMunicipios([]);
           setMunicipios([]);
         }}
+        show={!!pais}
       />
 
       {/* MUNICIPIOS */}
@@ -115,6 +124,7 @@ const ArbolConSelectorMultiple = ({
         selectedOptions={municipiosSeleccionados}
         onSelect={onSetMunicipios}
         onClear={() => onSetMunicipios([])}
+        show={provinciasSeleccionadas?.length == 1}
       />
 
     </div>
