@@ -161,7 +161,7 @@ const PlataformaMasImpresiones = ({datosLocales, resumenCliente= null, loading =
                         </div>
                         <div className={`accordion-collapse collapse show`}>
                             <div className="accordion-body pt-0">
-                                <div className='row row-cols-md-3 row-cols-lg-5 pt-0 gy-3'>
+                                <div className='row row-cols-md-3 row-cols-lg-5 pt-0 ps-4 gy-3'>
                                     {plataforma.meGusta != 0 &&
                                     <div className='col d-flex align-items-center'>
                                         <img src="/images/logoMeGusta.png" alt="Me gusta" className='img-fluid me-2' />

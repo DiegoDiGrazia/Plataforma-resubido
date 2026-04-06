@@ -110,6 +110,7 @@ const Dashboard = () => {
     };
 
     return (
+            <div id='pantalla-dashboard'>
                 <div className="content flex-grow-1" ref={componenteRef}>
                     <div id="print-header">
                             <row>
@@ -186,7 +187,8 @@ const Dashboard = () => {
                             </div>
                         </div>
                     </div>
-        </div>
+                </div>
+            </div>
     );
 };
 

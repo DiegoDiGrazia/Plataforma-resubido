@@ -177,6 +177,7 @@ const Barplot = ({datosLocales, resumenCliente = null, loading = false}) => {
     }
     
     return (
+        <div id='pantalla-barplot'>
         <div className="container-fluid sinPadding" ref={captureRef}>
             <div className="row cantidades mt-3 back-white">
                 <div className='col-4 barra_lateral'>
@@ -201,6 +202,7 @@ const Barplot = ({datosLocales, resumenCliente = null, loading = false}) => {
                     </div>
                 </div>
             </div>
+        </div>
         </div>
     );
 };

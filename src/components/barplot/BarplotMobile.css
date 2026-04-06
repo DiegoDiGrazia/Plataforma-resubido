@@ -1,12 +1,10 @@
+#pantalla-barplot {
 @media (max-width: 768px) {
 
     #descargar-reporte::after {
         top: 0px !important;
     }
 
-    .mb-2.tamaño_barplot {
-        width: 100%;
-    }
 
     .vn_categoria {
         position: relative;
@@ -27,7 +25,7 @@
     }
     .row.cantidades.mt-3.back-white {
         padding: 0px;
-        width: 105%;
+        width: 100%;
         gap: 24px;
     }
 
@@ -85,5 +83,7 @@
         left: 145%;           
         background-color: rgb(226, 218, 218);  
     }
+
+}
 
 }

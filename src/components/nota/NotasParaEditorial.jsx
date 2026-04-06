@@ -328,6 +328,7 @@ const NotasParaEditorial = () => {
     }, [filtroSeleccionado]);
 
     return (
+        <div id='pantalla-notasParaEditorial'>
             <div className="content flex-grow-1 p-3">
                 <div className='row'>
                     <h4 id="nota">Notas</h4>
@@ -551,6 +552,7 @@ const NotasParaEditorial = () => {
                         </div>
                     </div>   
                 </div>
+        </div>
 
     );
 };

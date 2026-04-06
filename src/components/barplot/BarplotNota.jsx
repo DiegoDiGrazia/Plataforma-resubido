@@ -231,9 +231,10 @@ const BarplotNota = ({id_noti, TOKEN, cliente, fpub, dataLocalNota, resumenNota 
     
     // Mostrar el gráfico real una vez cargados los datos
     return (
+        <div id='pantalla-barplotNota'>
         <div className="container-fluid ml-5">
             <div className="row cantidades mt-3 back-white">
-            <div className='col-2 barra_lateral'>
+            <div className='col-4 barra_lateral'>
                 <p className='leyenda_barplot'>
                     <span className="blue-dot-user"></span> Impresiones Medios
                     <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "dv360 + search + noticias(d)"/>  
@@ -262,6 +263,7 @@ const BarplotNota = ({id_noti, TOKEN, cliente, fpub, dataLocalNota, resumenNota 
                     </div>
                 </div>
             </div>
+        </div>
         </div>
     );
 };
