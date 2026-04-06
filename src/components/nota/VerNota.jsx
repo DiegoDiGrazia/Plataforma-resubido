@@ -20,6 +20,7 @@ import { traerDatosDeNota } from '../../utils/buscarEnLocal';
 import "./nota_print.css"
 import { obtenerResumenDashboardNota } from '../administrador/gestores/apisUsuarios';
 import PlataformaMasImpresiones from '../Dashboard/datosRelevantes/PlataformaMasImpresiones';
+import IframeNota from './IframeNota';
 export const RUTA = "http://localhost:4000/"
 const VerNota = () => {
 
@@ -177,6 +178,11 @@ const VerNota = () => {
                         </div>
                         <div className='col-lg-12 col-xl col-6 m-2 back-white'>
                             {<MediosMasRelevantesNotas id_noti={id_noti} TOKEN={TOKEN} cliente={CLIENTE} fpub={FPUB} dataLocalNota = {dataLocalNota?.mediosNoticia}/>}   
+                        </div>
+                    </div>
+                    <div className='row g-1'>
+                        <div className='col-lg-12 col-xl col-6 m-2 back-white'>
+                            <IframeNota url={`https://builder.noticiasd.com/preview.php?id_noti=${id_noti}`} width={300} height={250} titulo={'asdasdasd'} />
                         </div>
                     </div>
                 </div>
