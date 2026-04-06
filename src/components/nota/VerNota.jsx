@@ -106,7 +106,7 @@ const VerNota = () => {
     }
     return (
 
-        <>
+        <div id='pantalla-verNota'>
              {!cargando && 
                 <div className="content flex-grow-1">
                     <div className='row p-0'>
@@ -187,7 +187,7 @@ const VerNota = () => {
                     </div>
                 </div>
                 }
-            </>
+            </div>
 
     );
 };

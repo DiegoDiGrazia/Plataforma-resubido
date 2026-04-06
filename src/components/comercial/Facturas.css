@@ -92,11 +92,15 @@ i {
         padding-right: 0px !important;
     }
 
-    a {
+    #botones-filtros a {
         font-size: 11px !important;
     }
 
-    .datos-factura {
-        font-size: 11px;
+    .datos-factura  {
+        font-size: 11px !important;
+    }
+
+    .datos-factura a {
+        font-size: 11px !important;
     }
 }   

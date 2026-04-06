@@ -1,248 +1,270 @@
-@media (max-width: 768px) {
+#pantalla-notasParaEditorial {
+    @media (max-width: 768px) {
 
-    .row {
-        width: 100%;
-        padding-top: 10px;
+        .row {
+            width: 100%;
+            padding-top: 10px;
+        }
+
+        #saludo {
+            display: block !important;
+            width: 104% !important;
+            margin: 0px;
+            order: 1 !important;
+            font-size: 20px;
+        }
+
+        #menu-boton .col:has(#saludo) {
+            display: flex !important;
+            flex-direction: column !important;
+            padding-left: 0px !important;
+        }
+
+        .abajoDeTusNotas {
+            width: 160% !important;
+            position: relative !important;
+            padding: 0px;
+            margin-left: 5px;
+            order: 2 !important;
+            top: 0px !important;
+            font-size: 14px;
+        }
+
+        #dropdownMenuButtonSelectorCliente {
+            margin-left: 0px !important;
+            position: relative;
+            top: 30px;
+            left: 0% !important;
+            white-space: normal !important; 
+            word-wrap: break-word !important; 
+            text-align: center !important;
+            max-width: 100%;
+            padding-right: 27px !important;
+            font-size: 15px;
+        }
+
+        .dropdown.no-print {
+            order: 3 !important; 
+        }
+        #dropdownMenuButtonSelectorCliente::after {
+            position: absolute !important;
+            right: 15px !important; 
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+        }
+
+        #menu-boton {
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        #botonPublicar {
+            white-space: normal !important; 
+            word-wrap: break-word !important;
+            height: auto !important;
+            min-height: 38px !important;
+            padding: 8px 10px !important;
+            width: 95% !important; 
+            margin-right: 5px;
+            font-size: 13px; 
+        }
+
+        .col.boton {
+            display: flex !important;
+            align-items: flex-start !important; 
+            justify-content: flex-end !important; 
+            height: 100% !important;
+            position: relative;
+            top: 50px !important;
+            padding: 10px 0 0 0;
+        }
+
+        #filtroNotas {
+            margin-top: 8%;
+        }
+
+        #filtroNotas .container {
+            width: 100% !important;
+            padding: 0px;
+        }
+
+        #filtroNotas .container .row {
+            width: 100%;
+            justify-content: space-between !important;
+        }
+
+        #filtroNotas .container .row .col-auto {
+            padding: 0px;
+        }
+
+        .boton_filtro_notas {
+            margin: 0px;
+            padding: 0px;
+            font-size: 90%;
+        }
+
+        .container-notas {
+            margin: 0px !important;
+            padding: 0px;
+        }
+
+        .col-8.buscadorNotas {
+            width: 65%;
+            padding-right: 10px !important;
+        }
+        .inputBuscadorNotas {
+            width: 100% !important; 
+            position: relative;
+            left: 0 !important; 
+            font-size: 12px; 
+            padding-left: 10px;
+        }
+
+        .inputBuscadorNotas {
+            width: 150px !important; 
+            position: relative;
+            left: 0 !important; 
+            font-size: 12px;
+            padding-left: 10px; 
+        }
+
+        .buscadorNotasForm .btn {
+            position: relative;
+            left: 0 !important; 
+            margin-left: 0 !important; 
+            padding: 5px 12px; 
+            font-size: 13px;
+            white-space: nowrap; 
+        }
+
+        .btn.btn-danger.ml-3.btn.btn-primary {
+            position: relative;    
+            left: -10px;
+        }
+
+        #buscador {
+            margin-bottom: 7px;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        .todasLasNotas {
+            position: relative !important;
+            padding: 0px !important;
+            margin-left: 5px;
+            font-size: 12px;
+            display: flex;
+            justify-content: center !important;
+        }
+        
+        #headerListadoNotas {
+            display: none;
+        }
+        
+        .row.pt-1.borderNotas {
+            padding-top: 10px !important;
+
+        }
+
+        .row.pt-1.borderNotas .col-auto {
+            width: 20% !important;
+            height: 70px !important;
+            padding: 0px;
+        }
+
+        .imagenWidwetInteracciones2 {
+            width: 100%;
+            height: 100%;
+        }
+
+
+        .row.pt-1.borderNotas .col-4.pt-1.columna_interaccion.nuevoFont {
+            padding: 0px !important;
+            width: 75%;
+            margin-left: 10px;
+        }
+        
+        .col-4.pt-1.columna_interaccion.nuevoFont .row.p-0 {
+            margin-top: 5px;
+            width: 104%;
+        }
+
+        .categoria_notas {
+            margin-left: 10px !important; 
+        }
+
+        #cuenta {
+            width: 40% !important; 
+            height: 50px !important;
+            margin: 0px !important;
+            padding: 10px 0 0 10px !important; 
+            text-align: center;
+            display: flex;
+            justify-content: start;
+            align-items: center;
+        }
+
+        #cuenta p {
+            margin-bottom: 0px !important; 
+            padding-bottom: 0px !important; 
+            font-size: 13px !important; 
+            line-height: 1.2 !important;
+            white-space: normal !important; 
+            word-break: break-word !important; 
+        }
+
+        #botonesInteraccionNota {
+            flex: 0 0 auto !important; 
+            width: auto !important; 
+            max-width: none !important;
+            margin: 0px !important;
+            display: flex !important;
+            align-items: center !important; 
+            justify-content: flex-end !important; 
+            gap: 15px !important; 
+            padding-right: 5px !important;
+        }
+
+        #botonesInteraccionNota a,
+        #botonesInteraccionNota button {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            margin: 0 !important; 
+        }
+
+        #botonesInteraccionNota i {
+            font-size: 25px !important; 
+            margin: 0 !important; 
+        }
+
+        #botonesInteraccionNota img.mb-3 {
+            margin-bottom: 0 !important; 
+            width: 28px !important;  
+        }
+
+        .categoria_notas {
+            font-size: 14px !important;
+        }
+
+        #verMas {
+            padding: 0px;
+        }
+
+        .p-0.m-2.border-0.bg-transparent {
+            margin-left: 0px !important;
+        }
+
     }
 
-    #saludo {
-        display: block !important;
-        width: 104% !important;
-        margin: 0px;
-        order: 1 !important;
-    }
-
-    .col:has(#saludo) {
-        display: flex !important;
-        flex-direction: column !important;
-    }
-
-    .abajoDeTusNotas {
-        width: 160% !important;
-        position: relative !important;
-        padding: 0px;
-        margin-left: 5px;
-        order: 2 !important;
-        top: 0px !important;
-    }
-
-    #dropdownMenuButtonSelectorCliente {
-        margin-left: 0px !important;
-        position: relative;
-        top: 30px;
-        left: 0% !important;
-        white-space: normal !important; 
-        word-wrap: break-word !important; 
-        text-align: center !important;
-        max-width: 100%;
-        padding-right: 27px !important;
-        font-size: 15px;
-    }
-
-    .dropdown.no-print {
-        order: 3 !important; 
-    }
-    #dropdownMenuButtonSelectorCliente::after {
-        position: absolute !important;
-        right: 15px !important; 
-        top: 50% !important;
-        transform: translateY(-50%) !important;
-    }
-
-    #menu-boton {
-        display: flex !important;
-        align-items: center !important;
-    }
-
-    #botonPublicar {
-        white-space: normal !important; 
-        word-wrap: break-word !important;
-        height: auto !important;
-        min-height: 38px !important;
-        padding: 8px 10px !important;
-        width: 95% !important; 
-        margin-right: 5px;
-        font-size: 13px; 
-    }
-
-    .col.boton {
-        display: flex !important;
-        align-items: flex-start !important; 
-        justify-content: flex-end !important; 
-        height: 100% !important;
-        position: relative;
-        top: 50px !important;
-    }
-
-    #filtroNotas {
-        margin-top: 8%;
-    }
-
-    #filtroNotas .container {
-        width: 100% !important;
-        padding: 0px;
-    }
-
-    #filtroNotas .container .row {
-        width: 100%;
-        justify-content: space-between !important;
-    }
-
-    #filtroNotas .container .row .col-auto {
-        padding: 0px;
-    }
-
-    .boton_filtro_notas {
-        margin: 0px;
-        padding: 0px;
-        font-size: 90%;
-    }
-
-    .container-notas {
-        margin: 0px !important;
-        padding: 0px;
-    }
-
-    .col-8.buscadorNotas {
-        width: 65%;
-        padding-right: 10px !important;
-    }
-    .inputBuscadorNotas {
-        width: 100% !important; 
-        position: relative;
-        left: 0 !important; 
-        font-size: 12px; 
-        padding-left: 10px;
-    }
-
-    .inputBuscadorNotas {
-        width: 150px !important; 
-        position: relative;
-        left: 0 !important; 
-        font-size: 12px;
-        padding-left: 10px; 
-    }
-
-    .buscadorNotasForm .btn {
-        position: relative;
-        left: 0 !important; 
-        margin-left: 0 !important; 
-        padding: 5px 12px; 
-        font-size: 13px;
-        white-space: nowrap; 
-    }
-
-    .btn.btn-danger.ml-3.btn.btn-primary {
-        position: relative;    
-        left: -10px;
-    }
-
-    #buscador {
-        margin-bottom: 7px;
-    }
-
-    .todasLasNotas {
-        position: relative !important;
-        padding: 0px !important;
-        top: 8px;
-        margin-left: 5px;
-        font-size: 13px;
-    }
-
-    #headerListadoNotas {
-        display: none;
-    }
-    
-    .row.pt-1.borderNotas {
-        padding-top: 10px !important;
-
-    }
-
-    .row.pt-1.borderNotas .col-auto {
-        width: 20% !important;
-        height: 70px !important;
-        padding: 0px;
-    }
-
-    .imagenWidwetInteracciones2 {
-        width: 100%;
-        height: 100%;
-    }
-
-
-    .row.pt-1.borderNotas .col-4.pt-1.columna_interaccion.nuevoFont {
-        padding: 0px !important;
-        width: 75%;
-        margin-left: 10px;
-    }
-    
-    .col-4.pt-1.columna_interaccion.nuevoFont .row.p-0 {
-        margin-top: 5px;
-        width: 104%;
-    }
-
-    #cuenta {
-        flex: 1 1 auto !important; 
-        width: 40% !important; 
-        max-width: none !important; /* Volamos el límite que lo apretaba */
-        text-align: left !important;
-        margin: 0px 0px 0px 5px !important;
-        padding-right: 10px !important; /* Separación con los íconos */
-        display: flex;
-        align-items: center;
-    }
-
-    #cuenta p {
-        margin-bottom: 30px !important; 
-        padding-bottom: 10px !important; 
-        font-size: 13px !important; 
-        line-height: 1.2 !important;
-        white-space: normal !important; /* Permite que baje de renglón */
-        word-break: break-word !important; /* Rompe la palabra si es más larga que la pantalla */
-    }
-
-    #botonesInteraccionNota {
-        flex: 0 0 auto !important; 
-        width: auto !important; 
-        max-width: none !important;
-        margin: 0px !important;
-        display: flex !important;
-        align-items: center !important; 
-        justify-content: flex-end !important; 
-        gap: 15px !important; /* ¡CLAVE! Distancia entre íconos aumentada */
-        padding-right: 5px !important;
-    }
-
-    #botonesInteraccionNota a,
-    #botonesInteraccionNota button {
-        display: flex !important;
-        align-items: center;
-        justify-content: center;
-        margin: 0 !important; 
-    }
-
-    /* TAMAÑO DE ÍCONOS: Los volvemos a agrandar */
-    #botonesInteraccionNota i {
-        font-size: 25px !important; /* Tamaño grande restaurado */
-        margin: 0 !important; 
-    }
-
-    /* TAMAÑO DEL PRISMA: Igualado a los otros */
-    #botonesInteraccionNota img.mb-3 {
-        margin-bottom: 0 !important; 
-        width: 28px !important; /* Prisma grande */
-    }
-
-    .categoria_notas {
-        font-size: 14px !important;
-    }
-
-    #verMas {
-        padding: 0px;
-    }
-
-    .p-0.m-2.border-0.bg-transparent {
-        margin-left: 0px !important;
-    }
-
+    @media (max-width: 380px) {
+            .todasLasNotas {
+                position: relative !important;
+                padding: 0px !important;
+                margin-left: 5px;
+                font-size: 12px;
+                display: flex;
+                justify-content: start !important;
+            }
+        }
 }

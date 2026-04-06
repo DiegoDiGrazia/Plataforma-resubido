@@ -1,208 +1,255 @@
-@media (max-width: 768px) {
+#pantalla-verNota {
+    .content.flex-grow-1 {
+        background-color: white !important;
+    }
     
-    .row.p-0 {
-        margin-top: 25px;
+    @media (max-width: 768px) {
+        
+
+        #nota {
+            padding: 30px 0 0 10px;
+        }
+
+        .breadcrumb-item {
+            font-size: 15px !important;
+        }
+
+        .row.p-0 {
+            margin-top: 25px;
+        }
+
+        .row.margin_vn  {
+            display: flex;
+            position: relative !important;
+            width: 100%;
+            max-height: 170px !important;
+            padding: 0 10px !important;
+        }
+        
+        .col.imagen_col {
+            padding: 0px;
+            max-height: 170px;
+        }
+
+        .imagen_nota {
+            width: 100%;
+            height: 50%;
+        }
+        
+        .col-6.d-flex.flex-column {
+            width: 80%;
+            height: 80% !important;
+            align-items: end;
+        }
+        
+        .row.vn_titulo {
+            padding: 0px;
+            font-size: 14px;
+        }
+        
+        .row.vn_fecha {
+            padding: 0px;
+        }
+        
+        .row.publicada {
+            width: 100%;
+            left: -35%;
+            top: 0%;
+        }
+        
+        .publicada {
+            width: 100%;
+            position: relative;
+        }
+        
+        .row.order-last.flex-grow-1 {
+            padding: 0;
+        }
+        
+        .row.order-last.flex-grow-1:has(.vn_categoria) {
+            position: relative;
+            top: -70px !important;
+            width: 100px;
+        }
+        
+        .col.boton_nota.d-flex.justify-content-center.align-items-center.no_print {
+            position: absolute !important;
+            top: -38px !important;    
+            right: 20px !important;  
+            width: auto !important;
+            margin: 0 !important;
+        }
+
+        #descargar-reporte {
+            display: contents;
+            position: relative !important;
+            font-size: 14px;
+        }
+
+        #descargar-reporte .icon.me-2 {
+            width: 15px;
+            height: 15px;
+        }
+
+        #descargar-reporte::after {
+            top: 0px;
+        }
+
+        .subtitulo {
+            width: 100%;
+            margin-top: 0%;
+        }
+
+        #subtitulo_performance {
+            display: flex;
+            width: 100% !important;
+            height: 100%;
+            padding: 0;
+            margin: 0px;
+            justify-content: center;
+        }
+        
+        .mb-2.tamaño_barplot {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .container-fluid.ml-5 {
+            width: 100% !important;
+            padding: 0px;
+            margin: 0px !important;
+        }
+
+        .row.cantidades.mt-3.back-white {
+            width: 101% !important;
+            gap: 0px;
+        }
+        .col-2.barra_lateral {
+            width: 40% !important;
+            margin-left: 5%;
+        }
+
+        .col {
+            width: 40% !important;
+            padding: 0px; 
+        }
+
+        .barra_lateral::after {
+            left: 125% !important;
+        }
+
+        .row.g-1.align-items-start {
+            width: 90% !important;
+            margin-left: 0px;
+        }
+
+        .col-6.m-2.p-3.back-white {
+            width: 100% !important;
+            padding: 0px 0px 0px 10px !important;
+            margin: 0px !important;
+        }
+
+        .row.p-0.nombre_plataforma {
+            margin: 0px !important;
+        }
+
+        .col.pt-1 .row.p-0 {
+            margin: 0px !important;
+        }
+
+        .col.totales_widget {
+            justify-content: start !important;
+        }
+
+        .col.totales_widget p {
+            margin: 0px;
+            display: flex;
+            position: relative;
+            top: 40%;
+        }
+
+        #titulo_relevantes {
+            font-size: 120%;
+        }
+
+        .accordion-body.pt-0 {
+            padding: 0px;
+            margin-bottom: 10px;
+        }
+
+        .col-auto.d-flex.align-items-center {
+            padding-right: 20px;
+        }
+
+        .row.medioRowNota {
+            padding-left: 0px;
+            padding-right: 0px;
+        }
+
+        .row.g-1 {
+            width: 100%;
+            margin-top: 220px;
+        }
+        
+        .col.totales_widget.impresionesWidget {
+            display: flex !important;
+            position: relative;
+            bottom: 50px !important;
+            justify-content: flex-end !important;
+            align-self: flex-start !important;
+            padding-top: 0px !important;
+            margin-top: 0px !important;
+        }
+
+        .row.medioRowNota {
+            padding-top: 0px !important; 
+            margin-bottom: 10px !important; 
+            height: 70px !important;
+        }
+
+        .accordion-collapse {
+            width: 100% !important;
+            padding: 0px 10px;
+        }
+
+        .accordion-body {
+            width: 100% !important;
+        }
+
+        .accordion-body .row.row-cols-md-3 > .col {
+            flex: 0 0 50% !important; 
+            max-width: 50% !important;
+        }
+
+        .accordion-button .col.totales_widget {
+            margin: 0px !important;
+            padding-top: 10px;
+            font-size: 16px;
+        }
+
+        .col-lg-12.col-xl.col-6.m-2.back-white {
+            width: 100%;
+            margin-left: 0px !important; 
+            margin-right: 0px !important; 
+            padding: 0;
+        }
+
+        .medioRowNota {
+            margin-top: 10px;
+            padding-right: 10px !important;
+        }
+
+        .medioRowNota .impresionesWidget {
+            position: static !important;
+        }
     }
 
-    .row.margin_vn  {
-        display: flex;
-        position: relative !important;
-        width: 100%;
-        height: 50%;
-    }
-    
-    .col.imagen_col {
-        padding: 0px;
-    }
-
-    .imagen_nota {
-        width: 100%;
-        height: 50%;
-    }
-    
-    .col-6.d-flex.flex-column {
-        width: 80%;
-        height: 80% !important;
-        align-items: end;
-    }
-    
-    .row.vn_titulo {
-        padding: 0px;
-    }
-    
-    .row.vn_fecha {
-        padding: 0px;
-    }
-    
-    .row.publicada {
-        width: 100%;
-        left: -35%;
-        top: 0%;
-    }
-    
     .publicada {
-        width: 100%;
-        position: relative;
-    }
-    
-    .row.order-last.flex-grow-1 {
-        padding: 0px;
-    }
-    
-    .vn_categoria {
-        position: relative;
-        width: auto;
-        top: -80%;
-        justify-content: center;
-    }
-    
-    .col.boton_nota.d-flex.justify-content-center.align-items-center.no_print {
-        position: absolute !important;
-        top: -40px !important;    
-        right: 20px !important;  
-        width: auto !important;
-        margin: 0 !important;
-    }
-
-    #descargar-reporte {
-        display: contents;
-        position: relative !important;
-        top: 110%;
-    }
-
-    .subtitulo {
-        width: 100%;
-        margin-top: 0%;
-    }
-
-    #subtitulo_performance {
         width: 100% !important;
-        height: 100%;
-        margin-top: 30px;
-        margin-left: -12px;
-    }
-    
-    .mb-2.tamaño_barplot {
-        width: 100% !important;
-        height: 100% !important;
-        margin-left: 5% !important;
+        margin-bottom: 20px !important;
     }
 
-    .container-fluid.ml-5 {
-        width: 100% !important;
-        padding: 0px;
-        margin: 0px !important;
-    }
-
-    .row.cantidades.mt-3.back-white {
-        width: 101% !important;
-        gap: 0px;
-    }
-    .col-2.barra_lateral {
-        width: 40% !important;
-        margin-left: 5%;
-    }
-
-    .col {
-        width: 40% !important;
-        padding: 0px; 
-    }
-
-    .barra_lateral::after {
-        left: 125% !important;
-    }
-
-    .row.g-1.align-items-start {
-        width: 90% !important;
-        margin-left: 0px;
-    }
-
-    .col-6.m-2.p-3.back-white {
-        width: 100% !important;
-        padding: 0px 0px 0px 10px !important;
-        margin: 0px !important;
-    }
-
-    .row.p-0.nombre_plataforma {
-        margin: 0px !important;
-    }
-
-    .col.pt-1 .row.p-0 {
-        margin: 0px !important;
-    }
-
-    .col.totales_widget {
-        justify-content: start !important;
-    }
-
-    .col.totales_widget p {
-        margin: 0px;
-        display: flex;
-        position: relative;
-        top: 40%;
-    }
-
-    #titulo_relevantes {
-        font-size: 120%;
-    }
-
-    .accordion-body.pt-0 {
-        padding: 0px;
-        margin-bottom: 10px;
-    }
-
-    .col-auto.d-flex.align-items-center {
-        padding-right: 20px;
-    }
-
-    ::after {
-        position: relative;
-        top: 15px;
-    }
-
-    .row.medioRowNota {
-        padding-left: 0px;
-        padding-right: 0px;
-    }
-
-    .row.g-1 {
-        width: 90%;
-        margin-left: 10px;
-        margin-top: 220px;
-    }
-    
-    .col.totales_widget.impresionesWidget {
-        display: flex !important;
-        position: relative;
-        bottom: 50px !important;
-        justify-content: flex-end !important;
-        align-self: flex-start !important;
-        padding-top: 0px !important;
-        margin-top: 0px !important;
-    }
-
-    .row.medioRowNota {
-        padding-top: 0px !important; 
-        margin-bottom: 10px !important; 
-        height: 70px !important;
-    }
-
-    .accordion-body {
-        width: 105% !important;
-    }
-
-    .accordion-button .col.totales_widget {
-        margin: 0px !important;
-        padding-top: 10px;
-    }
 }
-
-.publicada {
-    width: 100% !important;
-    margin-bottom: 20px !important;
-}
-
-
 
 
 
