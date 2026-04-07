@@ -1,26 +1,21 @@
 import React from "react";
 
-const IframeBanner = ({
-  url,
-  width = 300,
-  height = 250,
-  titulo
-}) => {
+const IframeNota = ({ url, width = 300, height = 250, title= ""}) => {
   return (
-    <div className="iframe-container">
-      {titulo && <h4 className="iframe-title">{titulo}</h4>}
-      
+    <>
+    <h3 style={{ textAlign: 'start', fontSize: '14px', margin: '5px 0' }}>{title}</h3>
+    <div style={{ width: width, height: height, overflow: "hidden", border: "1px solid #000" }}>
       <iframe
-        className="banner-iframe"
         src={url}
         width={width}
         height={height}
-        scrolling="no"
+        style={{ border: 0 }}
+        scrolling="auto" // <--- Esto permite scroll si el contenido es más grande
         frameBorder="0"
-        title={titulo || "iframe-banner"}
       />
     </div>
+    </>
   );
 };
 
-export default IframeBanner;
+export default IframeNota;

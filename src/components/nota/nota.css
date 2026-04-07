@@ -855,6 +855,12 @@ textarea.inputTituloNota {
     transform: translateX(-50%)
 }
 
+.tituloCreativo{
+    margin-bottom: 5px !important;
+    font-size: 20px !important;
+    margin-left: 15px;
+}
+
 @media print {
     /* Ocultar ciertos componentes */
     .no-print {

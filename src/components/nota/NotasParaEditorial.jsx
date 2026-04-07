@@ -325,7 +325,7 @@ const NotasParaEditorial = () => {
         } else {
             handleFiltroClick_todasLasNotas(filtroSeleccionado); // Llama a la función específica para el caso de id = 1
         }
-    }, [filtroSeleccionado]);
+    }, [filtroSeleccionado, CLIENTE]);
 
     return (
         <div id='pantalla-notasParaEditorial'>

@@ -21,6 +21,7 @@ import "./nota_print.css"
 import { obtenerResumenDashboardNota } from '../administrador/gestores/apisUsuarios';
 import PlataformaMasImpresiones from '../Dashboard/datosRelevantes/PlataformaMasImpresiones';
 import IframeNota from './IframeNota';
+import IframeNotaEscalable  from './IframeNotaEscalable';
 export const RUTA = "http://localhost:4000/"
 const VerNota = () => {
 
@@ -181,9 +182,62 @@ const VerNota = () => {
                         </div>
                     </div>
                     <div className='row g-1'>
+                        <h2 className='tituloCreativo'>Creativos DV 360</h2>
                         <div className='col-lg-12 col-xl col-6 m-2 back-white'>
-                            <IframeNota url={`https://builder.noticiasd.com/preview.php?id_noti=${id_noti}`} width={300} height={250} titulo={'asdasdasd'} />
+                            <div className='row g-1'>
+                                <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                                    <IframeNota url={`https://builder.ntcias.de/preview.php?id_noti=${id_noti}`} width={350} height={250} title={'350 x 250'}  />
+                                </div>
+                                <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                                    <IframeNota url={`https://builder.ntcias.de/preview.php?id_noti=${id_noti}`} width={320} height={50} title={'320 x 50'} />
+                                </div>
+                            </div>
+                            <IframeNota url={`https://builder.ntcias.de/preview.php?id_noti=${id_noti}`} width={728} height={90} title={'728 x 90'} />
                         </div>
+                        <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                            <IframeNota url={`https://builder.ntcias.de/preview.php?id_noti=${id_noti}`} width={300} height={600} title={'300 x 600'} />
+                        </div>
+                    </div>
+                    <div className='row g-1'>
+                        <h2 className='tituloCreativo'>Creativos Facebook</h2>
+                        <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                            <IframeNota url={`https://builder.ntcias.de/preview.php?template=feed_face&id_noti=${id_noti}`} width={340} height={500} baseHeight={500} baseWidth={340} title='Feed'/>
+                        </div>
+                        <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                            <IframeNota url={`https://builder.ntcias.de/preview.php?template=instream_face&id_noti=${id_noti}`} width={340} height={500} baseHeight={500} baseWidth={340} title='instream reels'/>
+                        </div>
+                    </div>
+                    <div className='row g-1'>
+                        <h2 className='tituloCreativo'>Creativos Instagram</h2>
+                        <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                            <IframeNota url={`https://builder.ntcias.de/preview.php?template=feed_insta&id_noti=${id_noti}`} width={340} height={500} baseHeight={500} baseWidth={340} title='Feed'/>
+                        </div>
+                        <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                            <IframeNota url={`https://builder.ntcias.de/preview.php?template=explore_insta&id_noti=${id_noti}`} width={340} height={500} baseHeight={500} baseWidth={340} title='Explorar'/>
+                        </div>
+                    </div>
+
+                    <div className='row g-1'>
+                        <h2 className='tituloCreativo'>Creativos Historias</h2>
+                        <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                            <IframeNotaEscalable 
+                            url={`https://reporte.noticiasd.com/creativo/${id_noti}?tipo=1`} 
+                            width={360} 
+                            height={640} 
+                            baseWidth={720} 
+                            baseHeight={1280}
+                            />                       
+                        </div>
+                        <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                            <IframeNotaEscalable 
+                            url={`https://reporte.noticiasd.com/creativo/${id_noti}?tipo=2`} 
+                            width={360} 
+                            height={640} 
+                            baseWidth={720} 
+                            baseHeight={1280}
+                            />                       
+                        </div>
+
                     </div>
                 </div>
                 }
