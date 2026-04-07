@@ -11,19 +11,10 @@ const InputNumerico = ({
   max = 100
 }) => {
 
-  const formatNumber = (num) => {
-    if (num === '' || num === null || num === undefined) return '';
-    
-    return Number(num).toLocaleString('es-AR', {
-      minimumFractionDigits: isDecimal ? 2 : 0,
-      maximumFractionDigits: isDecimal ? 2 : 0
-    });
-  };
-
-  const [value, setValue] = useState(formatNumber(selectedValue));
+  const [value, setValue] = useState(selectedValue || '');
 
   useEffect(() => {
-    setValue(formatNumber(selectedValue));
+    setValue(selectedValue ?? '');
   }, [selectedValue]);
 
   const handleChange = (e) => {
@@ -35,16 +26,13 @@ const InputNumerico = ({
       return;
     }
 
-    // quitar separadores de miles
-    val = val.replace(/\./g, '');
-
-    // permitir coma decimal
+    // permitir coma como decimal
     if (isDecimal) {
       val = val.replace(',', '.');
     }
 
     const regex = isDecimal
-      ? /^\d+(\.\d{0,2})?$/
+      ? /^\d*\.?\d{0,2}$/
       : /^\d+$/;
 
     if (!regex.test(val)) return;
@@ -54,9 +42,8 @@ const InputNumerico = ({
     if (isNaN(number)) return;
     if (number < min || number > max) return;
 
-    onSelect(number);
-
-    setValue(formatNumber(number));
+    setValue(val);        // 👈 importante: guardamos lo que escribe el usuario
+    onSelect(number);     // 👈 actualizamos el estado padre
   };
 
   return (

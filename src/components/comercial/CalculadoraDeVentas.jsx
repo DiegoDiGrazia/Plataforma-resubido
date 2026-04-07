@@ -56,11 +56,14 @@ const CalculadoraVentas
   const [margen, setMargen] = useState(70);
   const [data, setData] = useState([[]]);
   const [margenAgencia, setMargenAgencia] = useState(15);
+  const [margenAgencia2, setMargenAgencia2] = useState(0);
+  const [cpmPersonalizado, setCpmPersonalizado] = useState(0);
   const costoPorNota = 100;
+  const [selectedRows, setSelectedRows] = useState([true, true, true, true]);
 
 
-  const columns = ["CPM", 'CPM + AGENCIA', "Costo por nota", "Costo total", 'Precio por nota', 'Precio total']
-  const rows = ["dv 360", "Meta", "Total seleccionado"]
+  const columns = ["CPM", 'CPM + Plataforma', "Costo por nota", "Costo total", 'Precio por nota', 'Precio de venta neto', 'Precio con Agencia']
+  const rows = ["dv 360", "Meta", 'Youtube', 'Personalizado', "Total seleccionado"]
 
 
   useEffect(() => {
@@ -137,7 +140,13 @@ useEffect(() => {
 
     fetchPoblacion();
 }, [pais, provincia, municipio]);
-
+const toggleRow = (index) => {
+  setSelectedRows(prev => {
+    const copy = [...prev];
+    copy[index] = !copy[index];
+    return copy;
+  });
+};
 useEffect(() => {
   console.log(poblacionEstimada);
   if(!poblacionEstimada ) return;
@@ -149,6 +158,7 @@ useEffect(() => {
   const dv_costo_total = dv_costo_por_nota * cantidadDeNotas;
   const dv_precio_por_nota = dv_costo_por_nota / (1-margen/100)
   const dv_precio_total = dv_precio_por_nota * cantidadDeNotas;
+  const dv_precioConAgencia = dv_precio_total / (1 - margenAgencia2/100);
 
   const meta_cpm = Number(poblacionEstimada?.meta?.cpm ?? 0);
   const meta_cpm_agencia = meta_cpm / (1 - margenAgencia/100);
@@ -156,19 +166,62 @@ useEffect(() => {
   const meta_costo_total = meta_costo_por_nota * cantidadDeNotas;
   const meta_precio_por_nota = meta_costo_por_nota / (1-margen/100)
   const meta_precio_total = meta_precio_por_nota * cantidadDeNotas;
+  const meta_precioConAgencia = meta_precio_total / (1 - margenAgencia/100);
 
-  const totales_cpm = dv_cpm + meta_cpm;
-  const totales_cpm_agencia = cpm_agencia + meta_cpm_agencia;
-  const totales_costo_por_nota = dv_costo_por_nota + meta_costo_por_nota;
-  const totales_costo_total = dv_costo_total + meta_costo_total;
-  const totales_precio_por_nota = dv_precio_por_nota + meta_precio_por_nota;
-  const totales_precio_total = dv_precio_total + meta_precio_total;
+  const youtube_cpm = Number(poblacionEstimada?.meta?.cpm ?? 0);
+  const youtube_cpm_agencia = meta_cpm / (1 - margenAgencia/100);
+  const youtube_costo_por_nota = meta_cpm_agencia * alcancePorNota * 2/1000;
+  const youtube_costo_total = meta_costo_por_nota * cantidadDeNotas;
+  const youtube_precio_por_nota = meta_costo_por_nota / (1-margen/100)
+  const youtube_precio_total = meta_precio_por_nota * cantidadDeNotas;
+  const youtube_precioConAgencia = meta_precio_total / (1 - margenAgencia/100);
 
-  setData([[dv_cpm.toFixed(2), cpm_agencia.toFixed(2), dv_costo_por_nota.toFixed(2), dv_costo_total.toFixed(2), dv_precio_por_nota.toFixed(2), dv_precio_total.toFixed(2)],
-          [meta_cpm.toFixed(2), meta_cpm_agencia.toFixed(2),meta_costo_por_nota.toFixed(2), meta_costo_total.toFixed(2), meta_precio_por_nota.toFixed(2), meta_precio_total.toFixed(2)],
-          [totales_cpm.toFixed(2), totales_cpm_agencia.toFixed(2), totales_costo_por_nota.toFixed(2), totales_costo_total.toFixed(2), totales_precio_por_nota.toFixed(2), totales_precio_total.toFixed(2)]]);
+  const personalizado_cpm = cpmPersonalizado;
+  const personalizado_cpm_agencia = personalizado_cpm / (1 - margenAgencia/100);
+  const personalizado_costo_por_nota = personalizado_cpm_agencia * alcancePorNota * 2/1000;
+  const personalizado_costo_total = personalizado_costo_por_nota * cantidadDeNotas;
+  const personalizado_precio_por_nota = personalizado_costo_por_nota / (1-margen/100)
+  const personalizado_precio_total = personalizado_precio_por_nota * cantidadDeNotas;
+  const personalizado_precioConAgencia = personalizado_precio_total / (1 - margenAgencia/100);
 
-}, [poblacionEstimada, alcancePorNota, cantidadDeNotas, margen, margenAgencia]);
+  const filas = [
+  {
+    activo: selectedRows[0],
+    valores: [dv_cpm, cpm_agencia, dv_costo_por_nota, dv_costo_total, dv_precio_por_nota, dv_precio_total, dv_precioConAgencia]
+  },
+  {
+    activo: selectedRows[1],
+    valores: [meta_cpm, meta_cpm_agencia, meta_costo_por_nota, meta_costo_total, meta_precio_por_nota, meta_precio_total, meta_precioConAgencia]
+  },
+  {
+    activo: selectedRows[2],
+    valores: [youtube_cpm, youtube_cpm_agencia, youtube_costo_por_nota, youtube_costo_total, youtube_precio_por_nota, youtube_precio_total, youtube_precioConAgencia]
+  },
+  {
+    activo: selectedRows[3],
+    valores: [personalizado_cpm, personalizado_cpm_agencia, personalizado_costo_por_nota, personalizado_costo_total, personalizado_precio_por_nota, personalizado_precio_total, personalizado_precioConAgencia]
+  }
+];
+
+const totales = new Array(7).fill(0);
+
+filas.forEach(fila => {
+  if (!fila.activo) return;
+
+  fila.valores.forEach((val, i) => {
+    totales[i] += val;
+  });
+});
+
+setData([
+  filas[0].valores.map(v => v.toFixed(2)),
+  filas[1].valores.map(v => v.toFixed(2)),
+  filas[2].valores.map(v => v.toFixed(2)),
+  filas[3].valores.map(v => v.toFixed(2)),
+  totales.map(v => v.toFixed(2))
+]);
+
+}, [poblacionEstimada, alcancePorNota, cantidadDeNotas, margen, margenAgencia, cpmPersonalizado, selectedRows]);
 
 
   return (
@@ -188,7 +241,7 @@ useEffect(() => {
       {/* Búsqueda */}
       <div className='row miPerfilContainer soporteContainer mt-4 p-0 mb-3'>
           <div className='col-6'>
-          <ArbolDistribucion
+          <ArbolDistribucion  
             TOKEN={TOKEN}
             pais={pais}
             provincia={provincia}
@@ -239,13 +292,34 @@ useEffect(() => {
                   isDecimal={true}
                 />
                 <InputNumerico
-                  title="Margen agencia"
+                  title="Fee plataformas"
                   selectedValue={margenAgencia}
                   isPercentual ={true}
                   min={0}
                   max={99.9}
                   onSelect={setMargenAgencia}
                   onClear={() => setMargenAgencia(null)}
+                  isDecimal={true}
+                />
+
+                <InputNumerico
+                  title="Margen agencia"
+                  selectedValue={margenAgencia2}
+                  isPercentual ={true}
+                  min={0}
+                  max={99.9}
+                  onSelect={setMargenAgencia2}
+                  onClear={() => setMargenAgencia2(0)}
+                  isDecimal={true}
+                />
+                <InputNumerico
+                  title="CPM personalizado (opcional)"
+                  selectedValue={cpmPersonalizado}
+                  isPercentual ={false}
+                  min={0}
+                  max={10000000}
+                  onSelect={setCpmPersonalizado}
+                  onClear={() => setCpmPersonalizado(0)}
                   isDecimal={true}
                 />
               </div>
@@ -257,6 +331,8 @@ useEffect(() => {
             columns={columns}
             rows={rows}
             data={data}
+            selectedRows={selectedRows}
+            onToggleRow={toggleRow}
           />
         </div>
       </div>

@@ -1,6 +1,6 @@
 import React from "react";
 
-const TablaReadOnly = ({ columns = [], rows = [], data = [] }) => {
+const TablaReadOnly = ({ columns = [], rows = [], data = [], selectedRows = [], onToggleRow }) => {
   return (
     <div style={{ overflowX: "auto" }}>
       <table
@@ -48,19 +48,26 @@ const TablaReadOnly = ({ columns = [], rows = [], data = [] }) => {
             </tr>
           ) : (
             rows.map((rowTitle, rowIndex) => (
-              <tr key={rowIndex}>
-                {/* Primera columna gris */}
-                <th
-                  style={{
-                    border: "1px solid #ccc",
-                    padding: "8px",
-                    backgroundColor: "#f2f2f2",
-                    textAlign: "left",
-                    fontWeight: "bold",
-                  }}
-                >
-                  {rowTitle}
-                </th>
+  <tr key={rowIndex}>
+    <th
+      style={{
+        border: "1px solid #ccc",
+        padding: "8px",
+        backgroundColor: "#f2f2f2",
+        textAlign: "left",
+        fontWeight: "bold",
+      }}
+    >
+      {rowIndex < rows.length - 1 && (
+        <input
+          type="checkbox"
+          checked={selectedRows[rowIndex]}
+          onChange={() => onToggleRow(rowIndex)}
+          style={{ marginRight: "6px" }}
+        />
+      )}
+      {rowTitle}
+    </th>
 
                 {columns.map((_, colIndex) => (
                   <td
