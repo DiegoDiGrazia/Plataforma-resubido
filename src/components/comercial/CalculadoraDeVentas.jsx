@@ -166,7 +166,7 @@ useEffect(() => {
   const meta_costo_total = meta_costo_por_nota * cantidadDeNotas;
   const meta_precio_por_nota = meta_costo_por_nota / (1-margen/100)
   const meta_precio_total = meta_precio_por_nota * cantidadDeNotas;
-  const meta_precioConAgencia = meta_precio_total / (1 - margenAgencia/100);
+  const meta_precioConAgencia = meta_precio_total / (1 - margenAgencia2/100);
 
   const youtube_cpm = Number(poblacionEstimada?.meta?.cpm ?? 0);
   const youtube_cpm_agencia = meta_cpm / (1 - margenAgencia/100);
@@ -174,7 +174,7 @@ useEffect(() => {
   const youtube_costo_total = meta_costo_por_nota * cantidadDeNotas;
   const youtube_precio_por_nota = meta_costo_por_nota / (1-margen/100)
   const youtube_precio_total = meta_precio_por_nota * cantidadDeNotas;
-  const youtube_precioConAgencia = meta_precio_total / (1 - margenAgencia/100);
+  const youtube_precioConAgencia = meta_precio_total / (1 - margenAgencia2/100);
 
   const personalizado_cpm = cpmPersonalizado;
   const personalizado_cpm_agencia = personalizado_cpm / (1 - margenAgencia/100);
@@ -182,7 +182,7 @@ useEffect(() => {
   const personalizado_costo_total = personalizado_costo_por_nota * cantidadDeNotas;
   const personalizado_precio_por_nota = personalizado_costo_por_nota / (1-margen/100)
   const personalizado_precio_total = personalizado_precio_por_nota * cantidadDeNotas;
-  const personalizado_precioConAgencia = personalizado_precio_total / (1 - margenAgencia/100);
+  const personalizado_precioConAgencia = personalizado_precio_total / (1 - margenAgencia2/100);
 
   const filas = [
   {
@@ -221,7 +221,8 @@ setData([
   totales.map(v => v.toFixed(2))
 ]);
 
-}, [poblacionEstimada, alcancePorNota, cantidadDeNotas, margen, margenAgencia, cpmPersonalizado, selectedRows]);
+}, [poblacionEstimada, alcancePorNota, cantidadDeNotas, margen, 
+  margenAgencia, cpmPersonalizado, selectedRows, margenAgencia2]);
 
 
   return (

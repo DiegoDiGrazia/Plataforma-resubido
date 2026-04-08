@@ -469,6 +469,21 @@ const NotasParaEditorial = () => {
                                             <img src="/images/prisma.png" alt="Duplicar Nota" className='mb-3' />
                                         </button>
                                         } 
+                                        
+                                        <button title="video youtube"
+                                            onClick={() => {
+                                            setMostrarModalYoutube(true);
+                                            setIdNotaYoutube(nota.id);
+                                            console.log(nota.id)
+                                            }}
+                                            style={{background: "none", border: "none",padding: 0,
+                                                margin: 0,
+                                                cursor: "pointer",
+                                            }}
+                                            >
+                                            <i className="bi bi-youtube m-2 fs-2"></i>
+                                        </button>
+                                        
 
                                         { nota.con_distribucion === "1" &&
                                         <Link
@@ -489,21 +504,7 @@ const NotasParaEditorial = () => {
                                             >
                                             <i className="bi bi-back m-2 fs-2"></i>
                                         </button>
-                                        {perfilUsuario === "1" || perfilUsuario === "5" &&
-                                        <button title="video youtube"
-                                            onClick={() => {
-                                            setMostrarModalYoutube(true);
-                                            setIdNotaYoutube(nota.id);
-                                            console.log(nota.id)
-                                            }}
-                                            style={{background: "none", border: "none",padding: 0,
-                                                margin: 0,
-                                                cursor: "pointer",
-                                            }}
-                                            >
-                                            <i className="bi bi-youtube m-2 fs-2"></i>
-                                        </button>
-                                        }
+
                                         <BotonEliminarNota id={nota.id} token={TOKEN}></BotonEliminarNota>
 
                                         </div>

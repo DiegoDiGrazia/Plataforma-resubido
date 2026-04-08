@@ -57,12 +57,7 @@ const PlataformaMasImpresiones = ({datosLocales, resumenCliente= null, loading =
 
     const totalesInteracciones = useMemo(() => {
         if (!resumenCliente) return null;
-
-        const cantidad_meses = seleccionPorFiltro(FiltroActual);
-
-        const dataFiltrada = resumenCliente.slice(cantidad_meses);
-
-        return sumarCampos(dataFiltrada, CAMPOS_METRICAS);
+        return sumarCampos(resumenCliente, CAMPOS_METRICAS);
 
     }, [resumenCliente, FiltroActual]);
 

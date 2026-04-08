@@ -37,7 +37,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 const BarplotNota = ({id_noti, TOKEN, cliente, fpub, dataLocalNota, resumenNota = null}) => {
 
     console.log("LOCAL DATA NOTA", dataLocalNota)
-    const [loading, setLoading] = useState(true); // Estado de carga
+    const [loading, setLoading] = useState(false); // Estado de carga
     const [totales, setTotales] = useState({})
 
     useEffect(() => {
@@ -126,36 +126,6 @@ const BarplotNota = ({id_noti, TOKEN, cliente, fpub, dataLocalNota, resumenNota 
     },
     };
 
-    useEffect(() => {
-        axios.post(
-            "https://panel.serviciosd.com/app_obtener_usuarios_impresiones_noticia",
-            {
-                cliente: cliente,
-                periodos: generarPeriodosDesde(String(fpub), 3),
-                token: TOKEN,
-                id_noti: id_noti,
-            },
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            }
-        )
-        .then((response) => {
-            if (response.data.status === "true") {
-                setUsuariosImpresionesNota(dataLocalNota ? dataLocalNota : response.data.item);
-                console.log(response.data.item)
-            } else {
-                console.error('Error en la respuesta de la API:', response.data.message);
-            }
-        })
-        .catch((error) => {
-            console.error('Error al hacer la solicitud:', error);
-        })
-        .finally(() => {
-            setLoading(false);
-        });
-    }, [fpub, cliente, TOKEN, id_noti]);
 
 
     const dataReal = {
