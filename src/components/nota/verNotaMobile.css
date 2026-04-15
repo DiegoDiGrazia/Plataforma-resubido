@@ -186,9 +186,10 @@
             padding-right: 0px;
         }
 
-        .row.g-1 {
+        .datos-resumen.row.g-1 {
             width: 100%;
             margin-top: 220px;
+            padding: 0px;
         }
         
         .col.totales_widget.impresionesWidget {
@@ -242,6 +243,41 @@
         .medioRowNota .impresionesWidget {
             position: static !important;
         }
+        
+        .tituloCreativo {
+            margin: 10px 0 0 0;
+            display: flex; 
+            justify-content: center;
+        }
+
+        .col-lg-12.col-xl.col-6.m-2.back-white.ms-5 {
+            margin: 15px 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            max-width: 100vw !important;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: auto;
+        }
+
+        .iframe-w.col-lg-12.col-xl.col-6.m-2.back-white.ms-5 {
+            padding: 0 15px !important;
+            align-items: flex-start !important;
+        }
+        
+        .col-lg-12.col-xl.col-6.m-2.back-white.ms-5 .row.g-1 {
+            width: 100%;
+            margin: 0;
+            justify-content: center;
+        }
+
+        .col-lg-12.col-xl.col-6.m-2.back-white.ms-5 h3 {
+            text-align: center !important;
+            width: 100%;
+            margin-bottom: 10px !important;
+        }
+
     }
 
     .publicada {

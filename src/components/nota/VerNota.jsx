@@ -173,7 +173,7 @@ const VerNota = () => {
                     <div className="mb-2 tamaño_barplot">
                             { <BarplotNota id_noti={id_noti} TOKEN={TOKEN} cliente={CLIENTE} fpub={FPUB} dataLocalNota = {dataLocalNota?.usuarioDeNota} resumenNota = {resumenNota}/> } 
                     </div>
-                     <div className='row g-1'>
+                     <div className='datos-resumen row g-1'>
                         <div className='col-lg-12 col-xl col-6 m-2 back-white'>
                             <PlataformaMasImpresiones resumenCliente = {resumenNota} loading ={loadingUsuarios}/>
                         </div>
@@ -191,8 +191,10 @@ const VerNota = () => {
                                 <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
                                     <IframeNota url={`https://builder.ntcias.de/preview.php?id_noti=${id_noti}`} width={320} height={50} title={'320 x 50'} />
                                 </div>
+                                <div className='iframe-w col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                                    <IframeNota url={`https://builder.ntcias.de/preview.php?id_noti=${id_noti}`} width={728} height={90} title={'728 x 90'} />
+                                </div>
                             </div>
-                            <IframeNota url={`https://builder.ntcias.de/preview.php?id_noti=${id_noti}`} width={728} height={90} title={'728 x 90'} />
                         </div>
                         <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
                             <IframeNota url={`https://builder.ntcias.de/preview.php?id_noti=${id_noti}`} width={300} height={600} title={'300 x 600'} />
