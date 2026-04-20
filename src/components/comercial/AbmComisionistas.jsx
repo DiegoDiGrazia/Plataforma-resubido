@@ -42,9 +42,8 @@ const AbmPerfiles
     obtenerGeo().then(setGeo);
 }, [TOKEN]);
 
-  // Filtrar por búsqueda
   const comisionistasFiltrados = useMemo(() => {
-    return comisionistas.filter((item) =>  //-- Cambia esto a usuarios cuando tengas la API
+    return comisionistas.filter((item) => 
       item.nombre.toLowerCase().includes(search.toLowerCase()) 
     );
   }, [search, comisionistas]);

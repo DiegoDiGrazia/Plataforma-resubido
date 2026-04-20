@@ -208,3 +208,6 @@ export const obtenerComentariosDeContrato = (token, id) =>
 
 export const agregarComentario = (token, id_usuario, comentarios_in, id) =>
   fetchData("https://panel.serviciosd.com/app_comentario_edit", token, {id_usuario, comentarios_in, id});
+
+export const obtenerNotaCompletaConIa = (token, id, term_id) =>
+  fetchData("https://panel.serviciosd.com/app_obtener_completo_ia", token, {id, term_id});

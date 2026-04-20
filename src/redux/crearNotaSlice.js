@@ -253,7 +253,7 @@ const crearNotaSlice = createSlice({
       state.distribucion_prioritaria = nota.distribucion_prioritaria == 'Prioritaria' ? '1' : nota.distribucion_prioritaria;
       state.estado = nota.estado;
       state.id_noti = nota.id;
-      state.etiquetas = nota.etiquetas.split(",");
+      state.etiquetas = nota.etiquetas?.split(",") || [];
       state.f_vence = nota.fecha_vencimiento;
       state.f_pub = nota.f_pub;
       state.autor = nota.autor;

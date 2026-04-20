@@ -21,6 +21,7 @@ import './verNotaMobile.css'
 import ModalConInputFile from '../administrador/gestores/ModalConInputFile';
 import { guardarVideoYoutube } from '../administrador/gestores/apisUsuarios';
 import ModalMensaje from '../administrador/gestores/ModalMensaje';
+import { obtenerNotaCompletaConIa } from '../administrador/gestores/apisUsuarios';
 
   function obtenerFechaDeManana() {
     const hoy = new Date();
@@ -56,38 +57,49 @@ const NotasParaEditorial = () => {
     const [idNotaYoutube, setIdNotaYoutube] = useState('')
     const [mostrarMensaje, setMostrarMensaje] = useState(false)
     const [mensaje, setMensaje] = useState('')
+    const TOKEN = useSelector((state) => state.formulario.token);
 
     const editarNota = async (notaABM, seDuplica) => {
-    console.log("entro a editarNota");
-    dispatch(resetCrearNota());
-    dispatch(setNotaAEditar(notaABM));
-    dispatch(updateCliente(notaABM.cliente));
-    if (seDuplica) {
-        dispatch(setIdNoti("0"));
-    }
-    // Procesar el contenido HTML
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(notaABM.parrafo, 'text/html');
-    const nodes = doc.body.childNodes;
-    const contenido = [];
-
-    for (let i = 0; i < nodes.length; i++) {
-        const node = nodes[i];
-
-        if (node.nodeType === 1) { // ELEMENT_NODE
-            const tag = node.tagName.toUpperCase();
-
-            if (tag === 'IFRAME' || tag === 'BLOCKQUOTE') {
-                contenido.push(["embebido", node.outerHTML, "", ""]);
-            } else {
-                contenido.push(["parrafo", node.outerHTML, "", ""]);
-            }
-        } else if (node.nodeType === 3) { // TEXT_NODE
-            const trimmed = node.textContent.trim();
-            if (trimmed) {
-                contenido.push(["parrafo", trimmed, "", ""]);
-            }
+        console.log("nota a editar:", notaABM);
+        if (notaABM.es_ia == '1' && notaABM.parrafo == "<p></p>") {
+            setMensaje(`Obteniendo nota completa con IA, esto puede tardar unos segundos...
+            En brevedad usted podra editar la nota con toda la informacion y contenido que se genero con IA`);
+            setMostrarMensaje(true)
+            const nota = await obtenerNotaCompletaConIa(TOKEN, notaABM.id, notaABM.term_id);
+            notaABM = nota
+            console.log("nota completa con IA:", nota);
         }
+        dispatch(resetCrearNota());
+        dispatch(setNotaAEditar(notaABM));
+        dispatch(updateCliente(notaABM.cliente));
+        
+        
+        if (seDuplica) {
+            dispatch(setIdNoti("0"));
+        }
+        // Procesar el contenido HTML
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(notaABM.parrafo, 'text/html');
+        const nodes = doc.body.childNodes;
+        const contenido = [];
+
+        for (let i = 0; i < nodes.length; i++) {
+            const node = nodes[i];
+
+            if (node.nodeType === 1) { // ELEMENT_NODE
+                const tag = node.tagName.toUpperCase();
+
+                if (tag === 'IFRAME' || tag === 'BLOCKQUOTE') {
+                    contenido.push(["embebido", node.outerHTML, "", ""]);
+                } else {
+                    contenido.push(["parrafo", node.outerHTML, "", ""]);
+                }
+            } else if (node.nodeType === 3) { // TEXT_NODE
+                const trimmed = node.textContent.trim();
+                if (trimmed) {
+                    contenido.push(["parrafo", trimmed, "", ""]);
+                }
+            }
     }
 
     dispatch(setContenidoAEditar(contenido));
@@ -297,7 +309,6 @@ const NotasParaEditorial = () => {
 
     const dispatch = useDispatch();
 
-    const TOKEN = useSelector((state) => state.formulario.token);
     
     const notasFiltradas = todasLasNotas2.filter(nota =>
         nota.titulo.toLowerCase().includes(searchQuery.toLowerCase())
@@ -469,6 +480,18 @@ const NotasParaEditorial = () => {
                                             <img src="/images/prisma.png" alt="Duplicar Nota" className='mb-3' />
                                         </button>
                                         } 
+
+                                        {perfilUsuario === "1" &&  nota.es_ia == 1  && 
+                                        <button title="es_ia"
+                                            onClick={() => editarNotaFreemium(nota, true)}
+                                            style={{background: "none", border: "none",padding: 0,
+                                                margin: 0,
+                                                cursor: "pointer",
+                                            }}
+                                        >
+                                            ia
+                                        </button>
+                                        } 
                                         
                                         <button title="video youtube"
                                             onClick={() => {
@@ -483,6 +506,8 @@ const NotasParaEditorial = () => {
                                             >
                                             <i className="bi bi-youtube m-2 fs-2"></i>
                                         </button>
+
+                                        
                                         
 
                                         { nota.con_distribucion === "1" &&
