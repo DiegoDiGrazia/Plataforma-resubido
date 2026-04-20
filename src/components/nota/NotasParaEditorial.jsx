@@ -481,17 +481,6 @@ const NotasParaEditorial = () => {
                                         </button>
                                         } 
 
-                                        {perfilUsuario === "1" &&  nota.es_ia == 1  && 
-                                        <button title="es_ia"
-                                            onClick={() => editarNotaFreemium(nota, true)}
-                                            style={{background: "none", border: "none",padding: 0,
-                                                margin: 0,
-                                                cursor: "pointer",
-                                            }}
-                                        >
-                                            ia
-                                        </button>
-                                        } 
                                         
                                         <button title="video youtube"
                                             onClick={() => {
