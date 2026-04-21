@@ -66,8 +66,10 @@ const NotasParaEditorial = () => {
             En brevedad usted podra editar la nota con toda la informacion y contenido que se genero con IA`);
             setMostrarMensaje(true)
             const nota = await obtenerNotaCompletaConIa(TOKEN, notaABM.id, notaABM.term_id);
+            if (nota == []) {
             notaABM = nota
             console.log("nota completa con IA:", nota);
+            }
         }
         dispatch(resetCrearNota());
         dispatch(setNotaAEditar(notaABM));
