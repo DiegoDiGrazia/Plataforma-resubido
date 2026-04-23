@@ -448,7 +448,7 @@ const NotasParaEditorial = () => {
                                             }}
                                         >
                                             <div className='row p-0 nombre_plataforma'>
-                                                {formatearTitulo(nota.titulo, 67)}
+                                                {nota.titulo}
                                             </div>
                                         </Link>
                                         <div className='row p-0'>
