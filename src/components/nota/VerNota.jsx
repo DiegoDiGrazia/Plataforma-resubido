@@ -219,7 +219,7 @@ const VerNota = () => {
                         </div>
                     </div>
 
-                    <div className='row g-1'>
+                    {/* <div className='row g-1'>
                         <h2 className='tituloCreativo'>Creativos Historias</h2>
                         <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
                             <IframeNotaEscalable 
@@ -240,7 +240,7 @@ const VerNota = () => {
                             />                       
                         </div>
 
-                    </div>
+                    </div> */}
                 </div>
                 }
             </div>
