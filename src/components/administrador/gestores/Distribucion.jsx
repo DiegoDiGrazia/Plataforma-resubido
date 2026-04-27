@@ -4,7 +4,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "../../miPerfil/miPerfil.css";
 import { useSelector } from 'react-redux';
 import ModalMensaje from '../gestores/ModalMensaje';
-import {obtenerClientes, obtenerNotasDeGeneraciones, obtenerPlanesMarketing, obtenerVideosYoutube } from './apisUsuarios'; 
+import {obtenerClientes, obtenerNotasDeGeneraciones, obtenerPlanesMarketing, obtenerVideosYoutube, obtenerGeo, obtenerContratos } from './apisUsuarios'; 
 import CopiarTexto from './CopiarTexto';
 import IconosDistribucionConMonto from './IconosDistribucionConMonto';
 import { Accordion } from 'react-bootstrap';
@@ -127,8 +127,13 @@ const DistribucionAdmin = () => {
   const TOKEN = useSelector((state) => state.formulario.token);
   const [loading, setLoading] = useState(false); 
   const nombreAgrupacionVideosNota = 'Notas de Video';
+  const [geo, setGeo] = useState("");
+  const [contratos, setContratos] = useState([]);
+  
 
   useEffect(() => {
+    obtenerGeo().then(setGeo);
+    obtenerContratos(TOKEN).then(setContratos);
     obtenerClientes(TOKEN).then(setClientes);
     const [añoHasta, mesHasta] = fechaHasta.split("-");
     const ultimoDiaHasta = obtenerUltimoDiaMes(añoHasta, mesHasta);
@@ -396,7 +401,7 @@ const goToPage = (newPage) => {
                               </div>
                                 
                               {/* Columna 4 */}
-                              <IconosDistribucionConMonto nota= {nota} token = {TOKEN} />
+                              <IconosDistribucionConMonto nota= {nota} token = {TOKEN} geo={geo} contratos={contratos}/>
                               </>
                               )}
                             </div>
