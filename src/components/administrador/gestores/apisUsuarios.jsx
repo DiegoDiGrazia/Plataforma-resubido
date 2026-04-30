@@ -211,3 +211,6 @@ export const agregarComentario = (token, id_usuario, comentarios_in, id) =>
 
 export const obtenerNotaCompletaConIa = (token, id, term_id) =>
   fetchData("https://panel.serviciosd.com/app_obtener_completo_ia", token, {id, term_id});
+
+export const obtenerFuenteBot = (token, term_id) =>
+  fetchData("https://panel.serviciosd.com/app_obtener_fuente_bot", token, {term_id});

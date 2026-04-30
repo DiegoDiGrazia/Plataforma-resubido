@@ -21,7 +21,7 @@ import './verNotaMobile.css'
 import ModalConInputFile from '../administrador/gestores/ModalConInputFile';
 import { guardarVideoYoutube } from '../administrador/gestores/apisUsuarios';
 import ModalMensaje from '../administrador/gestores/ModalMensaje';
-import { obtenerNotaCompletaConIa } from '../administrador/gestores/apisUsuarios';
+import { obtenerNotaCompletaConIa, obtenerFuenteBot } from '../administrador/gestores/apisUsuarios';
 
   function obtenerFechaDeManana() {
     const hoy = new Date();
@@ -175,9 +175,9 @@ const NotasParaEditorial = () => {
         desdeLimite = verMasUltimo * verMasCantidadPaginacion;
         setVerMasUltimo(siguientePagina);
     } else {
-        setTodasLasNotas2([]);               // ✅ Limpiar la lista
-        setVerMasUltimo(1);                  // ✅ Reiniciar el contador de paginación
-        desdeLimite = 0;                     // ✅ Resetear el offset
+        setTodasLasNotas2([]);              
+        setVerMasUltimo(1);                 
+        desdeLimite = 0;                     
     }
 
     axios.post(
@@ -339,6 +339,19 @@ const NotasParaEditorial = () => {
             handleFiltroClick_todasLasNotas(filtroSeleccionado); // Llama a la función específica para el caso de id = 1
         }
     }, [filtroSeleccionado, CLIENTE]);
+
+    const mostrarFuenteNota = async (term_id) => {
+        const link = await obtenerFuenteBot(TOKEN, term_id);
+        console.log("link fuente", link);
+        setMensaje(`
+            La fuente de esta nota es: ${link[0].url}
+            Título: ${link[0].titulo}
+            Provincia: ${link[0].provincia}
+            Ciudad: ${link[0].ciudad}
+            Imagen: ${link[0].imagen}
+            `);
+        setMostrarMensaje(true);
+    };
 
     return (
         <div id='pantalla-notasParaEditorial'>
@@ -510,6 +523,18 @@ const NotasParaEditorial = () => {
                                         >
                                             <i class="bi bi-bar-chart-line-fill m-2 fs-2"></i>
                                         </Link>
+                                        }
+
+                                        { nota.es_ia == "1" &&
+                                        <button title="Obtener fuente"
+                                            onClick={() => mostrarFuenteNota(nota.term_id)}
+                                            style={{background: "none", border: "none",padding: 0,
+                                                margin: 0,
+                                                cursor: "pointer",
+                                            }}
+                                            >
+                                            <i className="bi bi-menu-button-wide m-2 fs-2"></i>
+                                        </button>
                                         }
                                         <button title="Duplicar Nota"
                                             onClick={() => editarNota(nota, true)}

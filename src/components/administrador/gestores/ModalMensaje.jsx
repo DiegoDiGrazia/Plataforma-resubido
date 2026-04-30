@@ -22,7 +22,9 @@ export default function ModalMensaje({ show, mensaje, onClose }) {
             ></button>
           </div>
           <div className="modal-body">
-            <p>{mensaje}</p>
+            <p style={{ whiteSpace: 'pre-line' }}>
+              {mensaje}
+            </p>
           </div>
         </div>
       </div>
