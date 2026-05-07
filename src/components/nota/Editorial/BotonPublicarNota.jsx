@@ -9,8 +9,7 @@ import  store  from '../../../redux/store'; // o la ruta que tengas definida
 import BotonModalIframes from './BotonModalframes';
 
 
-const BotonPublicarNota = ({ status }) => {
-    const [isLoading, setIsLoading] = useState(false);
+const BotonPublicarNota = ({ status, isLoading, setIsLoading }) => {
     const [showModal, setShowModal] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const { archivo } = useContext(ArchivoContext); // video es tipo File
@@ -43,6 +42,7 @@ const BotonPublicarNota = ({ status }) => {
     const engagementText = useSelector((state) => state.crearNota.engagement);
     const bajadaText = useSelector((state) => state.crearNota.bajada);
     const epigrafeImagenPpal = useSelector((state) => state.crearNota.epigrafeImagenPpal);
+    const id_nota_borrador = useSelector((state) => state.crearNota.id_nota_borrador);
 
     const tipoAutor = useSelector((state) => state.crearNota.autor);
     const pais = useSelector((state) => state.crearNota.pais);
@@ -102,6 +102,7 @@ const BotonPublicarNota = ({ status }) => {
         try {
             const response = await clickearEnPublicarNota({
                 status,
+                id_nota_borrador,
                 TOKEN,
                 titulo,
                 categoriasActivas,

@@ -32,6 +32,7 @@ const PublicarNota = () => {
     const [isClickedRecorte, setIsClickedRecorte] = useState(false);
     const comentario = useSelector((state) => state.crearNota.comentarios); // Comentario de la nota
     const con_distribucion = useSelector((state) => state.crearNota.con_distribucion); // Comentario de la nota
+    const [isLoading, setIsLoading] = useState(false);
 
     const manejarCambioComentarios = (e) => {
         dispatch(setComentario(e.target.value));
@@ -102,7 +103,9 @@ const PublicarNota = () => {
 
     return (
                 <>
+                {isLoading && (
                 <GuardarNotaCada10sg nota={actual} />
+                )}
                 <div className="content flex-grow-1">
                     <header id="head_dash" className='header_dash'>
                         <div className='row'>
@@ -252,9 +255,9 @@ const PublicarNota = () => {
                                 )}
                                 
                                 <div className='mb-5'>
-                                    <BotonPublicarNota status="EN REVISION" />
-                                    <BotonPublicarNota status="BORRADOR" />
-                                    {es_editor && <BotonPublicarNota status="PUBLICADO" />}
+                                    <BotonPublicarNota status="EN REVISION" isLoading={isLoading} setIsLoading={setIsLoading} />
+                                    <BotonPublicarNota status="BORRADOR" isLoading={isLoading} setIsLoading={setIsLoading} />
+                                    {es_editor && <BotonPublicarNota status="PUBLICADO" isLoading={isLoading} setIsLoading={setIsLoading} />}
                                     <Button
                                         onClick={() => navigate('/crearNota')}
                                         id="botonVolver"
