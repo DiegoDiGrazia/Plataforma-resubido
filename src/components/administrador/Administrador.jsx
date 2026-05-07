@@ -27,7 +27,13 @@ const DEF = {
         "url": "clientes",
         "titulo": "Cuentas"
         },
+    "sitios-relevantes": {
+        "descripcion": "Gestiona la alta, baja y modificación de sitios relevantes.", 
+        "url": "sitios-relevantes",
+        "titulo": "ABM Sitios Relevantes"
     }
+}
+
 const Administrador = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const navigate = useNavigate();

@@ -214,3 +214,24 @@ export const obtenerNotaCompletaConIa = (token, id, term_id) =>
 
 export const obtenerFuenteBot = (token, term_id) =>
   fetchData("https://panel.serviciosd.com/app_obtener_fuente_bot", token, {term_id});
+
+export const obtenerSitiosPaises = (token, pais_id) =>
+  fetchData("https://panel.serviciosd.com/app_obtener_m_sitios_paises", token, {pais_id});
+
+export const obtenerSitiosProvincias = (token, provincia_id) =>
+  fetchData("https://panel.serviciosd.com/app_obtener_m_sitios_provincias", token, {provincia_id});
+
+export const agregarSitioPaises = (token, pais_id, sitio) =>
+  fetchData("https://panel.serviciosd.com/app_agregar_m_sitios_paises", token, {pais_id, sitio});
+
+export const agregarSitioProvincias = (token, provincia_id, sitio) =>
+  fetchData("https://panel.serviciosd.com/app_agregar_m_sitios_provincias", token, {provincia_id, sitio});
+
+export const eliminarSitiosPaises = (token, pais_id, id_sitio) =>
+  fetchData("https://panel.serviciosd.com/app_eliminar_m_sitios_paises", token, {pais_id, id_sitio});
+
+export const eliminarSitiosProvincias = (token, provincia_id, id_sitio) =>
+  fetchData("https://panel.serviciosd.com/app_eliminar_m_sitios_provincias", token, {provincia_id, id_sitio});
+
+export const editarSitio = (token, id, sitio, imagen) => 
+fetchData ("https://panel.serviciosd.com/app_sitio_edit", token, {id, sitio, imagen});

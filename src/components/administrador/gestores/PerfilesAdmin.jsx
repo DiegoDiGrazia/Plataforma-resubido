@@ -149,7 +149,7 @@ const handleAgregarPaginaDelPerfil = (id_perfil, id_pagina) => {
       <div className='row miPerfilContainer soporteContainer'>
         <div className='col p-0'>
           <h3 id="saludo" className='headerTusNotas ml-0'>
-            <img src="/images/auto_entrevistas_icon.png" alt="Icono 1" className="icon me-2 icono_tusNotas" /> Gestiona tus perfiles
+            <i className="icon me-2 icono_tusNotas bi bi-gear-fill" alt="Icono 1" /> Gestiona tus perfiles
           </h3>
           <h4 className='infoCuenta'>Gestiona tus perfiles</h4>
           <div className='abajoDeTusNotas'>

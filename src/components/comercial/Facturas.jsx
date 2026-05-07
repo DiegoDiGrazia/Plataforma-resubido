@@ -567,7 +567,7 @@ const Facturas = () =>  {
                                     <strong className="datos-factura d-block">Empresa: <span className="fw-normal">{factura.empresa}</span></strong>
                                 </div>
                                 <div className="col mt-5">
-                                    <strong className="datos-factura d-block">Enviar a: <span className="fw-normal">{factura.donde}</span></strong>
+                                    <strong className="datos-factura d-block">Enviar a: <span className="fw-normal">{factura.donde ? factura.donde : "- -"}</span></strong>
                                     <strong className="datos-factura d-block">Paga Sellos: <span className="fw-normal">{factura.requiere_pago}</span></strong>
                                     <strong className="datos-factura d-block">Lleva Certificación: <span className="fw-normal">{factura.lleva_certificacion}</span></strong>
                                     <strong className="datos-factura d-block">Generada Como Abierta: <span className="fw-normal">{factura.abierto}</span></strong>

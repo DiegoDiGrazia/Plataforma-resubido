@@ -19,6 +19,7 @@ import AbmPlanes from './components/comercial/AbmPlanes';
 import AbmComisionistas from './components/comercial/AbmComisionistas';
 import AbmContratos from './components/comercial/AbmContratos';
 import Facturas from './components/comercial/Facturas';
+import AbmSitiosRelevantes from './components/administrador/gestores/AbmSitiosRelevantes';
 
 // 👇 Acá van tus componentes con lazy
 const Formulario = lazy(() => import('./components/login/Formulario'));
@@ -57,6 +58,7 @@ function App() {
               <Route path="/perfiles" element={<PerfilesAdmin />} />
               <Route path="/distribucion" element={<DistribucionAdmin />} />
               <Route path="/clientes" element={<AbmClientes />} />
+              <Route path='/sitios-relevantes' element={<AbmSitiosRelevantes/>} />
               <Route path="/distribuir-nota-freemium" element={<NotaFreemiumDistribucion />} />
               <Route path="/notas-cliente/:cliente/:desde/:hasta" element={<NotasCliente />} />
               <Route path="/mi-perfil" element={<Perfil />} />
@@ -74,8 +76,6 @@ function App() {
               <Route path="/comercial/abm-comisionistas" element={<AbmComisionistas />} />
               <Route path="/comercial/abm-contratos" element={<AbmContratos />} />
               <Route path="/comercial/facturas" element={<Facturas />} />
-
-
             </Route>
           </Routes>
         </Suspense>

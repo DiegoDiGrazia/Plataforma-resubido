@@ -435,8 +435,7 @@ const handleSave = () => {
       <div className='row miPerfilContainer soporteContainer'>
         <div className='col p-0'>
           <h3 id="saludo" className='headerTusNotas ml-0'>
-            <img src="/images/auto_entrevistas_icon.png" alt="Icono 1" 
-            className="icon me-2 icono_tusNotas" /> Gestiona tus Contratos
+            <i className="icon me-2 icono_tusNotas bi bi-bag-fill" alt="Icono 1" /> Gestiona tus Contratos
           </h3>
           <h4 className='infoCuenta'>Gestiona tus Contratos</h4>
           <div className='abajoDeTusNotas'>

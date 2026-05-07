@@ -118,8 +118,10 @@
     width: 470px !important;
 }
 
-.accordion-button::after {
-   display: none;
+#pantalla-dashboard, #pantalla-verNota {
+    .accordion-button::after {
+       display: none;
+    }
 }
 
 .icono-ctr {

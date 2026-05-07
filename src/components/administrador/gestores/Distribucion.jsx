@@ -307,7 +307,7 @@ const goToPage = (newPage) => {
                           </div>
                         </div>
                         <div className="col-3">
-                          <strong>Meta</strong>
+                          <u><strong className='ms-5'>Meta</strong></u>
                           <div className="row p-1">
                             <span><strong>Distribuidas: </strong>{data.notas.filter(n => n.primer_dato_en_meta != null).length}</span>
                           </div>
@@ -316,7 +316,7 @@ const goToPage = (newPage) => {
                           </div>
                         </div>
                         <div className="col-3">
-                          <strong>DV360</strong>
+                          <u><strong className='ms-5'>DV360</strong></u>
                           <div className="row p-1">
                             <span><strong>Distribuidas: </strong>{data.notas.filter(n => n.primer_dato_en_360 != null).length}</span>
                           </div>

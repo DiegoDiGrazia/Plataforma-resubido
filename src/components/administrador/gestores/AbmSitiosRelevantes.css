@@ -1,0 +1,38 @@
+#abm-sitios-relevantes {
+
+    .buscadorNotasForm {
+        width: 20% !important;
+    }
+
+    .accordion-button::after {
+        margin-left: 0px !important;
+    }
+
+    a {
+        font-size: 16px !important;
+    }
+
+    .bi-plus-circle {
+        color: rgb(34, 85, 194);
+    }
+
+    .bi-trash3-fill {
+        color: rgb(194, 33, 33);
+    }
+
+    .bi-pencil-square {
+        color: rgba(39, 39, 39, 0.836);
+    }
+
+    .boton-funcion {
+        border: none !important;
+    }
+
+    
+}
+
+
+
+
+
+
