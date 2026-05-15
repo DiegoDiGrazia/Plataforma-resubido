@@ -61,9 +61,9 @@ const contratoVacio = {
 
   nombre: "",
   empresa: "GUIAD SA",
-  razon_social: "test",
+  razon_social: "",
   tipo: "",
-  cuit: "1234",
+  cuit: "",
 
   fecha_inicio: '',
   fecha_fin: '',
@@ -114,7 +114,11 @@ const contratoVacio = {
   donde: "",
   comentarios: "",
   id_plan: "",
+  ignore: '1',
+  margenTercero: "0",
 };
+
+
 
 const AbmContratos
  = () => {
@@ -150,6 +154,10 @@ const AbmContratos
     const [fileAAgregar, setFileAAgregar] = useState(null);
     const [loading, setLoading] = useState(true);
 
+
+    useEffect(() => {
+  console.log('contrato seleccionado:', formData);
+}, [formData, contratoSeleccionado]);
     const eliminarContrato = (id) => {
       axios
         .post(
@@ -337,6 +345,16 @@ const AbmContratos
 
   }
 
+  useEffect(() => {
+      if(contratosDelClienteSeleccionado?.length > 0){
+      setFormData(fd => ({
+        ...fd,
+        razon_social: contratosDelClienteSeleccionado.find(c => c.razon_social)?.razon_social || '',
+        cuit: contratosDelClienteSeleccionado.find(c => c.cuit)?.cuit || '',
+      }));
+    }
+  }, [contratosDelClienteSeleccionado]);
+
   const handleEditClick = (contrato) => {
     const comisionista1 = contrato.com1
       ? comisionistas.find(c => contrato.com1.includes(c.apellido))
@@ -356,6 +374,9 @@ const AbmContratos
     const emisorObj = Emisor.find(
       e => e.nombre === contrato.empresa  
     );
+
+    
+    
     setEmisorSeleccionado(emisorObj || null);
     const modal = new window.bootstrap.Modal(document.getElementById('editModal'));
     modal.show();
@@ -375,6 +396,8 @@ const totales = useMemo(() => {
 }, [contratosFiltrados]);
 
 const handleSave = () => {
+  setShowModal(true); // mostrar modal
+  setMensajeModalExito('Aguarde un momento... estamos guardando los cambios'); // mensaje de guardado
   axios
     .post(
       "https://panel.serviciosd.com/app_contrato_edit",
@@ -386,12 +409,14 @@ const handleSave = () => {
         headers: { "Content-Type": "multipart/form-data" },
       }
     )
-    .then(() => {
-      setMensajeModalExito('Los cambios se realizaron correctamente.');
+    .then((res) => {
+      setMensajeModalExito(res.data.message || 'Los cambios se realizaron correctamente');
       setShowModal(true);
+      if (!res.data.message) {
       setTimeout(() => {
         window.location.reload(); 
-      }, 1500);
+      }, 2000)
+    }
     })
     .catch((err) => {
       console.log("Error al guardar cambios:", err);
@@ -652,11 +677,13 @@ const handleSave = () => {
                   <div className="mb-3">
                     <label className="form-label">Contratos del cliente: {clienteSeleccionado.name}</label>
                     <ul>
-                      {contratosDelClienteSeleccionado.map((contrato) => (
+                      {contratosDelClienteSeleccionado
+                      .sort((a, b) => b.id - a.id).filter(c => c.fecha_fin >= new Date().toISOString().split('T')[0])
+                      .map((contrato) => (
                         <li key={contrato.id}>
                           id: {contrato.id} - monto: {contrato.monto} - {contrato.fecha_inicio} a {contrato.fecha_fin}
                         </li>
-                      ))}
+                    ))}
                     </ul>
                   </div>
                   )}
@@ -759,7 +786,7 @@ const handleSave = () => {
                 {/* Margen */}
                   <div className="mb-3">
                   <InputNumerico
-                    title="Margen agencia"
+                    title=" Margen noticias(d)"
                     selectedValue={formData.margen || '0'}
                     isPercentual ={true}
                     min={0}
@@ -770,17 +797,32 @@ const handleSave = () => {
                   />
                   </div>  
 
+                  <div className="mb-3">
+                    <InputNumerico
+                      title=" Margen agencia(tercero)"
+                      selectedValue={formData.margenTercero || '0'}
+                      isPercentual ={true}
+                      min={0}
+                      max={99.9}
+                      onSelect={(value) => setFormData({ ...formData, margenTercero: value })}
+                      onClear={() => setFormData({ ...formData, margenTercero: '0' })}
+                      isDecimal={true}
+                    />
+                  </div>    
+
 
                   {/* Comision */}
                   <div className="mb-3">
-                  <InputNumerico
-                    title="Comision total ($)"
-                    selectedValue={Number(formData.comision) + Number(formData.comision2)}
-                    isPercentual ={true}
-                    min={0}
-                    max={99.9}
-                    isDecimal={true}
-                  />
+                  {comisionistasSeleccionados.length > 0 && (
+                    <InputNumerico
+                      title="Comision total ($)"
+                      selectedValue={Number(formData.comision) + Number(formData.comision2)}
+                      isPercentual ={true}
+                      min={0}
+                      max={99.9}
+                      isDecimal={true}
+                    />
+                  )}
 
                   <SelectorConBuscador
                     title="Comisionistas (Max 2)"
@@ -845,22 +887,34 @@ const handleSave = () => {
                   (<>
                   <InputNumerico
                     title="Monto ($)"
-                    selectedValue={formData.monto || '0'}
-                    isPercentual ={false}
-                    onSelect={(value) => setFormData({ ...formData, monto  : value })}
-                    onClear={() => setFormData({ ...formData, monto: '0' })}
-                    isDecimal={true}
-                    max={999999999999}  
+                    selectedValue={formData.monto || ''}
+                    isMoney={true}
+                    isPercentual={false}
+                    onSelect={(value) =>
+                      setFormData({
+                        ...formData,
+                        monto: value
+                      })
+                    }
+                    onClear={() =>
+                      setFormData({
+                        ...formData,
+                        monto: ''
+                      })
+                    }
+                    max={999999999999}
                   />
 
-                  <InputNumerico
-                    title="Comision total ($)"
-                    selectedValue={(Number(formData.monto) * (Number(formData.porcentaje_comision) / 100) + (Number(formData.monto) * Number(formData.porcentaje_comision2) / 100))}
-                    isPercentual ={false}
-                    min={0}
-                    max={99.9}
-                    isDecimal={true}
-                  />
+                  {comisionistasSeleccionados.length > 0 && (
+                    <InputNumerico
+                      title="Comision total ($)"
+                      selectedValue={Number(formData.comision) + Number(formData.comision2)}
+                      isPercentual ={true}
+                      min={0}
+                      max={99.9}
+                      isDecimal={true}
+                    />
+                  )}
                   <SelectorConBuscador
                     title="Comisionistas (Max 2)"
                     options={comisionistas}
@@ -986,7 +1040,7 @@ const handleSave = () => {
                   />
                 {/* con youtube */}
                 <DropdawnSiNo
-                    label="Con Meta"
+                    label="Con Youtube"
                     name="con_youtube"
                     value={formData.con_youtube}
                     setFormData={setFormData}

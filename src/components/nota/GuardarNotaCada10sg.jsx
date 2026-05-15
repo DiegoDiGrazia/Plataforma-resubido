@@ -13,6 +13,7 @@ const GuardarNotaCada10sg = ({nota}) => {
 
     // 🔥 Todas tus selecciones de Redux (igual que antes)
     const id_nota_borrador = useSelector((state) => state.crearNota.id_nota_borrador);
+    const id_noti = useSelector((state) => state.crearNota.id_noti);
     const titulo = useSelector((state) => state.crearNota.tituloNota);
     const contenidoNota = useSelector((state) => state.crearNota.contenidoNota);
     const categoriasActivas = useSelector((state) => state.crearNota.categoriasActivas);
@@ -66,12 +67,12 @@ const GuardarNotaCada10sg = ({nota}) => {
     // 🔥 SOLUCIÓN: Mantener id_noti ACTUALIZADO usando un ref
     // --------------------------------------------------------------
 
-    const idRef = useRef(id_nota_borrador);
+    const idRef = useRef(id_nota_borrador || id_noti);
 
     useEffect(() => {
-        idRef.current = id_nota_borrador;
+        idRef.current = id_nota_borrador || id_noti || nota.id;
         console.log("🔄 id_nota_borrador actualizado:", idRef.current);
-    }, [id_nota_borrador]);
+    }, [id_nota_borrador, id_noti, nota.id]);
 
 
     // --------------------------------------------------------------
@@ -95,6 +96,8 @@ const GuardarNotaCada10sg = ({nota}) => {
     // --------------------------------------------------------------
 
     const clickear_en_publicar_nota = async () => {
+        console.log("id_noti", id_noti, "id_nota_borrador", id_nota_borrador, "idRef.current", idRef.current);
+        if(!nota) return;
         const idActual = idRef.current;
         console.log("📝 Auto-guardando con id:", idActual);
 

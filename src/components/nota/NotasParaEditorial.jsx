@@ -60,6 +60,7 @@ const NotasParaEditorial = () => {
     const TOKEN = useSelector((state) => state.formulario.token);
 
     const editarNota = async (notaABM, seDuplica) => {
+        console.log("notaABM en editarNota", notaABM);
         if (notaABM.es_ia == '1' && notaABM.parrafo == "<p></p>") {
             setMensaje(`Obteniendo nota completa con IA, esto puede tardar unos segundos...
             En brevedad usted podra editar la nota con toda la informacion y contenido que se genero con IA`);

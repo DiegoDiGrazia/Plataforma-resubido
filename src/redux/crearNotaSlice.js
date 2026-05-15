@@ -90,6 +90,7 @@ const initialState = {
   id_noti: "",
   tipoContenido: "gestion",
   f_pub: "",
+  url: "",
   f_vence: "",
   engagement: "",
   bajada: "",
@@ -237,7 +238,9 @@ const crearNotaSlice = createSlice({
       state.categorias = action.payload;
     },
     setNotaAEditar: (state, action) => {
+      console.log("action.payload en setNotaAEditar", action.payload);
       const nota = action.payload;
+      state.url = nota.url;
       state.es_ia = nota.es_ia; 
       state.term_id = nota.term_id;
       state.tituloNota = nota.titulo;

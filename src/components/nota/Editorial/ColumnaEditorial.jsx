@@ -25,6 +25,7 @@ const ColumnaEditorial = ({ indice }) => {
     const municipio = useSelector((state) => state.crearNota.municipio);
     const pais = useSelector((state) => state.crearNota.pais);
     const TOKEN = useSelector((state) => state.formulario.token);
+    const nota = useSelector((state) => state.crearNota);
 
 
 
@@ -40,6 +41,19 @@ const ColumnaEditorial = ({ indice }) => {
 
     return (
         <div className='col-4 align-self-start col_editorial'>
+            {/* <div className="input-group mb-3">
+                <input
+                    type="text"
+                    className="form-control"
+                    placeholder="url de la nota"
+                    aria-label="Recipient's username"
+                    aria-describedby="basic-addon2"
+                    value={nota.url}
+                />
+                <span className="input-group-text" id="basic-addon2">
+                    -{nota.id_noti}
+                </span>
+            </div> */}
                 <Etiquetas />
                     <span style={{ fontSize: "20px", fontWeight: "bold", padding: "0px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
                         Cuenta de la nota:

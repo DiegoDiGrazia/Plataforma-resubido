@@ -7,6 +7,7 @@ const InputNumerico = ({
   onClear = () => {},
   isPercentual = false,
   isDecimal = false,
+  isMoney = false,
   min = 0,
   max = 100
 }) => {
@@ -17,9 +18,38 @@ const InputNumerico = ({
     setValue(selectedValue ?? '');
   }, [selectedValue]);
 
+  const formatearPesos = (numero) => {
+    return new Intl.NumberFormat('es-AR', {
+      style: 'currency',
+      currency: 'ARS',
+      minimumFractionDigits: 0,
+    }).format(numero || 0);
+  };
+
   const handleChange = (e) => {
     let val = e.target.value;
 
+    // 👉 modo pesos
+    if (isMoney) {
+      const soloNumeros = val.replace(/\D/g, '');
+
+      if (soloNumeros === '') {
+        setValue('');
+        onClear();
+        return;
+      }
+
+      const number = Number(soloNumeros);
+
+      if (number < min || number > max) return;
+
+      setValue(soloNumeros);
+      onSelect(number);
+
+      return;
+    }
+
+    // 👉 modo normal
     if (val === '') {
       setValue('');
       onClear();
@@ -42,8 +72,8 @@ const InputNumerico = ({
     if (isNaN(number)) return;
     if (number < min || number > max) return;
 
-    setValue(val);        // 👈 importante: guardamos lo que escribe el usuario
-    onSelect(number);     // 👈 actualizamos el estado padre
+    setValue(val);
+    onSelect(number);
   };
 
   return (
@@ -55,8 +85,16 @@ const InputNumerico = ({
           <input
             type="text"
             className="form-control"
-            placeholder={`${min} - ${max}`}
-            value={value}
+            placeholder={
+              isMoney
+                ? "$ 0"
+                : `${min} - ${max}`
+            }
+            value={
+              isMoney
+                ? (value === '' ? '' : formatearPesos(value))
+                : value
+            }
             onChange={handleChange}
           />
 

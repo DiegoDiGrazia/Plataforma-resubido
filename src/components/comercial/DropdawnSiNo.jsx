@@ -19,7 +19,7 @@ const DropdownSiNo = ({ label, name, value, setFormData }) => {
           data-bs-toggle="dropdown"
           aria-expanded="false"
         >
-          {value === "0" ? "No" : "Si"}
+          {value === "NO" ? "No" : "Si"}
         </button>
 
         <ul className="dropdown-menu w-100">
@@ -27,7 +27,7 @@ const DropdownSiNo = ({ label, name, value, setFormData }) => {
             <button
               type="button"
               className="dropdown-item"
-              onClick={() => handleChange("0")}
+              onClick={() => handleChange("NO")}
             >
               No
             </button>
@@ -36,7 +36,7 @@ const DropdownSiNo = ({ label, name, value, setFormData }) => {
             <button
               type="button"
               className="dropdown-item"
-              onClick={() => handleChange("1")}
+              onClick={() => handleChange("SI")}
             >
               Si
             </button>

@@ -16,6 +16,7 @@ import { obtenerConsolidacionCliente } from '../administrador/gestores/apisUsuar
 import ArbolConSelectorMultiple from './ArbolConSelectorMultiple';
 import { use } from 'react';
 import SelectorConBuscadorMult from './SelectorConBuscadorMult';
+import { useNavigate } from 'react-router-dom';
 
 export const formatearARS = (valor) => {
   if (valor === null || valor === undefined || isNaN(valor)) return "$ 0,00";
@@ -51,7 +52,6 @@ const NotaFreemiumDistribucion
   const [precioEstimado, setPrecioEstimado] = useState(0);
   const id_cliente = useSelector((state) => state.formulario.id_cliente);
   const id_usuario = useSelector((state) => state.formulario.usuario.id);
-
   const hoy = new Date();
   const fechaInicio = hoy.toISOString().split('T')[0];
   const fechaMas30 = new Date();
@@ -59,7 +59,6 @@ const NotaFreemiumDistribucion
   const fechaFin = fechaMas30.toISOString().split('T')[0];
   const [fecha_inicio, setFechaInicio] = useState(fechaInicio);
   const [fecha_fin, setFechaFin] = useState(fechaFin);
-
   const [porcentajeUsuarios, setPorcentajeUsuarios] = useState(20);
   const [consolidacionCliente, setConsolidacionCliente] = useState(null);
   const [usuariosSeleccionados, setUsuariosSeleccionados] = useState(0);
@@ -67,6 +66,9 @@ const NotaFreemiumDistribucion
   const [valorMeta, setValorMeta] = useState(0);
   const [valorDv, setValorDv] = useState(0);
   const [total, setTotal] = useState(0);
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [mensajeModal, setMensajeModal] = useState("La nota esta siendo distribuida");
+  const navigate = useNavigate();
 
   useEffect(() => {
     obtenerClientes(TOKEN).then(setClientes);
@@ -139,7 +141,7 @@ useEffect(() => {
   
 
   const handleDistribuirClick = async () => {
-  if (!TOKEN || !canalSelected || !notaFreemium?.term_id) return;
+  if (!TOKEN || !notaFreemium?.term_id) return;
 
   const usuarios = Math.floor(usuariosSeleccionados);
   if (usuarios <= 0) return;
@@ -149,38 +151,45 @@ useEffect(() => {
   let monto_dv360 = null;
   let monto_meta = null;
 
-  if (canalSelected.id === "1") {
+  if (canalesSeleccionados.some(c => c.id === "1")) {
     monto_dv360 = valorDv;
   }
 
-  if (canalSelected.id === "2") {
+  if (canalesSeleccionados.some(c => c.id === "2")) {
     monto_meta = valorMeta;
   }
 
-  if (canalSelected.id === "3") {
+  if (canalesSeleccionados.some(c => c.id === "3")) {
     monto_dv360 = valorDv;
     monto_meta = valorMeta;
   }
+  setMensajeModal("La nota está siendo distribuida. Esto puede tardar unos minutos.");
+  setMostrarModal(true);
 
-    try {
-      const item = await setComprarDistribucion(
-        TOKEN,
-        municipiosSeleccionados.length == 1 ? 'municipio' : provinciasSeleccionadas.length == 1 ? 'provincia' : 'pais',
-        municipiosSeleccionados.length == 1 ? 
-            municipiosSeleccionados[0].municipio_id : provinciasSeleccionadas.length == 1 ? 
-            provinciasSeleccionadas[0].provincia_id : obtenerPaisId(geo.paises, pais.nombre),
-        id_usuario,
-        usuarios,
-        id_cliente,
-        id_noti,
-        monto_dv360,
-        monto_meta,
-        fecha_fin,
-        fecha_inicio,
-        comentariosLocalidades
-      );
+   try {
+    const item = await setComprarDistribucion(
+      TOKEN,
+      municipiosSeleccionados.length == 1 ? 'municipio' : provinciasSeleccionadas.length == 1 ? 'provincia' : 'pais',
+      municipiosSeleccionados.length == 1 ? 
+          municipiosSeleccionados[0].municipio_id : provinciasSeleccionadas.length == 1 ? 
+          provinciasSeleccionadas[0].provincia_id : obtenerPaisId(geo.paises, pais.nombre),
+      id_usuario,
+      usuarios,
+      id_cliente,
+      id_noti,
+      monto_dv360,
+      monto_meta,
+      fecha_fin,
+      fecha_inicio,
+      comentariosLocalidades
+    );
 
     setRespuestaDistribuirBoton(item);
+
+    setTimeout(() => {
+      navigate('/notasEditorial');
+    }, 3000);
+
   } catch (error) {
     console.error("Error al distribuir la nota:", error);
   }
@@ -188,10 +197,22 @@ useEffect(() => {
 
 useEffect(() => {
     const poblacion = Number(precioEstimado?.poblacion) || 0;
-    setValorMeta(Number(precioEstimado?.precio_por_usuario_meta || 0) * poblacion * porcentajeUsuarios / 100);
-    setValorDv(Number(precioEstimado?.precio_por_usuario_dv360 || 0) * poblacion * porcentajeUsuarios / 100);
-    setTotal(valorMeta + valorDv);
-  }, [precioEstimado, porcentajeUsuarios]); 
+
+    const meta =
+      Number(precioEstimado?.precio_por_usuario_meta || 0) *
+      poblacion *
+      porcentajeUsuarios / 100;
+
+    const dv =
+      Number(precioEstimado?.precio_por_usuario_dv360 || 0) *
+      poblacion *
+      porcentajeUsuarios / 100;
+
+    setValorMeta(meta);
+    setValorDv(dv);
+    setTotal(meta + dv);
+
+}, [precioEstimado, porcentajeUsuarios]);
 
   return (
     <div className="content flex-grow-1 crearNotaGlobal">
@@ -325,6 +346,11 @@ useEffect(() => {
             </div>
 
       </div>
+      <ModalMensaje
+        show={mostrarModal}
+        onHide={() => setMostrarModal(false)}
+        mensaje={mensajeModal}
+      />
     </div>
   );
 };
