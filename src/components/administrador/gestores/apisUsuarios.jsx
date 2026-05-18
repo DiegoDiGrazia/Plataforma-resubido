@@ -235,3 +235,13 @@ export const eliminarSitiosProvincias = (token, provincia_id, id_sitio) =>
 
 export const editarSitio = (token, id, sitio, imagen) => 
 fetchData ("https://panel.serviciosd.com/app_sitio_edit", token, {id, sitio, imagen});
+
+export const validarToken = async (token) => {
+    const formData = new FormData();
+    formData.append("token", token);
+    
+    const response = await axios.post("https://panel.serviciosd.com/app_chequear_token", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data; 
+};

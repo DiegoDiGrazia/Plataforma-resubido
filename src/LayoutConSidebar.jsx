@@ -4,10 +4,13 @@ import Sidebar from '../src/components/sidebar/Sidebar'; // Ajustá el path
 import { Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import GuardarUbicacionDeCliente from '../src/components/Dashboard/GuardarUbicacionDeCliente'; 
+import ReloginModal from './components/login/ReloginModal.jsx';
+import { useSessionManager } from './hooks/useSessionManager.js';
 
 
 const LayoutConSidebar = () => {
     const id_cliente = useSelector((state) => state.formulario.id_cliente);
+    const { mostrarModal, reloguear } = useSessionManager();
 
     return (
                 <div className="container-fluid sinPadding">
@@ -18,6 +21,9 @@ const LayoutConSidebar = () => {
                         <Outlet />
                     </div>
                 </div>
+                {mostrarModal && (
+                  <ReloginModal onLoginExitoso={reloguear} />
+                )}
             </div>
         );
     };
