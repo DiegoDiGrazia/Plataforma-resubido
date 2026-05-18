@@ -56,6 +56,7 @@ const BotonPublicarNota = ({ status, isLoading, setIsLoading }) => {
     const municipioSelector = useSelector((state) => state.crearNota.municipio);
     const provinciaDelUsuario = useSelector((state) => state.formulario.provinciaUsuario);
     const municipioDelUsuario = useSelector((state) => state.formulario.municipioUsuario);
+    const url = useSelector((state) => state.crearNota.url);
 
     const provincia =  provinciaSelector || provinciaDelUsuario
     const municipio = municipioSelector || municipioDelUsuario 
@@ -105,6 +106,7 @@ const BotonPublicarNota = ({ status, isLoading, setIsLoading }) => {
                 id_nota_borrador,
                 TOKEN,
                 titulo,
+                url,
                 categoriasActivas,
                 notaCargada,
                 contenidoHTMLSTR,

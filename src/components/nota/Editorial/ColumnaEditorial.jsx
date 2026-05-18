@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'cropperjs/dist/cropper.css';
@@ -10,9 +10,10 @@ import SelectorAutor from './SelectorAutor';
 import "./colEditorial.css"
 import { useDispatch, useSelector } from 'react-redux';
 import { setPais, setProvincia, setMunicipio } from '../../../redux/crearNotaSlice';
-import { setDistribucionProioritaria,setNoHome, setFechaVencimiento, setFechaPublicacion} from '../../../redux/crearNotaSlice';
+import { setDistribucionProioritaria,setNoHome, setFechaVencimiento, setFechaPublicacion, setUrl} from '../../../redux/crearNotaSlice';
 import SelectorCliente2 from './SelectorCliente2';
 import EsDemo from './EsDemo';
+import { replace } from 'react-router-dom';
 
 
 
@@ -26,34 +27,55 @@ const ColumnaEditorial = ({ indice }) => {
     const pais = useSelector((state) => state.crearNota.pais);
     const TOKEN = useSelector((state) => state.formulario.token);
     const nota = useSelector((state) => state.crearNota);
+    const tituloNota = useSelector((state) => state.crearNota.tituloNota);
+    const url = useSelector((state) => state.crearNota.url);
+
+
+
+    const normaliarAUrl = (titulo) => {
+        return titulo
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "") // saca acentos
+            .replace(/\s+/g, "-") // espacios por guiones
+            .toLowerCase();
+    }
+    useEffect(() => {
+    if (!url) {
+        const urlLimpia = tituloNota? normaliarAUrl(tituloNota) : '';
+        dispatch(setUrl(urlLimpia));
+    }
+    }, []);
+
 
 
 
     const dispatch = useDispatch();
-
-
     const dispacharfechaVencimiento = (e) => {
       dispatch(setFechaVencimiento(e.target.value)); 
     };
     const dispacharfechaPublicacion = (e) => {
         dispatch(setFechaPublicacion(e.target.value)); 
-      };
+    };
+    const dispacharUrl = (e) => {
+        dispatch(setUrl(normaliarAUrl(e.target.value))); 
+    }
 
     return (
         <div className='col-4 align-self-start col_editorial'>
-            {/* <div className="input-group mb-3">
+            <div className="input-group mb-3">
                 <input
                     type="text"
                     className="form-control"
                     placeholder="url de la nota"
                     aria-label="Recipient's username"
                     aria-describedby="basic-addon2"
-                    value={nota.url}
+                    value={url}
+                    onChange={dispacharUrl}
                 />
                 <span className="input-group-text" id="basic-addon2">
-                    -{nota.id_noti}
+                    -{nota.id_noti || nota.id_nota_borrador || 'id-nota'}
                 </span>
-            </div> */}
+            </div>
                 <Etiquetas />
                     <span style={{ fontSize: "20px", fontWeight: "bold", padding: "0px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
                         Cuenta de la nota:

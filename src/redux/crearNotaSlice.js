@@ -349,6 +349,9 @@ const crearNotaSlice = createSlice({
     setIdAtt: (state, action) => {
       state.id_att = action.payload
     },
+    setUrl: (state, action) => {
+      state.url = action.payload;
+    },
 
     setCategoriasActivasEnStore: (state, action) => {
       state.categoriasActivas = action.payload;
@@ -372,7 +375,7 @@ const crearNotaSlice = createSlice({
 
 export const {
   setTituloNota,setContenidoDeNotaDeIa, setIdNotaBorrador, setCambiarEstadoActual, setAttachmentArchivo,setAttachmentArchivoToNull, setClienteNota, setContenidoNota, setAttachment_video1, DeleteContenidoPorIndice, setContenidoPorIndice,setFechaPublicacion, setAttachmentToNull,
-  SubirContenidoPorIndice, BajarContenidoPorIndice, setCategorias, setImagenPrincipal, setImagenRRSS, setImagenesDeCarrusel,
+  SubirContenidoPorIndice, BajarContenidoPorIndice, setCategorias, setImagenPrincipal, setImagenRRSS, setImagenesDeCarrusel, setUrl,
   setCopete, setNotaAEditar, setContenidoAEditar, setItemsEtiquetas, setEsDemo, setNoHome, setCategoriasActivasEnStore,
   setDistribucionProioritaria, setTipoContenido, setFechaVencimiento, setBajada, setEngagement, setComentario, setSelectedOptionDistribucion,
   setAutor, setMunicipio,setEpigrafeImagenPpal,setDemo, setMunicipios,setIdNoti, setProvincia,setPais, setIdAtt,setProvincias, resetCrearNota, setEpigrafeDeImagen, setListaImagenesContenidoEnBase64, setAtachment, setSumarUnoAlNumeroDeAtachment

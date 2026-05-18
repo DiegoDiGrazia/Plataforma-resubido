@@ -39,6 +39,7 @@ const GuardarNotaCada10sg = ({nota}) => {
     const id_att = useSelector((state) => state.crearNota.id_att);
     const clienteDeLaNota = useSelector((state) => state.crearNota.cliente);
     const demo = useSelector((state) => state.crearNota.demo.nombre);
+    const url = useSelector((state) => state.crearNota.url);
 
     const provinciaSelector = useSelector((state) => state.crearNota.provincia);
     const municipioSelector = useSelector((state) => state.crearNota.municipio);
@@ -107,6 +108,7 @@ const GuardarNotaCada10sg = ({nota}) => {
             status,
             TOKEN,
             titulo,
+            url,
             categoriasActivas,
             notaCargada,
             contenidoHTMLSTR,
