@@ -1,0 +1,93 @@
+@media print {
+   
+    @page {
+        size: A4 portrait;
+        margin: 0; 
+    }
+
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    body {
+        background-color: white !important;
+    }
+
+    .no_print, 
+    .no-print {
+        display: none !important;
+    }
+
+    .seccion-creativos-excluida {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        page-break-before: always !important; 
+        padding-top: 1cm !important;
+    }
+
+    .seccion-creativos-excluida iframe {
+        max-width: 100% !important;
+        display: block !important;
+    }
+
+    .seccion-creativos-excluida .back-white {
+        page-break-inside: avoid !important;
+        margin-bottom: 20px !important;
+    }
+
+    #pantalla-verNota .row {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        flex-direction: row !important;
+    }
+
+    #pantalla-verNota .margin_vn {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: flex-start !important;
+        margin-bottom: 25px !important;
+    }
+
+    #pantalla-verNota .imagen_col {
+        flex: 0 0 35% !important; 
+        max-width: 35% !important;
+    }
+
+    #pantalla-verNota .imagen_nota {
+        width: 100% !important;
+        max-height: 200px !important;
+        object-fit: contain !important; 
+    }
+
+    #pantalla-verNota .accordion-item {
+        width: 100% !important;
+    }
+
+    #pantalla-verNota .margin_vn .col-6 {
+        flex: 0 0 65% !important; 
+        max-width: 65% !important;
+        height: auto !important; 
+        padding-left: 20px !important;
+    }
+
+    #pantalla-verNota .tamaño_barplot {
+        page-break-inside: avoid !important;
+    }
+
+    #pantalla-verNota .datos-resumen,
+    #pantalla-verNota .datos-resumen div {
+        display: flex !important;
+        flex-wrap: wrap !important; 
+        justify-content: space-between !important;
+    }
+
+    #pantalla-verNota .datos-resumen p,
+    #pantalla-verNota .datos-resumen span {
+        width: 100% !important;
+        text-align: center !important;
+        margin: 0 !important;
+    }
+    
+}
