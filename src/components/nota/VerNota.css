@@ -15,11 +15,12 @@
     }
 
     .no_print, 
-    .no-print {
+    .no-print, .seccion-creativos-excluida {
         display: none !important;
     }
 
-    .seccion-creativos-excluida {
+    
+    /* .seccion-creativos-excluida {
         display: block !important;
         width: 100% !important;
         max-width: 100% !important;
@@ -35,7 +36,7 @@
     .seccion-creativos-excluida .back-white {
         page-break-inside: avoid !important;
         margin-bottom: 20px !important;
-    }
+    } */
 
     #pantalla-verNota .row {
         display: flex !important;
