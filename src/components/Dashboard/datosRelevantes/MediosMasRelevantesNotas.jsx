@@ -6,8 +6,10 @@ import { formatNumberMiles } from '../Dashboard';
 const multiplicador= 1
 
 function formatearTextoNombre(texto) {
-    const textoCortado = texto.split('.')[0];
-    return textoCortado.charAt(0).toUpperCase() + textoCortado.slice(1).toLowerCase();
+    if(texto) {
+        const textoCortado = texto.split('.')[0];
+        return textoCortado.charAt(0).toUpperCase() + textoCortado.slice(1).toLowerCase();
+    }
 }
 
 function reduceByKeyMedios(lista_medios) {
