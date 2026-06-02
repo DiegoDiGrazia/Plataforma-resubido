@@ -17,7 +17,7 @@ const SelectorConBuscadorMult = ({
   });
 
   const getId = (opt) =>
-    opt.pais_id || opt.provincia_id || opt.municipio_id || opt.id;
+  opt.municipio_id ?? opt.provincia_id ?? opt.pais_id ?? opt.id;
 
   const isSelected = (option) => {
     return selectedOptions.some(item => getId(item) === getId(option));

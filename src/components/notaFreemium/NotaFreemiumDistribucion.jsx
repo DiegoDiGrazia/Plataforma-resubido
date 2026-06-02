@@ -17,15 +17,16 @@ import ArbolConSelectorMultiple from './ArbolConSelectorMultiple';
 import { use } from 'react';
 import SelectorConBuscadorMult from './SelectorConBuscadorMult';
 import { useNavigate } from 'react-router-dom';
+import Checkbox from '../nota/Editorial/checkbox';
 
-export const formatearARS = (valor) => {
+export const formatearARS = (valor, decimales = 2) => {
   if (valor === null || valor === undefined || isNaN(valor)) return "$ 0,00";
 
   return new Intl.NumberFormat("es-AR", {
     style: "currency",
     currency: "ARS",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: decimales,
+    maximumFractionDigits: decimales,
   }).format(Number(valor));
 };
 
@@ -60,6 +61,7 @@ const NotaFreemiumDistribucion
   const [fecha_inicio, setFechaInicio] = useState(fechaInicio);
   const [fecha_fin, setFechaFin] = useState(fechaFin);
   const [porcentajeUsuarios, setPorcentajeUsuarios] = useState(20);
+  const [cantidadPoblacion, setCantidadPoblacion] = useState(0);
   const [consolidacionCliente, setConsolidacionCliente] = useState(null);
   const [usuariosSeleccionados, setUsuariosSeleccionados] = useState(0);
   const [respuestaDistribuirBoton, setRespuestaDistribuirBoton] = useState(null);
@@ -68,6 +70,9 @@ const NotaFreemiumDistribucion
   const [total, setTotal] = useState(0);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [mensajeModal, setMensajeModal] = useState("La nota esta siendo distribuida");
+  const [creditoCliente, setCreditoCliente] = useState(0);
+  const [distribuirMeta, setDistribuirMeta] = useState(true);
+  const [distribuirDv, setDistribuirDv] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -76,7 +81,7 @@ const NotaFreemiumDistribucion
 }, [TOKEN]);
 
 useEffect(() => {
-  setUsuariosSeleccionados((porcentajeUsuarios/100) * (Number(precioEstimado?.poblacion) || 0));
+  setUsuariosSeleccionados((cantidadPoblacion|| 0));
 }, [porcentajeUsuarios, precioEstimado]);
 
   // Filtrar por búsqueda
@@ -96,11 +101,22 @@ useEffect(() => {
     return paisEncontrado ? paisEncontrado.pais_id : null;
   }
 
+
+
 useEffect(() => {
     const fetchPrecio = async () => {
 
 
-        if(!pais) return; 
+        if (!pais) {
+          setPrecioEstimado(null);
+          setCantidadPoblacion(0);
+          setValorMeta(0);
+          setValorDv(0);
+          setTotal(0);
+          return;
+        }
+
+        console.log("acaaaa", provinciasSeleccionadas, municipiosSeleccionados);
         const precio = await obtenerPrecioUsuario(
             TOKEN,
             municipiosSeleccionados.length == 1 ? 'municipio' : provinciasSeleccionadas.length == 1 ? 'provincia' : 'pais',
@@ -129,43 +145,58 @@ useEffect(() => {
     fetchConsolidacionCliente();
 }, [id_cliente]);
 
+useEffect(() => {
+    const creditoCargado = consolidacionCliente?.credito?.reduce(
+          (acc, item) => acc + Number(item.monto_mensual), 
+          0
+        )
+    const consumo = consolidacionCliente?.consumo?.reduce(
+          (acc, item) => acc + Number(item.monto_meta) + Number(item.monto_dv360), 
+          0
+        )
+    setCreditoCliente(creditoCargado - consumo);
+    console.log("Crédito cargado:", creditoCargado);
+    console.log("Consumo:", consumo);
+}, [consolidacionCliente]);
+
   const comentariosLocalidades = useMemo(() => {
   if (municipiosSeleccionados.length > 0) {
-    return `Distribuir en los municipios: ${municipiosSeleccionados.map(m => m.nombre).join(', ')}`;
+    return `Distribuir en ${pais.nombre}, provincia:${provinciasSeleccionadas.map(p => p.nombre).join(', ')}, municipios:${municipiosSeleccionados.map(m => m.nombre).join(', ')}, alcance: ${cantidadPoblacion} usuarios, desde: ${fecha_inicio} hasta: ${fecha_fin}`;
   } else if (provinciasSeleccionadas.length > 0) {
-    return `Distribuir en las provincias: ${provinciasSeleccionadas.map(p => p.nombre).join(', ')}`;
+    return `Distribuir en ${pais.nombre}, provincias: ${provinciasSeleccionadas.map(p => p.nombre).join(', ')}, alcance: ${cantidadPoblacion} usuarios, desde: ${fecha_inicio} hasta: ${fecha_fin}`;
   }
   return "";
 }, [municipiosSeleccionados, provinciasSeleccionadas]);
+
+
 
   
 
   const handleDistribuirClick = async () => {
   if (!TOKEN || !notaFreemium?.term_id) return;
 
-  const usuarios = Math.floor(usuariosSeleccionados);
-  if (usuarios <= 0) return;
+  if (cantidadPoblacion <= 0){
+    setMensajeModal("Debe seleccionar a la cantidad de poblacion que quiere llegar a distribuir.");
+    setMostrarModal(true);
+    return;
+  }
+  let usuarios = cantidadPoblacion;
+    
+    let monto_dv360 = distribuirDv ? valorDv : 0;
+    let monto_meta = distribuirMeta ? valorMeta : 0;
+    console.log("Crédito insuficiente:", creditoCliente, "Monto requerido:", monto_dv360 + monto_meta);
+  if (creditoCliente < monto_dv360 + monto_meta) {
+    setMensajeModal("No hay créditos disponibles.");
+    setMostrarModal(true);
+  return;
+  }
 
   const id_noti = notaFreemium.term_id;
 
-  let monto_dv360 = null;
-  let monto_meta = null;
-
-  if (canalesSeleccionados.some(c => c.id === "1")) {
-    monto_dv360 = valorDv;
-  }
-
-  if (canalesSeleccionados.some(c => c.id === "2")) {
-    monto_meta = valorMeta;
-  }
-
-  if (canalesSeleccionados.some(c => c.id === "3")) {
-    monto_dv360 = valorDv;
-    monto_meta = valorMeta;
-  }
+  console.log("Monto DV360:", monto_dv360);
   setMensajeModal("La nota está siendo distribuida. Esto puede tardar unos minutos.");
   setMostrarModal(true);
-
+    
    try {
     const item = await setComprarDistribucion(
       TOKEN,
@@ -196,23 +227,23 @@ useEffect(() => {
 };
 
 useEffect(() => {
+  console.log("Precio estimado:", precioEstimado, "Población:", cantidadPoblacion);
+  console.log("pais:", pais, );
     const poblacion = Number(precioEstimado?.poblacion) || 0;
 
     const meta =
-      Number(precioEstimado?.precio_por_usuario_meta || 0) *
-      poblacion *
-      porcentajeUsuarios / 100;
+      Number(precioEstimado?.precio_por_usuario_meta || 0) * cantidadPoblacion;
 
     const dv =
-      Number(precioEstimado?.precio_por_usuario_dv360 || 0) *
-      poblacion *
-      porcentajeUsuarios / 100;
+      Number(precioEstimado?.precio_por_usuario_dv360 || 0) * cantidadPoblacion
+      console.log("Valor Meta:", meta);
+      console.log("Valor DV:", dv);
 
     setValorMeta(meta);
     setValorDv(dv);
     setTotal(meta + dv);
 
-}, [precioEstimado, porcentajeUsuarios]);
+}, [precioEstimado, porcentajeUsuarios, cantidadPoblacion, pais, provinciasSeleccionadas, municipiosSeleccionados]);
 
   return (
     <div className="content flex-grow-1 crearNotaGlobal">
@@ -247,10 +278,7 @@ useEffect(() => {
       color: "#202124"
     }}>
       {formatearARS(
-        consolidacionCliente?.credito?.reduce(
-          (acc, item) => acc + Number(item.monto_mensual), 
-          0
-        )
+        creditoCliente
       )}
     </h3>
 
@@ -303,20 +331,20 @@ useEffect(() => {
               <div>
                 <h3>Cantidad de usuarios</h3>
                 <BarraVolumen valor={porcentajeUsuarios} setValor={setPorcentajeUsuarios}
-                 total={precioEstimado?.poblacion} />
+                 total={precioEstimado?.poblacion} poblacion={cantidadPoblacion } setPoblacion={setCantidadPoblacion} />
               </div>
           </div>
           <div className='col-6 '>
-              <div className="dropdown p-0">
-                <SelectorConBuscadorMult
-                  title="Canales"
-                  options={canales}
-                  selectedOptions={canalesSeleccionados}
-                  onSelect={setCanalesSeleccionados}
-                  onClear={() => setCanalesSeleccionados([])}
-                  show={true}
-                />
-              </div>
+              <Checkbox
+                title="Distribuir en Meta"
+                value={distribuirMeta}
+                onChange={setDistribuirMeta}
+              />
+              <Checkbox
+                title="Distribuir en DV360"
+                value={distribuirDv}
+                onChange={setDistribuirDv}
+              />
               <InputFecha
                 label="Fecha inicio:"
                 name="fecha_publicacion"
@@ -340,9 +368,9 @@ useEffect(() => {
               justifyContent: "space-between", 
               width: "100%" 
             }}>
-              <h3> <img src='./images/logoFB.png' style={{width: '25px'}}/> Valor en Meta: {formatearARS(valorMeta)}</h3>
-              <h3> <img src='./images/dv360.png' style={{width: '25px'}}/> Valor en DV: {formatearARS(valorDv)}</h3>
-              <h3> <img src='./images/exitoIcon.png' style={{width: '25px'}}/> Total: {formatearARS(total)}</h3>
+              <h3> <img src='./images/logoFB.png' style={{width: '25px'}}/> Valor en Meta: {formatearARS(valorMeta, 0)}</h3>
+              <h3> <img src='./images/dv360.png' style={{width: '25px'}}/> Valor en DV: {formatearARS(valorDv, 0)}</h3>
+              <h3> <img src='./images/exitoIcon.png' style={{width: '25px'}}/> Total: {formatearARS(total, 0)}</h3>
             </div>
 
       </div>
@@ -350,6 +378,7 @@ useEffect(() => {
         show={mostrarModal}
         onHide={() => setMostrarModal(false)}
         mensaje={mensajeModal}
+        onClose={() => setMostrarModal(false)}
       />
     </div>
   );

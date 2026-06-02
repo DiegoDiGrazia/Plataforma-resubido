@@ -51,6 +51,7 @@ const convertirVideoBase64 = (file) => {
 
 const NotasParaEditorial = () => {
     const [searchQuery, setSearchQuery] = useState('');
+    const [searchQueryId, setSearchQueryId] = useState('');
     const [mostrarModalYoutube, setMostrarModalYoutube] = useState(false)
     const [videoYoutube, setVideoYoutube] = useState(null)
     const [fechaYoutube, setFechaYoutube] = useState('')
@@ -247,6 +248,7 @@ const NotasParaEditorial = () => {
                 titulo: searchQuery,
                 pais: nombrePaisUsuario || "",
                 full: "1",
+                term_id: searchQueryId,
             },
             { headers: { 'Content-Type': 'multipart/form-data' } }
         )
@@ -280,6 +282,11 @@ const NotasParaEditorial = () => {
     const handleInputChange = (e) => {
     setSearchQuery(e.target.value);
     setNumeroDePagina(1);
+    };
+
+    const handleInputChangeId = (e) => {
+        setSearchQueryId(e.target.value);
+        setNumeroDePagina(1);
     };
 
     const handleSearch = (e) => {
@@ -402,8 +409,24 @@ const NotasParaEditorial = () => {
                                 <div className='col-4 todasLasNotas'>
                                     Todas Las Notas
                                 </div>
-                                <div className='col-8 buscadorNotas'>
-                                    <form onSubmit={handleSearch} className='buscadorNotasForm gap-2 justify-content-end'>
+                                {filtroSeleccionado === 2 && (
+                                <div className='col-4 buscadorNotasForm ' >
+                                    <form onSubmit={handleSearch} className='buscadorNotasForm'>
+                                        <input
+                                            className='inputBuscadorNotas'
+                                            type="text"
+                                            value={searchQueryId}
+                                            onChange={handleInputChangeId}
+                                            placeholder="      Buscar por id"
+                                        />
+                                        <Button type="submit" className="btn btn-danger ml-3">
+                                            Buscar
+                                        </Button>
+                                    </form>
+                                </div>
+                                )}
+                                <div className='col '>
+                                    <form onSubmit={handleSearch} className='buscadorNotasForm'>
                                         <input
                                             className='inputBuscadorNotas'
                                             type="text"
@@ -415,8 +438,8 @@ const NotasParaEditorial = () => {
                                             Buscar
                                         </Button>
                                     </form>
-                                    
                                 </div>
+
                             </div>
                             <div className='row' id='headerListadoNotas'>
                                 <div className='col-auto' style={{width: "70px"}}></div>
@@ -482,7 +505,7 @@ const NotasParaEditorial = () => {
                                                     <i class="bi bi-eye-fill m-2 fs-2"></i>
                                                 </a>
                                             )}
-                                        {perfilUsuario === "1" &&  CLIENTE != ""  && ///MODIFICAR A 9 DESPUES DE LAS PRUEBAS
+                                        {perfilUsuario === "1" &&  CLIENTE != ""  && nota.con_distribucion === "0" && ///MODIFICAR A 9 DESPUES DE LAS PRUEBAS
                                         <button title="distribuir nota"
                                             onClick={() => editarNotaFreemium(nota, true)}
                                             style={{background: "none", border: "none",padding: 0,

@@ -39,12 +39,17 @@ const ColumnaEditorial = ({ indice }) => {
             .replace(/\s+/g, "-") // espacios por guiones
             .toLowerCase();
     }
+
     useEffect(() => {
-    if (!url) {
-        const urlLimpia = tituloNota? normaliarAUrl(tituloNota) : '';
+    console.log("url:", JSON.stringify(url));
+    console.log("regex:", /^-\d+$/.test(url?.trim()));
+
+    if (!url || /^-\d+$/.test(url.trim())) {
+        console.log("ENTRO");
+        const urlLimpia = tituloNota ? normaliarAUrl(tituloNota) : '';
         dispatch(setUrl(urlLimpia));
     }
-    }, []);
+}, [url, tituloNota]);
 
 
 
