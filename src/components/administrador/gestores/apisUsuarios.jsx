@@ -190,8 +190,8 @@ export const obtenerFacturasDeContrato = (token, id_contrato) =>
 export const obtenerArchivosDeContrato = (token, id) =>
   fetchData ("https://panel.serviciosd.com/app_obtener_contratos_archivos", token, {id});
 
-export const obtenerResumenDashboardCliente = (token, cliente_id) =>
-  fetchData ("https://panel.serviciosd.com/app_obtener_resume", token, {cliente_id});
+export const obtenerResumenDashboardCliente = (token, cliente_id, cat_pais = null) =>
+  fetchData ("https://panel.serviciosd.com/app_obtener_resume", token, {cliente_id, cat_pais: cat_pais});
 
 export const obtenerResumenDashboardNota = (token, id_noti) =>
   fetchData ("https://panel.serviciosd.com/app_obtener_resume", token, {id_noti});

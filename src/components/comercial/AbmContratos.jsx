@@ -370,8 +370,11 @@ const AbmContratos
     setModalidadSeleccionada(obtenerModalidadDelContrato(contrato));
     setClienteSeleccionado(clientes.find(c => c.id === contrato.id_cliente) || '');
     setContratoSeleccionado({...contrato, id_usuario: id_usuario});
-    setFormData({...contrato, id_usuario: id_usuario});
-    setFormData({...contrato, ignore: '1'}); // para que tome los cambios aunque no se modifique nada
+    setFormData({
+      ...contrato,
+      id_usuario,
+      ignore: '1'
+    });
     const emisorObj = Emisor.find(
       e => e.nombre === contrato.empresa  
     );

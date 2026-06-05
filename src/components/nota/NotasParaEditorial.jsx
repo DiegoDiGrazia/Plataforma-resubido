@@ -410,7 +410,7 @@ const NotasParaEditorial = () => {
                                     Todas Las Notas
                                 </div>
                                 {filtroSeleccionado === 2 && (
-                                <div className='col-4 buscadorNotasForm ' >
+                                <div className='col buscadorNotasForm justify-content-end' >
                                     <form onSubmit={handleSearch} className='buscadorNotasForm'>
                                         <input
                                             className='inputBuscadorNotas'
@@ -425,7 +425,7 @@ const NotasParaEditorial = () => {
                                     </form>
                                 </div>
                                 )}
-                                <div className='col '>
+                                <div className='col-3'>
                                     <form onSubmit={handleSearch} className='buscadorNotasForm'>
                                         <input
                                             className='inputBuscadorNotas'

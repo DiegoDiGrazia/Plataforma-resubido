@@ -154,15 +154,14 @@ const GuardarNotaCada10sg = ({nota}) => {
     // --------------------------------------------------------------
 
     useEffect(() => {
-        if (!nota) return;
-        if (nota.estado !== "PUBLICADO" && nota.es_ia === '0') {
-            const intervalo = setInterval(() => {
-                clickear_en_publicar_nota();
-            }, 10000);
-            return () => clearInterval(intervalo);
-        }
-
-    }, []);
+    if (!nota) return;
+    if (nota.estado !== "PUBLICADO" && nota.es_ia === '0') {
+        const intervalo = setInterval(() => {
+            clickear_en_publicar_nota();
+        }, 10000);
+        return () => clearInterval(intervalo); // se limpia si estado cambia
+    }
+}, [nota.estado, nota.es_ia]); // 👈 acá está el fix
 
     return null;
 };

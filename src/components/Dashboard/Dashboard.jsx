@@ -26,6 +26,7 @@ import { formatDate } from '../barplot/Barplot.jsx';
 import { setClienteNota } from '../../redux/crearNotaSlice.js';
 import { traerDatosLocalmente } from '../../utils/buscarEnLocal.js';
 import { obtenerResumenDashboardCliente } from '../administrador/gestores/apisUsuarios.jsx';
+import SelectorConBuscador from '../nota/Editorial/SelectorConBuscador.jsx';
 
 export function formatNumberMiles(num) {
     if (num === null || num === undefined || num === "") {
@@ -45,6 +46,9 @@ const Dashboard = () => {
     const [loadingUsuarios, setLoadingUsuarios] = useState(false)
     const FiltroActual = useSelector((state) => state.dashboard.filtro);
     const [datosLocalmente, setDatosLocalmente] = useState(null); 
+    const [paisFiltro, setPaisFiltro] = useState(null);
+    const paises = useSelector((state) => state.formulario.geo);
+
     const componenteRef = useRef(null);
     const handleClickFiltro = (nuevoFiltro) => {
         dispatch(setFiltro(nuevoFiltro));
@@ -78,7 +82,7 @@ const Dashboard = () => {
     useEffect(() => {
     setLoadingUsuarios(true);
 
-    obtenerResumenDashboardCliente(token, cliente_id)
+    obtenerResumenDashboardCliente(token, cliente_id, paisFiltro?.nombre)
         .then((res) => {
             setResumenCliente(res);
         })
@@ -89,10 +93,10 @@ const Dashboard = () => {
             setLoadingUsuarios(false);
         });
 
-    }, [token, cliente_id]);
+    }, [token, cliente_id, paisFiltro]);
 
 
-    useEffect(() => { 
+    useEffect(() => {       
         const fecha = new Date();
         dispatch(setFechaActual(fecha.getDate()));
     }, [FiltroActual, dispatch]);
@@ -136,6 +140,7 @@ const Dashboard = () => {
                         <div className="subtitulo no-print">
                             <h5 id="subtitulo_performance">Performance de la cuenta</h5>
                             <span className='botones_subtitulo'>
+                                <SelectorConBuscador title="Filtro pais: " options={paises} selectedOption={paisFiltro} onSelect={setPaisFiltro} onClear={() => setPaisFiltro(null)} />
                                 <div className="dropdown">
                                     <button className="btn custom-dropdown-button dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                         <img src="/images/calendarIcon.png" alt="Icono 1" className="icon me-2" /> {FiltroActual}
@@ -166,23 +171,23 @@ const Dashboard = () => {
                             </span>
                         </div>
                         <div className="mb-2 tamaño_barplot">
-                            <Barplot datosLocales={datosLocalmente} resumenCliente = {resumenCliente} loading ={loadingUsuarios}/>
+                            <Barplot datosLocales={datosLocalmente} resumenCliente = {resumenCliente} loading ={loadingUsuarios} paisFiltro={paisFiltro}/>
                         </div>
                         <div className= "tops">
                             <div className='row g-1'>
                                 <div className='col-lg-12 col-xl col-6 m-2 back-white'>
-                                    <InteraccionPorNota datosLocales={datosLocalmente}/>
+                                    <InteraccionPorNota datosLocales={datosLocalmente} paisFiltro={paisFiltro}/>
                                 </div>
                                 <div className='col-lg-12 col-xl col-6 m-2 back-white'>
-                                    <MediosMasRelevantes datosLocales={datosLocalmente}/>
+                                    <MediosMasRelevantes datosLocales={datosLocalmente} paisFiltro={paisFiltro}/>
                                 </div>
                             </div>
                             <div className='row g-1'>
                                 <div className='col-lg-12 col-xl col-6 m-2 back-white'>
-                                    <PlataformaMasImpresiones resumenCliente = {resumenCliente} loading ={loadingUsuarios}/>
+                                    <PlataformaMasImpresiones resumenCliente = {resumenCliente} loading ={loadingUsuarios} paisFiltro={paisFiltro}/>
                                 </div>
                                 <div className='col-lg-12 col-xl col-6 m-2 back-white'>
-                                    <CategoriasMasRelevantes datosLocales={datosLocalmente}/>
+                                    <CategoriasMasRelevantes datosLocales={datosLocalmente} paisFiltro={paisFiltro}/>
                                 </div>
                             </div>
                         </div>

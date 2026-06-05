@@ -34,7 +34,7 @@ function reduceBykeyMedios(lista_medios) {
     return sitios;
 }
 
-const MediosMasRelevantes = ({datosLocales}) => {
+const MediosMasRelevantes = ({datosLocales, paisFiltro}) => {
     const nombreCliente = useSelector((state) => state.formulario.cliente);
     const periodos_api = useSelector((state) => state.dashboard.periodos_api);
     const dispatch = useDispatch();
@@ -61,6 +61,7 @@ const MediosMasRelevantes = ({datosLocales}) => {
                 token: token,
                 f_pub_desde: fecha_inicio_creacion,
                 f_pub_hasta: fecha_fin_creacion,
+                cat_pais: paisFiltro?.nombre
             },
             {
                 headers: {
@@ -78,7 +79,7 @@ const MediosMasRelevantes = ({datosLocales}) => {
         .catch((error) => {
             console.error('Error al hacer la solicitud:', error);
         });
-    }, [nombreCliente, ultimaFechaCargadaBarplot]);
+    }, [nombreCliente, ultimaFechaCargadaBarplot, paisFiltro]);
 
     const meses = useSelector(state => state.interaccionesPorNota.mediosMayorInteraccion || []).slice(cantidad_meses);
     let todas_los_medios = [];

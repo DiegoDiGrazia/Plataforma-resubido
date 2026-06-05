@@ -103,9 +103,9 @@ const PublicarNota = () => {
 
     return (
                 <>
-                {isLoading && (
+                {/* {isLoading && (
                 <GuardarNotaCada10sg nota={actual} />
-                )}
+                )} */}
                 <div className="content flex-grow-1">
                     <header id="head_dash" className='header_dash'>
                         <div className='row'>

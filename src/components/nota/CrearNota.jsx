@@ -198,7 +198,7 @@ const CrearNota = () => {
     return (
 
                 <div className="content flex-grow-1 crearNotaGlobal">
-                    <GuardarNotaCada10sg nota={actual} />
+                    {/* <GuardarNotaCada10sg nota={actual} /> */}
                     <div className='row'>
                         <div className='col'>
                             <h4 id="nota">
