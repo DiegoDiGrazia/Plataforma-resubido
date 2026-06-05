@@ -67,6 +67,11 @@ const NotasParaEditorial = () => {
             En brevedad usted podra editar la nota con toda la informacion y contenido que se genero con IA`);
             setMostrarMensaje(true)
             const nota = await obtenerNotaCompletaConIa(TOKEN, notaABM.id, notaABM.term_id);
+            if (nota === 'Sin fondos OpenAI') {
+                setMensaje('El cliente no tiene fondos en OpenAI para obtener el contenido completo de la nota');
+                setMostrarMensaje(true);
+                return;
+            }
             notaABM = nota
             
         }

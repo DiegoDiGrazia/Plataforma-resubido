@@ -18,7 +18,11 @@ const fetchData = async (url, token, extraParams = {}) => {
     const response = await axios.post(url, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
-
+    console.log(response);
+    if (response.data === 'Sin fondos OpenAI') {
+      console.log('El cliente no tiene fondos en OpenAI para regenerar el texto.');
+      return response.data || [];
+    }
     return response.data.item || [];
   } catch (err) {
     console.error(`Error al obtener datos de ${url}:`, err);
