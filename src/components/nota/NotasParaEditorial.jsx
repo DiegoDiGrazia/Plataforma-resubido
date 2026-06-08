@@ -68,7 +68,7 @@ const NotasParaEditorial = () => {
             setMostrarMensaje(true)
             const nota = await obtenerNotaCompletaConIa(TOKEN, notaABM.id, notaABM.term_id);
             if (nota === 'Sin fondos OpenAI') {
-                setMensaje('El cliente no tiene fondos en OpenAI para obtener el contenido completo de la nota');
+                setMensaje('No tiene fondos suficientes en OpenAI para obtener el contenido completo de la nota');
                 setMostrarMensaje(true);
                 return;
             }
