@@ -37,6 +37,9 @@ const AbmPerfiles
   const TOKEN = useSelector((state) => state.formulario.token);
   const [comisionistas, setComisionistas] = useState([]);
 
+  const permisoAlta = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Comisionistas: Alta") || false);
+  const permisoEdicion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Comisionistas: Edicion") || false);
+
   useEffect(() => {
     obtenerComisionistas(TOKEN).then(setComisionistas);
     obtenerGeo().then(setGeo);
@@ -112,7 +115,9 @@ const handleSave = () => {
       {/* Búsqueda */}
       <div className='row miPerfilContainer soporteContainer mt-4 p-0 mb-3'>
         <div className='col buscadorNotas'> 
-          <button className="mb-2 btn btn-primary" onClick={() => handleEditClick(comisionistaVacio)}>Crear nuevo comisionista</button>
+          {permisoAlta && (
+            <button className="mb-2 btn btn-primary" onClick={() => handleEditClick(comisionistaVacio)}>Crear nuevo comisionista</button>
+          )}
           <form className='buscadorNotasForm'>
             <input
               className = 'inputBuscadorNotas'
@@ -137,8 +142,9 @@ const handleSave = () => {
                   <div className='row pt-0'>
                     <div className='col-2'>
                       <button
-                        className="btn btn-link p-0"
+                        className="btn btn-link text-primary p-0"
                         onClick={() => handleEditClick(item)}
+                        disabled={!permisoEdicion}
                       >
                         <strong>{item.nombre}</strong>
                       </button>

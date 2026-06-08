@@ -26,6 +26,10 @@ const Facturas = () =>  {
     
     const token = useSelector((state) => state.formulario.token);
     const idUsuario = useSelector((state) => state.formulario.usuario.id);
+    const permisoAlta = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Facturas: Alta") || false);
+    const permisoEdicion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Facturas: Edicion") || false);
+    const permisoBorrado = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Facturas: Borrado") || false);
+
     const [fechaDesde, setFechaDesde] = useState(obtenerMesActual(-3));
     const [fechaHasta, setFechaHasta] = useState(obtenerMesActual(6));
     const [search, setSearch] = useState("");
@@ -89,6 +93,7 @@ const Facturas = () =>  {
             setMesSeleccionado(f.mes ? `${String(f.mes).slice(0, 4)}-${String(f.mes).slice(4)}` : "");
             setFechaPagoSeleccionada(f.fecha_pago);
           },
+          mostrar: (f) => permisoEdicion,
           modalTarget: "#modalEditarFactura"
         },
 
@@ -107,7 +112,7 @@ const Facturas = () =>  {
             .finally(() => setCargandoFacturasEnContrato(false));
 
           },
-          mostrar: (f) => !f.numero,
+          mostrar: (f) => !f.numero && permisoEdicion,
           modalTarget: "#modalUnificarFacturas"
         },
           
@@ -124,6 +129,7 @@ const Facturas = () =>  {
             })
             .finally(() => setCargandoArchivos(false));
           },
+          mostrar: (f) => permisoEdicion,
           modalTarget: "#modalArchivos",
         },
 
@@ -135,7 +141,7 @@ const Facturas = () =>  {
             setNumeroSeleccionado("2");
             setMesSeleccionado(`${String(f.mes).slice(0, 4)}-${String(f.mes).slice(4)}`)
           },
-          mostrar: (f) => !f.numero,
+          mostrar: (f) => !f.numero && permisoEdicion,
           modalTarget: "#modalDividirFactura"
          },
         
@@ -152,6 +158,7 @@ const Facturas = () =>  {
             })
             .finally(() => setCargandoComentarios(false));
           },
+          mostrar: (f) => permisoEdicion,
           modalTarget: "#modalComentarios",  
         },
 
@@ -160,8 +167,9 @@ const Facturas = () =>  {
           color: "rgb(165, 22, 22)",
           accion: (f) => {
             setFacturaActual(f);
-          },  
-          mostrar: (f) => f.abierto === "SI",
+          },
+          permiso: permisoBorrado,  
+          mostrar: (f) => f.abierto === "SI" && permisoBorrado,
           modalTarget: "#modalEliminarFactura",
         },
     ];
@@ -434,6 +442,7 @@ const Facturas = () =>  {
                     </div>
                 </div>
                 <div className='row justify-content-end align-items-end gap-3'>
+                    {permisoAlta && (
                     <button 
                         id='cargar-factura' 
                         className="btn btn-primary col-2 h-100 w-auto" 
@@ -445,6 +454,7 @@ const Facturas = () =>  {
                     > 
                         <i className='bi bi-file-earmark-arrow-up fs-4' style={{color:'rgb(40, 40, 40)'}}></i> {/* bi-file-earmark-arrow-up / bi-file-earmark-plus / bi-receipt / bi-plus-circle*/}
                     </button>
+                    )}
                     <button 
                         id='descargar-excel' 
                         className='btn col-2 h-100 w-auto' 
@@ -526,7 +536,10 @@ const Facturas = () =>  {
             </div>
             {/* Listado de Facturas */}
             <ul className= 'list-group gap-1 mx-5 mb-5'>
-                {facturasFiltradas && facturasFiltradas.length > 0 ?(
+            {facturas.length <= 0 ? (
+                <SpinnerCarga texto='Cargando facturas...'/>
+            ) : (
+                facturasFiltradas && facturasFiltradas.length > 0 ?(
                     facturasFiltradas.map((factura) => (
                         <li className= {`list-group-item py-3 ${factura.numero ? "border border-2 border-success px-1" : ""}`} key= {factura.id}>
                             <div className="row text-start w-100" style={{ fontSize: "13px" }}>
@@ -594,6 +607,7 @@ const Facturas = () =>  {
                                                 onClick={() => boton.accion(factura)}
                                                 data-bs-toggle={boton.modalTarget ? "modal" : undefined}
                                                 data-bs-target={boton.modalTarget}
+                                                
                                             >
                                                 <i className={`${boton.icono} fs-4 m-0 botones-accion`} style={{color: `${boton.color}`}}></i>   
                                             </button>
@@ -607,8 +621,9 @@ const Facturas = () =>  {
                 ) : (
                     <li className= 'list-group-item text-center text-muted'> No hay resultados. </li>
                         
-                )}
+                )
                     
+            )}
             </ul>
             {/* Modal Editar Factura */}
             <div className="modal fade" id="modalEditarFactura" tabIndex="-1" aria-hidden="true">

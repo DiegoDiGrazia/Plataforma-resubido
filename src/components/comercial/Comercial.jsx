@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Sidebar from '../sidebar/Sidebar';
@@ -8,35 +9,48 @@ import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
 
-const DEF = {
-    "Calculadora de ventas": {
-        "descripcion": "Calculá el costo de distribución de tu contenido.",
-        "url": "comercial/calculadora-ventas",
-        "titulo": "Calculadora"
-        },
-    "ABM Planes": {
-        "descripcion": "Alta, baja y modificación de Planes.",
-        "url": "comercial/abm-planes",
-        "titulo": "ABM Planes"
-        },
-    "ABM Comisionistas": {
-        "descripcion": "Alta, baja y modificación de Comisionistas.",
-        "url": "comercial/abm-comisionistas",
-        "titulo": "ABM Comisionistas"
-        },
-    "Contratos": {
-        "descripcion": "Alta, baja y modificación de Contratos.",
-        "url": "comercial/abm-contratos",
-        "titulo": "ABM Contratos"
-        },
-    "Administración de facturas": {
-        "descripcion": "Listado y administración de Facturas.",
-        "url": "comercial/facturas",
-        "titulo": "Administración de Facturas"
-    },
-
-    }
 const Comercial = () => {
+    
+    const permisoListadoPlanes = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Planes: Listado") || false);
+    const permisoListadoComisionistas = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Comisionistas: Listado") || false);
+    const permisoListadoContratos = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Contratos: Listado") || false);
+    const permisoListadoFacturas = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Facturas: Listado") || false);
+    
+    const DEF = {
+        "Calculadora de ventas": {
+            "descripcion": "Calculá el costo de distribución de tu contenido.",
+            "url": "comercial/calculadora-ventas",
+            "titulo": "Calculadora",
+            "permiso": "true"
+            },
+        "ABM Planes": {
+            "descripcion": "Alta, baja y modificación de Planes.",
+            "url": "comercial/abm-planes",
+            "titulo": "ABM Planes",
+            "permiso": permisoListadoPlanes
+            },
+        "ABM Comisionistas": {
+            "descripcion": "Alta, baja y modificación de Comisionistas.",
+            "url": "comercial/abm-comisionistas",
+            "titulo": "ABM Comisionistas",
+            "permiso": permisoListadoComisionistas
+            },
+        "Contratos": {
+            "descripcion": "Alta, baja y modificación de Contratos.",
+            "url": "comercial/abm-contratos",
+            "titulo": "ABM Contratos",
+            "permiso": permisoListadoContratos
+            },
+        "Administración de facturas": {
+            "descripcion": "Listado y administración de Facturas.",
+            "url": "comercial/facturas",
+            "titulo": "Administración de Facturas",
+            "permiso": permisoListadoFacturas
+        },
+    
+    }
+    
+
     const [searchQuery, setSearchQuery] = useState('');
     const navigate = useNavigate();
 
@@ -44,9 +58,11 @@ const Comercial = () => {
         setSearchQuery(e.target.value);
     };
 
-    const filteredCategories = Object.keys(DEF).filter((categoriaKey) =>
-        categoriaKey.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredCategories = Object.keys(DEF).filter((categoriaKey) => {
+        const busqueda = categoriaKey.toLowerCase().includes(searchQuery.toLowerCase())
+        const tienePermiso = DEF[categoriaKey].permiso;
+        return busqueda && tienePermiso;
+    });
     return (
         <>
         <div className="content flex-grow-1 crearNotaGlobal">

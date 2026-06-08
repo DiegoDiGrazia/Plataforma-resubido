@@ -51,6 +51,8 @@ const UsuariosAdmin = () => {
   const [formData, setFormData] = useState({});
   const itemsPerPage = 10;  
   const TOKEN = useSelector((state) => state.formulario.token);
+  const permisoAlta = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Usuarios: Alta") || false);
+  const permisoEdicion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Usuarios: Edicion") || false);
 
   // Cargar usuarios
   useEffect(() => {
@@ -212,7 +214,9 @@ const handleInputKeyDown = (e) => {
       {/* Búsqueda */}
       <div className='row miPerfilContainer soporteContainer mt-4 p-0 mb-3'>
         <div className='col buscadorNotas'> 
-          <button className="mb-2 btn btn-primary" onClick={() => handleEditClick(usuarioVacio)}>Crear nuevo usuario</button>
+          {permisoAlta && (
+            <button className="mb-2 btn btn-primary" onClick={() => handleEditClick(usuarioVacio)}>Crear nuevo usuario</button>
+          )}
           <form className='buscadorNotasForm'>
             <input
               className='inputBuscadorNotas'
@@ -237,8 +241,9 @@ const handleInputKeyDown = (e) => {
                   <div className='row pt-0'>
                     <div className='col-2'>
                       <button
-                        className="btn btn-link p-0"
+                        className="btn btn-link text-primary p-0"
                         onClick={() => handleEditClick(item)}
+                        disabled={!permisoEdicion}
                       >
                         <div className='user-name-text text-start'>{item.nombre}</div>
                       </button>

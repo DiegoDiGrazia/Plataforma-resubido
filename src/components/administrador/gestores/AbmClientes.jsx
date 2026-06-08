@@ -57,6 +57,8 @@ const AbmClientes
   const itemsPerPage = 10;  
   const desdeMarketing = new Date().toISOString().split('T')[0];
   const TOKEN = useSelector((state) => state.formulario.token);
+  const permisoAlta = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Cuentas: Alta") || false);
+  const permisoEdicion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Cuentas: Edicion") || false);
 
   useEffect(() => {
     obtenerUsuarios(TOKEN).then(setUsuarios);
@@ -128,26 +130,28 @@ const handleSave = () => {
       <div className='row miPerfilContainer soporteContainer'>
         <div className='col p-0'>
           <h3 id="saludo" className='headerTusNotas ml-0'>
-            <i className="icon me-2 icono_tusNotas bi bi-gear-fill" alt="Icono 1" /> Gestiona tus clientes
+            <i className="icon me-2 icono_tusNotas bi bi-gear-fill" alt="Icono 1" /> Gestiona tus cuentas
           </h3>
-          <h4 className='infoCuenta'>Gestiona tus clientes</h4>
+          <h4 className='infoCuenta'>Gestiona tus cuentas</h4>
           <div className='abajoDeTusNotas'>
             En esta seccion podras gestionar la creacion, eliminacion y edicion <br />
-            de todos los clientes de la plataforma.
+            de todos los cuentas de la plataforma.
           </div>
         </div>
       </div>
       {/* Búsqueda */}
       <div className='row miPerfilContainer soporteContainer mt-4 p-0 mb-3'>
         <div className='col buscadorNotas'> 
-          <button className="mb-2 btn btn-primary" onClick={() => handleEditClick(clienteVacio)}>Crear nuevo usuario</button>
+          {permisoAlta && (
+            <button className="mb-2 btn btn-primary" onClick={() => handleEditClick(clienteVacio)}>Crear nueva cuenta</button>
+          )}
           <form className='buscadorNotasForm'>
             <input
               className = 'inputBuscadorNotas'
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="       Buscar usuario por nombre"
+              placeholder="       Buscar cuenta por nombre"
             />
           </form>
         </div>
@@ -163,10 +167,11 @@ const handleSave = () => {
               pagedItems.map((item) => (
                 <li key={item.id} className="list-group-item">
                   <div className='row pt-0'>
-                    <div className='col-2'>
+                    <div className='col-4'>
                       <button
-                        className="btn btn-link p-0"
+                        className="btn btn-link text-primary p-0"
                         onClick={() => handleEditClick(item)}
+                        disabled={!permisoEdicion}
                       >
                         <strong>{item.name}</strong>
                       </button>
@@ -210,7 +215,7 @@ const handleSave = () => {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title">
-                {selectedClient ? "Editar Cliente" : "Nuevo Cliente"}
+                {selectedClient?.id != 0 ? "Editar Cuenta" : "Nueva Cuenta"}
               </h5>
               <button
                 type="button"

@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Sidebar from '../sidebar/Sidebar';
@@ -10,41 +11,54 @@ import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
 
-const DEF = {
-    "usuarios": {
-        "descripcion": "Gestiona los usuarios de la plataforma, incluyendo su creación, edición y eliminación.",
-        "url": "usuarios",
-        "titulo": "Usuarios"
-        },
-
-    "perfiles": {
-        "descripcion": "Gestiona los perfiles de los usuarios, asignando roles y permisos específicos.",
-        "url": "perfiles",
-        "titulo": "Perfil"
-        },
-    "clientes": {
-        "descripcion": "Gestiona la creación y edición de nuevas cuentas.",
-        "url": "clientes",
-        "titulo": "Cuentas"
-        },
-    "sitios-relevantes": {
-        "descripcion": "Gestiona la alta, baja y modificación de sitios relevantes.", 
-        "url": "sitios-relevantes",
-        "titulo": "ABM Sitios Relevantes"
-    }
-}
 
 const Administrador = () => {
+    
+    const permisoListadoUsuarios = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Usuarios: Listado") || false);
+    const permisoListadoPerfiles = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Perfiles: Listado") || false);
+    const permisoListadoCuentas = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Cuentas: Listado") || false);
+    const permisoListadoSitios = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Sitios: Listado") || false);
+    
+    const DEF = {
+        "usuarios": {
+            "descripcion": "Gestiona los usuarios de la plataforma, incluyendo su creación, edición y eliminación.",
+            "url": "usuarios",
+            "titulo": "Usuarios",
+            "permiso": permisoListadoUsuarios
+            },
+    
+        "perfiles": {
+            "descripcion": "Gestiona los perfiles de los usuarios, asignando roles y permisos específicos.",
+            "url": "perfiles",
+            "titulo": "Perfil",
+            "permiso": permisoListadoPerfiles
+            },
+        "clientes": {
+            "descripcion": "Gestiona la creación y edición de nuevas cuentas.",
+            "url": "clientes",
+            "titulo": "Cuentas",
+            "permiso": permisoListadoCuentas
+            },
+        "sitios-relevantes": {
+            "descripcion": "Gestiona la alta, baja y modificación de sitios relevantes.", 
+            "url": "sitios-relevantes",
+            "titulo": "ABM Sitios Relevantes",
+            "permiso": permisoListadoSitios
+        }
+    }
+
     const [searchQuery, setSearchQuery] = useState('');
     const navigate = useNavigate();
-
+    
     const handleInputChange = (e) => {
         setSearchQuery(e.target.value);
     };
 
-    const filteredCategories = Object.keys(DEF).filter((categoriaKey) =>
-        categoriaKey.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredCategories = Object.keys(DEF).filter((categoriaKey) => {
+        const busqueda = categoriaKey.toLowerCase().includes(searchQuery.toLowerCase());
+        const tienePermiso = DEF[categoriaKey].permiso;
+        return busqueda && tienePermiso;
+    });
     return (
         <>
         <div className="content flex-grow-1 crearNotaGlobal">
