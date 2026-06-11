@@ -26,7 +26,7 @@ function reduceByKeyMedios(lista_medios) {
     }, {});
 }
 
-const MediosMasRelevantesNotas = ({ id_noti, TOKEN, cliente, fpub, dataLocalNota }) => {
+const MediosMasRelevantesNotas = ({ id_noti, TOKEN, cliente, fpub, dataLocalNota, paisFiltro }) => {
     const fechaCompleta = new Date(fpub);
     fechaCompleta.setDate(1);
     const desde = fpub ? fechaCompleta.toISOString().split('T')[0] : null;
@@ -44,6 +44,7 @@ const MediosMasRelevantesNotas = ({ id_noti, TOKEN, cliente, fpub, dataLocalNota
                 hasta,
                 token: TOKEN,
                 id_noti,
+                cat_pais: paisFiltro?.nombre || null,
             },
             {
                 headers: {
@@ -61,7 +62,7 @@ const MediosMasRelevantesNotas = ({ id_noti, TOKEN, cliente, fpub, dataLocalNota
         .catch((error) => {
             console.error('Error al hacer la solicitud:', error);
         });
-    }, [desde, hasta, TOKEN, id_noti, cliente]);
+    }, [desde, hasta, TOKEN, id_noti, cliente, paisFiltro]);
 
     const todosLosMediosSinRepetir = Object.values(reduceByKeyMedios(mediosNota));
     const listaTresMedios = todosLosMediosSinRepetir

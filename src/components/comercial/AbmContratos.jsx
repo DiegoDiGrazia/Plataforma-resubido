@@ -402,12 +402,18 @@ const totales = useMemo(() => {
 const handleSave = () => {
   setShowModal(true); // mostrar modal
   setMensajeModalExito('Aguarde un momento... estamos guardando los cambios'); // mensaje de guardado
+
+    const data = {
+    ...formData,
+    notas_x_mes: formData.notas_x_mes || 0,
+    alcance_x_nota: formData.alcance_x_nota || 0,
+  };
   axios
     .post(
       "https://panel.serviciosd.com/app_contrato_edit",
       {
         token: TOKEN,
-        ...formData,
+        ...data,
       },
       {
         headers: { "Content-Type": "multipart/form-data" },
@@ -1028,7 +1034,7 @@ const handleSave = () => {
                     <input
                       type="number"
                       className="form-control"
-                      value={formData.alcance_x_nota || ""}
+                      value={formData.alcance_x_nota || "0"}
                       onChange={(e) =>
                         setFormData({ ...formData, alcance_x_nota: e.target.value })
                       }

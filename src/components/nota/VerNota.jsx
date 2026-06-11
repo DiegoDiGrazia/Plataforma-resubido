@@ -18,6 +18,7 @@ import { obtenerResumenDashboardNota } from '../administrador/gestores/apisUsuar
 import PlataformaMasImpresiones from '../Dashboard/datosRelevantes/PlataformaMasImpresiones';
 import IframeNota from './IframeNota';
 import IframeNotaEscalable from './IframeNotaEscalable';
+import SelectorConBuscador from '../nota/Editorial/SelectorConBuscador';
 
 export const RUTA = "http://localhost:4000/";
 
@@ -31,6 +32,8 @@ const VerNota = () => {
     const [dataLocalNota, setdataLocalNota] = useState(null);
     const [resumenNota, setResumenNota] = useState([]);
     const [loadingUsuarios, setLoadingUsuarios] = useState(false);
+    const [paisFiltro, setPaisFiltro] = useState(null);
+    const paises = useSelector((state) => state.formulario.geo);
     
     const id_para_api = id_ruta ? id_ruta : id;
     const id_noti = id_para_api;
@@ -48,7 +51,7 @@ const VerNota = () => {
 
     useEffect(() => {
         setLoadingUsuarios(true);
-        obtenerResumenDashboardNota(TOKEN, id_noti)
+        obtenerResumenDashboardNota(TOKEN, id_noti, paisFiltro?.nombre)
             .then((res) => {
                 setResumenNota(res);
             })
@@ -58,7 +61,7 @@ const VerNota = () => {
             .finally(() => {
                 setLoadingUsuarios(false);
             });
-    }, [TOKEN, id_noti]);
+    }, [TOKEN, id_noti, paisFiltro]);
     
     useEffect(() => {
         if (!id_para_api) return;
@@ -142,6 +145,9 @@ const VerNota = () => {
                                 </div>
                             </div>
                             <div className='col boton_nota d-flex justify-content-center align-items-center no_print'>
+                                <div className="mt-3">
+                                <SelectorConBuscador title="Filtro pais: " options={paises} selectedOption={paisFiltro} onSelect={setPaisFiltro} onClear={() => setPaisFiltro(null)} />
+                                </div>
                                 {!es_demo &&
                                 <button className="btn custom-dropdown-button dropdown-toggle boton_compartir no_print" onClick={descargarReporte} type="button" id="descargar-reporte">
                                     <img src="/images/share_icon.png" alt="Descargar" className="icon me-2" />
@@ -174,7 +180,7 @@ const VerNota = () => {
                                 <PlataformaMasImpresiones resumenCliente={resumenNota} loading={loadingUsuarios} />
                             </div>
                             <div className='col-lg-12 col-xl col-6 m-2 back-white cuadro-impresion'>
-                                <MediosMasRelevantesNotas id_noti={id_noti} TOKEN={TOKEN} cliente={CLIENTE} fpub={FPUB} dataLocalNota={dataLocalNota?.mediosNoticia} />
+                                <MediosMasRelevantesNotas id_noti={id_noti} TOKEN={TOKEN} cliente={CLIENTE} fpub={FPUB} dataLocalNota={dataLocalNota?.mediosNoticia} paisFiltro={paisFiltro} />
                             </div>
                         </div>
                     </div>

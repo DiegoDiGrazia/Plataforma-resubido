@@ -197,8 +197,8 @@ export const obtenerArchivosDeContrato = (token, id) =>
 export const obtenerResumenDashboardCliente = (token, cliente_id, cat_pais = null) =>
   fetchData ("https://panel.serviciosd.com/app_obtener_resume", token, {cliente_id, cat_pais: cat_pais});
 
-export const obtenerResumenDashboardNota = (token, id_noti) =>
-  fetchData ("https://panel.serviciosd.com/app_obtener_resume", token, {id_noti});
+export const obtenerResumenDashboardNota = (token, id_noti, cat_pais = null) =>
+  fetchData ("https://panel.serviciosd.com/app_obtener_resume", token, {id_noti, cat_pais: cat_pais});
 
 export const cargarArchivo = (token, id_usuario, archivo, id_contrato_archivo) =>
   fetchData("https://panel.serviciosd.com/app_contrato_archivo_edit", token, {
