@@ -13,7 +13,7 @@ const obtenerColorDeEstadoDistribucionDeNota = (campoAChequear, nota) => {
 
 // Recibimos geo y contratos desde el padre
 const IconosDistribucionConMonto = ({ nota, token, geo, contratos }) => {
-    const isFirstRender = useRef(true);
+    const isUserEdit = useRef(false);
     const Usuario = useSelector((state) => state.formulario.usuario);
     const [showModal, setShowModal] = useState(false);
     const [mensajeModalExito, setMensajeModalExito] = useState("Los cambios se realizaron correctamente.");
@@ -87,10 +87,8 @@ const IconosDistribucionConMonto = ({ nota, token, geo, contratos }) => {
     }, [alcance, poblacion]);
 
     useEffect(() => {
-      if (isFirstRender.current) {
-          isFirstRender.current = false;
-          return; 
-      }
+      if (!isUserEdit.current) return;
+
       const handler = setTimeout(() => {
           const dato_a_guardar = JSON.stringify({
               vp: banner_data?.vp || '50',
@@ -100,10 +98,11 @@ const IconosDistribucionConMonto = ({ nota, token, geo, contratos }) => {
               },
           });
           guardar_dato_en_banner_data(token, nota.id, dato_a_guardar);
-      }, 2000); 
+          isUserEdit.current = false;
+      }, 2000);
 
       return () => clearTimeout(handler);
-    }, [montoDv, montoMeta, token, nota.id]); 
+    }, [montoDv, montoMeta, token, nota.id]);
     
   const confirmarAccion = () => {
     if (accionPendiente) accionPendiente();
@@ -156,6 +155,7 @@ const IconosDistribucionConMonto = ({ nota, token, geo, contratos }) => {
           readOnly={!(Usuario.nombre === 'Santiago Iván Rossi' || Usuario.perfil === '1')}
           onChange={(e) => {
             if (Usuario.nombre === 'Santiago Iván Rossi' || Usuario.perfil === '1') {
+              isUserEdit.current = true;
               setMontoMeta(e.target.value);
             }
           }}
@@ -179,7 +179,8 @@ const IconosDistribucionConMonto = ({ nota, token, geo, contratos }) => {
           readOnly={!(Usuario.nombre === 'Santiago Iván Rossi' || Usuario.perfil === '1')}
           onChange={(e) => {
             if (Usuario.nombre === 'Santiago Iván Rossi' || Usuario.perfil === '1') {
-              setMontoDv(e.target.value); 
+              isUserEdit.current = true;
+              setMontoDv(e.target.value);
             }
           }}
           style={{ width: '120px', fontSize: '0.9rem' }}

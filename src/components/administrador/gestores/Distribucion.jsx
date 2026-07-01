@@ -48,9 +48,6 @@ const obtenerColorDeEstadoDistribucion = (campoAChequear, datosDelCiente) => {
 const filtrarClientesSegunPendientes = (clientesObj, pendientes) => {
   const clientesFiltradosEntries = Object.entries(clientesObj).filter(([nombre, datos]) => {
     if (!datos.notas || datos.notas.length === 0) return false;
-    if (nombre === "Notas de Video") {
-      return true;
-    }
     if (pendientes === 'Todos los casos') return true;
 
     if (pendientes === 'solo en Meta') {
@@ -114,6 +111,20 @@ const agruparNotasPorCliente = (notas) => {
     return acc;
   }, {});
 };
+
+const agruparVideosPorCliente = (videos) => {
+  if (!videos || videos.length === 0) return {};
+  return videos.reduce((acc, video) => {
+    if (!video.cliente) return acc;
+    const notaDeVideo = { ...video, esNotaDeVideo: true };
+    if (!acc[video.cliente]) {
+      acc[video.cliente] = [notaDeVideo];
+    } else {
+      acc[video.cliente].push(notaDeVideo);
+    }
+    return acc;
+  }, {});
+};
 const DistribucionAdmin = () => {
   const [clientes, setClientes] = useState([]);
   const [fechaDesde, setFechaDesde] = useState(obtenerMesActual(0));
@@ -128,7 +139,6 @@ const DistribucionAdmin = () => {
   const itemsPerPage = 100;  
   const TOKEN = useSelector((state) => state.formulario.token);
   const [loading, setLoading] = useState(false); 
-  const nombreAgrupacionVideosNota = 'Notas de Video';
   const [geo, setGeo] = useState("");
   const [contratos, setContratos] = useState([]);
   const [comentarios, setComentarios] = useState({});
@@ -171,9 +181,19 @@ useEffect(() => {
   const diccionarioDeCLientesConSusNotas = agruparNotasPorCliente(res);
   const agrupadasConPlanes = agregarPlanAlDiccionarioDeNotas(diccionarioDeCLientesConSusNotas, clientes, planes);
   console.log('agrupadasConPlanes: ', agrupadasConPlanes);
-  setNotasGeneracionesAgrupadas(prev => ({ ...prev, ...agrupadasConPlanes}));
+  setNotasGeneracionesAgrupadas(prev => {
+    const actualizado = { ...prev };
+    for (const [nombreCliente, datos] of Object.entries(agrupadasConPlanes)) {
+      const notasDeVideoPrevias = actualizado[nombreCliente]?.notas?.filter(n => n.esNotaDeVideo) || [];
+      actualizado[nombreCliente] = {
+        plan: datos.plan,
+        notas: [...datos.notas, ...notasDeVideoPrevias]
+      };
+    }
+    return actualizado;
+  });
   })
-  .finally(() => setLoading(false)); 
+  .finally(() => setLoading(false));
 }, [TOKEN, clientes, planes, fechaDesde, fechaHasta]);
 
 useEffect(() => {
@@ -186,12 +206,25 @@ useEffect(() => {
     '150',
     '0'
   ).then((res) => {
-    setNotasGeneracionesAgrupadas(prev => ({
-      ...prev,
-      [nombreAgrupacionVideosNota]: {'notas': res, 'plan': null}
-    }));
+    const videosPorCliente = agruparVideosPorCliente(res);
+    setNotasGeneracionesAgrupadas(prev => {
+      const actualizado = { ...prev };
+      for (const [nombreCliente, notasDeVideo] of Object.entries(videosPorCliente)) {
+        if (actualizado[nombreCliente]) {
+          actualizado[nombreCliente] = {
+            ...actualizado[nombreCliente],
+            notas: [...actualizado[nombreCliente].notas, ...notasDeVideo]
+          };
+        } else {
+          const municipio = clientes.find(m => m.name === nombreCliente);
+          const plan = municipio ? planes.find(p => p.id === municipio.id_plan) : null;
+          actualizado[nombreCliente] = { notas: notasDeVideo, plan: plan || null };
+        }
+      }
+      return actualizado;
+    });
   });
-  
+
 }, [TOKEN, fechaDesde, fechaHasta]);
 
   useEffect(() => {
@@ -347,10 +380,10 @@ const goToPage = (newPage) => {
                     <Accordion.Body>
                       <ul className="list-group">
                         {data.notas.map(nota => (
-                          <li key={nota.id} className="list-group-item">
+                          <li key={`${nota.id}-${nota.esNotaDeVideo ? 'video' : 'nota'}`} className="list-group-item">
                             <div className='row p-0'>
                               {/* Columna 1 */}
-                              {cliente !== nombreAgrupacionVideosNota && (
+                              {!nota.esNotaDeVideo && (
                               <div className="col-3">
                                 <div className="row p-1">
                                   <span>
@@ -365,14 +398,14 @@ const goToPage = (newPage) => {
                                 </div>
                               </div>
                               )}
-                              {cliente == nombreAgrupacionVideosNota && (
+                              {nota.esNotaDeVideo && (
                               <div className="col-3">
                                 <div className="row p-1">
                                   <span><strong>Fecha vencimiento: </strong>{nota.fecha_vencimiento_video}</span>
                                 </div>
                               </div>
                               )}
-                              {cliente == nombreAgrupacionVideosNota && (
+                              {nota.esNotaDeVideo && (
                               <div className="col-3">
                                 <div className="row p-1">
                                   <span>
@@ -388,7 +421,7 @@ const goToPage = (newPage) => {
                               )}
 
                               {/* Columna 2 */}
-                              {cliente !== nombreAgrupacionVideosNota && (
+                              {!nota.esNotaDeVideo && (
                                 <>
                               <div className="col-3">
                                 <div className="row p-1">
