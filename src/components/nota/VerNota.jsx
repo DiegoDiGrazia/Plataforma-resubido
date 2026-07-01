@@ -51,7 +51,7 @@ const VerNota = () => {
 
     useEffect(() => {
         setLoadingUsuarios(true);
-        obtenerResumenDashboardNota(TOKEN, id_noti, paisFiltro?.nombre)
+        obtenerResumenDashboardNota(TOKEN, id_noti, paisFiltro?.pais_id)
             .then((res) => {
                 setResumenNota(res);
             })

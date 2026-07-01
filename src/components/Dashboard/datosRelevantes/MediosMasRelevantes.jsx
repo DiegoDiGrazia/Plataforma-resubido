@@ -61,7 +61,7 @@ const MediosMasRelevantes = ({datosLocales, paisFiltro}) => {
                 token: token,
                 f_pub_desde: fecha_inicio_creacion,
                 f_pub_hasta: fecha_fin_creacion,
-                cat_pais: paisFiltro?.nombre
+                pais_id: paisFiltro?.pais_id
             },
             {
                 headers: {

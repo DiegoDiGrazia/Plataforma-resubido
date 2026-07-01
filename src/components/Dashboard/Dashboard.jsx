@@ -82,7 +82,7 @@ const Dashboard = () => {
     useEffect(() => {
     setLoadingUsuarios(true);
 
-    obtenerResumenDashboardCliente(token, cliente_id, paisFiltro?.nombre)
+    obtenerResumenDashboardCliente(token, cliente_id, paisFiltro?.pais_id)
         .then((res) => {
             setResumenCliente(res);
         })

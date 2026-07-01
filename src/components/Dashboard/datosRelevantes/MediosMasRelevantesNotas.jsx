@@ -44,7 +44,7 @@ const MediosMasRelevantesNotas = ({ id_noti, TOKEN, cliente, fpub, dataLocalNota
                 hasta,
                 token: TOKEN,
                 id_noti,
-                cat_pais: paisFiltro?.nombre || null,
+                pais_id: paisFiltro?.pais_id || null,
             },
             {
                 headers: {

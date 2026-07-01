@@ -105,6 +105,19 @@ export const obtenerPlanesMarketing = (token, desde, hasta) =>
     desde, hasta
 });
 
+export const setearComentarioANota = (token, nota) =>
+  fetchData("https://panel.serviciosd.com/app_setear_dato_meta_360", token, {
+    id_generacion: nota.id,
+    comentarios: nota.comentarios
+  });
+
+  export const setearMontoDVoMeta = (token, nota, primer_dato_en_meta = null, primer_dato_en_360 = null) =>
+  fetchData("https://panel.serviciosd.com/app_setear_dato_meta_360", token, {
+    id_generacion: nota.id,
+    primer_dato_en_meta, 
+    primer_dato_en_360
+  });
+
 //guardar_posicion_iframes
 export const guardar_dato_en_banner_data = (token, id, datos) =>
   fetchData("https://reporte.noticiasd.com/api/guardar_posicion_creativos", token, {
@@ -195,10 +208,10 @@ export const obtenerArchivosDeContrato = (token, id) =>
   fetchData ("https://panel.serviciosd.com/app_obtener_contratos_archivos", token, {id});
 
 export const obtenerResumenDashboardCliente = (token, cliente_id, cat_pais = null) =>
-  fetchData ("https://panel.serviciosd.com/app_obtener_resume", token, {cliente_id, cat_pais: cat_pais});
+  fetchData ("https://panel.serviciosd.com/app_obtener_resume", token, {cliente_id, pais_id: cat_pais});
 
 export const obtenerResumenDashboardNota = (token, id_noti, cat_pais = null) =>
-  fetchData ("https://panel.serviciosd.com/app_obtener_resume", token, {id_noti, cat_pais: cat_pais});
+  fetchData ("https://panel.serviciosd.com/app_obtener_resume", token, {id_noti, pais_id: cat_pais});
 
 export const cargarArchivo = (token, id_usuario, archivo, id_contrato_archivo) =>
   fetchData("https://panel.serviciosd.com/app_contrato_archivo_edit", token, {

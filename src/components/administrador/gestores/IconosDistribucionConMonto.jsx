@@ -1,22 +1,24 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { guardar_dato_en_banner_data, obtenerPoblacion } from './apisUsuarios';
+import { guardar_dato_en_banner_data, obtenerPoblacion, setearMontoDVoMeta } from './apisUsuarios';
 import { useSelector } from 'react-redux';
+import ModalMensaje from '../gestores/ModalMensaje';
 
 const obtenerColorDeEstadoDistribucionDeNota = (campoAChequear, nota) => {
-  const fechaHoy = new Date();
-  const fechaVencimiento = new Date(nota['fecha_vencimiento']);
   if (!campoAChequear || !nota) return 'text-muted';
-  if (nota[campoAChequear] == null && fechaVencimiento < fechaHoy) return 'text-danger';
-  if (nota[campoAChequear] == null && fechaVencimiento > fechaHoy) return 'text-warning';
-  if (nota[campoAChequear] != null) return 'text-success';
-  
-  return 'text-muted';
+  const valor = nota[campoAChequear];
+  if (valor == null) return 'text-danger';
+  if (valor === '1111-11-11') return 'text-warning';
+  return 'text-success';
 };
 
 // Recibimos geo y contratos desde el padre
 const IconosDistribucionConMonto = ({ nota, token, geo, contratos }) => {
     const isFirstRender = useRef(true);
     const Usuario = useSelector((state) => state.formulario.usuario);
+    const [showModal, setShowModal] = useState(false);
+    const [mensajeModalExito, setMensajeModalExito] = useState("Los cambios se realizaron correctamente.");
+    
+    
 
     const parseBannerData = () => {
         try {
@@ -31,6 +33,11 @@ const IconosDistribucionConMonto = ({ nota, token, geo, contratos }) => {
     const [montoDv, setMontoDv] = useState(0);
     const [montoMeta, setMontoMeta] = useState(0);
     const [poblacion, setPoblacion] = useState(null);
+    const [primerDatoEnMeta, setPrimerDatoEnMeta] = useState(nota.primer_dato_en_meta ?? null);
+    const [primerDatoEn360, setPrimerDatoEn360] = useState(nota.primer_dato_en_360 ?? null);
+    const [showConfirmacion, setShowConfirmacion] = useState(false);
+    const [accionPendiente, setAccionPendiente] = useState(null);
+    const [plataformaConfirmacion, setPlataformaConfirmacion] = useState('');
 
     const alcance = useMemo(() => {
         if (!contratos || !nota.cliente) return 0;
@@ -98,12 +105,49 @@ const IconosDistribucionConMonto = ({ nota, token, geo, contratos }) => {
       return () => clearTimeout(handler);
     }, [montoDv, montoMeta, token, nota.id]); 
     
+  const confirmarAccion = () => {
+    if (accionPendiente) accionPendiente();
+    setShowConfirmacion(false);
+    setAccionPendiente(null);
+    setPlataformaConfirmacion('');
+  };
+
+  const cancelarAccion = () => {
+    setShowConfirmacion(false);
+    setAccionPendiente(null);
+    setPlataformaConfirmacion('');
+  };
+
   return (
+    <>
+    {showConfirmacion && (
+      <div className="modal fade show d-block" tabIndex="-1" style={{ background: 'rgba(0,0,0,0.5)' }}>
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">Confirmación</h5>
+              <button type="button" className="btn-close" onClick={cancelarAccion}></button>
+            </div>
+            <div className="modal-body">
+              <p>¿Seguro que quiere marcar forzosamente la nota como distribuida en <strong>{plataformaConfirmacion}</strong>?</p>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-secondary" onClick={cancelarAccion}>Cancelar</button>
+              <button className="btn btn-warning" onClick={confirmarAccion}>Confirmar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
     <div className="col-3 d-flex justify-content-center align-items-center">
       {/* Ícono META */}
       <div className="d-flex flex-column align-items-center">
-        <i className={'bi bi-meta fs-1 ' + obtenerColorDeEstadoDistribucionDeNota('primer_dato_en_meta', nota)}></i>
-        <strong>Estimado meta:</strong>
+        <i
+          className={'bi bi-meta fs-1 ' + obtenerColorDeEstadoDistribucionDeNota('primer_dato_en_meta', { ...nota, primer_dato_en_meta: primerDatoEnMeta })}
+          style={{ cursor: primerDatoEnMeta == null ? 'pointer' : 'default' }}
+          onClick={() => { if (primerDatoEnMeta == null) { setAccionPendiente(() => () => { setearMontoDVoMeta(token, nota, '1111-11-11', null); setPrimerDatoEnMeta('1111-11-11'); }); setPlataformaConfirmacion('Meta'); setShowConfirmacion(true); } }}
+        ></i>
+        <strong>Presupuesto meta:</strong>
         <input
           type="number"
           className="form-control mt-2 text-center"
@@ -121,8 +165,12 @@ const IconosDistribucionConMonto = ({ nota, token, geo, contratos }) => {
 
       {/* Ícono DV */}
       <div className="d-flex flex-column align-items-center ms-3">
-        <i className={'bi bi-google fs-1 ' + obtenerColorDeEstadoDistribucionDeNota('primer_dato_en_360', nota)}></i>
-        <strong>Estimado dv360:</strong>
+        <i
+          className={'bi bi-google fs-1 ' + obtenerColorDeEstadoDistribucionDeNota('primer_dato_en_360', { ...nota, primer_dato_en_360: primerDatoEn360 })}
+          style={{ cursor: primerDatoEn360 == null ? 'pointer' : 'default' }}
+          onClick={() => { if (primerDatoEn360 == null) { setAccionPendiente(() => () => { setearMontoDVoMeta(token, nota, null, '1111-11-11'); setPrimerDatoEn360('1111-11-11'); }); setPlataformaConfirmacion('DV360'); setShowConfirmacion(true); } }}
+        ></i>
+        <strong>Presupuesto dv360:</strong>
         <input
           type="number"
           className="form-control mt-2 text-center"
@@ -138,6 +186,7 @@ const IconosDistribucionConMonto = ({ nota, token, geo, contratos }) => {
         />
       </div>
     </div>
+    </>
   );
 };
 

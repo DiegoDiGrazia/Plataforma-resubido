@@ -4,7 +4,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "../../miPerfil/miPerfil.css";
 import { useSelector } from 'react-redux';
 import ModalMensaje from '../gestores/ModalMensaje';
-import {obtenerClientes, obtenerNotasDeGeneraciones, obtenerPlanesMarketing, obtenerVideosYoutube, obtenerGeo, obtenerContratos } from './apisUsuarios'; 
+import {obtenerClientes, obtenerNotasDeGeneraciones, obtenerPlanesMarketing, obtenerVideosYoutube, obtenerGeo, obtenerContratos, setearComentarioANota } from './apisUsuarios'; 
 import CopiarTexto from './CopiarTexto';
 import IconosDistribucionConMonto from './IconosDistribucionConMonto';
 import { Accordion } from 'react-bootstrap';
@@ -38,22 +38,11 @@ function formatearFechaDDMMAAAA(fechaStr) {
   return `${dia}-${mes}-${año}`;
 }
 const obtenerColorDeEstadoDistribucion = (campoAChequear, datosDelCiente) => {
-    if (!datosDelCiente || !datosDelCiente.plan) {
+  if (!datosDelCiente || !datosDelCiente.notas || datosDelCiente.notas.length === 0) {
     return 'text-muted';
   }
-  const notas = datosDelCiente['notas'].filter(n => n[campoAChequear] != null);
-  const totalDeNotasDistribuidas = notas.length;
-  const numeroDeNotasADistribuir = Number(datosDelCiente['plan']['notas_x_mes']) || 0;
-  if(totalDeNotasDistribuidas === 0 && numeroDeNotasADistribuir != 0){
-    return 'text-danger'
-  }
-  else if(totalDeNotasDistribuidas < numeroDeNotasADistribuir){
-    return 'text-warning'
-  }
-  else if(totalDeNotasDistribuidas >= numeroDeNotasADistribuir){
-    return 'text-success'
-  }
-  return 'text-success';
+  const tieneAlgunNull = datosDelCiente.notas.some(n => n[campoAChequear] == null);
+  return tieneAlgunNull ? 'text-danger' : 'text-success';
 }
 
 const filtrarClientesSegunPendientes = (clientesObj, pendientes) => {
@@ -84,19 +73,32 @@ const filtrarClientesSegunPendientes = (clientesObj, pendientes) => {
 };
 
 function agregarPlanAlDiccionarioDeNotas(dicNotas, clientes, planes) {
+  const entradasOrdenadas = Object.entries(dicNotas).sort(([, notasA], [, notasB]) => {
+    const fechaA = Math.max(...notasA.map(n => new Date(n.h_pub).getTime()));
+    const fechaB = Math.max(...notasB.map(n => new Date(n.h_pub).getTime()));
+
+    return fechaB - fechaA; // más reciente primero
+  });
+
   const nuevoDic = {};
-  for (const [nombreCliente, notas] of Object.entries(dicNotas)) {
+
+  for (const [nombreCliente, notas] of entradasOrdenadas) {
     const municipio = clientes.find(m => m.name === nombreCliente);
+
     const plan = municipio
       ? planes.find(p => p.id === municipio.id_plan)
       : null;
+
     nuevoDic[nombreCliente] = {
-      notas: notas,
+      notas,
       plan: plan || null
     };
   }
+
   return nuevoDic;
 }
+
+
 
 const agruparNotasPorCliente = (notas) => {
   if(!notas || notas.length === 0) return {};
@@ -115,7 +117,7 @@ const agruparNotasPorCliente = (notas) => {
 const DistribucionAdmin = () => {
   const [clientes, setClientes] = useState([]);
   const [fechaDesde, setFechaDesde] = useState(obtenerMesActual(0));
-  const [fechaHasta, setFechaHasta] = useState(obtenerMesActual(0));
+  const [fechaHasta, setFechaHasta] = useState(obtenerMesActual(1));
   const [pendientes, setPendientes] = useState('Todos los casos');
   const [planes, setPlanes] = useState([]);
   const [notasGeneracionesAgrupadas, setNotasGeneracionesAgrupadas] = useState({});
@@ -129,7 +131,23 @@ const DistribucionAdmin = () => {
   const nombreAgrupacionVideosNota = 'Notas de Video';
   const [geo, setGeo] = useState("");
   const [contratos, setContratos] = useState([]);
-  
+  const [comentarios, setComentarios] = useState({});
+
+  const setearComentario = (token, nota) => {
+  setMensajeModalExito("Se esta enviando el comentario...");
+  setShowModal(true);
+
+  setearComentarioANota(token, nota)
+    .then(() => {
+      setMensajeModalExito("El comentario se guardó correctamente.");
+    })
+    .catch(() => {
+      setMensajeModalExito("Ocurrió un error al guardar el comentario.");
+    })
+    .finally(() => {
+      setShowModal(false);
+    });
+};
 
   useEffect(() => {
     obtenerGeo().then(setGeo);
@@ -311,17 +329,12 @@ const goToPage = (newPage) => {
                           <div className="row p-1">
                             <span><strong>Distribuidas: </strong>{data.notas.filter(n => n.primer_dato_en_meta != null).length}</span>
                           </div>
-                          <div className="row p-1">
-                            <span><strong>Vencidas: </strong>{data.notas.filter(n => new Date(n.fecha_vencimiento) < new Date() && n.primer_dato_en_meta != null).length}</span>
-                          </div>
+  
                         </div>
                         <div className="col-3">
                           <u><strong className='ms-5'>DV360</strong></u>
                           <div className="row p-1">
                             <span><strong>Distribuidas: </strong>{data.notas.filter(n => n.primer_dato_en_360 != null).length}</span>
-                          </div>
-                          <div className="row p-1">
-                            <span><strong>Vencidas: </strong>{data.notas.filter(n => new Date(n.fecha_vencimiento) < new Date() && n.primer_dato_en_360 != null).length}</span>
                           </div>
                         </div>
                         <div className="col-3 d-flex justify-content-center align-items-center">
@@ -341,14 +354,11 @@ const goToPage = (newPage) => {
                               <div className="col-3">
                                 <div className="row p-1">
                                   <span>
-                                    <a href={`https://www.noticiasd.com/${nota.term_id}`} target="_blank" rel="noopener noreferrer">{nota.term_id}</a>
+                                    <a href={`https://www.noticiasd.com/nota/${nota.term_id}`} target="_blank" rel="noopener noreferrer">{nota.term_id}</a>
                                   </span>
                                 </div>
                                 <div className="row p-1">
-                                  <span><strong>Publicación: </strong>{nota.f_pub}</span>
-                                </div>
-                                <div className="row p-1">
-                                  <span><strong>Ultima versión: </strong>{nota.update_date}</span>
+                                  <span><strong>Fecha publicación: </strong>{nota.f_pub}</span>
                                 </div>
                                 <div className="row p-1">
                                   <span><strong>Fecha vencimiento: </strong>{nota.fecha_vencimiento}</span>
@@ -389,7 +399,32 @@ const goToPage = (newPage) => {
                                   </span>
                                 </div>
                                 <div className="row p-1">
-                                  <span><strong>Comentarios: </strong>{nota.comentarios ?? 'No hay comentarios'}</span>
+                                  <strong>Comentarios:</strong>
+
+                                  <textarea
+                                    className="form-control mt-1"
+                                    value={comentarios[nota.id] ?? nota.comentarios ?? ''}
+                                    onChange={(e) => {
+                                      setComentarios(prev => ({
+                                        ...prev,
+                                        [nota.id]: e.target.value
+                                      }));
+
+                                      nota.comentarios = e.target.value;
+                                    }}
+                                  />
+
+                                  <button
+                                    className="btn btn-primary btn-sm mt-2"
+                                    onClick={() =>
+                                      setearComentario(
+                                        TOKEN,
+                                        nota
+                                      )
+                                    }
+                                  >
+                                    Guardar
+                                  </button>
                                 </div>
                               </div>
 
