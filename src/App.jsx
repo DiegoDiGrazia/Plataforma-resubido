@@ -35,7 +35,7 @@ const RecuperarContraseña = lazy(() => import('./components/login/RecuperarCont
 const UpdatePassword = lazy(() => import('./components/login/updatePassword'));
 const AutoEntrevistasVideoAsk = lazy(() => import('./components/miPerfil/AutoEntrevistasVideoAsk'));
 const NotasCliente = lazy(() => import('./components/administrador/gestores/NotasCliente'));
-
+const Feed = lazy(() => import('./components/feed/Feed'));
 function App() {
   return (
     <ArchivoProvider>
@@ -67,6 +67,8 @@ function App() {
               <Route path="/verNota/:id_ruta?" element={<VerNota />} />
               <Route path="/notas" element={<NotasParaEditorial />} />
               <Route path="/notasEditorial" element={<NotasParaEditorial />} />
+              <Route path="/feed" element={<Feed />} />
+
               
 
               {/* COMERCIAL */}

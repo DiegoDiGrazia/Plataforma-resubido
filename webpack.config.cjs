@@ -31,6 +31,9 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js', '.jsx'],
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+    },
   },
   plugins: [
     new CleanWebpackPlugin(), // Limpia la carpeta dist en cada build
@@ -45,6 +48,12 @@ module.exports = {
     hot: true,
     port: 4001, // Puerto para el servidor de desarrollo
     proxy: [
+      {
+        context: ['/services'],
+        target: 'https://services.noticiasd.com',
+        changeOrigin: true,
+        pathRewrite: { '^/services': '' },
+      },
       {
         context: [
           '/api',

@@ -179,6 +179,13 @@ const Sidebar = ({ estadoActual }) => {
               'Administración',
               'bi bi-gear-fill'
             )}
+            {PerfilUsuario == '1' && renderSidebarButton(
+              'Feed',
+              'feed',
+              '/images/auto_entrevistas_icon.png',
+              'Feed',
+              'bi bi-rss-fill'
+            )}
             {paginasDelPerfil.find((pagina) => pagina.nombre == "Distribucion" || pagina.nombre == "Monitor Distribucion" ) && renderSidebarButton(
               'distribucion',
               'distribucion',

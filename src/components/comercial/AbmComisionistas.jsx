@@ -1,14 +1,14 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import "../miPerfil/miPerfil.css";
+import '@/components/miPerfil/miPerfil.css';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
-import ModalMensaje from '../administrador/gestores/ModalMensaje';
-import { obtenerUsuarios, obtenerClientes, obtenerPerfiles, obtenerGeo, obtenerPlanesMarketing, obtenerComisionistas } from '../administrador/gestores/apisUsuarios'; // Importa la función para obtener usuarios
-import ArbolDistribucion from '../nota/Editorial/ArbolDistribucion';
-import '../administrador/gestores/AbmsMobile.css';
-import DropdawnSiNo from './DropdawnSiNo'
+import ModalMensaje from '@/components/administrador/gestores/ModalMensaje';
+import { obtenerUsuarios, obtenerClientes, obtenerPerfiles, obtenerGeo, obtenerPlanesMarketing, obtenerComisionistas } from '@/components/administrador/gestores/apisUsuarios';
+import ArbolDistribucion from '@/components/nota/Editorial/ArbolDistribucion';
+import '@/components/administrador/gestores/AbmsMobile.css';
+import DropdawnSiNo from '@/components/comercial/DropdawnSiNo';
 
 
 const comisionistaVacio = {
