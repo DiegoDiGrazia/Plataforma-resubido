@@ -15,35 +15,36 @@ const InputNumerico = ({
   const [value, setValue] = useState(selectedValue || '');
 
   useEffect(() => {
-    setValue(selectedValue ?? '');
-  }, [selectedValue]);
-
-  const formatearPesos = (numero) => {
-    return new Intl.NumberFormat('es-AR', {
-      style: 'currency',
-      currency: 'ARS',
-      minimumFractionDigits: 0,
-    }).format(numero || 0);
-  };
+    if (isMoney) {
+      const texto = (selectedValue === '' || selectedValue == null)
+        ? ''
+        : String(selectedValue).replace('.', ',');
+      setValue(texto);
+    } else {
+      setValue(selectedValue ?? '');
+    }
+  }, [selectedValue, isMoney]);
 
   const handleChange = (e) => {
     let val = e.target.value;
 
-    // 👉 modo pesos
+    // 👉 modo pesos: acepta coma como separador decimal
     if (isMoney) {
-      const soloNumeros = val.replace(/\D/g, '');
-
-      if (soloNumeros === '') {
+      if (val === '') {
         setValue('');
         onClear();
         return;
       }
 
-      const number = Number(soloNumeros);
+      const regexMoney = /^\d*,?\d{0,2}$/;
+      if (!regexMoney.test(val)) return;
 
+      const number = Number(val.replace(',', '.'));
+
+      if (isNaN(number)) return;
       if (number < min || number > max) return;
 
-      setValue(soloNumeros);
+      setValue(val);
       onSelect(number);
 
       return;
@@ -82,19 +83,18 @@ const InputNumerico = ({
         <span className="fw-bold">{title}</span>
 
         <div className="input-group" style={{ maxWidth: "220px" }}>
+          {isMoney && (
+            <span className="input-group-text">$</span>
+          )}
           <input
             type="text"
             className="form-control"
             placeholder={
               isMoney
-                ? "$ 0"
+                ? "0,00"
                 : `${min} - ${max}`
             }
-            value={
-              isMoney
-                ? (value === '' ? '' : formatearPesos(value))
-                : value
-            }
+            value={value}
             onChange={handleChange}
           />
 

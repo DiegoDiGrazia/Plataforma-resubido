@@ -138,16 +138,6 @@ export const obtenerConsolidacionCliente = (token, id_cliente) =>
     id_cliente
   });
 
-  export const obtenerArchivosDelContrato = (token, id) =>
-  fetchData("https://panel.serviciosd.com/app_obtener_contratos_archivos", token, {
-    id
-  });
-
-  export const obtenerComentariosDelContrato = (token, id) =>
-  fetchData("https://panel.serviciosd.com/app_obtener_contratos_comentarios", token, {
-    id
-  });
-
   export const obtenerVideosYoutube = (token, desde, hasta, limite, desde_limite) =>
   fetchData("https://panel.serviciosd.com/app_obtener_videos_noticias", token, {
     desde, hasta, limite, desde_limite
@@ -155,15 +145,6 @@ export const obtenerConsolidacionCliente = (token, id_cliente) =>
   export const guardarVideoYoutube = (token, video, fecha_vencimiento,id) =>
     fetchData("https://panel.serviciosd.com/app_subir_video_nota", token, {
       video, fecha_vencimiento, id
-  });
-
-  export const guardarComentarioDeUnContrato = (token, id, comentarios_in, id_usuario) =>
-  fetchData("https://panel.serviciosd.com/app_comentario_edit", token, {
-    id, comentarios_in, id_usuario
-  });
-  export const guardarArchivoDeUnContrato = (token, id_contrato_archivo, id_usuario, archivo) =>
-  fetchData("https://panel.serviciosd.com/app_contrato_archivo_edit", token, {
-    id_contrato_archivo, id_usuario, archivo
   });
 
   export const setComprarDistribucion = (token, division, id, id_usuario, usuarios, id_cliente, id_noti, monto_dv360=null, monto_meta= null, fecha_fin, fecha_inicio, comentarios) =>
