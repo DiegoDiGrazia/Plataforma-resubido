@@ -34,6 +34,7 @@ const DEF = {
     }
 }
 
+
 const Administrador = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const navigate = useNavigate();

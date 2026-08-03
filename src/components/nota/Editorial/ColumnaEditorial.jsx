@@ -11,9 +11,20 @@ import "./colEditorial.css"
 import { useDispatch, useSelector } from 'react-redux';
 import { setPais, setProvincia, setMunicipio } from '../../../redux/crearNotaSlice';
 import { setDistribucionProioritaria,setNoHome, setFechaVencimiento, setFechaPublicacion, setUrl} from '../../../redux/crearNotaSlice';
+import {
+    setDistribucionFechaVencimiento,
+    setDistribucionComentarios,
+    setDistribucionMetaTitulo,
+    setDistribucionMetaEngagement,
+    setDistribucionXDescripcion,
+    setDistribucionYtTitulo,
+    setDistribucionYtDescripcion,
+    setDistribucionYtLink,
+} from '../../../redux/crearNotaSlice';
 import SelectorCliente2 from './SelectorCliente2';
 import EsDemo from './EsDemo';
 import { replace } from 'react-router-dom';
+import { obtenerDistribucionGeneracion } from '../../Apis/apis';
 
 
 
@@ -29,6 +40,14 @@ const ColumnaEditorial = ({ indice }) => {
     const nota = useSelector((state) => state.crearNota);
     const tituloNota = useSelector((state) => state.crearNota.tituloNota);
     const url = useSelector((state) => state.crearNota.url);
+    const distribucionFechaVencimiento = useSelector((state) => state.crearNota.distribucion_fecha_vencimiento);
+    const distribucionComentarios = useSelector((state) => state.crearNota.distribucion_comentarios);
+    const distribucionMetaTitulo = useSelector((state) => state.crearNota.distribucion_meta_titulo);
+    const distribucionMetaEngagement = useSelector((state) => state.crearNota.distribucion_meta_engagement);
+    const distribucionXDescripcion = useSelector((state) => state.crearNota.distribucion_x_descripcion);
+    const distribucionYtTitulo = useSelector((state) => state.crearNota.distribucion_yt_titulo);
+    const distribucionYtDescripcion = useSelector((state) => state.crearNota.distribucion_yt_descripcion);
+    const distribucionYtLink = useSelector((state) => state.crearNota.distribucion_yt_link);
 
 
 
@@ -51,6 +70,23 @@ const ColumnaEditorial = ({ indice }) => {
     }
 }, [url, tituloNota]);
 
+    useEffect(() => {
+        if (!nota.id_noti) return;
+
+        obtenerDistribucionGeneracion(TOKEN, nota.id_noti).then((datos) => {
+            if (!datos || !datos[0]) return;
+
+            dispatch(setDistribucionFechaVencimiento(datos[0].fecha_vencimiento?.slice(0, 10) || ''));
+            dispatch(setDistribucionComentarios(datos[0].comentarios || ''));
+            dispatch(setDistribucionMetaTitulo(datos[0].meta_titulo || ''));
+            dispatch(setDistribucionMetaEngagement(datos[0].meta_engagement || ''));
+            dispatch(setDistribucionXDescripcion(datos[0].x_descripcion || ''));
+            dispatch(setDistribucionYtTitulo(datos[0].youtube_titulo || ''));
+            dispatch(setDistribucionYtDescripcion(datos[0].youtube_descripcion || ''));
+            dispatch(setDistribucionYtLink(datos[0].youtube_link_video || ''));
+        });
+    }, [nota.id_noti, TOKEN]);
+
 
 
 
@@ -62,8 +98,33 @@ const ColumnaEditorial = ({ indice }) => {
         dispatch(setFechaPublicacion(e.target.value)); 
     };
     const dispacharUrl = (e) => {
-        dispatch(setUrl(normaliarAUrl(e.target.value))); 
+        dispatch(setUrl(normaliarAUrl(e.target.value)));
     }
+
+    const dispacharDistribucionFechaVencimiento = (e) => {
+        dispatch(setDistribucionFechaVencimiento(e.target.value));
+    };
+    const dispacharDistribucionComentarios = (e) => {
+        dispatch(setDistribucionComentarios(e.target.value));
+    };
+    const dispacharDistribucionMetaTitulo = (e) => {
+        dispatch(setDistribucionMetaTitulo(e.target.value));
+    };
+    const dispacharDistribucionMetaEngagement = (e) => {
+        dispatch(setDistribucionMetaEngagement(e.target.value));
+    };
+    const dispacharDistribucionXDescripcion = (e) => {
+        dispatch(setDistribucionXDescripcion(e.target.value));
+    };
+    const dispacharDistribucionYtTitulo = (e) => {
+        dispatch(setDistribucionYtTitulo(e.target.value));
+    };
+    const dispacharDistribucionYtDescripcion = (e) => {
+        dispatch(setDistribucionYtDescripcion(e.target.value));
+    };
+    const dispacharDistribucionYtLink = (e) => {
+        dispatch(setDistribucionYtLink(e.target.value));
+    };
 
     return (
         <div className='col-4 align-self-start col_editorial'>
@@ -159,6 +220,88 @@ const ColumnaEditorial = ({ indice }) => {
                         style={{ fontSize: "20px", fontWeight: "bold"}}
                     />
                 </div>
+                {nota.con_distribucion == 1 && (
+                <div className="datosDistribucion">
+                    <span className="datosDistribucionTitulo">Datos distribución</span>
+
+                    <div className="datosDistribucionCampo">
+                        <label>Fecha vencimiento</label>
+                        <input
+                            type="date"
+                            className="form-control"
+                            value={distribucionFechaVencimiento}
+                            onChange={dispacharDistribucionFechaVencimiento}
+                        />
+                    </div>
+
+                    <div className="datosDistribucionCampo">
+                        <label>Comentarios</label>
+                        <textarea
+                            className="form-control"
+                            value={distribucionComentarios}
+                            onChange={dispacharDistribucionComentarios}
+                        />
+                    </div>
+
+                    <div className="datosDistribucionPlataforma">META</div>
+                    <div className="datosDistribucionCampo">
+                        <label>Titulo</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            value={distribucionMetaTitulo}
+                            onChange={dispacharDistribucionMetaTitulo}
+                        />
+                    </div>
+                    <div className="datosDistribucionCampo">
+                        <label>Engagement</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            value={distribucionMetaEngagement}
+                            onChange={dispacharDistribucionMetaEngagement}
+                        />
+                    </div>
+
+                    <div className="datosDistribucionPlataforma">X</div>
+                    <div className="datosDistribucionCampo">
+                        <label>Descripción</label>
+                        <textarea
+                            className="form-control"
+                            value={distribucionXDescripcion}
+                            onChange={dispacharDistribucionXDescripcion}
+                        />
+                    </div>
+
+                    <div className="datosDistribucionPlataforma">Youtube</div>
+                    <div className="datosDistribucionCampo">
+                        <label>Titulo</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            value={distribucionYtTitulo}
+                            onChange={dispacharDistribucionYtTitulo}
+                        />
+                    </div>
+                    <div className="datosDistribucionCampo">
+                        <label>Descripción</label>
+                        <textarea
+                            className="form-control"
+                            value={distribucionYtDescripcion}
+                            onChange={dispacharDistribucionYtDescripcion}
+                        />
+                    </div>
+                    <div className="datosDistribucionCampo">
+                        <label>Link al video</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            value={distribucionYtLink}
+                            onChange={dispacharDistribucionYtLink}
+                        />
+                    </div>
+                </div>
+                )}
                 <TextareaWithCounter/>
             </div>
         </div>

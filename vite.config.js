@@ -43,7 +43,12 @@ export default defineConfig({
         target: 'https://dashboard.serviciosd.com/',
         changeOrigin: true,
       },
-      
+      '/services': {
+        target: 'https://services.noticiasd.com/',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/services/, ''),
+      },
+
     },
   },
 });

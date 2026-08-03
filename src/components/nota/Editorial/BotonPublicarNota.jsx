@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import { clickearEnPublicarNota } from '../../../utils/publicarNotaHelper';
+import { editarDistribucionGeneracion } from '../../Apis/apis';
 import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { ArchivoContext } from '../../../context/archivoContext';
@@ -43,6 +44,14 @@ const BotonPublicarNota = ({ status, isLoading, setIsLoading }) => {
     const bajadaText = useSelector((state) => state.crearNota.bajada);
     const epigrafeImagenPpal = useSelector((state) => state.crearNota.epigrafeImagenPpal);
     const id_nota_borrador = useSelector((state) => state.crearNota.id_nota_borrador);
+    const distribucionFechaVencimiento = useSelector((state) => state.crearNota.distribucion_fecha_vencimiento);
+    const distribucionComentarios = useSelector((state) => state.crearNota.distribucion_comentarios);
+    const distribucionMetaTitulo = useSelector((state) => state.crearNota.distribucion_meta_titulo);
+    const distribucionMetaEngagement = useSelector((state) => state.crearNota.distribucion_meta_engagement);
+    const distribucionXDescripcion = useSelector((state) => state.crearNota.distribucion_x_descripcion);
+    const distribucionYtTitulo = useSelector((state) => state.crearNota.distribucion_yt_titulo);
+    const distribucionYtDescripcion = useSelector((state) => state.crearNota.distribucion_yt_descripcion);
+    const distribucionYtLink = useSelector((state) => state.crearNota.distribucion_yt_link);
 
     const tipoAutor = useSelector((state) => state.crearNota.autor);
     const pais = useSelector((state) => state.crearNota.pais);
@@ -145,6 +154,23 @@ const BotonPublicarNota = ({ status, isLoading, setIsLoading }) => {
                 console.log("Nota publicada con éxito");
                 console.log('response en boton: ', response);
                 setIdNotaPublicada(response.item);
+
+                if (status === "PUBLICADO" && distribucionFechaVencimiento && selectedOptionDistribucion == 1) {
+                    editarDistribucionGeneracion(TOKEN, response.item, {
+                        fecha_vencimiento: distribucionFechaVencimiento,
+                        comentarios: distribucionComentarios,
+                        meta_titulo: distribucionMetaTitulo,
+                        meta_engagement: distribucionMetaEngagement,
+                        x_descripcion: distribucionXDescripcion,
+                        youtube_titulo: distribucionYtTitulo,
+                        youtube_descripcion: distribucionYtDescripcion,
+                        youtube_link_video: distribucionYtLink,
+                        cliente,
+                    }).catch((error) => {
+                        console.error("Error al guardar los datos de distribución:", error);
+                    });
+                }
+
                 setShowModal(true); // Muestra el modal de éxito
             } else {
                 throw new Error("Hemos tenido un problema en el servidor, por favor comuníquese con el soporte.");

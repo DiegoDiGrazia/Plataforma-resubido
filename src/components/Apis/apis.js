@@ -72,3 +72,40 @@ export const quitarNotaDeFeed = (token, feedId, generacionId) =>
     method: "DELETE",
     headers: headers(token),
   });
+
+// Distribucion Generaciones
+
+export const editarDistribucionGeneracion = (token, generacion_id, data) =>
+  fetch(`${BASE_URL}/distribucion-generaciones/by-generacion/${generacion_id}`, {
+    method: "PATCH",
+    headers: jsonHeaders(token),
+    body: JSON.stringify(data),
+  }).then((r) => r.json());
+
+
+
+export const obtenerDistribucionGeneracion = async (token, generacion_id) => {
+  const response = await fetch(`${BASE_URL}/distribucion-generaciones/${generacion_id}`, {
+    headers: headers(token),
+  });
+  if (!response.ok) return null;
+  return response.json();
+};
+
+export const obtenerDistribucionPorFechaVencimiento = async (token, fecha_vencimiento_desde, fecha_vencimiento_hasta) => {
+  const response = await fetch(`${BASE_URL}/distribucion-generaciones/by_fecha_vencimiento/${fecha_vencimiento_desde}/${fecha_vencimiento_hasta}`, {
+    headers: headers(token),
+  });
+  if (!response.ok) return [];
+  return response.json();
+};
+
+// Generaciones
+
+export const obtenerGeneracion = async (token, id_generacion) => {
+  const response = await fetch(`${BASE_URL}/generaciones/${id_generacion}`, {
+    headers: headers(token),
+  });
+  if (!response.ok) return null;
+  return response.json();
+};

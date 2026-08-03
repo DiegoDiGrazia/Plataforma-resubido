@@ -4,9 +4,10 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "../../miPerfil/miPerfil.css";
 import { useSelector } from 'react-redux';
 import ModalMensaje from '../gestores/ModalMensaje';
-import {obtenerClientes, obtenerNotasDeGeneraciones, obtenerPlanesMarketing, obtenerVideosYoutube, obtenerGeo, obtenerContratos, setearComentarioANota } from './apisUsuarios'; 
+import {obtenerClientes, obtenerPlanesMarketing, obtenerVideosYoutube, obtenerGeo, obtenerContratos } from './apisUsuarios';
+import { obtenerDistribucionPorFechaVencimiento, obtenerGeneracion, editarDistribucionGeneracion } from '../../Apis/apis';
 import CopiarTexto from './CopiarTexto';
-import IconosDistribucionConMonto from './IconosDistribucionConMonto';
+import IconosDistribucionConMonto, { PLATAFORMAS } from './IconosDistribucionConMonto';
 import { Accordion } from 'react-bootstrap';
 
 
@@ -71,8 +72,8 @@ const filtrarClientesSegunPendientes = (clientesObj, pendientes) => {
 
 function agregarPlanAlDiccionarioDeNotas(dicNotas, clientes, planes) {
   const entradasOrdenadas = Object.entries(dicNotas).sort(([, notasA], [, notasB]) => {
-    const fechaA = Math.max(...notasA.map(n => new Date(n.h_pub).getTime()));
-    const fechaB = Math.max(...notasB.map(n => new Date(n.h_pub).getTime()));
+    const fechaA = Math.max(...notasA.map(n => new Date(n.f_pub).getTime()));
+    const fechaB = Math.max(...notasB.map(n => new Date(n.f_pub).getTime()));
 
     return fechaB - fechaA; // más reciente primero
   });
@@ -96,6 +97,32 @@ function agregarPlanAlDiccionarioDeNotas(dicNotas, clientes, planes) {
 }
 
 
+
+const obtenerContratoMasReciente = (contratosDelCliente) => {
+  return contratosDelCliente.reduce((masReciente, actual) => {
+    if (!masReciente) return actual;
+    return new Date(actual.fecha_inicio) > new Date(masReciente.fecha_inicio) ? actual : masReciente;
+  }, null);
+};
+
+const completarContratoEnNotas = (notas, contratos) => {
+  if (!notas || !contratos || contratos.length === 0) return notas;
+  return notas.map(nota => {
+    if (nota.id_contrato != null) return nota;
+    const contratosDelCliente = contratos.filter(c => c.name?.toLowerCase() === nota.cliente?.toLowerCase());
+    const contrato = obtenerContratoMasReciente(contratosDelCliente);
+    if (!contrato) return nota;
+    return {
+      ...nota,
+      id_contrato: contrato.id_contrato,
+      monto_dv360: contrato.con_dv360,
+      monto_meta: contrato.con_meta,
+      monto_search: contrato.con_search,
+      monto_x: contrato.con_x,
+      monto_youtube: contrato.con_youtube,
+    };
+  });
+};
 
 const agruparNotasPorCliente = (notas) => {
   if(!notas || notas.length === 0) return {};
@@ -142,12 +169,62 @@ const DistribucionAdmin = () => {
   const [geo, setGeo] = useState("");
   const [contratos, setContratos] = useState([]);
   const [comentarios, setComentarios] = useState({});
+  const [termIdsPorGeneracion, setTermIdsPorGeneracion] = useState({});
+  const [showContratoModal, setShowContratoModal] = useState(false);
+  const [contratoSeleccionado, setContratoSeleccionado] = useState(null);
+
+  const obtenerTermId = async (nota) => {
+    if (termIdsPorGeneracion[nota.id_generacion]) {
+      return termIdsPorGeneracion[nota.id_generacion];
+    }
+    const generacion = await obtenerGeneracion(TOKEN, nota.id_generacion);
+    const termId = generacion?.term_id ?? null;
+    if (termId != null) {
+      setTermIdsPorGeneracion(prev => ({ ...prev, [nota.id_generacion]: termId }));
+    }
+    return termId;
+  };
+
+  const abrirNota = async (nota) => {
+    const termId = await obtenerTermId(nota);
+    if (termId == null) {
+      alert('No se pudo obtener el id de la nota.');
+      return;
+    }
+    window.open(`https://www.noticiasd.com/nota/${termId}`, '_blank');
+  };
+
+  const copiarIdDeNota = async (nota) => {
+    const termId = await obtenerTermId(nota);
+    if (termId == null) {
+      alert('No se pudo obtener el id de la nota.');
+      return;
+    }
+    navigator.clipboard.writeText(termId)
+      .then(() => alert(`Se a copiado con exito: \n ${termId} ✅`))
+      .catch(err => console.error('Error al copiar: ', err));
+  };
+
+  const mostrarContrato = (nota) => {
+    const contrato = contratos.find(c => c.id_contrato === nota.id_contrato) || null;
+    setContratoSeleccionado(contrato);
+    setShowContratoModal(true);
+  };
+
+  const abrirCreativo = async (nota) => {
+    const termId = await obtenerTermId(nota);
+    if (termId == null) {
+      alert('No se pudo obtener el id de la nota.');
+      return;
+    }
+    window.open(decodeURI(`https://builder.ntcias.de/single.php?name=-wp${termId}-${nota.cliente}_v:${formatearFechaDDMMAAAA(nota.fecha_vencimiento)}&nota_id=${termId}`), '_blank');
+  };
 
   const setearComentario = (token, nota) => {
   setMensajeModalExito("Se esta enviando el comentario...");
   setShowModal(true);
 
-  setearComentarioANota(token, nota)
+  editarDistribucionGeneracion(token, nota.id_generacion, { comentarios: nota.comentarios })
     .then(() => {
       setMensajeModalExito("El comentario se guardó correctamente.");
     })
@@ -172,13 +249,14 @@ const DistribucionAdmin = () => {
 }, [TOKEN]);  
 
 useEffect(() => {
-  if(planes.length === 0 || clientes.length === 0) return;
+  if(planes.length === 0 || clientes.length === 0 || contratos.length === 0) return;
   const [añoHasta, mesHasta] = fechaHasta.split("-");
   const ultimoDiaHasta = obtenerUltimoDiaMes(añoHasta, mesHasta);
   setLoading(true);
-  obtenerNotasDeGeneraciones(TOKEN, '', '', '', 'PUBLICADO', '150', '0', '', '', fechaDesde+'-01', `${fechaHasta}-${ultimoDiaHasta}`)
+  obtenerDistribucionPorFechaVencimiento(TOKEN, fechaDesde+'-01', `${fechaHasta}-${ultimoDiaHasta}`)
   .then((res) => {
-  const diccionarioDeCLientesConSusNotas = agruparNotasPorCliente(res);
+  const resConContrato = completarContratoEnNotas(res, contratos);
+  const diccionarioDeCLientesConSusNotas = agruparNotasPorCliente(resConContrato);
   const agrupadasConPlanes = agregarPlanAlDiccionarioDeNotas(diccionarioDeCLientesConSusNotas, clientes, planes);
   console.log('agrupadasConPlanes: ', agrupadasConPlanes);
   setNotasGeneracionesAgrupadas(prev => {
@@ -194,7 +272,7 @@ useEffect(() => {
   });
   })
   .finally(() => setLoading(false));
-}, [TOKEN, clientes, planes, fechaDesde, fechaHasta]);
+}, [TOKEN, clientes, planes, contratos, fechaDesde, fechaHasta]);
 
 useEffect(() => {
   const [añoHasta, mesHasta] = fechaHasta.split("-");
@@ -357,23 +435,15 @@ const goToPage = (newPage) => {
                             <span><strong>Por publicar: </strong>{data.plan ? Number(data.plan.notas_x_mes) - data.notas.length : 0}</span>
                           </div>
                         </div>
-                        <div className="col-3">
-                          <u><strong className='ms-5'>Meta</strong></u>
-                          <div className="row p-1">
-                            <span><strong>Distribuidas: </strong>{data.notas.filter(n => n.primer_dato_en_meta != null).length}</span>
+                        {PLATAFORMAS.map((plataforma) => (
+                          <div className="col text-center" key={plataforma.key}>
+                            <u><strong>{plataforma.label}</strong></u>
+                            <div className="row p-1 justify-content-center">
+                              <span><strong>Distribuidas: </strong>{data.notas.filter(n => n[plataforma.campoPrimerDato] != null).length}</span>
+                            </div>
+                            <i className={`bi ${plataforma.icono} fs-3 ` + obtenerColorDeEstadoDistribucion(plataforma.campoPrimerDato, data)}></i>
                           </div>
-  
-                        </div>
-                        <div className="col-3">
-                          <u><strong className='ms-5'>DV360</strong></u>
-                          <div className="row p-1">
-                            <span><strong>Distribuidas: </strong>{data.notas.filter(n => n.primer_dato_en_360 != null).length}</span>
-                          </div>
-                        </div>
-                        <div className="col-3 d-flex justify-content-center align-items-center">
-                          <i className={'bi bi-meta fs-1 ' + obtenerColorDeEstadoDistribucion('primer_dato_en_meta', data)}></i>
-                          <i className={'bi bi-google fs-1 ms-3 ' + obtenerColorDeEstadoDistribucion('primer_dato_en_360', data)}></i>
-                        </div>
+                        ))}
                       </div>
                     </Accordion.Header>
 
@@ -384,11 +454,15 @@ const goToPage = (newPage) => {
                             <div className='row p-0'>
                               {/* Columna 1 */}
                               {!nota.esNotaDeVideo && (
-                              <div className="col-3">
+                              <div className="col">
                                 <div className="row p-1">
-                                  <span>
-                                    <a href={`https://www.noticiasd.com/nota/${nota.term_id}`} target="_blank" rel="noopener noreferrer">{nota.term_id}</a>
-                                  </span>
+                                  <button className="btn btn-outline-primary w-100" onClick={() => abrirNota(nota)}>Abrir nota</button>
+                                </div>
+                                <div className="row p-1">
+                                  <button className="btn btn-outline-secondary w-100" onClick={() => copiarIdDeNota(nota)}>Obtener id</button>
+                                </div>
+                                <div className="row p-1">
+                                  <button className="btn btn-outline-info w-100" onClick={() => mostrarContrato(nota)}>Mostrar contrato</button>
                                 </div>
                                 <div className="row p-1">
                                   <span><strong>Fecha publicación: </strong>{nota.f_pub}</span>
@@ -423,13 +497,9 @@ const goToPage = (newPage) => {
                               {/* Columna 2 */}
                               {!nota.esNotaDeVideo && (
                                 <>
-                              <div className="col-3">
+                              <div className="col">
                                 <div className="row p-1">
-                                  <span>
-                                    <a href={decodeURI(`https://builder.ntcias.de/single.php?name=-wp${nota.term_id}-${nota.cliente}_v:${formatearFechaDDMMAAAA(nota.fecha_vencimiento)}&nota_id=${nota.term_id}`)} target="_blank" rel="noopener noreferrer">
-                                      CREATIVO
-                                    </a>
-                                  </span>
+                                  <button className="btn btn-outline-primary w-100" onClick={() => abrirCreativo(nota)}>CREATIVO</button>
                                 </div>
                                 <div className="row p-1">
                                   <strong>Comentarios:</strong>
@@ -461,14 +531,24 @@ const goToPage = (newPage) => {
                                 </div>
                               </div>
 
-                              {/* Columna 3 */}
-                              <div className="col-3">
-                                <div className="row p-1"><CopiarTexto textoACopiar={nota.titulo} TituloBoton={'Copiar Titulo'} /></div>
-                                <div className="row p-1"><CopiarTexto textoACopiar={nota.extracto} TituloBoton={'Copiar Bajada'} /></div>
-                                <div className="row p-1"><CopiarTexto textoACopiar={nota.engagement} TituloBoton={'Copiar Engagement'} /></div>
+                              {/* Columna 3: Meta / X */}
+                              <div className="col">
+                                <div className="row p-1"><strong>Meta</strong></div>
+                                <div className="row p-1"><CopiarTexto textoACopiar={nota.meta_titulo} TituloBoton={'Copiar Titulo'} /></div>
+                                <div className="row p-1"><CopiarTexto textoACopiar={nota.meta_engagement} TituloBoton={'Copiar Bajada'} /></div>
+                                <div className="row p-1 mt-2"><strong>X</strong></div>
+                                <div className="row p-1"><CopiarTexto textoACopiar={nota.x_descripcion} TituloBoton={'Copiar Descripcion'} /></div>
                               </div>
-                                
-                              {/* Columna 4 */}
+
+                              {/* Columna 4: Youtube */}
+                              <div className="col">
+                                <div className="row p-1"><strong>Youtube</strong></div>
+                                <div className="row p-1"><CopiarTexto textoACopiar={nota.youtube_titulo} TituloBoton={'Copiar Titulo'} /></div>
+                                <div className="row p-1"><CopiarTexto textoACopiar={nota.youtube_descripcion} TituloBoton={'Copiar Descripcion'} /></div>
+                                <div className="row p-1"><CopiarTexto textoACopiar={nota.youtube_link_video} TituloBoton={'Copiar Link Video'} /></div>
+                              </div>
+
+                              {/* Columna 5 */}
                               <IconosDistribucionConMonto nota= {nota} token = {TOKEN} geo={geo} contratos={contratos}/>
                               </>
                               )}
@@ -490,6 +570,50 @@ const goToPage = (newPage) => {
         mensaje={mensajeModalExito}
         onClose={() => setShowModal(false)}  // 👈 cierra solo con la cruz
       />
+
+      {showContratoModal && (
+        <div className="modal fade show d-block" tabIndex="-1" style={{ background: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Datos del contrato</h5>
+                <button type="button" className="btn-close" onClick={() => setShowContratoModal(false)}></button>
+              </div>
+              <div className="modal-body">
+                {contratoSeleccionado ? (
+                  <>
+                    <p className="mb-1"><strong>Montos por plataforma:</strong></p>
+                    <ul className="list-group mb-3">
+                      {PLATAFORMAS.map((plataforma) => (
+                        <li className="list-group-item d-flex justify-content-between" key={plataforma.key}>
+                          <span>{plataforma.label}</span>
+                          <span>{contratoSeleccionado[plataforma.campoMonto.replace('monto_', 'con_')]}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <p className="mb-1"><strong>Otros datos:</strong></p>
+                    <ul className="list-group">
+                      {Object.entries(contratoSeleccionado)
+                        .filter(([campo]) => campo === 'monto' || campo === 'id' || campo === 'notas_x_mes')
+                        .map(([campo, valor]) => (
+                          <li className="list-group-item d-flex justify-content-between" key={campo}>
+                            <span>{campo}</span>
+                            <span>{String(valor)}</span>
+                          </li>
+                        ))}
+                    </ul>
+                  </>
+                ) : (
+                  <p>No se encontró un contrato asociado a esta nota.</p>
+                )}
+              </div>
+              <div className="modal-footer">
+                <button className="btn btn-secondary" onClick={() => setShowContratoModal(false)}>Cerrar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

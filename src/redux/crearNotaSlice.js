@@ -143,6 +143,14 @@ const initialState = {
   id_nota_borrador: "",
   es_ia: '0',
   term_id: '',
+  distribucion_fecha_vencimiento: "",
+  distribucion_comentarios: "",
+  distribucion_meta_titulo: "",
+  distribucion_meta_engagement: "",
+  distribucion_x_descripcion: "",
+  distribucion_yt_titulo: "",
+  distribucion_yt_descripcion: "",
+  distribucion_yt_link: "",
 };
 
 const crearNotaSlice = createSlice({
@@ -369,6 +377,31 @@ const crearNotaSlice = createSlice({
       return action.payload;
     },
 
+    setDistribucionFechaVencimiento: (state, action) => {
+      state.distribucion_fecha_vencimiento = action.payload;
+    },
+    setDistribucionComentarios: (state, action) => {
+      state.distribucion_comentarios = action.payload;
+    },
+    setDistribucionMetaTitulo: (state, action) => {
+      state.distribucion_meta_titulo = action.payload;
+    },
+    setDistribucionMetaEngagement: (state, action) => {
+      state.distribucion_meta_engagement = action.payload;
+    },
+    setDistribucionXDescripcion: (state, action) => {
+      state.distribucion_x_descripcion = action.payload;
+    },
+    setDistribucionYtTitulo: (state, action) => {
+      state.distribucion_yt_titulo = action.payload;
+    },
+    setDistribucionYtDescripcion: (state, action) => {
+      state.distribucion_yt_descripcion = action.payload;
+    },
+    setDistribucionYtLink: (state, action) => {
+      state.distribucion_yt_link = action.payload;
+    },
+
     resetCrearNota: () => initialState,
   }
 });
@@ -378,7 +411,8 @@ export const {
   SubirContenidoPorIndice, BajarContenidoPorIndice, setCategorias, setImagenPrincipal, setImagenRRSS, setImagenesDeCarrusel, setUrl,
   setCopete, setNotaAEditar, setContenidoAEditar, setItemsEtiquetas, setEsDemo, setNoHome, setCategoriasActivasEnStore,
   setDistribucionProioritaria, setTipoContenido, setFechaVencimiento, setBajada, setEngagement, setComentario, setSelectedOptionDistribucion,
-  setAutor, setMunicipio,setEpigrafeImagenPpal,setDemo, setMunicipios,setIdNoti, setProvincia,setPais, setIdAtt,setProvincias, resetCrearNota, setEpigrafeDeImagen, setListaImagenesContenidoEnBase64, setAtachment, setSumarUnoAlNumeroDeAtachment
+  setAutor, setMunicipio,setEpigrafeImagenPpal,setDemo, setMunicipios,setIdNoti, setProvincia,setPais, setIdAtt,setProvincias, resetCrearNota, setEpigrafeDeImagen, setListaImagenesContenidoEnBase64, setAtachment, setSumarUnoAlNumeroDeAtachment,
+  setDistribucionFechaVencimiento, setDistribucionComentarios, setDistribucionMetaTitulo, setDistribucionMetaEngagement, setDistribucionXDescripcion, setDistribucionYtTitulo, setDistribucionYtDescripcion, setDistribucionYtLink
 } = crearNotaSlice.actions;
 
 export default crearNotaSlice.reducer;
