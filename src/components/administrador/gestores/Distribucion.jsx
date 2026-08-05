@@ -185,6 +185,26 @@ const DistribucionAdmin = () => {
     return termId;
   };
 
+  const cargarIdsDeCliente = async (eventKey) => {
+    if (eventKey == null) return;
+    const cliente = pagedClientes[Number(eventKey)];
+    const data = notasGeneracionesAgrupadas[cliente];
+    if (!data) return;
+    const notasSinId = data.notas.filter(
+      n => !n.esNotaDeVideo && n.id_generacion != null && !termIdsPorGeneracion[n.id_generacion]
+    );
+    if (notasSinId.length === 0) return;
+    const resultados = await Promise.all(notasSinId.map(n => obtenerGeneracion(TOKEN, n.id_generacion)));
+    setTermIdsPorGeneracion(prev => {
+      const actualizado = { ...prev };
+      notasSinId.forEach((n, i) => {
+        const termId = resultados[i]?.term_id;
+        if (termId != null) actualizado[n.id_generacion] = termId;
+      });
+      return actualizado;
+    });
+  };
+
   const abrirNota = async (nota) => {
     const termId = await obtenerTermId(nota);
     if (termId == null) {
@@ -207,6 +227,45 @@ const DistribucionAdmin = () => {
 
   const mostrarContrato = (nota) => {
     const contrato = contratos.find(c => c.id_contrato === nota.id_contrato) || null;
+    setContratoSeleccionado(contrato);
+    setShowContratoModal(true);
+  };
+
+  const recargarContrato = async (nota) => {
+    const contratosActualizados = await obtenerContratos(TOKEN);
+    setContratos(contratosActualizados);
+
+    const contratosDelCliente = contratosActualizados.filter(
+      c => c.name?.toLowerCase() === nota.cliente?.toLowerCase()
+    );
+    const contrato = obtenerContratoMasReciente(contratosDelCliente);
+
+    if (contrato) {
+      setNotasGeneracionesAgrupadas(prev => {
+        const datosCliente = prev[nota.cliente];
+        if (!datosCliente) return prev;
+        return {
+          ...prev,
+          [nota.cliente]: {
+            ...datosCliente,
+            notas: datosCliente.notas.map(n =>
+              n.id === nota.id && n.esNotaDeVideo === nota.esNotaDeVideo
+                ? {
+                    ...n,
+                    id_contrato: contrato.id_contrato,
+                    monto_dv360: contrato.con_dv360,
+                    monto_meta: contrato.con_meta,
+                    monto_search: contrato.con_search,
+                    monto_x: contrato.con_x,
+                    monto_youtube: contrato.con_youtube,
+                  }
+                : n
+            ),
+          },
+        };
+      });
+    }
+
     setContratoSeleccionado(contrato);
     setShowContratoModal(true);
   };
@@ -414,7 +473,7 @@ const goToPage = (newPage) => {
               <li className="list-group-item">No hay resultados.</li>
             </ul>
           ) : (
-            <Accordion defaultActiveKey="">
+            <Accordion defaultActiveKey="" onSelect={cargarIdsDeCliente}>
               {pagedClientes.map((cliente, index) => {
                 const data = notasGeneracionesAgrupadas[cliente];
                 if (!data) return null;
@@ -456,13 +515,16 @@ const goToPage = (newPage) => {
                               {!nota.esNotaDeVideo && (
                               <div className="col">
                                 <div className="row p-1">
+                                  <span><strong>ID: </strong>{termIdsPorGeneracion[nota.id_generacion] ?? 'cargando...'}</span>
+                                </div>
+                                <div className="row p-1">
                                   <button className="btn btn-outline-primary w-100" onClick={() => abrirNota(nota)}>Abrir nota</button>
                                 </div>
                                 <div className="row p-1">
-                                  <button className="btn btn-outline-secondary w-100" onClick={() => copiarIdDeNota(nota)}>Obtener id</button>
+                                  <button className="btn btn-outline-secondary w-100" onClick={() => mostrarContrato(nota)}>Mostrar contrato</button>
                                 </div>
                                 <div className="row p-1">
-                                  <button className="btn btn-outline-info w-100" onClick={() => mostrarContrato(nota)}>Mostrar contrato</button>
+                                  <button className="btn btn-outline-secondary w-100" onClick={() => recargarContrato(nota)}>Recargar contrato</button>
                                 </div>
                                 <div className="row p-1">
                                   <span><strong>Fecha publicación: </strong>{nota.f_pub}</span>
@@ -484,7 +546,7 @@ const goToPage = (newPage) => {
                                 <div className="row p-1">
                                   <span>
                                     {nota.video && (
-                                    <button className='btn btn-primary' onClick={() => descargar(nota)}> descargar creativo</button>
+                                    <button className='btn btn-outline-secondary w-100' onClick={() => descargar(nota)}>descargar creativo</button>
                                     )}
                                     {!nota.video && (
                                       <strong>Nota sin video</strong>
@@ -498,6 +560,9 @@ const goToPage = (newPage) => {
                               {!nota.esNotaDeVideo && (
                                 <>
                               <div className="col">
+                                <div className="row p-1">
+                                  <span><strong>Abrir: </strong></span>
+                                </div>
                                 <div className="row p-1">
                                   <button className="btn btn-outline-primary w-100" onClick={() => abrirCreativo(nota)}>CREATIVO</button>
                                 </div>
@@ -518,7 +583,7 @@ const goToPage = (newPage) => {
                                   />
 
                                   <button
-                                    className="btn btn-primary btn-sm mt-2"
+                                    className="btn btn-outline-secondary w-100 mt-2"
                                     onClick={() =>
                                       setearComentario(
                                         TOKEN,
@@ -526,26 +591,39 @@ const goToPage = (newPage) => {
                                       )
                                     }
                                   >
-                                    Guardar
+                                    Guardar comentario
                                   </button>
                                 </div>
                               </div>
 
                               {/* Columna 3: Meta / X */}
                               <div className="col">
-                                <div className="row p-1"><strong>Meta</strong></div>
-                                <div className="row p-1"><CopiarTexto textoACopiar={nota.meta_titulo} TituloBoton={'Copiar Titulo'} /></div>
-                                <div className="row p-1"><CopiarTexto textoACopiar={nota.meta_engagement} TituloBoton={'Copiar Bajada'} /></div>
-                                <div className="row p-1 mt-2"><strong>X</strong></div>
-                                <div className="row p-1"><CopiarTexto textoACopiar={nota.x_descripcion} TituloBoton={'Copiar Descripcion'} /></div>
+                                <div className="p-1">
+                                  <strong>Meta</strong>
+                                  {!nota.meta_titulo && !nota.meta_engagement && (
+                                    <span>: Sin datos</span>
+                                  )}
+                                </div>
+                                {nota.meta_titulo && <div className="row p-1"><CopiarTexto textoACopiar={nota.meta_titulo} TituloBoton={'Copiar Titulo'} /></div>}
+                                {nota.meta_engagement && <div className="row p-1"><CopiarTexto textoACopiar={nota.meta_engagement} TituloBoton={'Copiar Bajada'} /></div>}
+                                
+                                <div className="p-1"><strong>X </strong>{!nota.x_descripcion ? ': Sin datos' : ''}</div>
+                                {nota.x_descripcion && (
+                                  <div className="row p-1"><CopiarTexto textoACopiar={nota.x_descripcion} TituloBoton={'Copiar Descripcion'} /></div>
+                                )}
                               </div>
 
                               {/* Columna 4: Youtube */}
                               <div className="col">
-                                <div className="row p-1"><strong>Youtube</strong></div>
-                                <div className="row p-1"><CopiarTexto textoACopiar={nota.youtube_titulo} TituloBoton={'Copiar Titulo'} /></div>
-                                <div className="row p-1"><CopiarTexto textoACopiar={nota.youtube_descripcion} TituloBoton={'Copiar Descripcion'} /></div>
-                                <div className="row p-1"><CopiarTexto textoACopiar={nota.youtube_link_video} TituloBoton={'Copiar Link Video'} /></div>
+                                <div className="p-1">
+                                  <strong>Youtube</strong>
+                                  {!nota.youtube_titulo && !nota.youtube_descripcion && !nota.youtube_link_video && (
+                                    <span>: Sin datos</span>
+                                  )}
+                                </div>
+                                {nota.youtube_titulo && <div className="row p-1"><CopiarTexto textoACopiar={nota.youtube_titulo} TituloBoton={'Copiar Titulo'} /></div>}
+                                {nota.youtube_descripcion && <div className="row p-1"><CopiarTexto textoACopiar={nota.youtube_descripcion} TituloBoton={'Copiar Descripcion'} /></div>}
+                                {nota.youtube_link_video && <div className="row p-1"><CopiarTexto textoACopiar={nota.youtube_link_video} TituloBoton={'Copiar Link Video'} /></div>}
                               </div>
 
                               {/* Columna 5 */}

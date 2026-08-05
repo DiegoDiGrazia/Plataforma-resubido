@@ -28,7 +28,7 @@ const InputNumerico = ({
   const handleChange = (e) => {
     let val = e.target.value;
 
-    // 👉 modo pesos: acepta coma como separador decimal
+    // 👉 modo pesos: acepta coma o punto como separador decimal
     if (isMoney) {
       if (val === '') {
         setValue('');
@@ -36,7 +36,7 @@ const InputNumerico = ({
         return;
       }
 
-      const regexMoney = /^\d*,?\d{0,2}$/;
+      const regexMoney = /^\d*[.,]?\d{0,2}$/;
       if (!regexMoney.test(val)) return;
 
       const number = Number(val.replace(',', '.'));

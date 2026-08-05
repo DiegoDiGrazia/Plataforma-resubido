@@ -1089,61 +1089,51 @@ const handleSave = () => {
                   </div>
                   
                   <div className="seccionTitulo">Costos marketing</div>
-                  <div className="mb-3">
-                    <label className="form-label">Meta</label>
-                    <input
-                      type="number"
-                      className="form-control"
-                      value={formData.con_meta || "0"}
-                      onChange={(e) =>
-                        setFormData({ ...formData, con_meta: e.target.value })
-                      }
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">Youtube</label>
-                    <input
-                      type="number"
-                      className="form-control"
-                      value={formData.con_youtube || "0"}
-                      onChange={(e) =>
-                        setFormData({ ...formData, con_youtube: e.target.value })
-                      }
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">Search</label>
-                    <input
-                      type="number"
-                      className="form-control"
-                      value={formData.con_search || "0"}
-                      onChange={(e) =>
-                        setFormData({ ...formData, con_search: e.target.value })
-                      }
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">Dv 360</label>
-                    <input
-                      type="number"
-                      className="form-control"
-                      value={formData.con_dv360 || "0"}
-                      onChange={(e) =>
-                        setFormData({ ...formData, con_dv360: e.target.value })
-                      }
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">X</label>
-                    <input
-                      type="number"
-                      className="form-control"
-                      value={formData.con_x || "0"}
-                      onChange={(e) =>
-                        setFormData({ ...formData, con_x: e.target.value })
-                      }
-                    />
-                  </div>
+                  <InputNumerico
+                    title="Meta"
+                    selectedValue={formData.con_meta || ''}
+                    isMoney={true}
+                    isPercentual={false}
+                    onSelect={(value) => setFormData({ ...formData, con_meta: value })}
+                    onClear={() => setFormData({ ...formData, con_meta: 0 })}
+                    max={999999999999}
+                  />
+                  <InputNumerico
+                    title="Youtube"
+                    selectedValue={formData.con_youtube || ''}
+                    isMoney={true}
+                    isPercentual={false}
+                    onSelect={(value) => setFormData({ ...formData, con_youtube: value })}
+                    onClear={() => setFormData({ ...formData, con_youtube: 0 })}
+                    max={999999999999}
+                  />
+                  <InputNumerico
+                    title="Search"
+                    selectedValue={formData.con_search || ''}
+                    isMoney={true}
+                    isPercentual={false}
+                    onSelect={(value) => setFormData({ ...formData, con_search: value })}
+                    onClear={() => setFormData({ ...formData, con_search: 0 })}
+                    max={999999999999}
+                  />
+                  <InputNumerico
+                    title="Dv 360"
+                    selectedValue={formData.con_dv360 || ''}
+                    isMoney={true}
+                    isPercentual={false}
+                    onSelect={(value) => setFormData({ ...formData, con_dv360: value })}
+                    onClear={() => setFormData({ ...formData, con_dv360: 0 })}
+                    max={999999999999}
+                  />
+                  <InputNumerico
+                    title="X"
+                    selectedValue={formData.con_x || ''}
+                    isMoney={true}
+                    isPercentual={false}
+                    onSelect={(value) => setFormData({ ...formData, con_x: value })}
+                    onClear={() => setFormData({ ...formData, con_x: 0 })}
+                    max={999999999999}
+                  />
 
                 </>
               )}
