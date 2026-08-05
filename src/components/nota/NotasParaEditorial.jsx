@@ -51,7 +51,6 @@ const convertirVideoBase64 = (file) => {
 
 const NotasParaEditorial = () => {
     const [searchQuery, setSearchQuery] = useState('');
-    const [searchQueryId, setSearchQueryId] = useState('');
     const [mostrarModalYoutube, setMostrarModalYoutube] = useState(false)
     const [videoYoutube, setVideoYoutube] = useState(null)
     const [fechaYoutube, setFechaYoutube] = useState('')
@@ -250,10 +249,10 @@ const NotasParaEditorial = () => {
                 categoria: categoria,
                 limit: limite,
                 offset: verMas ? nuevoOffset : 0,  // este es el valor real que irá a la API
-                titulo: searchQuery,
+                titulo: isNaN(searchQuery) ? searchQuery : "",
                 pais: nombrePaisUsuario || "",
                 full: "1",
-                term_id: searchQueryId,
+                term_id: !isNaN(searchQuery) ? searchQuery : "",
             },
             { headers: { 'Content-Type': 'multipart/form-data' } }
         )
@@ -285,13 +284,8 @@ const NotasParaEditorial = () => {
     };
         
     const handleInputChange = (e) => {
-    setSearchQuery(e.target.value);
-    setNumeroDePagina(1);
-    };
-
-    const handleInputChangeId = (e) => {
-        setSearchQueryId(e.target.value);
-        setNumeroDePagina(1);
+        setSearchQuery(e.target.value);
+        setNumeroDePagina(1); 
     };
 
     const handleSearch = (e) => {
@@ -322,9 +316,7 @@ const NotasParaEditorial = () => {
     const dispatch = useDispatch();
 
     
-    const notasFiltradas = todasLasNotas2.filter(nota =>
-        nota.titulo.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const notasFiltradas = todasLasNotas2;
 
     const totalPaginas = Math.ceil(notasFiltradas.length / CantidadDeNotasPorPagina);
     let notasEnPaginaActual = notasFiltradas.slice(
@@ -414,37 +406,20 @@ const NotasParaEditorial = () => {
                                 <div className='col-4 todasLasNotas'>
                                     Todas Las Notas
                                 </div>
-                                {filtroSeleccionado === 2 && (
                                 <div className='col buscadorNotasForm justify-content-end' >
-                                    <form onSubmit={handleSearch} className='buscadorNotasForm'>
+                                    <form onSubmit={handleSearch} className='buscadorNotasForm gap-2'>
                                         <input
                                             className='inputBuscadorNotas'
                                             type="text"
-                                            value={searchQueryId}
-                                            onChange={handleInputChangeId}
-                                            placeholder="      Buscar por id"
+                                            value={searchQuery} 
+                                            onChange={handleInputChange} 
+                                            placeholder="      Buscar por título de la nota o id..."
                                         />
                                         <Button type="submit" className="btn btn-danger ml-3">
                                             Buscar
                                         </Button>
                                     </form>
                                 </div>
-                                )}
-                                <div className='col-3'>
-                                    <form onSubmit={handleSearch} className='buscadorNotasForm'>
-                                        <input
-                                            className='inputBuscadorNotas'
-                                            type="text"
-                                            value={searchQuery}
-                                            onChange={handleInputChange}
-                                            placeholder="      Buscar por titulo de la nota"
-                                        />
-                                        <Button type="submit" className="btn btn-danger ml-3">
-                                            Buscar
-                                        </Button>
-                                    </form>
-                                </div>
-
                             </div>
                             <div className='row' id='headerListadoNotas'>
                                 <div className='col-auto' style={{width: "70px"}}></div>
