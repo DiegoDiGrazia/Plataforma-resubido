@@ -4,9 +4,10 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "../../miPerfil/miPerfil.css";
 import { useSelector } from 'react-redux';
 import ModalMensaje from '../gestores/ModalMensaje';
-import {obtenerClientes, obtenerNotasDeGeneraciones, obtenerPlanesMarketing, obtenerVideosYoutube, obtenerGeo, obtenerContratos } from './apisUsuarios'; 
+import {obtenerClientes, obtenerPlanesMarketing, obtenerVideosYoutube, obtenerGeo, obtenerContratos } from './apisUsuarios';
+import { obtenerDistribucionPorFechaVencimiento, obtenerGeneracion, editarDistribucionGeneracion } from '../../Apis/apis';
 import CopiarTexto from './CopiarTexto';
-import IconosDistribucionConMonto from './IconosDistribucionConMonto';
+import IconosDistribucionConMonto, { PLATAFORMAS } from './IconosDistribucionConMonto';
 import { Accordion } from 'react-bootstrap';
 
 
@@ -28,6 +29,35 @@ const descargar = async (nota) => {
   a.click();
 };
 
+const descargarJpg = async (nota, imagenFeed) => {
+  const res = await fetch(`https://static.noticiasd.com/img${imagenFeed}`);
+  const blob = await res.blob();
+  const bitmap = await createImageBitmap(blob);
+
+  const tamaño = 1080;
+  const canvas = document.createElement("canvas");
+  canvas.width = tamaño;
+  canvas.height = tamaño;
+  const ctx = canvas.getContext("2d");
+
+  // Recorta al centro para llenar el cuadrado sin deformar la imagen
+  const escala = Math.max(tamaño / bitmap.width, tamaño / bitmap.height);
+  const anchoEscalado = bitmap.width * escala;
+  const altoEscalado = bitmap.height * escala;
+  const offsetX = (tamaño - anchoEscalado) / 2;
+  const offsetY = (tamaño - altoEscalado) / 2;
+  ctx.drawImage(bitmap, offsetX, offsetY, anchoEscalado, altoEscalado);
+
+  canvas.toBlob((jpgBlob) => {
+    const url = window.URL.createObjectURL(jpgBlob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `-wp${nota.id_generacion}-${nota.cliente}.jpg`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  }, "image/jpeg", 0.92);
+};
+
 export const obtenerUltimoDiaMes = (año, mes) => {
   return new Date(año, mes, 0).getDate(); 
 };
@@ -38,30 +68,16 @@ function formatearFechaDDMMAAAA(fechaStr) {
   return `${dia}-${mes}-${año}`;
 }
 const obtenerColorDeEstadoDistribucion = (campoAChequear, datosDelCiente) => {
-    if (!datosDelCiente || !datosDelCiente.plan) {
+  if (!datosDelCiente || !datosDelCiente.notas || datosDelCiente.notas.length === 0) {
     return 'text-muted';
   }
-  const notas = datosDelCiente['notas'].filter(n => n[campoAChequear] != null);
-  const totalDeNotasDistribuidas = notas.length;
-  const numeroDeNotasADistribuir = Number(datosDelCiente['plan']['notas_x_mes']) || 0;
-  if(totalDeNotasDistribuidas === 0 && numeroDeNotasADistribuir != 0){
-    return 'text-danger'
-  }
-  else if(totalDeNotasDistribuidas < numeroDeNotasADistribuir){
-    return 'text-warning'
-  }
-  else if(totalDeNotasDistribuidas >= numeroDeNotasADistribuir){
-    return 'text-success'
-  }
-  return 'text-success';
+  const tieneAlgunNull = datosDelCiente.notas.some(n => n[campoAChequear] == null);
+  return tieneAlgunNull ? 'text-danger' : 'text-success';
 }
 
 const filtrarClientesSegunPendientes = (clientesObj, pendientes) => {
   const clientesFiltradosEntries = Object.entries(clientesObj).filter(([nombre, datos]) => {
     if (!datos.notas || datos.notas.length === 0) return false;
-    if (nombre === "Notas de Video") {
-      return true;
-    }
     if (pendientes === 'Todos los casos') return true;
 
     if (pendientes === 'solo en Meta') {
@@ -83,20 +99,74 @@ const filtrarClientesSegunPendientes = (clientesObj, pendientes) => {
   return Object.fromEntries(clientesFiltradosEntries);
 };
 
+const obtenerTimestampUltimaActualizacion = (nota) =>
+  nota.ultima_actualizacion ? new Date(nota.ultima_actualizacion).getTime() : 0;
+
+const ordenarNotasPorUltimaActualizacion = (notas) =>
+  [...notas].sort((a, b) => obtenerTimestampUltimaActualizacion(b) - obtenerTimestampUltimaActualizacion(a));
+
+const obtenerUltimaActualizacionMasReciente = (notas) => {
+  if (!notas || notas.length === 0) return 0;
+  return Math.max(...notas.map(obtenerTimestampUltimaActualizacion));
+};
+
+const ordenarClientesPorUltimaActualizacion = (dicClientes) =>
+  Object.fromEntries(
+    Object.entries(dicClientes).sort(([, a], [, b]) =>
+      obtenerUltimaActualizacionMasReciente(b.notas) - obtenerUltimaActualizacionMasReciente(a.notas)
+    )
+  );
+
 function agregarPlanAlDiccionarioDeNotas(dicNotas, clientes, planes) {
+  const entradasOrdenadas = Object.entries(dicNotas).sort(([, notasA], [, notasB]) =>
+    obtenerUltimaActualizacionMasReciente(notasB) - obtenerUltimaActualizacionMasReciente(notasA)
+  );
+
   const nuevoDic = {};
-  for (const [nombreCliente, notas] of Object.entries(dicNotas)) {
+
+  for (const [nombreCliente, notas] of entradasOrdenadas) {
     const municipio = clientes.find(m => m.name === nombreCliente);
+
     const plan = municipio
       ? planes.find(p => p.id === municipio.id_plan)
       : null;
+
     nuevoDic[nombreCliente] = {
-      notas: notas,
+      notas: ordenarNotasPorUltimaActualizacion(notas),
       plan: plan || null
     };
   }
+
   return nuevoDic;
 }
+
+
+
+const obtenerContratoMasReciente = (contratosDelCliente) => {
+  return contratosDelCliente.reduce((masReciente, actual) => {
+    if (!masReciente) return actual;
+    return new Date(actual.fecha_inicio) > new Date(masReciente.fecha_inicio) ? actual : masReciente;
+  }, null);
+};
+
+const completarContratoEnNotas = (notas, contratos) => {
+  if (!notas || !contratos || contratos.length === 0) return notas;
+  return notas.map(nota => {
+    if (nota.id_contrato != null) return nota;
+    const contratosDelCliente = contratos.filter(c => c.name?.toLowerCase() === nota.cliente?.toLowerCase());
+    const contrato = obtenerContratoMasReciente(contratosDelCliente);
+    if (!contrato) return nota;
+    return {
+      ...nota,
+      id_contrato: contrato.id_contrato,
+      monto_dv360: contrato.con_dv360,
+      monto_meta: contrato.con_meta,
+      monto_search: contrato.con_search,
+      monto_x: contrato.con_x,
+      monto_youtube: contrato.con_youtube,
+    };
+  });
+};
 
 const agruparNotasPorCliente = (notas) => {
   if(!notas || notas.length === 0) return {};
@@ -112,10 +182,24 @@ const agruparNotasPorCliente = (notas) => {
     return acc;
   }, {});
 };
+
+const agruparVideosPorCliente = (videos) => {
+  if (!videos || videos.length === 0) return {};
+  return videos.reduce((acc, video) => {
+    if (!video.cliente) return acc;
+    const notaDeVideo = { ...video, esNotaDeVideo: true };
+    if (!acc[video.cliente]) {
+      acc[video.cliente] = [notaDeVideo];
+    } else {
+      acc[video.cliente].push(notaDeVideo);
+    }
+    return acc;
+  }, {});
+};
 const DistribucionAdmin = () => {
   const [clientes, setClientes] = useState([]);
   const [fechaDesde, setFechaDesde] = useState(obtenerMesActual(0));
-  const [fechaHasta, setFechaHasta] = useState(obtenerMesActual(0));
+  const [fechaHasta, setFechaHasta] = useState(obtenerMesActual(1));
   const [pendientes, setPendientes] = useState('Todos los casos');
   const [planes, setPlanes] = useState([]);
   const [notasGeneracionesAgrupadas, setNotasGeneracionesAgrupadas] = useState({});
@@ -126,10 +210,146 @@ const DistribucionAdmin = () => {
   const itemsPerPage = 100;  
   const TOKEN = useSelector((state) => state.formulario.token);
   const [loading, setLoading] = useState(false); 
-  const nombreAgrupacionVideosNota = 'Notas de Video';
   const [geo, setGeo] = useState("");
   const [contratos, setContratos] = useState([]);
-  
+  const [comentarios, setComentarios] = useState({});
+  const [termIdsPorGeneracion, setTermIdsPorGeneracion] = useState({});
+  const [imagenesFeedPorGeneracion, setImagenesFeedPorGeneracion] = useState({});
+  const [showContratoModal, setShowContratoModal] = useState(false);
+  const [contratoSeleccionado, setContratoSeleccionado] = useState(null);
+
+  const obtenerTermId = async (nota) => {
+    if (termIdsPorGeneracion[nota.id_generacion]) {
+      return termIdsPorGeneracion[nota.id_generacion];
+    }
+    const generacion = await obtenerGeneracion(TOKEN, nota.id_generacion);
+    const termId = generacion?.term_id ?? null;
+    if (termId != null) {
+      setTermIdsPorGeneracion(prev => ({ ...prev, [nota.id_generacion]: termId }));
+    }
+    if (generacion?.imagen_feed != null) {
+      setImagenesFeedPorGeneracion(prev => ({ ...prev, [nota.id_generacion]: generacion.imagen_feed }));
+    }
+    return termId;
+  };
+
+  const cargarIdsDeCliente = async (eventKey) => {
+    if (eventKey == null) return;
+    const cliente = pagedClientes[Number(eventKey)];
+    const data = notasGeneracionesAgrupadas[cliente];
+    if (!data) return;
+    const notasSinId = data.notas.filter(
+      n => !n.esNotaDeVideo && n.id_generacion != null && !termIdsPorGeneracion[n.id_generacion]
+    );
+    if (notasSinId.length === 0) return;
+    const resultados = await Promise.all(notasSinId.map(n => obtenerGeneracion(TOKEN, n.id_generacion)));
+    setTermIdsPorGeneracion(prev => {
+      const actualizado = { ...prev };
+      notasSinId.forEach((n, i) => {
+        const termId = resultados[i]?.term_id;
+        if (termId != null) actualizado[n.id_generacion] = termId;
+      });
+      return actualizado;
+    });
+    setImagenesFeedPorGeneracion(prev => {
+      const actualizado = { ...prev };
+      notasSinId.forEach((n, i) => {
+        const imagenFeed = resultados[i]?.imagen_feed;
+        if (imagenFeed != null) actualizado[n.id_generacion] = imagenFeed;
+      });
+      return actualizado;
+    });
+  };
+
+  const abrirNota = async (nota) => {
+    const termId = await obtenerTermId(nota);
+    if (termId == null) {
+      alert('No se pudo obtener el id de la nota.');
+      return;
+    }
+    window.open(`https://www.noticiasd.com/nota/${termId}`, '_blank');
+  };
+
+  const copiarIdDeNota = async (nota) => {
+    const termId = await obtenerTermId(nota);
+    if (termId == null) {
+      alert('No se pudo obtener el id de la nota.');
+      return;
+    }
+    navigator.clipboard.writeText(termId)
+      .then(() => alert(`Se a copiado con exito: \n ${termId} ✅`))
+      .catch(err => console.error('Error al copiar: ', err));
+  };
+
+  const mostrarContrato = (nota) => {
+    const contrato = contratos.find(c => c.id_contrato === nota.id_contrato) || null;
+    setContratoSeleccionado(contrato);
+    setShowContratoModal(true);
+  };
+
+  const recargarContrato = async (nota) => {
+    const contratosActualizados = await obtenerContratos(TOKEN);
+    setContratos(contratosActualizados);
+
+    const contratosDelCliente = contratosActualizados.filter(
+      c => c.name?.toLowerCase() === nota.cliente?.toLowerCase()
+    );
+    const contrato = obtenerContratoMasReciente(contratosDelCliente);
+
+    if (contrato) {
+      setNotasGeneracionesAgrupadas(prev => {
+        const datosCliente = prev[nota.cliente];
+        if (!datosCliente) return prev;
+        return {
+          ...prev,
+          [nota.cliente]: {
+            ...datosCliente,
+            notas: datosCliente.notas.map(n =>
+              n.id === nota.id && n.esNotaDeVideo === nota.esNotaDeVideo
+                ? {
+                    ...n,
+                    id_contrato: contrato.id_contrato,
+                    monto_dv360: contrato.con_dv360,
+                    monto_meta: contrato.con_meta,
+                    monto_search: contrato.con_search,
+                    monto_x: contrato.con_x,
+                    monto_youtube: contrato.con_youtube,
+                  }
+                : n
+            ),
+          },
+        };
+      });
+    }
+
+    setContratoSeleccionado(contrato);
+    setShowContratoModal(true);
+  };
+
+  const abrirCreativo = async (nota) => {
+    const termId = await obtenerTermId(nota);
+    if (termId == null) {
+      alert('No se pudo obtener el id de la nota.');
+      return;
+    }
+    window.open(decodeURI(`https://builder.ntcias.de/single.php?name=-wp${termId}-${nota.cliente}_v:${formatearFechaDDMMAAAA(nota.fecha_vencimiento)}&nota_id=${termId}`), '_blank');
+  };
+
+  const setearComentario = (token, nota) => {
+  setMensajeModalExito("Se esta enviando el comentario...");
+  setShowModal(true);
+
+  editarDistribucionGeneracion(token, nota.id_generacion, { comentarios: nota.comentarios })
+    .then(() => {
+      setMensajeModalExito("El comentario se guardó correctamente.");
+    })
+    .catch(() => {
+      setMensajeModalExito("Ocurrió un error al guardar el comentario.");
+    })
+    .finally(() => {
+      setShowModal(false);
+    });
+};
 
   useEffect(() => {
     obtenerGeo().then(setGeo);
@@ -144,19 +364,30 @@ const DistribucionAdmin = () => {
 }, [TOKEN]);  
 
 useEffect(() => {
-  if(planes.length === 0 || clientes.length === 0) return;
+  if(planes.length === 0 || clientes.length === 0 || contratos.length === 0) return;
   const [añoHasta, mesHasta] = fechaHasta.split("-");
   const ultimoDiaHasta = obtenerUltimoDiaMes(añoHasta, mesHasta);
   setLoading(true);
-  obtenerNotasDeGeneraciones(TOKEN, '', '', '', 'PUBLICADO', '150', '0', '', '', fechaDesde+'-01', `${fechaHasta}-${ultimoDiaHasta}`)
+  obtenerDistribucionPorFechaVencimiento(TOKEN, fechaDesde+'-01', `${fechaHasta}-${ultimoDiaHasta}`)
   .then((res) => {
-  const diccionarioDeCLientesConSusNotas = agruparNotasPorCliente(res);
+  const resConContrato = completarContratoEnNotas(res, contratos);
+  const diccionarioDeCLientesConSusNotas = agruparNotasPorCliente(resConContrato);
   const agrupadasConPlanes = agregarPlanAlDiccionarioDeNotas(diccionarioDeCLientesConSusNotas, clientes, planes);
   console.log('agrupadasConPlanes: ', agrupadasConPlanes);
-  setNotasGeneracionesAgrupadas(prev => ({ ...prev, ...agrupadasConPlanes}));
+  setNotasGeneracionesAgrupadas(prev => {
+    const actualizado = { ...prev };
+    for (const [nombreCliente, datos] of Object.entries(agrupadasConPlanes)) {
+      const notasDeVideoPrevias = actualizado[nombreCliente]?.notas?.filter(n => n.esNotaDeVideo) || [];
+      actualizado[nombreCliente] = {
+        plan: datos.plan,
+        notas: ordenarNotasPorUltimaActualizacion([...datos.notas, ...notasDeVideoPrevias])
+      };
+    }
+    return ordenarClientesPorUltimaActualizacion(actualizado);
+  });
   })
-  .finally(() => setLoading(false)); 
-}, [TOKEN, clientes, planes, fechaDesde, fechaHasta]);
+  .finally(() => setLoading(false));
+}, [TOKEN, clientes, planes, contratos, fechaDesde, fechaHasta]);
 
 useEffect(() => {
   const [añoHasta, mesHasta] = fechaHasta.split("-");
@@ -168,12 +399,25 @@ useEffect(() => {
     '150',
     '0'
   ).then((res) => {
-    setNotasGeneracionesAgrupadas(prev => ({
-      ...prev,
-      [nombreAgrupacionVideosNota]: {'notas': res, 'plan': null}
-    }));
+    const videosPorCliente = agruparVideosPorCliente(res);
+    setNotasGeneracionesAgrupadas(prev => {
+      const actualizado = { ...prev };
+      for (const [nombreCliente, notasDeVideo] of Object.entries(videosPorCliente)) {
+        if (actualizado[nombreCliente]) {
+          actualizado[nombreCliente] = {
+            ...actualizado[nombreCliente],
+            notas: ordenarNotasPorUltimaActualizacion([...actualizado[nombreCliente].notas, ...notasDeVideo])
+          };
+        } else {
+          const municipio = clientes.find(m => m.name === nombreCliente);
+          const plan = municipio ? planes.find(p => p.id === municipio.id_plan) : null;
+          actualizado[nombreCliente] = { notas: ordenarNotasPorUltimaActualizacion(notasDeVideo), plan: plan || null };
+        }
+      }
+      return ordenarClientesPorUltimaActualizacion(actualizado);
+    });
   });
-  
+
 }, [TOKEN, fechaDesde, fechaHasta]);
 
   useEffect(() => {
@@ -285,7 +529,7 @@ const goToPage = (newPage) => {
               <li className="list-group-item">No hay resultados.</li>
             </ul>
           ) : (
-            <Accordion defaultActiveKey="">
+            <Accordion defaultActiveKey="" onSelect={cargarIdsDeCliente}>
               {pagedClientes.map((cliente, index) => {
                 const data = notasGeneracionesAgrupadas[cliente];
                 if (!data) return null;
@@ -306,68 +550,56 @@ const goToPage = (newPage) => {
                             <span><strong>Por publicar: </strong>{data.plan ? Number(data.plan.notas_x_mes) - data.notas.length : 0}</span>
                           </div>
                         </div>
-                        <div className="col-3">
-                          <u><strong className='ms-5'>Meta</strong></u>
-                          <div className="row p-1">
-                            <span><strong>Distribuidas: </strong>{data.notas.filter(n => n.primer_dato_en_meta != null).length}</span>
+                        {PLATAFORMAS.map((plataforma) => (
+                          <div className="col text-center" key={plataforma.key}>
+                            <u><strong>{plataforma.label}</strong></u>
+                            <div className="row p-1 justify-content-center">
+                              <span><strong>Distribuidas: </strong>{data.notas.filter(n => n[plataforma.campoPrimerDato] != null).length}</span>
+                            </div>
+                            <i className={`bi ${plataforma.icono} fs-3 ` + obtenerColorDeEstadoDistribucion(plataforma.campoPrimerDato, data)}></i>
                           </div>
-                          <div className="row p-1">
-                            <span><strong>Vencidas: </strong>{data.notas.filter(n => new Date(n.fecha_vencimiento) < new Date() && n.primer_dato_en_meta != null).length}</span>
-                          </div>
-                        </div>
-                        <div className="col-3">
-                          <u><strong className='ms-5'>DV360</strong></u>
-                          <div className="row p-1">
-                            <span><strong>Distribuidas: </strong>{data.notas.filter(n => n.primer_dato_en_360 != null).length}</span>
-                          </div>
-                          <div className="row p-1">
-                            <span><strong>Vencidas: </strong>{data.notas.filter(n => new Date(n.fecha_vencimiento) < new Date() && n.primer_dato_en_360 != null).length}</span>
-                          </div>
-                        </div>
-                        <div className="col-3 d-flex justify-content-center align-items-center">
-                          <i className={'bi bi-meta fs-1 ' + obtenerColorDeEstadoDistribucion('primer_dato_en_meta', data)}></i>
-                          <i className={'bi bi-google fs-1 ms-3 ' + obtenerColorDeEstadoDistribucion('primer_dato_en_360', data)}></i>
-                        </div>
+                        ))}
                       </div>
                     </Accordion.Header>
 
                     <Accordion.Body>
                       <ul className="list-group">
                         {data.notas.map(nota => (
-                          <li key={nota.id} className="list-group-item">
+                          <li key={`${nota.id}-${nota.esNotaDeVideo ? 'video' : 'nota'}`} className="list-group-item">
                             <div className='row p-0'>
                               {/* Columna 1 */}
-                              {cliente !== nombreAgrupacionVideosNota && (
-                              <div className="col-3">
+                              {!nota.esNotaDeVideo && (
+                              <div className="col">
                                 <div className="row p-1">
-                                  <span>
-                                    <a href={`https://www.noticiasd.com/${nota.term_id}`} target="_blank" rel="noopener noreferrer">{nota.term_id}</a>
-                                  </span>
+                                  <span><strong>ID: </strong>{termIdsPorGeneracion[nota.id_generacion] ?? 'cargando...'}</span>
                                 </div>
                                 <div className="row p-1">
-                                  <span><strong>Publicación: </strong>{nota.f_pub}</span>
+                                  <button className="btn btn-outline-primary w-100" onClick={() => abrirNota(nota)}>Abrir nota</button>
                                 </div>
                                 <div className="row p-1">
-                                  <span><strong>Ultima versión: </strong>{nota.update_date}</span>
+                                  <button className="btn btn-outline-secondary w-100" onClick={() => mostrarContrato(nota)}>Mostrar contrato</button>
+                                </div>
+                                <div className="row p-1">
+                                  <button className="btn btn-outline-secondary w-100" onClick={() => recargarContrato(nota)}>Recargar contrato</button>
                                 </div>
                                 <div className="row p-1">
                                   <span><strong>Fecha vencimiento: </strong>{nota.fecha_vencimiento}</span>
                                 </div>
                               </div>
                               )}
-                              {cliente == nombreAgrupacionVideosNota && (
+                              {nota.esNotaDeVideo && (
                               <div className="col-3">
                                 <div className="row p-1">
                                   <span><strong>Fecha vencimiento: </strong>{nota.fecha_vencimiento_video}</span>
                                 </div>
                               </div>
                               )}
-                              {cliente == nombreAgrupacionVideosNota && (
+                              {nota.esNotaDeVideo && (
                               <div className="col-3">
                                 <div className="row p-1">
                                   <span>
                                     {nota.video && (
-                                    <button className='btn btn-primary' onClick={() => descargar(nota)}> descargar creativo</button>
+                                    <button className='btn btn-outline-secondary w-100' onClick={() => descargar(nota)}>descargar creativo</button>
                                     )}
                                     {!nota.video && (
                                       <strong>Nota sin video</strong>
@@ -378,29 +610,95 @@ const goToPage = (newPage) => {
                               )}
 
                               {/* Columna 2 */}
-                              {cliente !== nombreAgrupacionVideosNota && (
+                              {!nota.esNotaDeVideo && (
                                 <>
-                              <div className="col-3">
+                              <div className="col">
                                 <div className="row p-1">
-                                  <span>
-                                    <a href={decodeURI(`https://builder.ntcias.de/single.php?name=-wp${nota.term_id}-${nota.cliente}_v:${formatearFechaDDMMAAAA(nota.fecha_vencimiento)}&nota_id=${nota.term_id}`)} target="_blank" rel="noopener noreferrer">
-                                      CREATIVO
-                                    </a>
-                                  </span>
+                                  <span><strong>Abrir: </strong></span>
                                 </div>
                                 <div className="row p-1">
-                                  <span><strong>Comentarios: </strong>{nota.comentarios ?? 'No hay comentarios'}</span>
+                                  <button className="btn btn-outline-primary w-100" onClick={() => abrirCreativo(nota)}>CREATIVO</button>
+                                </div>
+                                <div className="row p-1">
+                                  <strong>Comentarios:</strong>
+
+                                  <textarea
+                                    className="form-control mt-1"
+                                    value={comentarios[nota.id] ?? nota.comentarios ?? ''}
+                                    onChange={(e) => {
+                                      setComentarios(prev => ({
+                                        ...prev,
+                                        [nota.id]: e.target.value
+                                      }));
+
+                                      nota.comentarios = e.target.value;
+                                    }}
+                                  />
+
+                                  <button
+                                    className="btn btn-outline-secondary w-100 mt-2"
+                                    onClick={() =>
+                                      setearComentario(
+                                        TOKEN,
+                                        nota
+                                      )
+                                    }
+                                  >
+                                    Guardar comentario
+                                  </button>
+                                  {imagenesFeedPorGeneracion[nota.id_generacion] && (
+                                    <button
+                                      className="btn btn-outline-secondary w-100 mt-2"
+                                      onClick={() => descargarJpg(nota, imagenesFeedPorGeneracion[nota.id_generacion])}
+                                    >
+                                      Descargar jpg
+                                    </button>
+                                  )}
                                 </div>
                               </div>
 
-                              {/* Columna 3 */}
-                              <div className="col-3">
-                                <div className="row p-1"><CopiarTexto textoACopiar={nota.titulo} TituloBoton={'Copiar Titulo'} /></div>
-                                <div className="row p-1"><CopiarTexto textoACopiar={nota.extracto} TituloBoton={'Copiar Bajada'} /></div>
-                                <div className="row p-1"><CopiarTexto textoACopiar={nota.engagement} TituloBoton={'Copiar Engagement'} /></div>
-                              </div>
+                              {/* Columna 3: Meta / X */}
+                              <div className="col">
+                                <div className="p-1">
+                                  <strong>Meta</strong>
+                                  {!nota.meta_titulo && !nota.meta_engagement && (
+                                    <span>: Sin datos</span>
+                                  )}
+                                </div>
+                                {nota.meta_titulo && <div className="row p-1"><CopiarTexto textoACopiar={nota.meta_titulo} TituloBoton={'Copiar Titulo'} /></div>}
+                                {nota.meta_engagement && <div className="row p-1"><CopiarTexto textoACopiar={nota.meta_engagement} TituloBoton={'Copiar Bajada'} /></div>}
                                 
-                              {/* Columna 4 */}
+
+
+                                <div className="p-1">
+                                  <strong>Search</strong>
+                                  {!nota.search_titulo && !nota.search_descripcion && (
+                                    <span>: Sin datos</span>
+                                  )}
+                                </div>
+                                {nota.search_titulo && <div className="row p-1"><CopiarTexto textoACopiar={nota.search_titulo} TituloBoton={'Copiar Titulo'} /></div>}
+                                {nota.search_descripcion && <div className="row p-1"><CopiarTexto textoACopiar={nota.search_descripcion} TituloBoton={'Copiar Descripcion'} /></div>}
+                              </div>
+
+                              {/* Columna 4: Youtube */}
+                              <div className="col">
+                                <div className="p-1">
+                                  <strong>Youtube</strong>
+                                  {!nota.youtube_titulo && !nota.youtube_descripcion && !nota.youtube_link_video && (
+                                    <span>: Sin datos</span>
+                                  )}
+                                </div>
+                                {nota.youtube_titulo && <div className="row p-1"><CopiarTexto textoACopiar={nota.youtube_titulo} TituloBoton={'Copiar Titulo'} /></div>}
+                                {nota.youtube_descripcion && <div className="row p-1"><CopiarTexto textoACopiar={nota.youtube_descripcion} TituloBoton={'Copiar Descripcion'} /></div>}
+                                {nota.youtube_link_video && <div className="row p-1"><CopiarTexto textoACopiar={nota.youtube_link_video} TituloBoton={'Copiar Link Video'} /></div>}
+                                <div className="p-1">
+                                  <strong>X </strong>{!nota.x_descripcion ? ': Sin datos' : ''}</div>
+                                    {nota.x_descripcion && (
+                                      <div className="row p-1"><CopiarTexto textoACopiar={nota.x_descripcion} TituloBoton={'Copiar Descripcion'} /></div>
+                                    )}
+                              </div>
+
+                              {/* Columna 5 */}
                               <IconosDistribucionConMonto nota= {nota} token = {TOKEN} geo={geo} contratos={contratos}/>
                               </>
                               )}
@@ -422,6 +720,50 @@ const goToPage = (newPage) => {
         mensaje={mensajeModalExito}
         onClose={() => setShowModal(false)}  // 👈 cierra solo con la cruz
       />
+
+      {showContratoModal && (
+        <div className="modal fade show d-block" tabIndex="-1" style={{ background: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Datos del contrato</h5>
+                <button type="button" className="btn-close" onClick={() => setShowContratoModal(false)}></button>
+              </div>
+              <div className="modal-body">
+                {contratoSeleccionado ? (
+                  <>
+                    <p className="mb-1"><strong>Montos por plataforma:</strong></p>
+                    <ul className="list-group mb-3">
+                      {PLATAFORMAS.map((plataforma) => (
+                        <li className="list-group-item d-flex justify-content-between" key={plataforma.key}>
+                          <span>{plataforma.label}</span>
+                          <span>{contratoSeleccionado[plataforma.campoMonto.replace('monto_', 'con_')]}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <p className="mb-1"><strong>Otros datos:</strong></p>
+                    <ul className="list-group">
+                      {Object.entries(contratoSeleccionado)
+                        .filter(([campo]) => campo === 'monto' || campo === 'id' || campo === 'notas_x_mes')
+                        .map(([campo, valor]) => (
+                          <li className="list-group-item d-flex justify-content-between" key={campo}>
+                            <span>{campo}</span>
+                            <span>{String(valor)}</span>
+                          </li>
+                        ))}
+                    </ul>
+                  </>
+                ) : (
+                  <p>No se encontró un contrato asociado a esta nota.</p>
+                )}
+              </div>
+              <div className="modal-footer">
+                <button className="btn btn-secondary" onClick={() => setShowContratoModal(false)}>Cerrar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

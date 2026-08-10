@@ -1,3 +1,6 @@
+.contenedor-facturas {
+
+
 #descargar-excel{
     background-color: #2ea054;
     border-color: #868e96;
@@ -104,3 +107,4 @@ i {
         font-size: 11px !important;
     }
 }   
+}

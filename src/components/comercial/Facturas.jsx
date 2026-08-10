@@ -429,7 +429,7 @@ const Facturas = () =>  {
     };
 
     return (
-        <div className="content flex-grow-1 crearNotaGlobal h-100">
+        <div className="contenedor-facturas content flex-grow-1 crearNotaGlobal h-100">
             <div className='row miPerfilContainer soporteContainer gap-5 pb-0 me-5'>
                 <div className='col p-0'>
                     {/* Saludo */}

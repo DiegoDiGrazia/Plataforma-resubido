@@ -5,8 +5,9 @@ import "../miPerfil/miPerfil.css";
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import ModalMensaje from '../administrador/gestores/ModalMensaje';
-import { obtenerUsuarios, obtenerClientes, obtenerContratos, obtenerGeo, obtenerPlanesMarketing, obtenerComisionistas, guardarArchivoDeUnContrato } from '../administrador/gestores/apisUsuarios'; // Importa la función para obtener usuarios
+import { obtenerClientes, obtenerContratos, obtenerPlanesMarketing, obtenerComisionistas, cargarArchivo } from '../administrador/gestores/apisUsuarios'; // Importa la función para obtener usuarios
 import '../administrador/gestores/AbmsMobile.css';
+import './AbmContratos.css';
 import DropdawnSiNo from './DropdawnSiNo'
 import SelectorConBuscador from '../nota/Editorial/SelectorConBuscador';
 import InputFecha from '../nota/Editorial/InputFecha';
@@ -14,9 +15,9 @@ import InputNumerico from '../nota/Editorial/InputNumerico';
 import Checkbox from '../nota/Editorial/checkbox';
 import FileInput from '../nota/Editorial/FileInput';
 import ModalConListado from '../administrador/gestores/ModalConListado';
-import { obtenerArchivosDelContrato, obtenerComentariosDelContrato } from '../administrador/gestores/apisUsuarios';
+import { obtenerArchivosDeContrato, obtenerComentariosDeContrato } from '../administrador/gestores/apisUsuarios';
 import ModalConInputTexto from '../administrador/gestores/ModalConInputTexto';
-import { guardarComentarioDeUnContrato } from '../administrador/gestores/apisUsuarios';
+import { agregarComentario } from '../administrador/gestores/apisUsuarios';
 import ModalConInputFile from '../administrador/gestores/ModalConInputFile';
 import { descargarExcel } from '../funciones/creacionCSV';
 
@@ -48,6 +49,15 @@ export const ultimoMesDelAnio = () => {
   const hoy = new Date();
   const anio = hoy.getFullYear();
   return `${anio}-12`;
+};
+
+const escaparRegExp = (texto) => texto.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+export const comisionistaCoincideConTexto = (comisionista, texto) => {
+  const apellido = comisionista?.apellido?.trim();
+  if (!texto || !apellido) return false;
+  const patron = new RegExp(`\\b${escaparRegExp(apellido)}\\b`, 'i');
+  return patron.test(texto);
 };
 
 
@@ -93,10 +103,11 @@ const contratoVacio = {
   com1: "",
   com2: "",
 
-  con_meta: "NO",
-  con_search: "NO",
-  con_dv360: "NO",
-  con_youtube: "NO",
+  con_meta: "0",
+  con_search: "0",
+  con_dv360: "0",
+  con_youtube: "0",
+  con_x: "0",
   con_orden: "SI",
 
   orden_compra: "",
@@ -122,11 +133,9 @@ const contratoVacio = {
 
 const AbmContratos
  = () => {
-    const [usuarios, setUsuarios] = useState([]);
     const [planes, setPlanes] = useState([]);
     const [clientes, setClientes] = useState([]);
     const [contratos, setContratos] = useState([]);
-    const [geo, setGeo] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [mensajeModalExito, setMensajeModalExito] = useState("Los cambios se realizaron correctamente.");
     const [search, setSearch] = useState("");
@@ -161,6 +170,8 @@ const AbmContratos
   console.log('contrato seleccionado:', formData);
 }, [formData, contratoSeleccionado]);
     const eliminarContrato = (id) => {
+      setMensajeModalExito('Eliminando el contrato...');
+      setShowModal(true); // mostrar modal
       axios
         .post(
           "https://panel.serviciosd.com/app_contrato_eliminar",
@@ -172,7 +183,12 @@ const AbmContratos
             headers: { "Content-Type": "multipart/form-data" },
           }
         )
-          .then(() => {
+          .then((res) => {
+            if (res.data?.message) {
+              setMensajeModalExito(res.data.message);
+              setShowModal(true);
+              return;
+            }
             setMensajeModalExito('El contrato se elimino correctamente');
             setShowModal(true); // mostrar modal
             setTimeout(() => {
@@ -180,7 +196,9 @@ const AbmContratos
             }, 1500);
           })
         .catch((err) => {
-          console.log("Error al guardar cambios:", err);
+          console.log("Error al eliminar contrato:", err);
+          setMensajeModalExito('Ocurrió un error al eliminar el contrato. Intentá nuevamente.');
+          setShowModal(true);
         });
     };
 
@@ -211,13 +229,13 @@ const AbmContratos
       });
     };
     const SeleccionarPlan = (plan) => {
-      setFormData({ ...formData, id_plan: plan.id, 
-        alcance_x_nota: plan.alcance_x_nota, 
-        notas_x_mes: plan.notas_x_mes,
-        con_meta: plan.con_meta,
-        con_dv360: plan.con_dv360,
-        con_search: plan.con_search,
-        con_youtube: plan.con_youtube,
+      setFormData({ ...formData, id_plan: plan.id,
+        alcance_x_nota: Number(plan.alcance_x_nota) || 0,
+        notas_x_mes: Number(plan.notas_x_mes) || 0,
+        con_meta: Number(plan.con_meta) || 0,
+        con_dv360: Number(plan.con_dv360) || 0,
+        con_search: Number(plan.con_search) || 0,
+        con_youtube: Number(plan.con_youtube) || 0,
 
       });
 
@@ -254,25 +272,19 @@ const AbmContratos
 
     try {
       const [
-        usuariosData,
         clientesData,
         planesData,
-        geoData,
         contratosData,
         comisionistasData
       ] = await Promise.all([
-        obtenerUsuarios(TOKEN),
         obtenerClientes(TOKEN),
         obtenerPlanesMarketing(TOKEN, desdeMarketing, desdeMarketing),
-        obtenerGeo(),
         obtenerContratos(TOKEN),
         obtenerComisionistas(TOKEN)
       ]);
 
-      setUsuarios(usuariosData);
       setClientes(clientesData);
       setPlanes(planesData);
-      setGeo(geoData);
       setContratos(contratosData);
       setComisionistas(comisionistasData);
 
@@ -313,7 +325,7 @@ const AbmContratos
   const contratosDelClienteSeleccionado = useMemo(() => {
     if (!clienteSeleccionado) return null;
     return contratos.filter(c => c.id_cliente === clienteSeleccionado.id) || null;
-  }, [clienteSeleccionado]);
+  }, [clienteSeleccionado, contratos]);
 
   const totalPages = Math.ceil(contratosFiltrados.length / itemsPerPage);
 
@@ -347,6 +359,21 @@ const AbmContratos
 
   }
 
+  const claseBadgeEstado = (estado) => {
+    switch ((estado || '').toLowerCase()) {
+      case 'activa':
+        return 'activa';
+      case 'pausada':
+      case 'en pausa':
+        return 'pausa';
+      case 'finalizada':
+      case 'vencida':
+        return 'finalizada';
+      default:
+        return 'default';
+    }
+  }
+
   useEffect(() => {
       if(contratosDelClienteSeleccionado?.length > 0){
       setFormData(fd => ({
@@ -359,11 +386,11 @@ const AbmContratos
 
   const handleEditClick = (contrato) => {
     const comisionista1 = contrato.com1
-      ? comisionistas.find(c => contrato.com1.includes(c.apellido))
+      ? comisionistas.find(c => comisionistaCoincideConTexto(c, contrato.com1))
       : null;
 
     const comisionista2 = contrato.com2
-      ? comisionistas.find(c => contrato.com2.includes(c.apellido))
+      ? comisionistas.find(c => comisionistaCoincideConTexto(c, contrato.com2))
       : null;
 
     setComisionistasSeleccionados(
@@ -372,7 +399,11 @@ const AbmContratos
     setModalidadSeleccionada(obtenerModalidadDelContrato(contrato));
     setClienteSeleccionado(clientes.find(c => c.id === contrato.id_cliente) || '');
     setContratoSeleccionado({...contrato, id_usuario: id_usuario});
-    setFormData({...contrato, id_usuario: id_usuario});
+    setFormData({
+      ...contrato,
+      id_usuario,
+      ignore: '1'
+    });
     const emisorObj = Emisor.find(
       e => e.nombre === contrato.empresa  
     );
@@ -400,12 +431,24 @@ const totales = useMemo(() => {
 const handleSave = () => {
   setShowModal(true); // mostrar modal
   setMensajeModalExito('Aguarde un momento... estamos guardando los cambios'); // mensaje de guardado
+
+    const data = {
+    ...formData,
+    notas_x_mes: Number(formData.notas_x_mes) || 0,
+    alcance_x_nota: Number(formData.alcance_x_nota) || 0,
+    monto: Number(formData.monto) || 0,
+    con_meta: Number(formData.con_meta) || 0,
+    con_youtube: Number(formData.con_youtube) || 0,
+    con_search: Number(formData.con_search) || 0,
+    con_dv360: Number(formData.con_dv360) || 0,
+    con_x: Number(formData.con_x) || 0,
+  };
   axios
     .post(
       "https://panel.serviciosd.com/app_contrato_edit",
       {
         token: TOKEN,
-        ...formData,
+        ...data,
       },
       {
         headers: { "Content-Type": "multipart/form-data" },
@@ -416,18 +459,20 @@ const handleSave = () => {
       setShowModal(true);
       if (!res.data.message) {
       setTimeout(() => {
-        window.location.reload(); 
+        window.location.reload();
       }, 2000)
     }
     })
     .catch((err) => {
       console.log("Error al guardar cambios:", err);
+      setMensajeModalExito('Ocurrió un error al guardar los cambios. Intentá nuevamente.');
+      setShowModal(true);
     });
   };
 
   const verComentariosDelContrato = async (contrato) => {
     setShowModalComentariosDelContrato(true);
-    const comentarios = await obtenerComentariosDelContrato(TOKEN, contrato.id); // Aquí deberías hacer una llamada a la API para obtener los comentarios relacionados con el contrato
+    const comentarios = await obtenerComentariosDeContrato(TOKEN, contrato.id);
     setComentariosDelContrato(comentarios);
   }
   const cargarComentario = (contrato) => {
@@ -439,26 +484,27 @@ const handleSave = () => {
     setContratoSeleccionado(contrato);
   }
   const clickearEnGuardarUnArchivoContrato = async (contrato, archivo) => {
-    console.log("Guardando archivo para contrato", contrato, "Archivo:", archivo);
     setShowModalInputFile(false);
-    const respuesta = await guardarArchivoDeUnContrato(TOKEN, contratoSeleccionado.id, id_usuario, archivo);
-
+    await cargarArchivo(TOKEN, id_usuario, archivo, contratoSeleccionado.id);
+    setMensajeModalExito('El archivo se cargó correctamente.');
+    setShowModal(true);
   }
 
   const clickearGuardarComentarioContrato = async (contrato, comentario) => {
-    console.log("Guardando comentario para contrato", contrato, "Comentario:", comentario);
     setShowModalInputTexto(false);
-    const respuesta = await guardarComentarioDeUnContrato(TOKEN, contratoSeleccionado.id, comentario, id_usuario);
+    await agregarComentario(TOKEN, id_usuario, comentario, contratoSeleccionado.id);
+    setMensajeModalExito('El comentario se guardó correctamente.');
+    setShowModal(true);
   }
 
   const verArchivosDelContrato = async (contrato) => {
     setShowModalArchivosDelContrato(true);
-    const archivos = await obtenerArchivosDelContrato(TOKEN, contrato.id); // Aquí deberías hacer una llamada a la API para obtener los archivos relacionados con el contrato
+    const archivos = await obtenerArchivosDeContrato(TOKEN, contrato.id);
     setArchivosDelContrato(archivos);
   }
 
   return (
-    <div className="content flex-grow-1 crearNotaGlobal">
+    <div className="content flex-grow-1 crearNotaGlobal contratosPage">
       <div className='row miPerfilContainer soporteContainer'>
         <div className='col p-0'>
           <h3 id="saludo" className='headerTusNotas ml-0'>
@@ -473,127 +519,137 @@ const handleSave = () => {
       </div>
       {/* Búsqueda */}
       <div className='row miPerfilContainer soporteContainer mt-4 p-0 mb-3'>
-        <div className='col buscadorNotas'>
-          {permisoAlta && (  
-            <button className="mb-2 btn btn-primary" onClick={() => handleEditClick(contratoVacio)}>Crear nuevo contrato</button>
-          )}
-          <span style={{ fontSize: "14px", marginLeft: "10px"}}>Vencimiendo desde:
-          <input 
-              type="month" 
-              value={fechaDesde} 
-              onChange={(e) => setFechaDesde(e.target.value)} 
-              style={{ fontSize: "14px", border: "1px solid #ccc", borderRadius: "4px", padding: "2px 5px"}}
-          />
-          </span>
-          <span style={{ fontSize: "14px"}}>Vencimiento hasta:
-            <input 
-                type="month" 
-                value={fechaHasta} 
-                onChange={(e) => setFechaHasta(e.target.value)} 
-                style={{ fontSize: "14px", border: "1px solid #ccc", borderRadius: "4px", padding: "2px 5px"}}
-            />
-          </span>
-          <form className='buscadorNotasForm'>
-            <input
-              className = 'inputBuscadorNotas'
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="       Buscar contratos por cliente o id..."
-            />
-          </form>
+        <div className='col'>
+          <div className="filtrosCard">
+            {permisoAlta && (
+              <button className="btnNuevoContrato btn btn-primary" onClick={() => handleEditClick(contratoVacio)}>
+                <i className="bi bi-plus-lg" />Crear nuevo contrato
+              </button>
+            )}
+            <label className="filtroFecha">
+              Vencimiento desde
+              <input
+                type="month"
+                value={fechaDesde}
+                onChange={(e) => setFechaDesde(e.target.value)}
+              />
+            </label>
+            <label className="filtroFecha">
+              Vencimiento hasta
+              <input
+                type="month"
+                value={fechaHasta}
+                onChange={(e) => setFechaHasta(e.target.value)}
+              />
+            </label>
+            <form className='buscadorNotasForm' onSubmit={(e) => e.preventDefault()}>
+              <input
+                className = 'inputBuscadorNotas'
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Buscar contratos por cliente o id..."
+              />
+            </form>
+          </div>
         </div>
       </div>
       <div className='row miPerfilContainer soporteContainer mt-4 p-0 mb-3'>
-        <div className='col buscadorNotas'>
-          <span style={{ fontSize: "14px"}}>
-            Total listado: {
-                formatearARS(totales.montosTotal) 
-            }
-          </span>
-        </div>
-        <div className='col buscadorNotas'>
-          <span style={{ fontSize: "14px"}}>
-            Cantidad facturas: {totales.facturado} / {totales.facturas}
-          </span>
-        </div>
-        <div className='col buscadorNotas'>
-          <span style={{ fontSize: "14px"}}>
-            Total comisión: ${formatearARS(totales.totalComision)}
-          </span>
-        </div>
-        <div className='col buscadorNotas'>
-            <button className="mb-2 btn btn-secondary" onClick={() => {
-              descargarExcel(contratosFiltrados, "Contratos");
-            }}>
-              Descargar Excel
-            </button>
+        <div className='col'>
+          <div className="statsRow">
+            <div className="statTile">
+              <div className="statIcono"><i className="bi bi-cash-stack" /></div>
+              <div>
+                <div className="statLabel">Total listado</div>
+                <div className="statValue">${formatearARS(totales.montosTotal)}</div>
+              </div>
+            </div>
+            <div className="statTile">
+              <div className="statIcono"><i className="bi bi-receipt" /></div>
+              <div>
+                <div className="statLabel">Cantidad facturas</div>
+                <div className="statValue">{totales.facturado} / {totales.facturas}</div>
+              </div>
+            </div>
+            <div className="statTile">
+              <div className="statIcono"><i className="bi bi-percent" /></div>
+              <div>
+                <div className="statLabel">Total comisión</div>
+                <div className="statValue">${formatearARS(totales.totalComision)}</div>
+              </div>
+            </div>
+            <div className="statTile" style={{ justifyContent: 'center' }}>
+              <button className="btn btn-secondary w-100" style={{ borderRadius: '8px' }} onClick={() => {
+                descargarExcel(contratosFiltrados, "Contratos");
+              }}>
+                <i className="bi bi-download me-2" />Descargar Excel
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Lista */}
       <div className='row miPerfilContainer soporteContainer mt-4 p-0'>
         <div>
-          <ul className="list-group">
-            
-             {loading ? (
-                <li className="list-group-item text-center" style={{ height: "200px" }}>
-                  <div className="d-flex justify-content-center align-items-center h-100">
-                    <div className="spinner-border text-primary" role="status">
-                      <span className="visually-hidden">Cargando...</span>
-                    </div>
-                  </div>
-                </li>
-              ) :
-            pagedItems.length === 0 ? (
-              <li className="list-group-item">No hay resultados.</li>
-            ) : (
-              pagedItems.map((item) => (
-                <li key={item.id} className="list-group-item">
+          {loading ? (
+            <div className="d-flex justify-content-center align-items-center" style={{ height: "200px" }}>
+              <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Cargando...</span>
+              </div>
+            </div>
+          ) : pagedItems.length === 0 ? (
+            <div className="contratoCard text-center text-muted">No hay resultados.</div>
+          ) : (
+            <ul className="listaContratos">
+              {pagedItems.map((item) => (
+                <li key={item.id} className="contratoCard">
                   <div className='row pt-0'>
-                    <div className='col-2'>
+                    <div className='col-md-3'>
                       <button
-                        className="btn btn-link text-primary p-0"
+                        className="btn btn-link contratoCliente"
                         onClick={() => handleEditClick(item)}
                         disabled={!permisoEdicion}
                       >
-                        <strong>{item.name == null ? 'Sin cliente' : item.name}</strong>
+                        {item.name == null ? 'Sin cliente' : item.name}
                       </button>
-                      <div>Cuit: {item.cuit}</div>
-                      <div>Empresa: {item.empresa}</div>
-                      <div>ID: {item.id}</div>
-                      <div>Modalidad: {obtenerModalidadDelContrato(item).nombre}</div>
+                      <div className="contratoMeta">ID: {item.id} · CUIT: {item.cuit}</div>
+                      <div className="contratoMeta">{item.empresa}</div>
+                      <div className="contratoMeta">{obtenerModalidadDelContrato(item).nombre}</div>
+                      <div className={`badgeEstado ${claseBadgeEstado(item.estado)}`}>{item.estado || 'Sin estado'}</div>
                     </div>
-                    <div className='col-3'>
-                      <div>Monto total: {formatearARS(item.monto)}</div>
-                      <div>Avance: {item.avance}</div>
-                      {item.orden_compra != '' && <a href={item.orden_compra} target='_blank'>Ver orden de compra</a>}
-                      {item.orden_compra == '' && <div>Sin orden de compra</div>}
+                    <div className='col-md-3'>
+                      <div className="contratoLabel">Monto total</div>
+                      <div className="contratoDato">${formatearARS(item.monto)}</div>
+                      <div className="contratoLabel">Avance</div>
+                      <div className="contratoDato">{item.avance}</div>
+                      <div className="contratoLabel">Orden de compra</div>
+                      {item.orden_compra != '' ? (
+                        <a className="ordenCompraLink" href={item.orden_compra} target='_blank' rel="noopener noreferrer">Ver orden de compra</a>
+                      ) : (
+                        <div className="contratoDato text-muted">Sin orden de compra</div>
+                      )}
                     </div>
                     <div className='col-3'>
                       <div>Fecha inicio: {item.fecha_inicio}</div>
                       <div>Fecha fin: {item.fecha_fin}</div>
                       <div>Facturas Emitidas: {item.facturado}/{item.facturas}</div>
                       <div>
-                        {permisoEdicion && (
                         <button className="mb-2 btn btn-primary" onClick={() => cargarArchivos(item)}>
                           Cargar archivo
                         </button>
-                        )}
-                      </div>
-                      <div>
-                        <button className="mb-2 btn btn-primary" disabled={showModalArchivosDelContrato} onClick={() => verArchivosDelContrato(item)}>
-                          Ver Archivos
+                        
+                        <button className="btn btn-outline-secondary" disabled={showModalArchivosDelContrato} onClick={() => verArchivosDelContrato(item)}>
+                          <i className="bi bi-folder2-open" />Ver archivos
                         </button>
                       </div>
-                    </div> 
-                    <div className='col-3'>
-                      <div>Distribucion: {item.estado}</div>
-                      <div>
+                    </div>
+                    <div className='col-md-3'>
+                      <div className="accionesContrato">
                         {permisoEdicion && (
-                        <button className="mb-2 btn btn-primary" onClick={() => cargarComentario(item)}>
-                          ingresar comentarios
-                        </button>
+                          <button className="btn btn-outline-secondary" onClick={() => cargarComentario(item)}>
+                            <i className="bi bi-chat-left-text" />Ingresar comentario
+                          </button>
                         )}
                       </div>
                       <div>
@@ -603,43 +659,43 @@ const handleSave = () => {
                       </div>
                       <div>
                         {permisoEdicion && (
-                        <button
-                          className="mb-2 btn btn-secondary"
-                          onClick={() => {
-                            handleEditClick(item);
-                            setFormData(prev => ({
-                              ...prev,
-                              id: "0"
-                            }));
-                          }}
-                        >
-                          Duplicar contrato
-                        </button>
+                          <button
+                            className="btn btn-primary"
+                            onClick={() => {
+                              handleEditClick(item);
+                              setFormData(prev => ({
+                                ...prev,
+                                id: "0"
+                              }));
+                            }}
+                          >
+                            <i className="bi bi-copy" />Duplicar contrato
+                          </button>
                         )}
                       </div>
-                    </div> 
+                    </div>
                   </div>
                 </li>
-              ))
-            )}
-          </ul>
+              ))}
+            </ul>
+          )}
 
           {/* Paginación */}
-          <div className="d-flex justify-content-center mt-3">
+          <div className="paginacionContratos">
             <button
-              className="btn btn-secondary btn-sm me-2"
+              className="btn btn-secondary btn-sm"
               onClick={() => goToPage(page - 1)}
               disabled={page === 1}
             >
-              Anterior
+              <i className="bi bi-chevron-left" />
             </button>
-            <span>Página {page} de {totalPages}</span>
+            <span>Página {page} de {totalPages || 1}</span>
             <button
-              className="btn btn-secondary btn-sm ms-2"
+              className="btn btn-secondary btn-sm"
               onClick={() => goToPage(page + 1)}
               disabled={page === totalPages}
             >
-              Siguiente
+              <i className="bi bi-chevron-right" />
             </button>
           </div>
         </div>
@@ -663,6 +719,7 @@ const handleSave = () => {
             <div className="modal-body">
               {contratoSeleccionado && (
                 <>
+                <div className="seccionTitulo">Datos generales</div>
                 {/* cliente */}
                   <SelectorConBuscador
                     title="Cliente"
@@ -768,6 +825,7 @@ const handleSave = () => {
                     />
                   </div>
 
+                  <div className="seccionTitulo">Modalidad y montos</div>
                   <SelectorConBuscador
                     title="Modalidad"
                     options={Modalidades}
@@ -909,7 +967,7 @@ const handleSave = () => {
                     onClear={() =>
                       setFormData({
                         ...formData,
-                        monto: ''
+                        monto: 0
                       })
                     }
                     max={999999999999}
@@ -981,8 +1039,9 @@ const handleSave = () => {
                   </div>
                   )}
                   </>)}
-                    
-                <Checkbox 
+
+                <div className="seccionTitulo">Condiciones</div>
+                <Checkbox
                   title="Requiere pago de sellos"
                   value={formData.requiere_pago === "SI"}
                   onChange={(value) => setFormData({ ...formData, requiere_pago: value ? "SI" : "NO" })}
@@ -1009,7 +1068,8 @@ const handleSave = () => {
                 {formData.orden_compra && (typeof formData.orden_compra === "string") &&  formData.orden_compra.includes('http') && (
                 <span>Ultima orden: <a href={formData.orden_compra} target="_blank" rel="noopener noreferrer">{formData.orden_compra}</a></span>
                 )}
-                <SelectorConBuscador title={'Plan'} options={planes} 
+                <div className="seccionTitulo">Plan y alcance</div>
+                <SelectorConBuscador title={'Plan'} options={planes}
                   selectedOption={planes.find(p => p.id === formData.id_plan) || ''}
                   onSelect={(plan) => SeleccionarPlan(plan)}
                   onClear={() => setFormData({ ...formData, id_plan: ''})} 
@@ -1034,40 +1094,58 @@ const handleSave = () => {
                     <input
                       type="number"
                       className="form-control"
-                      value={formData.alcance_x_nota || ""}
+                      value={formData.alcance_x_nota || "0"}
                       onChange={(e) =>
                         setFormData({ ...formData, alcance_x_nota: e.target.value })
                       }
                     />
                   </div>
-
-                {/* con meta */}
-                  <DropdawnSiNo
-                    label="Con Meta"
-                    name="con_meta"
-                    value={formData.con_meta}
-                    setFormData={setFormData}
+                  
+                  <div className="seccionTitulo">Costos marketing</div>
+                  <InputNumerico
+                    title="Meta"
+                    selectedValue={formData.con_meta || ''}
+                    isMoney={true}
+                    isPercentual={false}
+                    onSelect={(value) => setFormData({ ...formData, con_meta: value })}
+                    onClear={() => setFormData({ ...formData, con_meta: 0 })}
+                    max={999999999999}
                   />
-                {/* con youtube */}
-                <DropdawnSiNo
-                    label="Con Youtube"
-                    name="con_youtube"
-                    value={formData.con_youtube}
-                    setFormData={setFormData}
+                  <InputNumerico
+                    title="Youtube"
+                    selectedValue={formData.con_youtube || ''}
+                    isMoney={true}
+                    isPercentual={false}
+                    onSelect={(value) => setFormData({ ...formData, con_youtube: value })}
+                    onClear={() => setFormData({ ...formData, con_youtube: 0 })}
+                    max={999999999999}
                   />
-                {/* con dv360 */}
-                  <DropdawnSiNo
-                    label="Con dv360"
-                    name="con_dv360"
-                    value={formData.con_dv360}
-                    setFormData={setFormData}
+                  <InputNumerico
+                    title="Search"
+                    selectedValue={formData.con_search || ''}
+                    isMoney={true}
+                    isPercentual={false}
+                    onSelect={(value) => setFormData({ ...formData, con_search: value })}
+                    onClear={() => setFormData({ ...formData, con_search: 0 })}
+                    max={999999999999}
                   />
-                {/* con search */}
-                  <DropdawnSiNo
-                    label="Con search"
-                    name="con_search"
-                    value={formData.con_search}
-                    setFormData={setFormData}
+                  <InputNumerico
+                    title="Dv 360"
+                    selectedValue={formData.con_dv360 || ''}
+                    isMoney={true}
+                    isPercentual={false}
+                    onSelect={(value) => setFormData({ ...formData, con_dv360: value })}
+                    onClear={() => setFormData({ ...formData, con_dv360: 0 })}
+                    max={999999999999}
+                  />
+                  <InputNumerico
+                    title="X"
+                    selectedValue={formData.con_x || ''}
+                    isMoney={true}
+                    isPercentual={false}
+                    onSelect={(value) => setFormData({ ...formData, con_x: value })}
+                    onClear={() => setFormData({ ...formData, con_x: 0 })}
+                    max={999999999999}
                   />
 
                 </>

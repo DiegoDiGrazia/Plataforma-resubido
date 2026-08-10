@@ -9,6 +9,8 @@ import { updateContratoConFacturacionAbierta, updatePaginasDelUsuario } from '..
 import { useDispatch } from 'react-redux';
 import './SidebarMobile.css';
 
+const clientesParaElFeed = ['Agustin Wallasch'];
+
 const Sidebar = ({ estadoActual }) => {
   const esEditor = useSelector((state) => state.formulario.es_editor);
   const esContratoConFacturacionAbierta = useSelector((state) => state.formulario.contratoConFacturacionAbierta);
@@ -178,6 +180,13 @@ const Sidebar = ({ estadoActual }) => {
               '/images/auto_entrevistas_icon.png',
               'Administración',
               'bi bi-gear-fill'
+            )}
+            {PerfilUsuario == '1' || clientesParaElFeed.includes(cliente) && renderSidebarButton(
+              'Feed',
+              'feed',
+              '/images/auto_entrevistas_icon.png',
+              'Feed',
+              'bi bi-rss-fill'
             )}
             {paginasDelPerfil.find((pagina) => pagina.nombre == "Distribucion" || pagina.nombre == "Monitor Distribucion" ) && renderSidebarButton(
               'distribucion',

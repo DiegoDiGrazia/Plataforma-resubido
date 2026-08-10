@@ -18,7 +18,11 @@ const fetchData = async (url, token, extraParams = {}) => {
     const response = await axios.post(url, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
-
+    console.log(response);
+    if (response.data === 'Sin fondos OpenAI') {
+      console.log('El cliente no tiene fondos en OpenAI para regenerar el texto.');
+      return response.data || [];
+    }
     return response.data.item || [];
   } catch (err) {
     console.error(`Error al obtener datos de ${url}:`, err);
@@ -101,6 +105,19 @@ export const obtenerPlanesMarketing = (token, desde, hasta) =>
     desde, hasta
 });
 
+export const setearComentarioANota = (token, nota) =>
+  fetchData("https://panel.serviciosd.com/app_setear_dato_meta_360", token, {
+    id_generacion: nota.id,
+    comentarios: nota.comentarios
+  });
+
+  export const setearMontoDVoMeta = (token, nota, primer_dato_en_meta = null, primer_dato_en_360 = null) =>
+  fetchData("https://panel.serviciosd.com/app_setear_dato_meta_360", token, {
+    id_generacion: nota.id,
+    primer_dato_en_meta, 
+    primer_dato_en_360
+  });
+
 //guardar_posicion_iframes
 export const guardar_dato_en_banner_data = (token, id, datos) =>
   fetchData("https://reporte.noticiasd.com/api/guardar_posicion_creativos", token, {
@@ -121,16 +138,6 @@ export const obtenerConsolidacionCliente = (token, id_cliente) =>
     id_cliente
   });
 
-  export const obtenerArchivosDelContrato = (token, id) =>
-  fetchData("https://panel.serviciosd.com/app_obtener_contratos_archivos", token, {
-    id
-  });
-
-  export const obtenerComentariosDelContrato = (token, id) =>
-  fetchData("https://panel.serviciosd.com/app_obtener_contratos_comentarios", token, {
-    id
-  });
-
   export const obtenerVideosYoutube = (token, desde, hasta, limite, desde_limite) =>
   fetchData("https://panel.serviciosd.com/app_obtener_videos_noticias", token, {
     desde, hasta, limite, desde_limite
@@ -138,15 +145,6 @@ export const obtenerConsolidacionCliente = (token, id_cliente) =>
   export const guardarVideoYoutube = (token, video, fecha_vencimiento,id) =>
     fetchData("https://panel.serviciosd.com/app_subir_video_nota", token, {
       video, fecha_vencimiento, id
-  });
-
-  export const guardarComentarioDeUnContrato = (token, id, comentarios_in, id_usuario) =>
-  fetchData("https://panel.serviciosd.com/app_comentario_edit", token, {
-    id, comentarios_in, id_usuario
-  });
-  export const guardarArchivoDeUnContrato = (token, id_contrato_archivo, id_usuario, archivo) =>
-  fetchData("https://panel.serviciosd.com/app_contrato_archivo_edit", token, {
-    id_contrato_archivo, id_usuario, archivo
   });
 
   export const setComprarDistribucion = (token, division, id, id_usuario, usuarios, id_cliente, id_noti, monto_dv360=null, monto_meta= null, fecha_fin, fecha_inicio, comentarios) =>
@@ -190,11 +188,11 @@ export const obtenerFacturasDeContrato = (token, id_contrato) =>
 export const obtenerArchivosDeContrato = (token, id) =>
   fetchData ("https://panel.serviciosd.com/app_obtener_contratos_archivos", token, {id});
 
-export const obtenerResumenDashboardCliente = (token, cliente_id) =>
-  fetchData ("https://panel.serviciosd.com/app_obtener_resume", token, {cliente_id});
+export const obtenerResumenDashboardCliente = (token, cliente_id, cat_pais = null) =>
+  fetchData ("https://panel.serviciosd.com/app_obtener_resume", token, {cliente_id, pais_id: cat_pais});
 
-export const obtenerResumenDashboardNota = (token, id_noti) =>
-  fetchData ("https://panel.serviciosd.com/app_obtener_resume", token, {id_noti});
+export const obtenerResumenDashboardNota = (token, id_noti, cat_pais = null) =>
+  fetchData ("https://panel.serviciosd.com/app_obtener_resume", token, {id_noti, pais_id: cat_pais});
 
 export const cargarArchivo = (token, id_usuario, archivo, id_contrato_archivo) =>
   fetchData("https://panel.serviciosd.com/app_contrato_archivo_edit", token, {

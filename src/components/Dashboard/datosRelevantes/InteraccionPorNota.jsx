@@ -34,7 +34,7 @@ function seleccionarUrlImagenDeUnaNota(url) {
 }
 
 
-const InteraccionPorNota = ({datosLocales}) => {
+const InteraccionPorNota = ({datosLocales, paisFiltro}) => {
     const dispatch = useDispatch();
     const periodos_api = useSelector(state => state.dashboard.periodos_api);
     const nombreCliente = useSelector(state => state.formulario.cliente);
@@ -51,7 +51,8 @@ const InteraccionPorNota = ({datosLocales}) => {
         let fecha_fin_creacion = `${anio}-${mes}-${ultimo_dia.toString().padStart(2, '0')}`;
         axios.post("https://panel.serviciosd.com/app_obtener_notas", { cliente: nombreCliente, periodos: periodos_api, token: token, 
                                                                         fecha_inicio_creacion: fecha_inicio_creacion,
-                                                                        fecha_fin_creacion: fecha_fin_creacion
+                                                                        fecha_fin_creacion: fecha_fin_creacion,
+                                                                        cat_pais: paisFiltro?.nombre
                                                                      }, {
             headers: { 'Content-Type': 'multipart/form-data' }
         })
@@ -63,7 +64,7 @@ const InteraccionPorNota = ({datosLocales}) => {
             }
         })
         .catch(error => console.error('Error al hacer la solicitud:', error));
-    }, [nombreCliente, ultimaFechaCargadaBarplot]);
+    }, [nombreCliente, ultimaFechaCargadaBarplot, paisFiltro]);
 
 
 

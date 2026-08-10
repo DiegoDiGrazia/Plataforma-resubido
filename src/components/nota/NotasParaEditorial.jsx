@@ -66,6 +66,11 @@ const NotasParaEditorial = () => {
             En brevedad usted podra editar la nota con toda la informacion y contenido que se genero con IA`);
             setMostrarMensaje(true)
             const nota = await obtenerNotaCompletaConIa(TOKEN, notaABM.id, notaABM.term_id);
+            if (nota === 'Sin fondos OpenAI') {
+                setMensaje('No tiene fondos suficientes en OpenAI para obtener el contenido completo de la nota');
+                setMostrarMensaje(true);
+                return;
+            }
             notaABM = nota
             
         }
@@ -244,9 +249,10 @@ const NotasParaEditorial = () => {
                 categoria: categoria,
                 limit: limite,
                 offset: verMas ? nuevoOffset : 0,  // este es el valor real que irá a la API
-                titulo: searchQuery,
+                titulo: isNaN(searchQuery) ? searchQuery : "",
                 pais: nombrePaisUsuario || "",
                 full: "1",
+                term_id: !isNaN(searchQuery) ? searchQuery : "",
             },
             { headers: { 'Content-Type': 'multipart/form-data' } }
         )
@@ -278,8 +284,8 @@ const NotasParaEditorial = () => {
     };
         
     const handleInputChange = (e) => {
-    setSearchQuery(e.target.value);
-    setNumeroDePagina(1);
+        setSearchQuery(e.target.value);
+        setNumeroDePagina(1); 
     };
 
     const handleSearch = (e) => {
@@ -310,9 +316,7 @@ const NotasParaEditorial = () => {
     const dispatch = useDispatch();
 
     
-    const notasFiltradas = todasLasNotas2.filter(nota =>
-        nota.titulo.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const notasFiltradas = todasLasNotas2;
 
     const totalPaginas = Math.ceil(notasFiltradas.length / CantidadDeNotasPorPagina);
     let notasEnPaginaActual = notasFiltradas.slice(
@@ -402,20 +406,19 @@ const NotasParaEditorial = () => {
                                 <div className='col-4 todasLasNotas'>
                                     Todas Las Notas
                                 </div>
-                                <div className='col-8 buscadorNotas'>
-                                    <form onSubmit={handleSearch} className='buscadorNotasForm gap-2 justify-content-end'>
+                                <div className='col buscadorNotasForm justify-content-end' >
+                                    <form onSubmit={handleSearch} className='buscadorNotasForm gap-2'>
                                         <input
                                             className='inputBuscadorNotas'
                                             type="text"
-                                            value={searchQuery}
-                                            onChange={handleInputChange}
-                                            placeholder="      Buscar por titulo de la nota"
+                                            value={searchQuery} 
+                                            onChange={handleInputChange} 
+                                            placeholder="      Buscar por título de la nota o id..."
                                         />
                                         <Button type="submit" className="btn btn-danger ml-3">
                                             Buscar
                                         </Button>
                                     </form>
-                                    
                                 </div>
                             </div>
                             <div className='row' id='headerListadoNotas'>
@@ -482,7 +485,7 @@ const NotasParaEditorial = () => {
                                                     <i class="bi bi-eye-fill m-2 fs-2"></i>
                                                 </a>
                                             )}
-                                        {perfilUsuario === "1" &&  CLIENTE != ""  && ///MODIFICAR A 9 DESPUES DE LAS PRUEBAS
+                                        {perfilUsuario === "1" &&  CLIENTE != "" && ///MODIFICAR A 9 DESPUES DE LAS PRUEBAS
                                         <button title="distribuir nota"
                                             onClick={() => editarNotaFreemium(nota, true)}
                                             style={{background: "none", border: "none",padding: 0,

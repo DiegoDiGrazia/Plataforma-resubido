@@ -1,8 +1,14 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
   server: {
     proxy: {
       '/api': {
@@ -37,7 +43,12 @@ export default defineConfig({
         target: 'https://dashboard.serviciosd.com/',
         changeOrigin: true,
       },
-      
+      '/services': {
+        target: 'https://services.noticiasd.com/',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/services/, ''),
+      },
+
     },
   },
 });

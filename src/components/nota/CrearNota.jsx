@@ -159,8 +159,16 @@ const CrearNota = () => {
             dispatch(setContenidoNota([tipo, contenido]));
 
         } else if((tipo === "archivoPDF")){
-            const archivoPDFEnBase64 = await comprimirPDFaBase64(contenido)
-            dispatch(setContenidoNota([tipo, archivoPDFEnBase64]));
+            const archivoPDFEnBase64 = await comprimirPDFaBase64(contenido);
+            const blobUrl = URL.createObjectURL(contenido);
+
+            dispatch(
+            setContenidoNota([
+                tipo,
+                archivoPDFEnBase64, "", "", "", // para enviar a la API
+                blobUrl       // para mostrar en iframe
+            ])
+            );
         }else
             {
             // Si no es una imagen, solo almacenamos el contenido normalmente
@@ -198,7 +206,7 @@ const CrearNota = () => {
     return (
 
                 <div className="content flex-grow-1 crearNotaGlobal">
-                    <GuardarNotaCada10sg nota={actual} />
+                    {/* <GuardarNotaCada10sg nota={actual} /> */}
                     <div className='row'>
                         <div className='col'>
                             <h4 id="nota">

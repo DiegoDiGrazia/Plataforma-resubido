@@ -56,7 +56,7 @@ const ArchivoPDFListaParrafo = ({ indice }) => {
             dispatch(
                 setContenidoPorIndice([
                     indice,
-                    archivoPDFLista[1],
+                    archivoPDFLista[1] ,
                     contenido,'', numeroDeAtachmentAUsar
                 ])
             );
@@ -70,7 +70,7 @@ const ArchivoPDFListaParrafo = ({ indice }) => {
         <span className="spanContainer">
           <BotoneraContenido indice={indice} tipo={archivoPDFLista[0]} className="pr-2" />
           <iframe
-              src={archivoPDFLista[1]}
+              src={archivoPDFLista[5] || archivoPDFLista[1]} // Usa el blobUrl si está disponible, sino el contenido original
               alt="archivoPDFLista de parrafo"
               className="archivoPDFListaRecortada archivoPDFListaNotaContenido"
               style={{ width: '40%', height: '300px' }}

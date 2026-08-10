@@ -1,0 +1,293 @@
+.contratosPage .filtrosCard {
+  background: #fff;
+  border-radius: 14px;
+  padding: 16px 20px;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.08);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+}
+
+.contratosPage .btnNuevoContrato {
+  background-color: #FF653B;
+  border-color: #FF653B;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 8px 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 !important;
+}
+
+.contratosPage .btnNuevoContrato:hover {
+  background-color: #e6552d;
+  border-color: #e6552d;
+}
+
+.contratosPage .filtroFecha {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: #475467;
+  font-weight: 500;
+}
+
+.contratosPage .filtroFecha input {
+  border: 1px solid #D0D5DD !important;
+  border-radius: 8px !important;
+  padding: 6px 10px !important;
+  font-size: 13px !important;
+}
+
+.contratosPage .buscadorNotasForm {
+  margin-left: auto;
+  min-width: 260px;
+}
+
+.contratosPage .inputBuscadorNotas {
+  border: 1px solid #D0D5DD;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  width: 100%;
+}
+
+/* Totales */
+.contratosPage .statsRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 14px;
+}
+
+.contratosPage .statTile {
+  background: #fff;
+  border-radius: 14px;
+  padding: 16px 20px;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.contratosPage .statTile .statIcono {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #FFF1EC;
+  color: #FF653B;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.contratosPage .statTile .statIcono i {
+  margin: 0;
+  color: inherit;
+  font-size: 18px;
+}
+
+.contratosPage .statTile .statLabel {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: #667085;
+  font-weight: 600;
+}
+
+.contratosPage .statTile .statValue {
+  font-size: 19px;
+  font-weight: 700;
+  color: #101828;
+  margin-top: 2px;
+}
+
+/* Listado */
+.contratosPage .listaContratos {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.contratosPage .contratoCard {
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px 22px;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.08);
+  border: 1px solid #EAECF0;
+  transition: box-shadow .15s ease;
+}
+
+.contratosPage .contratoCard:hover {
+  box-shadow: 0 4px 14px rgba(16, 24, 40, 0.1);
+}
+
+.contratosPage .contratoCliente {
+  font-size: 16px;
+  font-weight: 700;
+  color: #101828;
+  padding: 0;
+  text-decoration: none;
+}
+
+.contratosPage .contratoCliente:hover {
+  color: #FF653B;
+}
+
+.contratosPage .contratoLabel {
+  font-size: 11px;
+  color: #98A2B3;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-bottom: 2px;
+  margin-top: 10px;
+}
+
+.contratosPage .contratoLabel:first-child {
+  margin-top: 0;
+}
+
+.contratosPage .contratoDato {
+  font-size: 14px;
+  color: #344054;
+}
+
+.contratosPage .contratoMeta {
+  font-size: 13px;
+  color: #667085;
+  margin-top: 2px;
+}
+
+.contratosPage .badgeEstado {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+.contratosPage .badgeEstado.activa { background: #ECFDF3; color: #027A48; }
+.contratosPage .badgeEstado.pausa { background: #FFFAEB; color: #B54708; }
+.contratosPage .badgeEstado.finalizada { background: #F2F4F7; color: #475467; }
+.contratosPage .badgeEstado.default { background: #EFF8FF; color: #175CD3; }
+
+.contratosPage .accionesContrato {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.contratosPage .accionesContrato .btn {
+  font-size: 13px;
+  border-radius: 8px;
+  padding: 6px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.contratosPage .accionesContrato .btn i {
+  margin: 0;
+  font-size: 14px;
+}
+
+.contratosPage .accionesContrato .btn-primary {
+  background-color: #FF653B;
+  border-color: #FF653B;
+}
+
+.contratosPage .accionesContrato .btn-primary:hover {
+  background-color: #e6552d;
+  border-color: #e6552d;
+}
+
+.contratosPage .ordenCompraLink {
+  font-size: 13px;
+}
+
+/* Paginacion */
+.contratosPage .paginacionContratos {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+  font-size: 14px;
+  color: #475467;
+}
+
+.contratosPage .paginacionContratos .btn {
+  border-radius: 8px;
+}
+
+/* Modal */
+#editModal .modal-content {
+  border-radius: 16px;
+  border: none;
+}
+
+#editModal .modal-header {
+  border-bottom: 1px solid #EAECF0;
+  padding: 20px 24px;
+}
+
+#editModal .modal-title {
+  font-weight: 700;
+  color: #101828;
+}
+
+#editModal .modal-body {
+  padding: 4px 24px 20px;
+}
+
+#editModal .modal-footer {
+  border-top: 1px solid #EAECF0;
+  padding: 16px 24px;
+}
+
+#editModal .seccionTitulo {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: #FF653B;
+  margin-top: 26px;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #EAECF0;
+}
+
+#editModal .seccionTitulo:first-of-type {
+  margin-top: 6px;
+}
+
+#editModal .modal-footer .btn-primary {
+  background-color: #FF653B;
+  border-color: #FF653B;
+}
+
+#editModal .modal-footer .btn-primary:hover {
+  background-color: #e6552d;
+  border-color: #e6552d;
+}
+
+@media (max-width: 768px) {
+  .contratosPage .buscadorNotasForm {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .contratosPage .filtrosCard {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

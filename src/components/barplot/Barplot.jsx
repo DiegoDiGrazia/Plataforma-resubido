@@ -59,7 +59,7 @@ export function seleccionPorFiltro(filtro) {
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const Barplot = ({datosLocales, resumenCliente = null, loading = false}) => {
+const Barplot = ({datosLocales, resumenCliente = null, loading = false, paisFiltro}) => {
     const FiltroActual = useSelector((state) => state.dashboard.filtro);
     const captureRef = useRef(null);  // Definir el ref para capturar la imagen
     const [totales, setTotales] = useState({})
@@ -180,28 +180,40 @@ const Barplot = ({datosLocales, resumenCliente = null, loading = false}) => {
         <div id='pantalla-barplot'>
         <div className="container-fluid sinPadding" ref={captureRef}>
             <div className="row cantidades mt-3 back-white">
-                <div className='col-4 barra_lateral'>
-                    <p className='leyenda_barplot'>
-                        <span className="blue-dot-user"></span> Usuarios Redes Sociales
-                        <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "Son las personas que llegaron a tus notas desde nuestra difusión en redes sociales."/>  
-                    </p>
-                    <p className='totales'>{formatNumberMiles(totales.usuariosTotalesRRSS)}</p>
+                {!totales.usuariosTotalesRRSS  && !totales.usuariosTotalesGoogle && (
+                    <h2 style={{ color: '#333', margin: '20px' }}>No se encontraron usuarios para la fecha seleccionada del pais: {paisFiltro?.nombre || 'Desconocido'}</h2>
+                )}
+                {totales.usuariosTotalesRRSS > 0 && totales.usuariosTotalesGoogle > 0 && (
+                <>
+                    
+                    <div className='col-4 barra_lateral'>
+                        <p className='leyenda_barplot'>
+                            <span className="blue-dot-user"></span> Usuarios Redes Sociales
+                            <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "Son las personas que llegaron a tus notas desde nuestra difusión en redes sociales."/>  
+                        </p>
+                        <p className='totales'>{formatNumberMiles(totales.usuariosTotalesRRSS)}</p>
+                    </div>
+                    <div className='col' style={{ paddingLeft: '20px' }}>
+                        <p className='leyenda_barplot'>
+                            <span className="blue-dot-impresiones"></span>Usuarios Medios
+                            <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "Son las personas que llegaron a tus notas desde nuestra difusión en otros medios de noticias."/>  
+                        </p>
+                        <p className='totales'>{formatNumberMiles(totales.usuariosTotalesGoogle)}</p>
+                    </div>
+  
+                    </>
+                )}
                 </div>
-                <div className='col' style={{ paddingLeft: '20px' }}>
-                    <p className='leyenda_barplot'>
-                        <span className="blue-dot-impresiones"></span>Usuarios Medios
-                        <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "Son las personas que llegaron a tus notas desde nuestra difusión en otros medios de noticias."/>  
-                    </p>
-                    <p className='totales'>{formatNumberMiles(totales.usuariosTotalesGoogle)}</p>
-                </div>
-            </div>
-            <div className="row back-white">
-                <div className="col barplot" >
-                    <div style={{ height: '100%' }}>
-                        <Bar data={dataReal} options={optionsReal} />
+             
+                {totales.usuariosTotalesRRSS > 0 && totales.usuariosTotalesGoogle > 0 && (
+                <div className="row back-white">
+                    <div className="col barplot" >
+                        <div style={{ height: '100%' }}>
+                            <Bar data={dataReal} options={optionsReal} />
+                        </div>
                     </div>
                 </div>
-            </div>
+                )}
         </div>
         </div>
     );
