@@ -4,10 +4,9 @@ import { useSelector } from 'react-redux';
 import './modal.css'
 import GoogleStyleSlider from './GoogleStyleSlider';
 import SliderVertical from './SliderVertical';
-import { guardar_dato_en_banner_data } from '../../administrador/gestores/apisUsuarios';
 import IframeNotaEscalable from '../IframeNotaEscalable';
 import SelectorNumerosEnteros from './SelectorNumerosEnteros';
-import { obtenerFeedsPorCliente, agregarNotaAFeed, crearFeed } from '@/components/Apis/apis';
+import { obtenerFeedsPorCliente, agregarNotaAFeed, crearFeed, editarDistribucionGeneracion } from '@/components/Apis/apis';
 
     const BotonModalIframes = ({id_nota, token}) => {
 
@@ -33,7 +32,9 @@ import { obtenerFeedsPorCliente, agregarNotaAFeed, crearFeed } from '@/component
         }, [posicion]);
 
         const guardarPosicion = async (token, id_nota, posicion) => {
-            await guardar_dato_en_banner_data(token, id_nota, `{vp:${posicion}, historiaTipo:${tipo}}`);
+            await editarDistribucionGeneracion(token, id_nota, {
+                banner_data: `{vp:${posicion}, historiaTipo:${tipo}}`,
+            });
         }
 
         const handleAbrirFeedModal = () => {
@@ -45,7 +46,7 @@ import { obtenerFeedsPorCliente, agregarNotaAFeed, crearFeed } from '@/component
                 .then(setFeeds)
                 .finally(() => setCargandoFeeds(false));
         };
-
+        
         const handleCrearFeed = () => {
             if (!nuevoNombreFeed.trim()) return;
             setCreandoFeed(true);

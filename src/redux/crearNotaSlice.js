@@ -151,6 +151,8 @@ const initialState = {
   distribucion_yt_titulo: "",
   distribucion_yt_descripcion: "",
   distribucion_yt_link: "",
+  distribucion_search_titulo: "",
+  distribucion_search_descripcion: "",
 };
 
 const crearNotaSlice = createSlice({
@@ -401,6 +403,12 @@ const crearNotaSlice = createSlice({
     setDistribucionYtLink: (state, action) => {
       state.distribucion_yt_link = action.payload;
     },
+    setDistribucionSearchTitulo: (state, action) => {
+      state.distribucion_search_titulo = action.payload;
+    },
+    setDistribucionSearchDescripcion: (state, action) => {
+      state.distribucion_search_descripcion = action.payload;
+    },
 
     resetCrearNota: () => initialState,
   }
@@ -412,7 +420,8 @@ export const {
   setCopete, setNotaAEditar, setContenidoAEditar, setItemsEtiquetas, setEsDemo, setNoHome, setCategoriasActivasEnStore,
   setDistribucionProioritaria, setTipoContenido, setFechaVencimiento, setBajada, setEngagement, setComentario, setSelectedOptionDistribucion,
   setAutor, setMunicipio,setEpigrafeImagenPpal,setDemo, setMunicipios,setIdNoti, setProvincia,setPais, setIdAtt,setProvincias, resetCrearNota, setEpigrafeDeImagen, setListaImagenesContenidoEnBase64, setAtachment, setSumarUnoAlNumeroDeAtachment,
-  setDistribucionFechaVencimiento, setDistribucionComentarios, setDistribucionMetaTitulo, setDistribucionMetaEngagement, setDistribucionXDescripcion, setDistribucionYtTitulo, setDistribucionYtDescripcion, setDistribucionYtLink
+  setDistribucionFechaVencimiento, setDistribucionComentarios, setDistribucionMetaTitulo, setDistribucionMetaEngagement, setDistribucionXDescripcion, setDistribucionYtTitulo, setDistribucionYtDescripcion, setDistribucionYtLink,
+  setDistribucionSearchTitulo, setDistribucionSearchDescripcion
 } = crearNotaSlice.actions;
 
 export default crearNotaSlice.reducer;

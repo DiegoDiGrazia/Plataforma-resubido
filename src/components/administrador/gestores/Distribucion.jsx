@@ -29,6 +29,35 @@ const descargar = async (nota) => {
   a.click();
 };
 
+const descargarJpg = async (nota, imagenFeed) => {
+  const res = await fetch(`https://static.noticiasd.com/img${imagenFeed}`);
+  const blob = await res.blob();
+  const bitmap = await createImageBitmap(blob);
+
+  const tamaño = 1080;
+  const canvas = document.createElement("canvas");
+  canvas.width = tamaño;
+  canvas.height = tamaño;
+  const ctx = canvas.getContext("2d");
+
+  // Recorta al centro para llenar el cuadrado sin deformar la imagen
+  const escala = Math.max(tamaño / bitmap.width, tamaño / bitmap.height);
+  const anchoEscalado = bitmap.width * escala;
+  const altoEscalado = bitmap.height * escala;
+  const offsetX = (tamaño - anchoEscalado) / 2;
+  const offsetY = (tamaño - altoEscalado) / 2;
+  ctx.drawImage(bitmap, offsetX, offsetY, anchoEscalado, altoEscalado);
+
+  canvas.toBlob((jpgBlob) => {
+    const url = window.URL.createObjectURL(jpgBlob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `-wp${nota.id_generacion}-${nota.cliente}.jpg`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  }, "image/jpeg", 0.92);
+};
+
 export const obtenerUltimoDiaMes = (año, mes) => {
   return new Date(año, mes, 0).getDate(); 
 };
@@ -70,13 +99,28 @@ const filtrarClientesSegunPendientes = (clientesObj, pendientes) => {
   return Object.fromEntries(clientesFiltradosEntries);
 };
 
-function agregarPlanAlDiccionarioDeNotas(dicNotas, clientes, planes) {
-  const entradasOrdenadas = Object.entries(dicNotas).sort(([, notasA], [, notasB]) => {
-    const fechaA = Math.max(...notasA.map(n => new Date(n.f_pub).getTime()));
-    const fechaB = Math.max(...notasB.map(n => new Date(n.f_pub).getTime()));
+const obtenerTimestampUltimaActualizacion = (nota) =>
+  nota.ultima_actualizacion ? new Date(nota.ultima_actualizacion).getTime() : 0;
 
-    return fechaB - fechaA; // más reciente primero
-  });
+const ordenarNotasPorUltimaActualizacion = (notas) =>
+  [...notas].sort((a, b) => obtenerTimestampUltimaActualizacion(b) - obtenerTimestampUltimaActualizacion(a));
+
+const obtenerUltimaActualizacionMasReciente = (notas) => {
+  if (!notas || notas.length === 0) return 0;
+  return Math.max(...notas.map(obtenerTimestampUltimaActualizacion));
+};
+
+const ordenarClientesPorUltimaActualizacion = (dicClientes) =>
+  Object.fromEntries(
+    Object.entries(dicClientes).sort(([, a], [, b]) =>
+      obtenerUltimaActualizacionMasReciente(b.notas) - obtenerUltimaActualizacionMasReciente(a.notas)
+    )
+  );
+
+function agregarPlanAlDiccionarioDeNotas(dicNotas, clientes, planes) {
+  const entradasOrdenadas = Object.entries(dicNotas).sort(([, notasA], [, notasB]) =>
+    obtenerUltimaActualizacionMasReciente(notasB) - obtenerUltimaActualizacionMasReciente(notasA)
+  );
 
   const nuevoDic = {};
 
@@ -88,7 +132,7 @@ function agregarPlanAlDiccionarioDeNotas(dicNotas, clientes, planes) {
       : null;
 
     nuevoDic[nombreCliente] = {
-      notas,
+      notas: ordenarNotasPorUltimaActualizacion(notas),
       plan: plan || null
     };
   }
@@ -170,6 +214,7 @@ const DistribucionAdmin = () => {
   const [contratos, setContratos] = useState([]);
   const [comentarios, setComentarios] = useState({});
   const [termIdsPorGeneracion, setTermIdsPorGeneracion] = useState({});
+  const [imagenesFeedPorGeneracion, setImagenesFeedPorGeneracion] = useState({});
   const [showContratoModal, setShowContratoModal] = useState(false);
   const [contratoSeleccionado, setContratoSeleccionado] = useState(null);
 
@@ -181,6 +226,9 @@ const DistribucionAdmin = () => {
     const termId = generacion?.term_id ?? null;
     if (termId != null) {
       setTermIdsPorGeneracion(prev => ({ ...prev, [nota.id_generacion]: termId }));
+    }
+    if (generacion?.imagen_feed != null) {
+      setImagenesFeedPorGeneracion(prev => ({ ...prev, [nota.id_generacion]: generacion.imagen_feed }));
     }
     return termId;
   };
@@ -200,6 +248,14 @@ const DistribucionAdmin = () => {
       notasSinId.forEach((n, i) => {
         const termId = resultados[i]?.term_id;
         if (termId != null) actualizado[n.id_generacion] = termId;
+      });
+      return actualizado;
+    });
+    setImagenesFeedPorGeneracion(prev => {
+      const actualizado = { ...prev };
+      notasSinId.forEach((n, i) => {
+        const imagenFeed = resultados[i]?.imagen_feed;
+        if (imagenFeed != null) actualizado[n.id_generacion] = imagenFeed;
       });
       return actualizado;
     });
@@ -324,10 +380,10 @@ useEffect(() => {
       const notasDeVideoPrevias = actualizado[nombreCliente]?.notas?.filter(n => n.esNotaDeVideo) || [];
       actualizado[nombreCliente] = {
         plan: datos.plan,
-        notas: [...datos.notas, ...notasDeVideoPrevias]
+        notas: ordenarNotasPorUltimaActualizacion([...datos.notas, ...notasDeVideoPrevias])
       };
     }
-    return actualizado;
+    return ordenarClientesPorUltimaActualizacion(actualizado);
   });
   })
   .finally(() => setLoading(false));
@@ -350,15 +406,15 @@ useEffect(() => {
         if (actualizado[nombreCliente]) {
           actualizado[nombreCliente] = {
             ...actualizado[nombreCliente],
-            notas: [...actualizado[nombreCliente].notas, ...notasDeVideo]
+            notas: ordenarNotasPorUltimaActualizacion([...actualizado[nombreCliente].notas, ...notasDeVideo])
           };
         } else {
           const municipio = clientes.find(m => m.name === nombreCliente);
           const plan = municipio ? planes.find(p => p.id === municipio.id_plan) : null;
-          actualizado[nombreCliente] = { notas: notasDeVideo, plan: plan || null };
+          actualizado[nombreCliente] = { notas: ordenarNotasPorUltimaActualizacion(notasDeVideo), plan: plan || null };
         }
       }
-      return actualizado;
+      return ordenarClientesPorUltimaActualizacion(actualizado);
     });
   });
 
@@ -527,9 +583,6 @@ const goToPage = (newPage) => {
                                   <button className="btn btn-outline-secondary w-100" onClick={() => recargarContrato(nota)}>Recargar contrato</button>
                                 </div>
                                 <div className="row p-1">
-                                  <span><strong>Fecha publicación: </strong>{nota.f_pub}</span>
-                                </div>
-                                <div className="row p-1">
                                   <span><strong>Fecha vencimiento: </strong>{nota.fecha_vencimiento}</span>
                                 </div>
                               </div>
@@ -593,6 +646,14 @@ const goToPage = (newPage) => {
                                   >
                                     Guardar comentario
                                   </button>
+                                  {imagenesFeedPorGeneracion[nota.id_generacion] && (
+                                    <button
+                                      className="btn btn-outline-secondary w-100 mt-2"
+                                      onClick={() => descargarJpg(nota, imagenesFeedPorGeneracion[nota.id_generacion])}
+                                    >
+                                      Descargar jpg
+                                    </button>
+                                  )}
                                 </div>
                               </div>
 
@@ -607,10 +668,16 @@ const goToPage = (newPage) => {
                                 {nota.meta_titulo && <div className="row p-1"><CopiarTexto textoACopiar={nota.meta_titulo} TituloBoton={'Copiar Titulo'} /></div>}
                                 {nota.meta_engagement && <div className="row p-1"><CopiarTexto textoACopiar={nota.meta_engagement} TituloBoton={'Copiar Bajada'} /></div>}
                                 
-                                <div className="p-1"><strong>X </strong>{!nota.x_descripcion ? ': Sin datos' : ''}</div>
-                                {nota.x_descripcion && (
-                                  <div className="row p-1"><CopiarTexto textoACopiar={nota.x_descripcion} TituloBoton={'Copiar Descripcion'} /></div>
-                                )}
+
+
+                                <div className="p-1">
+                                  <strong>Search</strong>
+                                  {!nota.search_titulo && !nota.search_descripcion && (
+                                    <span>: Sin datos</span>
+                                  )}
+                                </div>
+                                {nota.search_titulo && <div className="row p-1"><CopiarTexto textoACopiar={nota.search_titulo} TituloBoton={'Copiar Titulo'} /></div>}
+                                {nota.search_descripcion && <div className="row p-1"><CopiarTexto textoACopiar={nota.search_descripcion} TituloBoton={'Copiar Descripcion'} /></div>}
                               </div>
 
                               {/* Columna 4: Youtube */}
@@ -624,6 +691,11 @@ const goToPage = (newPage) => {
                                 {nota.youtube_titulo && <div className="row p-1"><CopiarTexto textoACopiar={nota.youtube_titulo} TituloBoton={'Copiar Titulo'} /></div>}
                                 {nota.youtube_descripcion && <div className="row p-1"><CopiarTexto textoACopiar={nota.youtube_descripcion} TituloBoton={'Copiar Descripcion'} /></div>}
                                 {nota.youtube_link_video && <div className="row p-1"><CopiarTexto textoACopiar={nota.youtube_link_video} TituloBoton={'Copiar Link Video'} /></div>}
+                                <div className="p-1">
+                                  <strong>X </strong>{!nota.x_descripcion ? ': Sin datos' : ''}</div>
+                                    {nota.x_descripcion && (
+                                      <div className="row p-1"><CopiarTexto textoACopiar={nota.x_descripcion} TituloBoton={'Copiar Descripcion'} /></div>
+                                    )}
                               </div>
 
                               {/* Columna 5 */}

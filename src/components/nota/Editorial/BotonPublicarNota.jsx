@@ -52,6 +52,8 @@ const BotonPublicarNota = ({ status, isLoading, setIsLoading }) => {
     const distribucionYtTitulo = useSelector((state) => state.crearNota.distribucion_yt_titulo);
     const distribucionYtDescripcion = useSelector((state) => state.crearNota.distribucion_yt_descripcion);
     const distribucionYtLink = useSelector((state) => state.crearNota.distribucion_yt_link);
+    const distribucionSearchTitulo = useSelector((state) => state.crearNota.distribucion_search_titulo);
+    const distribucionSearchDescripcion = useSelector((state) => state.crearNota.distribucion_search_descripcion);
 
     const tipoAutor = useSelector((state) => state.crearNota.autor);
     const pais = useSelector((state) => state.crearNota.pais);
@@ -165,6 +167,8 @@ const BotonPublicarNota = ({ status, isLoading, setIsLoading }) => {
                         youtube_titulo: distribucionYtTitulo,
                         youtube_descripcion: distribucionYtDescripcion,
                         youtube_link_video: distribucionYtLink,
+                        search_titulo: distribucionSearchTitulo,
+                        search_descripcion: distribucionSearchDescripcion,
                         cliente,
                     }).catch((error) => {
                         console.error("Error al guardar los datos de distribución:", error);

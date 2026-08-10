@@ -20,6 +20,8 @@ import {
     setDistribucionYtTitulo,
     setDistribucionYtDescripcion,
     setDistribucionYtLink,
+    setDistribucionSearchTitulo,
+    setDistribucionSearchDescripcion,
 } from '../../../redux/crearNotaSlice';
 import SelectorCliente2 from './SelectorCliente2';
 import EsDemo from './EsDemo';
@@ -48,6 +50,8 @@ const ColumnaEditorial = ({ indice }) => {
     const distribucionYtTitulo = useSelector((state) => state.crearNota.distribucion_yt_titulo);
     const distribucionYtDescripcion = useSelector((state) => state.crearNota.distribucion_yt_descripcion);
     const distribucionYtLink = useSelector((state) => state.crearNota.distribucion_yt_link);
+    const distribucionSearchTitulo = useSelector((state) => state.crearNota.distribucion_search_titulo);
+    const distribucionSearchDescripcion = useSelector((state) => state.crearNota.distribucion_search_descripcion);
 
 
 
@@ -84,9 +88,22 @@ const ColumnaEditorial = ({ indice }) => {
             dispatch(setDistribucionYtTitulo(datos[0].youtube_titulo || ''));
             dispatch(setDistribucionYtDescripcion(datos[0].youtube_descripcion || ''));
             dispatch(setDistribucionYtLink(datos[0].youtube_link_video || ''));
+            dispatch(setDistribucionSearchTitulo(datos[0].search_titulo || ''));
+            dispatch(setDistribucionSearchDescripcion(datos[0].search_descripcion || ''));
         });
     }, [nota.id_noti, TOKEN]);
 
+    useEffect(() => {
+        if (!distribucionMetaTitulo && tituloNota) {
+            dispatch(setDistribucionMetaTitulo(tituloNota));
+        }
+    }, [tituloNota, distribucionMetaTitulo]);
+
+    useEffect(() => {
+        if (!distribucionMetaEngagement && nota.bajada) {
+            dispatch(setDistribucionMetaEngagement(nota.bajada));
+        }
+    }, [nota.bajada, distribucionMetaEngagement]);
 
 
 
@@ -124,6 +141,12 @@ const ColumnaEditorial = ({ indice }) => {
     };
     const dispacharDistribucionYtLink = (e) => {
         dispatch(setDistribucionYtLink(e.target.value));
+    };
+    const dispacharDistribucionSearchTitulo = (e) => {
+        dispatch(setDistribucionSearchTitulo(e.target.value));
+    };
+    const dispacharDistribucionSearchDescripcion = (e) => {
+        dispatch(setDistribucionSearchDescripcion(e.target.value));
     };
 
     return (
@@ -211,7 +234,7 @@ const ColumnaEditorial = ({ indice }) => {
                         style={{ fontSize: "20px", fontWeight: "bold"}}
                     />
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: "20px", padding: "0px" }}>
+                {/* <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: "20px", padding: "0px" }}>
                     <span style={{ fontSize: "20px", fontWeight: "bold"}}>Fecha de vencimiento:</span>
                     <input 
                         type="date" 
@@ -219,7 +242,7 @@ const ColumnaEditorial = ({ indice }) => {
                         onChange={dispacharfechaVencimiento} 
                         style={{ fontSize: "20px", fontWeight: "bold"}}
                     />
-                </div>
+                </div> */}
                 {nota.con_distribucion == 1 && (
                 <div className="datosDistribucion">
                     <span className="datosDistribucionTitulo">Datos distribución</span>
@@ -249,18 +272,22 @@ const ColumnaEditorial = ({ indice }) => {
                         <input
                             type="text"
                             className="form-control"
+                            maxLength={130}
                             value={distribucionMetaTitulo}
                             onChange={dispacharDistribucionMetaTitulo}
                         />
+                        <p className="caracteresRestantes">Carácteres restantes: {130 - (distribucionMetaTitulo?.length || 0)}</p>
                     </div>
                     <div className="datosDistribucionCampo">
                         <label>Engagement</label>
                         <input
                             type="text"
                             className="form-control"
+                            maxLength={130}
                             value={distribucionMetaEngagement}
                             onChange={dispacharDistribucionMetaEngagement}
                         />
+                        <p className="caracteresRestantes">Carácteres restantes: {130 - (distribucionMetaEngagement?.length || 0)}</p>
                     </div>
 
                     <div className="datosDistribucionPlataforma">X</div>
@@ -268,9 +295,11 @@ const ColumnaEditorial = ({ indice }) => {
                         <label>Descripción</label>
                         <textarea
                             className="form-control"
+                            maxLength={280}
                             value={distribucionXDescripcion}
                             onChange={dispacharDistribucionXDescripcion}
                         />
+                        <p className="caracteresRestantes">Carácteres restantes: {280 - (distribucionXDescripcion?.length || 0)}</p>
                     </div>
 
                     <div className="datosDistribucionPlataforma">Youtube</div>
@@ -279,17 +308,21 @@ const ColumnaEditorial = ({ indice }) => {
                         <input
                             type="text"
                             className="form-control"
+                            maxLength={40}
                             value={distribucionYtTitulo}
                             onChange={dispacharDistribucionYtTitulo}
                         />
+                        <p className="caracteresRestantes">Carácteres restantes: {40 - (distribucionYtTitulo?.length || 0)}</p>
                     </div>
                     <div className="datosDistribucionCampo">
                         <label>Descripción</label>
                         <textarea
                             className="form-control"
+                            maxLength={90}
                             value={distribucionYtDescripcion}
                             onChange={dispacharDistribucionYtDescripcion}
                         />
+                        <p className="caracteresRestantes">Carácteres restantes: {90 - (distribucionYtDescripcion?.length || 0)}</p>
                     </div>
                     <div className="datosDistribucionCampo">
                         <label>Link al video</label>
@@ -300,9 +333,27 @@ const ColumnaEditorial = ({ indice }) => {
                             onChange={dispacharDistribucionYtLink}
                         />
                     </div>
+
+                    <div className="datosDistribucionPlataforma">Search</div>
+                    <div className="datosDistribucionCampo">
+                        <label>Titulo</label>
+                        <textarea
+                            className="form-control"
+                            value={distribucionSearchTitulo}
+                            onChange={dispacharDistribucionSearchTitulo}
+                        />
+                    </div>
+                    <div className="datosDistribucionCampo">
+                        <label>Descripción</label>
+                        <textarea
+                            className="form-control"
+                            value={distribucionSearchDescripcion}
+                            onChange={dispacharDistribucionSearchDescripcion}
+                        />
+                    </div>
                 </div>
                 )}
-                <TextareaWithCounter/>
+                {/* <TextareaWithCounter/> */}
             </div>
         </div>
     );
