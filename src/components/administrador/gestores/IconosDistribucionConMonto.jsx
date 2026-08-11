@@ -43,6 +43,8 @@ const IconosDistribucionConMonto = ({ nota, token, geo, contratos }) => {
     const [accionPendiente, setAccionPendiente] = useState(null);
     const [plataformaConfirmacion, setPlataformaConfirmacion] = useState('');
 
+    const permisoEdicionPresupuestos = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Distribucion: Edicion presupuestos") || false);
+
     const alcance = useMemo(() => {
         if (!contratos || !nota.cliente) return 0;
         const contratoEncontrado = contratos.find(c => c.name?.toLowerCase() === nota.cliente.toLowerCase());
@@ -173,7 +175,7 @@ const IconosDistribucionConMonto = ({ nota, token, geo, contratos }) => {
                             className="form-control form-control-sm text-center"
                             placeholder={plataforma.label}
                             value={montos[plataforma.key]}
-                            readOnly={!puedeEditar}
+                            readOnly={!permisoEdicionPresupuestos}
                             onChange={(e) => {
                                 if (!puedeEditar) return;
                                 const valor = e.target.value;

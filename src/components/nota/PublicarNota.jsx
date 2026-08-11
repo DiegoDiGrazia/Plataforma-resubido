@@ -34,6 +34,12 @@ const PublicarNota = () => {
     const con_distribucion = useSelector((state) => state.crearNota.con_distribucion); // Comentario de la nota
     const [isLoading, setIsLoading] = useState(false);
 
+    const permisoPublicarNota = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Editorial: Publicacion") || false);
+    const permisoBorrador = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Editorial: Borrador") || false);
+    const permisoRevision = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Editorial: Revision") || false);
+    const permisoDatosCreacion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Editorial: Datos creacion") || false);
+    const permisoTutorialCreacion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Editorial: Tutorial creacion") || false);
+
     const manejarCambioComentarios = (e) => {
         dispatch(setComentario(e.target.value));
     };
@@ -255,9 +261,22 @@ const PublicarNota = () => {
                                 )}
                                 
                                 <div className='mb-5'>
-                                    <BotonPublicarNota status="EN REVISION" isLoading={isLoading} setIsLoading={setIsLoading} />
-                                    <BotonPublicarNota status="BORRADOR" isLoading={isLoading} setIsLoading={setIsLoading} />
-                                    {es_editor && <BotonPublicarNota status="PUBLICADO" isLoading={isLoading} setIsLoading={setIsLoading} />}
+                                    {permisoBorrador && (
+                                        <BotonPublicarNota status="EN REVISION" isLoading={isLoading} setIsLoading={setIsLoading} />
+                                    )}
+
+                                    {permisoBorrador && (
+                                        <BotonPublicarNota status="BORRADOR" isLoading={isLoading} setIsLoading={setIsLoading} />
+                                    )}
+
+                                    {(es_editor && permisoPublicarNota) && 
+                                        <BotonPublicarNota 
+                                            status="PUBLICADO" 
+                                            isLoading={isLoading} 
+                                            setIsLoading={setIsLoading} 
+                                        />
+                                    }
+
                                     <Button
                                         onClick={() => navigate('/crearNota')}
                                         id="botonVolver"
@@ -265,19 +284,23 @@ const PublicarNota = () => {
                                     >
                                         {" Volver"}
                                     </Button>
+
                                 </div>
                             </div>
                             
 
                         </div>
 
-                        {es_editor ? 
+                        {permisoDatosCreacion && (
                             <ColumnaEditorial/>  
-                            : 
+                        )}
+
+                        {permisoTutorialCreacion && (
                             <div className='col-4'style={{ paddingRight: "30px"}}>
                                 <CardTutorial title = {videos.publicarNota.title} description = {videos.publicarNota.description} src = {videos.publicarNota.src}/>
                             </div>
-                        }
+                        )} 
+                        
                     </div>
         </div>
         </>

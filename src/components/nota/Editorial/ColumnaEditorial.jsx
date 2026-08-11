@@ -165,193 +165,210 @@ const ColumnaEditorial = ({ indice }) => {
                     -{nota.id_noti || nota.id_nota_borrador || 'id-nota'}
                 </span>
             </div>
-                <Etiquetas />
-                    <span style={{ fontSize: "20px", fontWeight: "bold", padding: "0px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-                        Cuenta de la nota:
-                        <div style={{ marginLeft: "auto" }}>
-                            <SelectorCliente2/>
-                        </div>
-                    </span>
+            
+            <Etiquetas />
+            
+            <span style={{ fontSize: "20px", fontWeight: "bold", padding: "0px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+                Cuenta de la nota:
+                <div style={{ marginLeft: "auto" }}>
+                    <SelectorCliente2 />
+                </div>
+            </span>
+            
             <div className='row pt-0'>
                 <div 
-                className="form-check form_editorial p-0" 
-                style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
+                    className="form-check form_editorial p-0" 
+                    style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
                 >
-                <label 
-                    className="form-check-label" 
-                    htmlFor="flexCheckDefault" 
-                    style={{ fontSize: "20px", fontWeight: "bold", marginRight: "10px", padding: "0px" }}
-                >
-                    No home
-                </label>
-                <input 
-                    className="form-check-input" 
-                    type="checkbox" 
-                    id="flexCheckChecked1" 
-                    checked={isCheckedNoHome == '1'} 
-                    onChange={() => dispatch(setNoHome(isCheckedNoHome == '1'? '0' : '1'))} 
+                    <label 
+                        className="form-check-label" 
+                        htmlFor="flexCheckDefault" 
+                        style={{ fontSize: "20px", fontWeight: "bold", marginRight: "10px", padding: "0px" }}
+                    >
+                        No home
+                    </label>
+                    <input 
+                        className="form-check-input" 
+                        type="checkbox" 
+                        id="flexCheckChecked1" 
+                        checked={isCheckedNoHome == '1'} 
+                        onChange={() => dispatch(setNoHome(isCheckedNoHome == '1' ? '0' : '1'))} 
                     />
-            </div>
+                </div>
 
-            <EsDemo></EsDemo>
+                <EsDemo></EsDemo>
 
-        <div 
-            className="form-check form_editorial p-0" 
-            style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
-        >
-            <label 
-                className="form-check-label" 
-                htmlFor="flexCheckChecked2" 
-                style={{ fontSize: "20px", fontWeight: "bold", marginRight: "10px" }}
-            >
-                Distribucion prioritaria
-            </label>
-            <input 
-                className="form-check-input" 
-                type="checkbox" 
-                id="flexCheckChecked2" 
-                checked={isCheckedDistribucionPrioritaria == '1'} 
-                onChange={() => dispatch(setDistribucionProioritaria(isCheckedDistribucionPrioritaria == '1'? '0' : '1'))} 
+                <div 
+                    className="form-check form_editorial p-0" 
+                    style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
+                >
+                    <label 
+                        className="form-check-label" 
+                        htmlFor="flexCheckChecked2" 
+                        style={{ fontSize: "20px", fontWeight: "bold", marginRight: "10px" }}
+                    >
+                        Distribucion prioritaria
+                    </label>
+                    <input 
+                        className="form-check-input" 
+                        type="checkbox" 
+                        id="flexCheckChecked2" 
+                        checked={isCheckedDistribucionPrioritaria == '1'} 
+                        onChange={() => dispatch(setDistribucionProioritaria(isCheckedDistribucionPrioritaria == '1' ? '0' : '1'))} 
+                    />
+                </div>
+                
+                <SelectorAutor />
+                
+                <ArbolDistribucion
+                    TOKEN={TOKEN}
+                    pais={pais}
+                    provincia={provincia}
+                    municipio={municipio}
+                    onSetPais={(p) => dispatch(setPais(p))}
+                    onSetProvincia={(p) => dispatch(setProvincia(p))}
+                    onSetMunicipio={(m) => dispatch(setMunicipio(m))}
                 />
-        </div>
-                    <SelectorAutor/>
-                        <ArbolDistribucion
-                        TOKEN={TOKEN}
-                        pais={pais}
-                        provincia={provincia}
-                        municipio={municipio}
-                        onSetPais={(p) => dispatch(setPais(p))}
-                        onSetProvincia={(p) => dispatch(setProvincia(p))}
-                        onSetMunicipio={(m) => dispatch(setMunicipio(m))}
-                        />
-                    <SelectorTipoContenido/>
+                
+                <SelectorTipoContenido />
+                
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: "20px", padding: "0px" }}>
-                    <span style={{ fontSize: "20px", fontWeight: "bold"}}>Fecha Publicacion:</span>
+                    <span style={{ fontSize: "20px", fontWeight: "bold" }}>Fecha Publicacion:</span>
                     <input 
                         type="date" 
                         value={fechaPublicacion} 
                         onChange={dispacharfechaPublicacion} 
-                        style={{ fontSize: "20px", fontWeight: "bold"}}
+                        style={{ fontSize: "20px", fontWeight: "bold" }}
                     />
                 </div>
+                
                 {/* <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: "20px", padding: "0px" }}>
-                    <span style={{ fontSize: "20px", fontWeight: "bold"}}>Fecha de vencimiento:</span>
+                    <span style={{ fontSize: "20px", fontWeight: "bold" }}>Fecha de vencimiento:</span>
                     <input 
                         type="date" 
                         value={fechaVence} 
                         onChange={dispacharfechaVencimiento} 
-                        style={{ fontSize: "20px", fontWeight: "bold"}}
+                        style={{ fontSize: "20px", fontWeight: "bold" }}
                     />
                 </div> */}
+                
                 {nota.con_distribucion == 1 && (
-                <div className="datosDistribucion">
-                    <span className="datosDistribucionTitulo">Datos distribución</span>
+                    <div className="datosDistribucion">
+                        <span className="datosDistribucionTitulo">Datos distribución</span>
 
-                    <div className="datosDistribucionCampo">
-                        <label>Fecha vencimiento</label>
-                        <input
-                            type="date"
-                            className="form-control"
-                            value={distribucionFechaVencimiento}
-                            onChange={dispacharDistribucionFechaVencimiento}
-                        />
-                    </div>
+                        <div className="datosDistribucionCampo">
+                            <label>Fecha vencimiento</label>
+                            <input
+                                type="date"
+                                className="form-control"
+                                value={distribucionFechaVencimiento}
+                                onChange={dispacharDistribucionFechaVencimiento}
+                            />
+                        </div>
 
-                    <div className="datosDistribucionCampo">
-                        <label>Comentarios</label>
-                        <textarea
-                            className="form-control"
-                            value={distribucionComentarios}
-                            onChange={dispacharDistribucionComentarios}
-                        />
-                    </div>
+                        <div className="datosDistribucionCampo">
+                            <label>Comentarios</label>
+                            <textarea
+                                className="form-control"
+                                value={distribucionComentarios}
+                                onChange={dispacharDistribucionComentarios}
+                            />
+                        </div>
 
-                    <div className="datosDistribucionPlataforma">META</div>
-                    <div className="datosDistribucionCampo">
-                        <label>Titulo</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            maxLength={130}
-                            value={distribucionMetaTitulo}
-                            onChange={dispacharDistribucionMetaTitulo}
-                        />
-                        <p className="caracteresRestantes">Carácteres restantes: {130 - (distribucionMetaTitulo?.length || 0)}</p>
-                    </div>
-                    <div className="datosDistribucionCampo">
-                        <label>Engagement</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            maxLength={130}
-                            value={distribucionMetaEngagement}
-                            onChange={dispacharDistribucionMetaEngagement}
-                        />
-                        <p className="caracteresRestantes">Carácteres restantes: {130 - (distribucionMetaEngagement?.length || 0)}</p>
-                    </div>
+                        <div className="datosDistribucionPlataforma">META</div>
+                        
+                        <div className="datosDistribucionCampo">
+                            <label>Titulo</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                maxLength={130}
+                                value={distribucionMetaTitulo}
+                                onChange={dispacharDistribucionMetaTitulo}
+                            />
+                            <p className="caracteresRestantes">Carácteres restantes: {130 - (distribucionMetaTitulo?.length || 0)}</p>
+                        </div>
+                        
+                        <div className="datosDistribucionCampo">
+                            <label>Engagement</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                maxLength={130}
+                                value={distribucionMetaEngagement}
+                                onChange={dispacharDistribucionMetaEngagement}
+                            />
+                            <p className="caracteresRestantes">Carácteres restantes: {130 - (distribucionMetaEngagement?.length || 0)}</p>
+                        </div>
 
-                    <div className="datosDistribucionPlataforma">X</div>
-                    <div className="datosDistribucionCampo">
-                        <label>Descripción</label>
-                        <textarea
-                            className="form-control"
-                            maxLength={280}
-                            value={distribucionXDescripcion}
-                            onChange={dispacharDistribucionXDescripcion}
-                        />
-                        <p className="caracteresRestantes">Carácteres restantes: {280 - (distribucionXDescripcion?.length || 0)}</p>
-                    </div>
+                        <div className="datosDistribucionPlataforma">X</div>
+                        
+                        <div className="datosDistribucionCampo">
+                            <label>Descripción</label>
+                            <textarea
+                                className="form-control"
+                                maxLength={280}
+                                value={distribucionXDescripcion}
+                                onChange={dispacharDistribucionXDescripcion}
+                            />
+                            <p className="caracteresRestantes">Carácteres restantes: {280 - (distribucionXDescripcion?.length || 0)}</p>
+                        </div>
 
-                    <div className="datosDistribucionPlataforma">Youtube</div>
-                    <div className="datosDistribucionCampo">
-                        <label>Titulo</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            maxLength={40}
-                            value={distribucionYtTitulo}
-                            onChange={dispacharDistribucionYtTitulo}
-                        />
-                        <p className="caracteresRestantes">Carácteres restantes: {40 - (distribucionYtTitulo?.length || 0)}</p>
-                    </div>
-                    <div className="datosDistribucionCampo">
-                        <label>Descripción</label>
-                        <textarea
-                            className="form-control"
-                            maxLength={90}
-                            value={distribucionYtDescripcion}
-                            onChange={dispacharDistribucionYtDescripcion}
-                        />
-                        <p className="caracteresRestantes">Carácteres restantes: {90 - (distribucionYtDescripcion?.length || 0)}</p>
-                    </div>
-                    <div className="datosDistribucionCampo">
-                        <label>Link al video</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            value={distribucionYtLink}
-                            onChange={dispacharDistribucionYtLink}
-                        />
-                    </div>
+                        <div className="datosDistribucionPlataforma">Youtube</div>
+                        
+                        <div className="datosDistribucionCampo">
+                            <label>Titulo</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                maxLength={40}
+                                value={distribucionYtTitulo}
+                                onChange={dispacharDistribucionYtTitulo}
+                            />
+                            <p className="caracteresRestantes">Carácteres restantes: {40 - (distribucionYtTitulo?.length || 0)}</p>
+                        </div>
+                        
+                        <div className="datosDistribucionCampo">
+                            <label>Descripción</label>
+                            <textarea
+                                className="form-control"
+                                maxLength={90}
+                                value={distribucionYtDescripcion}
+                                onChange={dispacharDistribucionYtDescripcion}
+                            />
+                            <p className="caracteresRestantes">Carácteres restantes: {90 - (distribucionYtDescripcion?.length || 0)}</p>
+                        </div>
+                        
+                        <div className="datosDistribucionCampo">
+                            <label>Link al video</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                value={distribucionYtLink}
+                                onChange={dispacharDistribucionYtLink}
+                            />
+                        </div>
 
-                    <div className="datosDistribucionPlataforma">Search</div>
-                    <div className="datosDistribucionCampo">
-                        <label>Titulo</label>
-                        <textarea
-                            className="form-control"
-                            value={distribucionSearchTitulo}
-                            onChange={dispacharDistribucionSearchTitulo}
-                        />
+                        <div className="datosDistribucionPlataforma">Search</div>
+                        
+                        <div className="datosDistribucionCampo">
+                            <label>Titulo</label>
+                            <textarea
+                                className="form-control"
+                                value={distribucionSearchTitulo}
+                                onChange={dispacharDistribucionSearchTitulo}
+                            />
+                        </div>
+                        
+                        <div className="datosDistribucionCampo">
+                            <label>Descripción</label>
+                            <textarea
+                                className="form-control"
+                                value={distribucionSearchDescripcion}
+                                onChange={dispacharDistribucionSearchDescripcion}
+                            />
+                        </div>
                     </div>
-                    <div className="datosDistribucionCampo">
-                        <label>Descripción</label>
-                        <textarea
-                            className="form-control"
-                            value={distribucionSearchDescripcion}
-                            onChange={dispacharDistribucionSearchDescripcion}
-                        />
-                    </div>
-                </div>
                 )}
                 {/* <TextareaWithCounter/> */}
             </div>

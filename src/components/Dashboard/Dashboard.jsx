@@ -49,6 +49,8 @@ const Dashboard = () => {
     const [paisFiltro, setPaisFiltro] = useState(null);
     const paises = useSelector((state) => state.formulario.geo);
 
+    const permisoSelectorClientes = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Dashboard: Selector clientes") || false);
+
     const componenteRef = useRef(null);
     const handleClickFiltro = (nuevoFiltro) => {
         dispatch(setFiltro(nuevoFiltro));
@@ -125,7 +127,7 @@ const Dashboard = () => {
                     </div>
                     <div className="p-3 mt-4">
                         <header className="head_dash no-print">
-                            {es_editor ? (
+                            {(es_editor || permisoSelectorClientes) ? (
                                 <SelectorCliente />
                             ) : (
                                 <>
