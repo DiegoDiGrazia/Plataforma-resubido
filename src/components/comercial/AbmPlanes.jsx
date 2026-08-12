@@ -37,6 +37,9 @@ const AbmPlanes
   const itemsPerPage = 10;  
   const desdeMarketing = new Date().toISOString().split('T')[0];
   const TOKEN = useSelector((state) => state.formulario.token);
+  
+  const permisoAlta = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Planes: Alta") || false);
+  const permisoEdicion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Planes: Edicion") || false);
 
   useEffect(() => {
     obtenerUsuarios(TOKEN).then(setUsuarios);
@@ -163,7 +166,9 @@ const handleSave = () => {
       {/* Búsqueda */}
       <div className='row miPerfilContainer soporteContainer mt-4 p-0 mb-3'>
         <div className='col buscadorNotas'> 
-          <button className="mb-2 btn btn-primary" onClick={() => handleEditClick(perfilVacio)}>Crear nuevo plan</button>
+          {permisoAlta && (
+            <button className="mb-2 btn btn-primary" onClick={() => handleEditClick(perfilVacio)}>Crear nuevo plan</button>
+          )}
           <form className='buscadorNotasForm'>
             <input
               className = 'inputBuscadorNotas'
@@ -188,8 +193,9 @@ const handleSave = () => {
                   <div className='row pt-0'>
                     <div className='col-2'>
                       <button
-                        className="btn btn-link p-0"
+                        className="btn btn-link text-primary p-0"
                         onClick={() => handleEditClick(item)}
+                        disabled={!permisoEdicion}
                       >
                         <strong>{item.nombre}</strong>
                       </button>

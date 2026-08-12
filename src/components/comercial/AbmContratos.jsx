@@ -163,6 +163,8 @@ const AbmContratos
     const [fileAAgregar, setFileAAgregar] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    const permisoAlta = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Contratos: Alta") || false);
+    const permisoEdicion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Contratos: Edicion") || false);
 
     useEffect(() => {
   console.log('contrato seleccionado:', formData);
@@ -519,9 +521,11 @@ const handleSave = () => {
       <div className='row miPerfilContainer soporteContainer mt-4 p-0 mb-3'>
         <div className='col'>
           <div className="filtrosCard">
-            <button className="btnNuevoContrato btn btn-primary" onClick={() => handleEditClick(contratoVacio)}>
-              <i className="bi bi-plus-lg" />Crear nuevo contrato
-            </button>
+            {permisoAlta && (
+              <button className="btnNuevoContrato btn btn-primary" onClick={() => handleEditClick(contratoVacio)}>
+                <i className="bi bi-plus-lg" />Crear nuevo contrato
+              </button>
+            )}
             <label className="filtroFecha">
               Vencimiento desde
               <input
@@ -605,6 +609,7 @@ const handleSave = () => {
                       <button
                         className="btn btn-link contratoCliente"
                         onClick={() => handleEditClick(item)}
+                        disabled={!permisoEdicion}
                       >
                         {item.name == null ? 'Sin cliente' : item.name}
                       </button>
@@ -625,15 +630,15 @@ const handleSave = () => {
                         <div className="contratoDato text-muted">Sin orden de compra</div>
                       )}
                     </div>
-                    <div className='col-md-3'>
-                      <div className="contratoLabel">Vigencia</div>
-                      <div className="contratoDato">{item.fecha_inicio} a {item.fecha_fin}</div>
-                      <div className="contratoLabel">Facturas emitidas</div>
-                      <div className="contratoDato">{item.facturado}/{item.facturas}</div>
-                      <div className="accionesContrato">
-                        <button className="btn btn-outline-secondary" onClick={() => cargarArchivos(item)}>
-                          <i className="bi bi-upload" />Cargar archivo
+                    <div className='col-3'>
+                      <div>Fecha inicio: {item.fecha_inicio}</div>
+                      <div>Fecha fin: {item.fecha_fin}</div>
+                      <div>Facturas Emitidas: {item.facturado}/{item.facturas}</div>
+                      <div>
+                        <button className="mb-2 btn btn-primary" onClick={() => cargarArchivos(item)}>
+                          Cargar archivo
                         </button>
+                        
                         <button className="btn btn-outline-secondary" disabled={showModalArchivosDelContrato} onClick={() => verArchivosDelContrato(item)}>
                           <i className="bi bi-folder2-open" />Ver archivos
                         </button>
@@ -641,24 +646,32 @@ const handleSave = () => {
                     </div>
                     <div className='col-md-3'>
                       <div className="accionesContrato">
-                        <button className="btn btn-outline-secondary" onClick={() => cargarComentario(item)}>
-                          <i className="bi bi-chat-left-text" />Ingresar comentario
+                        {permisoEdicion && (
+                          <button className="btn btn-outline-secondary" onClick={() => cargarComentario(item)}>
+                            <i className="bi bi-chat-left-text" />Ingresar comentario
+                          </button>
+                        )}
+                      </div>
+                      <div>
+                        <button className="mb-2 btn btn-primary" disabled={showModalComentariosDelContrato} onClick={() => verComentariosDelContrato(item)}>
+                          Ver comentarios
                         </button>
-                        <button className="btn btn-outline-secondary" disabled={showModalComentariosDelContrato} onClick={() => verComentariosDelContrato(item)}>
-                          <i className="bi bi-chat-square-text" />Ver comentarios
-                        </button>
-                        <button
-                          className="btn btn-primary"
-                          onClick={() => {
-                            handleEditClick(item);
-                            setFormData(prev => ({
-                              ...prev,
-                              id: "0"
-                            }));
-                          }}
-                        >
-                          <i className="bi bi-copy" />Duplicar contrato
-                        </button>
+                      </div>
+                      <div>
+                        {permisoEdicion && (
+                          <button
+                            className="btn btn-primary"
+                            onClick={() => {
+                              handleEditClick(item);
+                              setFormData(prev => ({
+                                ...prev,
+                                id: "0"
+                              }));
+                            }}
+                          >
+                            <i className="bi bi-copy" />Duplicar contrato
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>

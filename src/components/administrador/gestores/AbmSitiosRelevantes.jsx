@@ -11,6 +11,10 @@ import { borrarTildes } from '../../comercial/Facturas';
 const AbmSitiosRelevantes = () => {
     
   const token = useSelector((state) => state.formulario.token);
+  const permisoAlta = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Sitios: Alta") || false);
+  const permisoEdicion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Sitios: Edicion") || false);
+  const permisoBorrado = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Sitios: Borrado") || false);
+
   const [sitiosPaises, setSitiosPaises] = useState([]);
   const [sitiosProvincias, setSitiosProvincias] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -173,6 +177,7 @@ const AbmSitiosRelevantes = () => {
                     <div className='me-auto'>
                       <strong>{sitio.nombre}</strong>
                     </div>
+                    {permisoAlta && (
                     <button 
                       className='btn boton-funcion p-0 mt-1 me-2' 
                       title='Agregar sitio relevante' 
@@ -186,6 +191,7 @@ const AbmSitiosRelevantes = () => {
                     >
                       <i className='bi bi-plus-circle me-0'></i>
                     </button>
+                    )}
                   </Accordion.Header>
 
                   <Accordion.Body>
@@ -203,6 +209,7 @@ const AbmSitiosRelevantes = () => {
                               </a>
                             </div>
                             <div className='d-flex gap-2'>
+                              {permisoEdicion && (
                               <button 
                                 className='boton-funcion btn p-0'
                                 title='Editar Icono'
@@ -212,6 +219,8 @@ const AbmSitiosRelevantes = () => {
                               >
                                 <i className='bi bi-pencil-square mt-5'></i>
                               </button>
+                              )}
+                              {permisoBorrado && (
                               <button 
                                 className='boton-funcion btn p-0 mb-1' 
                                 title='Eliminar sitio relevante'
@@ -221,6 +230,7 @@ const AbmSitiosRelevantes = () => {
                               >
                                 <i className='bi bi-trash3-fill me-0'></i>
                               </button>
+                              )}
                             </div>
                           </li>
                         ))}

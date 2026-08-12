@@ -29,6 +29,8 @@ const PerfilesAdmin = () => {
   const [formData, setFormData] = useState({});
   const itemsPerPage = 10;  
   const TOKEN = useSelector((state) => state.formulario.token);
+  const permisoAlta = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Perfiles: Alta") || false);
+  const permisoEdicion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Perfiles: Edicion") || false);
 
   // Cargar usuarios
   useEffect(() => {
@@ -160,7 +162,9 @@ const handleAgregarPaginaDelPerfil = (id_perfil, id_pagina) => {
       {/* Búsqueda */}
       <div className='row miPerfilContainer soporteContainer mt-4 p-0 mb-3'>
         <div className='col buscadorNotas'> 
-          <button className="mb-2 btn btn-primary" onClick={() => handleEditClick(perfilVacio)}>Crear nuevo perfil</button>
+          {permisoAlta && (
+            <button className="mb-2 btn btn-primary" onClick={() => handleEditClick(perfilVacio)}>Crear nuevo perfil</button>
+          )}
           <form className='buscadorNotasForm'>
             <input
               className='inputBuscadorNotas'
@@ -185,8 +189,9 @@ const handleAgregarPaginaDelPerfil = (id_perfil, id_pagina) => {
                   <div className='row pt-0'>
                     <div className='col-2'>
                       <button
-                        className="btn btn-link p-0"
+                        className="btn btn-link text-primary p-0"
                         onClick={() => handleEditClick(item)}
+                        disabled={!permisoEdicion}
                       >
                         <strong>{item.nombre}</strong>
                       </button>

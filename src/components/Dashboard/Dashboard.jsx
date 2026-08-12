@@ -38,7 +38,6 @@ export function formatNumberMiles(num) {
 const Dashboard = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const es_editor = useSelector((state) => state.formulario.es_editor);
     const nombreCliente = useSelector((state) => state.formulario.cliente);
     const cliente_id = useSelector((state) => state.formulario.id_cliente);
     const token = useSelector((state) => state.formulario.token);
@@ -48,6 +47,8 @@ const Dashboard = () => {
     const [datosLocalmente, setDatosLocalmente] = useState(null); 
     const [paisFiltro, setPaisFiltro] = useState(null);
     const paises = useSelector((state) => state.formulario.geo);
+
+    const permisoSelectorClientes = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Dashboard: Selector clientes") || false);
 
     const componenteRef = useRef(null);
     const handleClickFiltro = (nuevoFiltro) => {
@@ -125,7 +126,7 @@ const Dashboard = () => {
                     </div>
                     <div className="p-3 mt-4">
                         <header className="head_dash no-print">
-                            {es_editor ? (
+                            {permisoSelectorClientes ? (
                                 <SelectorCliente />
                             ) : (
                                 <>

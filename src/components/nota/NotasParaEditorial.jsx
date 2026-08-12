@@ -139,14 +139,17 @@ const NotasParaEditorial = () => {
     const [verMasUltimo, setVerMasUltimo] = useState(1)
     const idPais = useSelector((state) => state.formulario.usuario.id_pais)
     const verMasCantidadPaginacion = 15
-    const [cargandoNotas, setCargandoNotas] = useState(true)
-    const es_editor = useSelector((state) => state.formulario.es_editor);
+    const [cargandoNotas, setCargandoNotas] = useState(true);
     const id_pais = useSelector((state) => state.formulario.usuario.id_pais);
     const paises = useSelector((state) =>state.formulario.geo);
     const nombrePaisUsuario = paises.find(pais => pais.pais_id === id_pais)?.nombre || null;
     const perfilUsuario = useSelector((state) => state.formulario.usuario.perfil);
     const esContratoConFacturacionAbierta = useSelector((state) => state.formulario.contratoConFacturacionAbierta);
     
+    const permisoSelectorClientes = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Editorial: Selector clientes") || false);
+    const permisoBorrado = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Editorial: Borrado") || false);
+    const permisoEdicion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Editorial: Edicion") || false);
+
     let CantidadDeNotasPorPagina = 200;
     const botones = [
         { id: 2, nombre: 'Publicaciones' },
@@ -366,9 +369,9 @@ const NotasParaEditorial = () => {
                         <h3 id="saludo" className='headerTusNotas'>
                             <img src="/images/tusNotasIcon.png" alt="Icono 1" className="icon me-2 icono_tusNotas" /> Tus Notas
                         </h3>
-                        {es_editor &&
-                        <SelectorCliente/> 
-                        }          
+                        {permisoSelectorClientes && (
+                            <SelectorCliente/> 
+                        )}          
                         <div className='abajoDeTusNotas'> Crea, gestiona y monitorea tus notas</div>
                     </div>
                     <div className='col boton'>
@@ -479,41 +482,23 @@ const NotasParaEditorial = () => {
                                             <p>{nota.cliente}</p>
                                         </div>
                                         
-                                        <div className='col totales_widget' id= 'botonesInteraccionNota' style={{ color: "#464d55ff"}}>
+                                    <div className='col totales_widget' id= 'botonesInteraccionNota' style={{ color: "#464d55ff"}}>
                                             {nota.estado === "PUBLICADO" && (
                                                 <a href={`http://noticiasd.com/nota/${nota.term_id}`} title="Ver nota" target="_blank" rel="noopener noreferrer">
                                                     <i class="bi bi-eye-fill m-2 fs-2"></i>
                                                 </a>
                                             )}
                                         {perfilUsuario === "1" &&  CLIENTE != "" && ///MODIFICAR A 9 DESPUES DE LAS PRUEBAS
-                                        <button title="distribuir nota"
-                                            onClick={() => editarNotaFreemium(nota, true)}
-                                            style={{background: "none", border: "none",padding: 0,
-                                                margin: 0,
-                                                cursor: "pointer",
-                                            }}
-                                        >
-                                            <img src="/images/prisma.png" alt="Duplicar Nota" className='mb-3' />
-                                        </button>
-                                        } 
-
-                                        
-                                        <button title="video youtube"
-                                            onClick={() => {
-                                            setMostrarModalYoutube(true);
-                                            setIdNotaYoutube(nota.id);
-                                            console.log(nota.id)
-                                            }}
-                                            style={{background: "none", border: "none",padding: 0,
-                                                margin: 0,
-                                                cursor: "pointer",
-                                            }}
+                                            <button title="distribuir nota"
+                                                onClick={() => editarNotaFreemium(nota, true)}
+                                                style={{background: "none", border: "none",padding: 0,
+                                                    margin: 0,
+                                                    cursor: "pointer",
+                                                }}
                                             >
-                                            <i className="bi bi-youtube m-2 fs-2"></i>
-                                        </button>
-
-                                        
-                                        
+                                                <img src="/images/prisma.png" alt="Duplicar Nota" className='mb-3' />
+                                            </button>
+                                        } 
 
                                         { nota.con_distribucion === "1" &&
                                         <Link
@@ -526,6 +511,34 @@ const NotasParaEditorial = () => {
                                         </Link>
                                         }
 
+                                        {permisoEdicion && (
+                                            <>
+                                                <button title="video youtube"
+                                                    onClick={() => {
+                                                        setMostrarModalYoutube(true);
+                                                        setIdNotaYoutube(nota.id);
+                                                        console.log(nota.id)
+                                                    }}
+                                                    style={{background: "none", border: "none",padding: 0,
+                                                        margin: 0,
+                                                        cursor: "pointer",
+                                                    }}
+                                                    >
+                                                    <i className="bi bi-youtube m-2 fs-2"></i>
+                                                </button>
+
+                                                <button title="Duplicar Nota"
+                                                    onClick={() => editarNota(nota, true)}
+                                                    style={{background: "none", border: "none",padding: 0,
+                                                        margin: 0,
+                                                        cursor: "pointer",
+                                                    }}
+                                                    >
+                                                    <i className="bi bi-back m-2 fs-2"></i>
+                                                </button>
+                                            </>
+                                        )}
+
                                         { nota.es_ia == "1" &&
                                         <button title="Obtener fuente"
                                             onClick={() => mostrarFuenteNota(nota.term_id)}
@@ -537,19 +550,13 @@ const NotasParaEditorial = () => {
                                             <i className="bi bi-menu-button-wide m-2 fs-2"></i>
                                         </button>
                                         }
-                                        <button title="Duplicar Nota"
-                                            onClick={() => editarNota(nota, true)}
-                                            style={{background: "none", border: "none",padding: 0,
-                                                margin: 0,
-                                                cursor: "pointer",
-                                            }}
-                                            >
-                                            <i className="bi bi-back m-2 fs-2"></i>
-                                        </button>
+                                        
+                                        {permisoBorrado && 
+                                        (
+                                            <BotonEliminarNota id={nota.id} token={TOKEN}></BotonEliminarNota>
+                                        )}
 
-                                        <BotonEliminarNota id={nota.id} token={TOKEN}></BotonEliminarNota>
-
-                                        </div>
+                                    </div>
                                         
                                     </>
                                 </div>

@@ -14,7 +14,6 @@ const BotonEnGenerarVistaPrevia = ({ status }) => {
     const dispatch = useDispatch();
 
     // Obtener los datos necesarios desde el estado global
-    const es_editor = useSelector((state) => state.formulario.es_editor);
     const TOKEN = useSelector((state) => state.formulario.token);
     const titulo = useSelector((state) => state.crearNota.tituloNota);
     const contenidoNota = useSelector((state) => state.crearNota.contenidoNota);

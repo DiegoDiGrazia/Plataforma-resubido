@@ -9,8 +9,6 @@ import { updateContratoConFacturacionAbierta, updatePaginasDelUsuario } from '..
 import { useDispatch } from 'react-redux';
 import './SidebarMobile.css';
 
-const clientesParaElFeed = ['Agustin Wallasch'];
-
 const Sidebar = ({ estadoActual }) => {
   const esEditor = useSelector((state) => state.formulario.es_editor);
   const esContratoConFacturacionAbierta = useSelector((state) => state.formulario.contratoConFacturacionAbierta);
@@ -21,6 +19,10 @@ const Sidebar = ({ estadoActual }) => {
   const [paginasDelPerfil, setPaginasPerfil]= useState([]);
   const [respuestaCreditos, setRespuestaCreditos] = useState(null);
   const dispatch = useDispatch();
+
+  const permisoDashboard = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Dashboard: Datos") || false);
+  const permisoFeed = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Feed") || false);
+  const permisoAdmin = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Administracion") || false);
 
   useEffect(() => {
     if (!PerfilUsuario) return;
@@ -150,7 +152,7 @@ const Sidebar = ({ estadoActual }) => {
           </Button>
 
           <ul className="list-group list-group-flush no-border list-unstyled">
-            {cliente &&
+            {cliente && permisoDashboard &&
               renderSidebarButton(
                 'dashboard',
                 'dashboard',
@@ -174,21 +176,21 @@ const Sidebar = ({ estadoActual }) => {
               'Auto-entrevistas',
               'bi bi-mic-fill'
             )}
-            {PerfilUsuario == '1' && renderSidebarButton(
+            {(PerfilUsuario == '1' || permisoAdmin) && renderSidebarButton(
               'Administrador',
               'administrador',
               '/images/auto_entrevistas_icon.png',
               'Administración',
               'bi bi-gear-fill'
             )}
-            {PerfilUsuario == '1' || clientesParaElFeed.includes(cliente) && renderSidebarButton(
+            {PerfilUsuario == '1' || permisoFeed && renderSidebarButton(
               'Feed',
               'feed',
               '/images/auto_entrevistas_icon.png',
               'Feed',
               'bi bi-rss-fill'
             )}
-            {paginasDelPerfil.find((pagina) => pagina.nombre == "Distribucion" || pagina.nombre == "Monitor Distribucion" ) && renderSidebarButton(
+            {paginasDelPerfil.find((pagina) => pagina.nombre === "Distribucion: Listado") && renderSidebarButton(
               'distribucion',
               'distribucion',
               '/images/auto_entrevistas_icon.png',

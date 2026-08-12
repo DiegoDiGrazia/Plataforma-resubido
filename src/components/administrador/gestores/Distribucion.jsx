@@ -218,6 +218,9 @@ const DistribucionAdmin = () => {
   const [showContratoModal, setShowContratoModal] = useState(false);
   const [contratoSeleccionado, setContratoSeleccionado] = useState(null);
 
+  const permisoGuardarComentario = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Distribucion: Guardar comentario") || false);
+  const permisoMarcarDistribucion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Distribucion: Marcar distribucion") || false);
+
   const obtenerTermId = async (nota) => {
     if (termIdsPorGeneracion[nota.id_generacion]) {
       return termIdsPorGeneracion[nota.id_generacion];
@@ -620,32 +623,36 @@ const goToPage = (newPage) => {
                                   <button className="btn btn-outline-primary w-100" onClick={() => abrirCreativo(nota)}>CREATIVO</button>
                                 </div>
                                 <div className="row p-1">
-                                  <strong>Comentarios:</strong>
+                                  {permisoGuardarComentario && (
+                                    <>
+                                    <strong>Comentarios:</strong>
 
-                                  <textarea
-                                    className="form-control mt-1"
-                                    value={comentarios[nota.id] ?? nota.comentarios ?? ''}
-                                    onChange={(e) => {
-                                      setComentarios(prev => ({
-                                        ...prev,
-                                        [nota.id]: e.target.value
-                                      }));
+                                    <textarea
+                                      className="form-control mt-1"
+                                      value={comentarios[nota.id] ?? nota.comentarios ?? ''}
+                                      onChange={(e) => {
+                                        setComentarios(prev => ({
+                                          ...prev,
+                                          [nota.id]: e.target.value
+                                        }));
 
-                                      nota.comentarios = e.target.value;
-                                    }}
-                                  />
+                                        nota.comentarios = e.target.value;
+                                      }}
+                                    />
 
-                                  <button
-                                    className="btn btn-outline-secondary w-100 mt-2"
-                                    onClick={() =>
-                                      setearComentario(
-                                        TOKEN,
-                                        nota
-                                      )
-                                    }
-                                  >
-                                    Guardar comentario
-                                  </button>
+                                    <button
+                                      className="btn btn-outline-secondary w-100 mt-2"
+                                      onClick={() =>
+                                        setearComentario(
+                                          TOKEN,
+                                          nota
+                                        )
+                                      }
+                                    >
+                                      Guardar comentario
+                                    </button>
+                                    </>
+                                  )}
                                   {imagenesFeedPorGeneracion[nota.id_generacion] && (
                                     <button
                                       className="btn btn-outline-secondary w-100 mt-2"
