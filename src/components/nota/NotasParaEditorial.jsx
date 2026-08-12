@@ -139,8 +139,7 @@ const NotasParaEditorial = () => {
     const [verMasUltimo, setVerMasUltimo] = useState(1)
     const idPais = useSelector((state) => state.formulario.usuario.id_pais)
     const verMasCantidadPaginacion = 15
-    const [cargandoNotas, setCargandoNotas] = useState(true)
-    const es_editor = useSelector((state) => state.formulario.es_editor);
+    const [cargandoNotas, setCargandoNotas] = useState(true);
     const id_pais = useSelector((state) => state.formulario.usuario.id_pais);
     const paises = useSelector((state) =>state.formulario.geo);
     const nombrePaisUsuario = paises.find(pais => pais.pais_id === id_pais)?.nombre || null;
@@ -370,7 +369,7 @@ const NotasParaEditorial = () => {
                         <h3 id="saludo" className='headerTusNotas'>
                             <img src="/images/tusNotasIcon.png" alt="Icono 1" className="icon me-2 icono_tusNotas" /> Tus Notas
                         </h3>
-                        {(es_editor || permisoSelectorClientes) && (
+                        {permisoSelectorClientes && (
                             <SelectorCliente/> 
                         )}          
                         <div className='abajoDeTusNotas'> Crea, gestiona y monitorea tus notas</div>

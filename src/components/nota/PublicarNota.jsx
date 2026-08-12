@@ -269,7 +269,7 @@ const PublicarNota = () => {
                                         <BotonPublicarNota status="BORRADOR" isLoading={isLoading} setIsLoading={setIsLoading} />
                                     )}
 
-                                    {(es_editor && permisoPublicarNota) && 
+                                    {permisoPublicarNota && 
                                         <BotonPublicarNota 
                                             status="PUBLICADO" 
                                             isLoading={isLoading} 

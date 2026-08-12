@@ -44,6 +44,7 @@ const IconosDistribucionConMonto = ({ nota, token, geo, contratos }) => {
     const [plataformaConfirmacion, setPlataformaConfirmacion] = useState('');
 
     const permisoEdicionPresupuestos = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Distribucion: Edicion presupuestos") || false);
+    const permisoMarcarDistribucion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Distribucion: Marcar distribucion") || false);
 
     const alcance = useMemo(() => {
         if (!contratos || !nota.cliente) return 0;
@@ -153,22 +154,23 @@ const IconosDistribucionConMonto = ({ nota, token, geo, contratos }) => {
         <div className="col-3">
             <div className="row p-1"><strong>Presupuestos plataformas</strong></div>
             {PLATAFORMAS.map((plataforma) => (
-                <div className="row p-1 align-items-center" key={plataforma.key}>
+                <div className="row p-1 align-items-center justify-content-between" key={plataforma.key}>
                     <div className="col-auto d-flex align-items-center pe-0">
                         <i
                             className={`bi ${plataforma.icono} fs-5 me-1 ` + obtenerColorDeEstadoDistribucionDeNota(primerosDatos[plataforma.key])}
-                            style={{ cursor: primerosDatos[plataforma.key] == null ? 'pointer' : 'default' }}
-                            onClick={() => {
-                                if (primerosDatos[plataforma.key] == null) {
-                                    setAccionPendiente(() => () => marcarComoDistribuido(plataforma));
-                                    setPlataformaConfirmacion(plataforma.label);
-                                    setShowConfirmacion(true);
-                                }
-                            }}
+                            style={{ cursor: (permisoMarcarDistribucion && (primerosDatos[plataforma.key] == null)) ? 'pointer' : 'default' }}
+                            onClick={ permisoMarcarDistribucion ? () => {
+                                    if (primerosDatos[plataforma.key] == null) {
+                                        setAccionPendiente(() => () => marcarComoDistribuido(plataforma));
+                                        setPlataformaConfirmacion(plataforma.label);
+                                        setShowConfirmacion(true);
+                                    }
+                                } : undefined 
+                            }
                         ></i>
                         <strong>{plataforma.label}:</strong>
                     </div>
-                    <div className="col">
+                    <div className="col-6">
                         <input
                             type="text"
                             inputMode="decimal"
