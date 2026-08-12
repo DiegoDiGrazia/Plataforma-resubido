@@ -33,7 +33,7 @@ import { obtenerFeedsPorCliente, agregarNotaAFeed, crearFeed, editarDistribucion
 
         const guardarPosicion = async (token, id_nota, posicion) => {
             await editarDistribucionGeneracion(token, id_nota, {
-                banner_data: `{vp:${posicion}, historiaTipo:${tipo}}`,
+                banner_data: `{'vp':${posicion}, 'historiaTipo':${tipo}}`,
             });
         }
 
