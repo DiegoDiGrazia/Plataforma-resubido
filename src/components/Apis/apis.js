@@ -109,3 +109,38 @@ export const obtenerGeneracion = async (token, id_generacion) => {
   if (!response.ok) return null;
   return response.json();
 };
+
+// Clientes
+
+export const obtenerClientes = (token) =>
+  fetch(`${BASE_URL}/clientes`, {
+    headers: headers(token),
+  }).then((r) => r.json());
+
+export const obtenerCliente = async (token, id_cliente) => {
+  const response = await fetch(`${BASE_URL}/clientes/${id_cliente}`, {
+    headers: headers(token),
+  });
+  if (!response.ok) return null;
+  return response.json();
+};
+
+export const crearCliente = (token, data) =>
+  fetch(`${BASE_URL}/clientes`, {
+    method: "POST",
+    headers: jsonHeaders(token),
+    body: JSON.stringify(data),
+  }).then((r) => r.json());
+
+export const actualizarCliente = (token, id_cliente, data) =>
+  fetch(`${BASE_URL}/clientes/${id_cliente}`, {
+    method: "PATCH",
+    headers: jsonHeaders(token),
+    body: JSON.stringify(data),
+  }).then((r) => r.json());
+
+export const eliminarCliente = (token, id_cliente) =>
+  fetch(`${BASE_URL}/clientes/${id_cliente}`, {
+    method: "DELETE",
+    headers: headers(token),
+  });

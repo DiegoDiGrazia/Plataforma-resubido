@@ -5,7 +5,8 @@ import "../miPerfil/miPerfil.css";
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import ModalMensaje from '../administrador/gestores/ModalMensaje';
-import { obtenerClientes, obtenerContratos, obtenerPlanesMarketing, obtenerComisionistas, cargarArchivo } from '../administrador/gestores/apisUsuarios'; // Importa la función para obtener usuarios
+import { obtenerContratos, obtenerPlanesMarketing, obtenerComisionistas, cargarArchivo } from '../administrador/gestores/apisUsuarios'; // Importa la función para obtener usuarios
+import { obtenerClientes } from '../Apis/apis';
 import '../administrador/gestores/AbmsMobile.css';
 import './AbmContratos.css';
 import DropdawnSiNo from './DropdawnSiNo'
@@ -145,6 +146,7 @@ const AbmContratos
     const itemsPerPage = 10;  
     const desdeMarketing = new Date().toISOString().split('T')[0];
     const TOKEN = useSelector((state) => state.formulario.token);
+    const idClienteLogueado = useSelector((state) => state.formulario.id_cliente);
     const [fechaDesde, setFechaDesde] = useState(primerMesDelAnio());
     const [fechaHasta, setFechaHasta] = useState(ultimoMesDelAnio());
     const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
@@ -283,9 +285,30 @@ const AbmContratos
         obtenerComisionistas(TOKEN)
       ]);
 
-      setClientes(clientesData);
+      const listaClientes = Array.isArray(clientesData) ? clientesData : [];
+      const listaContratos = Array.isArray(contratosData) ? contratosData : [];
+      const clienteLogueado = listaClientes.find((c) => c.id == idClienteLogueado);
+      const logueadoEsFranquicia = clienteLogueado?.tipo === 'FRANQUICIA';
+
+      let clientesVisibles = listaClientes;
+      let contratosVisibles = listaContratos;
+
+      if (logueadoEsFranquicia) {
+        let cuentasCreadas = [];
+        try {
+          const datos = clienteLogueado.datosFranquicia ? JSON.parse(clienteLogueado.datosFranquicia) : null;
+          cuentasCreadas = Array.isArray(datos?.cuentas_creadas) ? datos.cuentas_creadas : [];
+        } catch (err) {
+          cuentasCreadas = [];
+        }
+        const idsPermitidos = [clienteLogueado.id, ...cuentasCreadas.map((cuenta) => cuenta.id)];
+        clientesVisibles = listaClientes.filter((c) => idsPermitidos.some((id) => id == c.id));
+        contratosVisibles = listaContratos.filter((c) => idsPermitidos.some((id) => id == c.id_cliente));
+      }
+
+      setClientes(clientesVisibles);
       setPlanes(planesData);
-      setContratos(contratosData);
+      setContratos(contratosVisibles);
       setComisionistas(comisionistasData);
 
     } catch (error) {
@@ -296,7 +319,7 @@ const AbmContratos
   };
 
     cargarDatos();
-  }, [TOKEN]); 
+  }, [TOKEN, idClienteLogueado]);
 
 
   // Filtrar por búsqueda

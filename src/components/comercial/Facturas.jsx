@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { obtenerMesActual } from '../administrador/gestores/Distribucion.jsx';
-import DropdownFiltro from './DropdownFiltro.jsx'; 
+import DropdownFiltro from './DropdownFiltro.jsx';
 import './Facturas.css'
-import { obtenerFacturas, editarFactura, unificarFacturas, dividirFactura, 
-         cargarFacturaAbierta, obtenerContratos, obtenerFacturasDeContrato, 
+import { obtenerFacturas, editarFactura, unificarFacturas, dividirFactura,
+         cargarFacturaAbierta, obtenerContratos, obtenerFacturasDeContrato,
          obtenerArchivosDeContrato, obtenerComentariosDeContrato, eliminarFacturaAbierta,
          eliminarArchivo, cargarArchivo, agregarComentario } from '../administrador/gestores/apisUsuarios.jsx';
+import { obtenerClientes } from '../Apis/apis';
 import { descargarExcel } from '../funciones/creacionCSV';
 
 const SpinnerCarga = ({ texto = "Cargando..." }) => (
@@ -26,6 +27,7 @@ const Facturas = () =>  {
     
     const token = useSelector((state) => state.formulario.token);
     const idUsuario = useSelector((state) => state.formulario.usuario.id);
+    const idClienteLogueado = useSelector((state) => state.formulario.id_cliente);
     const permisoAlta = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Facturas: Alta") || false);
     const permisoEdicion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Facturas: Edicion") || false);
     const permisoBorrado = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Facturas: Borrado") || false);
@@ -61,6 +63,8 @@ const Facturas = () =>  {
     const [subiendoArchivo, setSubiendoArchivo] = useState(false);
     const [nuevoComentario, setNuevoComentario] = useState("");
     const [guardandoComentario, setGuardandoComentario] = useState(false);
+    const [clientes, setClientes] = useState([]);
+    const [todosLosContratos, setTodosLosContratos] = useState([]);
 
     useEffect(() => {
         if (token && fechaDesde && fechaHasta) {
@@ -74,12 +78,57 @@ const Facturas = () =>  {
         if(token) {
             setCargandoContratos(true);
             obtenerContratos(token).then((contratosRecibidos) => {
-                setContratosAbiertos(contratosRecibidos.filter((contrato) =>
+                const lista = Array.isArray(contratosRecibidos) ? contratosRecibidos : [];
+                setTodosLosContratos(lista);
+                setContratosAbiertos(lista.filter((contrato) =>
                     contrato.abierto === "SI"));
             })
             .finally(() => setCargandoContratos(false));
         }
     }, [token])
+
+    useEffect(() => {
+        if (token) {
+            obtenerClientes(token).then((data) => setClientes(Array.isArray(data) ? data : []));
+        }
+    }, [token]);
+
+    // Si el cliente logueado es una FRANQUICIA, solo puede ver lo suyo y lo de sus cuentas creadas
+    const clienteLogueado = useMemo(() => (
+        clientes.find((c) => c.id == idClienteLogueado)
+    ), [clientes, idClienteLogueado]);
+
+    const idsClientesPermitidos = useMemo(() => {
+        if (clienteLogueado?.tipo !== 'FRANQUICIA') return null;
+        let cuentasCreadas = [];
+        try {
+            const datos = clienteLogueado.datosFranquicia ? JSON.parse(clienteLogueado.datosFranquicia) : null;
+            cuentasCreadas = Array.isArray(datos?.cuentas_creadas) ? datos.cuentas_creadas : [];
+        } catch (err) {
+            cuentasCreadas = [];
+        }
+        return [clienteLogueado.id, ...cuentasCreadas.map((cuenta) => cuenta.id)];
+    }, [clienteLogueado]);
+
+    const contratoIdAClienteId = useMemo(() => {
+        const mapa = {};
+        todosLosContratos.forEach((contrato) => { mapa[contrato.id] = contrato.id_cliente; });
+        return mapa;
+    }, [todosLosContratos]);
+
+    const facturasVisibles = useMemo(() => {
+        if (!idsClientesPermitidos) return facturas;
+        return facturas.filter((factura) =>
+            idsClientesPermitidos.some((id) => id == contratoIdAClienteId[factura.id_contrato])
+        );
+    }, [facturas, idsClientesPermitidos, contratoIdAClienteId]);
+
+    const contratosAbiertosVisibles = useMemo(() => {
+        if (!idsClientesPermitidos) return contratosAbiertos;
+        return contratosAbiertos.filter((contrato) =>
+            idsClientesPermitidos.some((id) => id == contrato.id_cliente)
+        );
+    }, [contratosAbiertos, idsClientesPermitidos]);
 
     const accionesBotones = [
 
@@ -382,9 +431,9 @@ const Facturas = () =>  {
               (certificacion === "No" && factura.lleva_certificacion === "NO")
     }
 
-    const facturasFiltradas = facturas && facturas.length > 0 ? 
-        facturas.filter((factura) => filtrarPorBusqueda(factura) && filtrarPorEmision(factura) && 
-                                     filtrarPorDeuda(factura) && filtrarPorEmpresa(factura) && 
+    const facturasFiltradas = facturasVisibles && facturasVisibles.length > 0 ?
+        facturasVisibles.filter((factura) => filtrarPorBusqueda(factura) && filtrarPorEmision(factura) &&
+                                     filtrarPorDeuda(factura) && filtrarPorEmpresa(factura) &&
                                      filtrarPorCertificacion(factura)) : [];
     
     {/* FUNCION PREPARAR EXCEL */}
@@ -715,7 +764,7 @@ const Facturas = () =>  {
                                             required
                                         >
                                             <option value="" disabled hidden>Seleccione un contrato...</option>
-                                            {contratosAbiertos.map((c) => (
+                                            {contratosAbiertosVisibles.map((c) => (
                                                 <option key={c.id} value={c.id}>{`${c.razon_social} (${c.fecha_inicio} hasta ${c.fecha_fin})`}</option>
                                             ))}
                                         </select>

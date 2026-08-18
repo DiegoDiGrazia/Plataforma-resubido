@@ -38,7 +38,7 @@ const PublicarNota = () => {
     const permisoBorrador = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Editorial: Borrador") || false);
     const permisoRevision = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Editorial: Revision") || false);
     const permisoDatosCreacion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Editorial: Datos creacion") || false);
-    const permisoTutorialCreacion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Editorial: Tutorial creacion") || false);
+    const permisoTutorialCreacion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Editorial: Tutoriales creacion") || false);
 
     const manejarCambioComentarios = (e) => {
         dispatch(setComentario(e.target.value));

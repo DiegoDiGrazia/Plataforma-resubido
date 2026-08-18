@@ -3,9 +3,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "../../miPerfil/miPerfil.css";
 import { useSelector } from 'react-redux';
-import axios from 'axios';
 import ModalMensaje from '../gestores/ModalMensaje';
-import { obtenerUsuarios, obtenerClientes, obtenerPerfiles, obtenerGeo, obtenerPlanesMarketing } from './apisUsuarios'; // Importa la función para obtener usuarios
+import { obtenerUsuarios, obtenerPerfiles, obtenerGeo, obtenerPlanesMarketing } from './apisUsuarios'; // Importa la función para obtener usuarios
+import { obtenerClientes, crearCliente, actualizarCliente } from '../../Apis/apis';
 import ArbolDistribucion from '../../nota/Editorial/ArbolDistribucion';
 import './AbmsMobile.css';
 
@@ -15,6 +15,7 @@ const tiposUsuario = [
   {'id': "3", 'nombre': "CAMPAÑA"},
   {'id': "4", 'nombre': "AGENCIA"},
   {'id': "5", 'nombre': "GESTION"},
+  {'id': "6", 'nombre': "FRANQUICIA"}
 ];
 
 const tipoJurisdiccion = [
@@ -57,22 +58,47 @@ const AbmClientes
   const itemsPerPage = 10;  
   const desdeMarketing = new Date().toISOString().split('T')[0];
   const TOKEN = useSelector((state) => state.formulario.token);
+  const idClienteLogueado = useSelector((state) => state.formulario.id_cliente);
   const permisoAlta = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Cuentas: Alta") || false);
   const permisoEdicion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Cuentas: Edicion") || false);
 
   useEffect(() => {
     obtenerUsuarios(TOKEN).then(setUsuarios);
-    obtenerClientes(TOKEN).then(setClientes);
+    obtenerClientes(TOKEN).then((data) => setClientes(Array.isArray(data) ? data : []));
     obtenerPlanesMarketing(TOKEN, desdeMarketing, desdeMarketing).then(setPlanes);
     obtenerGeo().then(setGeo);
 }, [TOKEN]);
 
+  // Cliente logueado y si es de tipo FRANQUICIA
+  const clienteLogueado = useMemo(() => (
+    clientes.find((c) => c.id == idClienteLogueado)
+  ), [clientes, idClienteLogueado]);
+
+  const esFranquicia = clienteLogueado?.tipo === 'FRANQUICIA';
+
+  const clientesDeLaFranquicia = useMemo(() => {
+    if (!clienteLogueado?.datosFranquicia) return [];
+    try {
+      const datos = JSON.parse(clienteLogueado.datosFranquicia);
+      return Array.isArray(datos?.cuentas_creadas) ? datos.cuentas_creadas : [];
+    } catch (err) {
+      return [];
+    }
+  }, [clienteLogueado]);
+
+  // Un cliente FRANQUICIA solo ve las cuentas que el mismo creo
+  const clientesVisibles = useMemo(() => {
+    if (!esFranquicia) return clientes;
+    const idsPropios = clientesDeLaFranquicia.map((c) => c.id);
+    return clientes.filter((c) => idsPropios.includes(c.id));
+  }, [clientes, esFranquicia, clientesDeLaFranquicia]);
+
   // Filtrar por búsqueda
   const filteredClientes = useMemo(() => {
-    return clientes.filter((item) =>  //-- Cambia esto a usuarios cuando tengas la API
-      item.name.toLowerCase().includes(search.toLowerCase()) 
+    return clientesVisibles.filter((item) =>
+      item.name?.toLowerCase().includes(search.toLowerCase())
     );
-  }, [search, clientes]);
+  }, [search, clientesVisibles]);
 
   const totalPages = Math.ceil(filteredClientes.length / itemsPerPage);
 
@@ -101,29 +127,60 @@ const AbmClientes
     modal.show();
 };
 
-const handleSave = () => {
-  axios
-    .post(
-      "https://panel.serviciosd.com/app_cliente_edit",
-      {
-        token: TOKEN,
-        ...formData,
-      },
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      }
-    )
-    .then(() => {
-      setMensajeModalExito('Los cambios se realizaron correctamente.');
-      setShowModal(true);
-      setTimeout(() => {
-        window.location.reload(); 
-      }, 1500);
-    })
-    .catch((err) => {
-      console.log("Error al guardar cambios:", err);
-    });
+const buildClientePayload = (data) => {
+  const payload = {
+    name: data.name || undefined,
+    slug: data.slug || undefined,
+    code: data.code || undefined,
+    population_connected: data.population_connected !== "" && data.population_connected != null ? Number(data.population_connected) : undefined,
+    population_shown: data.population_shown !== "" && data.population_shown != null ? Number(data.population_shown) : undefined,
+    authors: data.authors || undefined,
+    id_plan: data.id_plan || undefined,
+    muestra_consumo: data.muestra_consumo !== "" && data.muestra_consumo != null ? Number(data.muestra_consumo) : undefined,
+    fecha_alta: data.fecha_alta || undefined,
+    tipo: data.tipo || undefined,
+    juridisccion: data.juridisccion || undefined,
+    provincia_id: data.provincia_cliente?.provincia_id || undefined,
+    municipio_id: data.municipio_cliente?.municipio_id || undefined,
+    pais_id: data.pais_cliente?.pais_id || undefined,
+    term_id: data.term_id || undefined,
   };
+  Object.keys(payload).forEach((key) => payload[key] === undefined && delete payload[key]);
+  return payload;
+};
+
+const handleSave = async () => {
+  const payload = buildClientePayload(formData);
+  try {
+    if (selectedClient && selectedClient.id != 0) {
+      await actualizarCliente(TOKEN, selectedClient.id, payload);
+    } else {
+      if (esFranquicia && clienteLogueado) {
+        // El cliente creado queda marcado con quien lo creo
+        payload.datosFranquicia = JSON.stringify({
+          creado_por_franquicia: true,
+          franquicia_id: clienteLogueado.id,
+          franquicia_nombre: clienteLogueado.name,
+        });
+      }
+      const nuevoCliente = await crearCliente(TOKEN, payload);
+      // La franquicia guarda sus cuentas creadas dentro de su propio datosFranquicia.cuentas_creadas
+      if (esFranquicia && clienteLogueado && nuevoCliente?.id) {
+        const cuentasCreadas = [...clientesDeLaFranquicia, { id: nuevoCliente.id, name: nuevoCliente.name }];
+        await actualizarCliente(TOKEN, clienteLogueado.id, {
+          datosFranquicia: JSON.stringify({ cuentas_creadas: cuentasCreadas }),
+        });
+      }
+    }
+    setMensajeModalExito('Los cambios se realizaron correctamente.');
+    setShowModal(true);
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500);
+  } catch (err) {
+    console.log("Error al guardar cambios:", err);
+  }
+};
 
   return (
     <div className="content flex-grow-1 crearNotaGlobal">
@@ -313,9 +370,9 @@ const handleSave = () => {
                     pais={formData.pais_cliente || ""}
                     provincia={formData.provincia_cliente || ""}
                     municipio={formData.municipio_cliente || ""}
-                    onSetPais={(e) =>setFormData({ ...formData, pais_cliente: e.target.value })}
-                    onSetProvincia={(e) =>setFormData({ ...formData, provincia_cliente: e.target.value })}
-                    onSetMunicipio={(e) =>setFormData({ ...formData, municipio_cliente: e.target.value })}
+                    onSetPais={(opcion) => setFormData({ ...formData, pais_cliente: opcion })}
+                    onSetProvincia={(opcion) => setFormData({ ...formData, provincia_cliente: opcion })}
+                    onSetMunicipio={(opcion) => setFormData({ ...formData, municipio_cliente: opcion })}
                   />
 
                   {/* authors */}

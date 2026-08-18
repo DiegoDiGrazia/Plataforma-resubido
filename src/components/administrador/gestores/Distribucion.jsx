@@ -4,8 +4,8 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "../../miPerfil/miPerfil.css";
 import { useSelector } from 'react-redux';
 import ModalMensaje from '../gestores/ModalMensaje';
-import {obtenerClientes, obtenerPlanesMarketing, obtenerVideosYoutube, obtenerGeo, obtenerContratos } from './apisUsuarios';
-import { obtenerDistribucionPorFechaVencimiento, obtenerGeneracion, editarDistribucionGeneracion } from '../../Apis/apis';
+import {obtenerPlanesMarketing, obtenerVideosYoutube, obtenerGeo, obtenerContratos } from './apisUsuarios';
+import { obtenerDistribucionPorFechaVencimiento, obtenerGeneracion, editarDistribucionGeneracion, obtenerClientes } from '../../Apis/apis';
 import CopiarTexto from './CopiarTexto';
 import IconosDistribucionConMonto, { PLATAFORMAS } from './IconosDistribucionConMonto';
 import { Accordion } from 'react-bootstrap';
@@ -207,8 +207,9 @@ const DistribucionAdmin = () => {
   const [mensajeModalExito, setMensajeModalExito] = useState("Los cambios se realizaron correctamente.");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const itemsPerPage = 100;  
+  const itemsPerPage = 100;
   const TOKEN = useSelector((state) => state.formulario.token);
+  const idClienteLogueado = useSelector((state) => state.formulario.id_cliente);
   const [loading, setLoading] = useState(false); 
   const [geo, setGeo] = useState("");
   const [contratos, setContratos] = useState([]);
@@ -433,13 +434,36 @@ useEffect(() => {
     window.open(`/notas-cliente/${cliente}/${fechaDesde}-01/${fechaHasta}-${ultimoDiaHasta}`, "_blank");
   };
 
+// Si el cliente logueado es una FRANQUICIA, solo puede ver sus notas y las de sus cuentas creadas
+const clienteLogueado = useMemo(() => (
+  clientes.find((c) => c.id == idClienteLogueado)
+), [clientes, idClienteLogueado]);
+
+const nombresClientesPermitidos = useMemo(() => {
+  if (clienteLogueado?.tipo !== 'FRANQUICIA') return null;
+  let cuentasCreadas = [];
+  try {
+    const datos = clienteLogueado.datosFranquicia ? JSON.parse(clienteLogueado.datosFranquicia) : null;
+    cuentasCreadas = Array.isArray(datos?.cuentas_creadas) ? datos.cuentas_creadas : [];
+  } catch (err) {
+    cuentasCreadas = [];
+  }
+  const idsPermitidos = [clienteLogueado.id, ...cuentasCreadas.map((cuenta) => cuenta.id)];
+  return clientes
+    .filter((c) => idsPermitidos.some((id) => id == c.id))
+    .map((c) => c.name);
+}, [clienteLogueado, clientes]);
+
 const filteredClientes = useMemo(() => {
-  const allKeys = Object.keys(notasGeneracionesAgrupadas || {});
+  let allKeys = Object.keys(notasGeneracionesAgrupadas || {});
+  if (nombresClientesPermitidos) {
+    allKeys = allKeys.filter((clave) => nombresClientesPermitidos.includes(clave));
+  }
   if (!search) return allKeys;
   return allKeys.filter((clave) =>
     clave.toLowerCase().includes(search.toLowerCase())
   );
-}, [search, notasGeneracionesAgrupadas]);
+}, [search, notasGeneracionesAgrupadas, nombresClientesPermitidos]);
 
 const totalPages = Math.ceil(filteredClientes.length / itemsPerPage);
 
