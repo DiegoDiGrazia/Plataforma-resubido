@@ -12,7 +12,6 @@
     display: inline-flex;
     align-items: center; /* Centra el contenido verticalmente */
     justify-content: right; /* Centra el contenido horizontalmente */
-    height: 40px; /* Altura del botón */
     cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
     position: relative;
     float: right;
@@ -49,9 +48,32 @@
     margin: 10px 10px;
 }
 
-#head_dash {
-    border-bottom: 1px solid #e7dfdf; 
+#head_dash, .head_dash {
+    border-bottom: 1px solid #e7dfdf;
     padding: 20px;
+}
+
+.bienvenidaFranquicia {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+    max-width: calc(100% - 60px);
+    vertical-align: middle;
+}
+
+.bienvenidaFranquiciaTexto h4 {
+    margin: 0 0 4px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #0E0E0E;
+}
+
+.bienvenidaFranquiciaTexto h5 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 500;
+    color: #667085;
 }
 
 #subtitulo_performance{

@@ -58,7 +58,7 @@ const AbmClientes
   const itemsPerPage = 10;  
   const desdeMarketing = new Date().toISOString().split('T')[0];
   const TOKEN = useSelector((state) => state.formulario.token);
-  const idClienteLogueado = useSelector((state) => state.formulario.id_cliente);
+  const idClienteLogueado = useSelector((state) => state.formulario.usuario.id_cliente);
   const permisoAlta = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Cuentas: Alta") || false);
   const permisoEdicion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Cuentas: Edicion") || false);
 
@@ -309,7 +309,8 @@ const handleSave = async () => {
                       {formData.tipo || "Seleccionar tipo"}
                       </button>
                       <ul className="dropdown-menu w-100">
-                        {tiposUsuario.map((tipo) => (
+                        {tiposUsuario.filter((tipo) => !esFranquicia || tipo.nombre !== 'FRANQUICIA').map((tipo) => (
+
                         <li id={tipo.id} key={tipo.id}>
                           <button
                             type="button"
@@ -364,7 +365,7 @@ const handleSave = async () => {
                   }
                   {/* localizacion */}
                   <ArbolDistribucion
-                    jurisdiccion = {formData.juridisccion || 'NINGUNA'}
+                    jurisdiccion = {formData.tipo === 'GESTION' ? (formData.juridisccion || 'NINGUNA') : null}
                     esGestion = {formData.tipo === 'GESTION' || false}
                     TOKEN={TOKEN}
                     pais={formData.pais_cliente || ""}

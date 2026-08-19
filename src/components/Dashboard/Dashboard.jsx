@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { Button } from 'react-bootstrap';
@@ -26,6 +26,7 @@ import { formatDate } from '../barplot/Barplot.jsx';
 import { setClienteNota } from '../../redux/crearNotaSlice.js';
 import { traerDatosLocalmente } from '../../utils/buscarEnLocal.js';
 import { obtenerResumenDashboardCliente } from '../administrador/gestores/apisUsuarios.jsx';
+import { obtenerClientes } from '../Apis/apis';
 import SelectorConBuscador from '../nota/Editorial/SelectorConBuscador.jsx';
 
 export function formatNumberMiles(num) {
@@ -47,8 +48,21 @@ const Dashboard = () => {
     const [datosLocalmente, setDatosLocalmente] = useState(null); 
     const [paisFiltro, setPaisFiltro] = useState(null);
     const paises = useSelector((state) => state.formulario.geo);
+    const idClienteLogueado = useSelector((state) => state.formulario.usuario.id_cliente);
+    const [clientes, setClientes] = useState([]);
 
     const permisoSelectorClientes = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Dashboard: Selector clientes") || false);
+
+    useEffect(() => {
+        if (token) {
+            obtenerClientes(token).then((data) => setClientes(Array.isArray(data) ? data : []));
+        }
+    }, [token]);
+
+    const clienteLogueado = useMemo(() => (
+        clientes.find((c) => c.id == idClienteLogueado)
+    ), [clientes, idClienteLogueado]);
+    const esFranquicia = clienteLogueado?.tipo === 'FRANQUICIA';
 
     const componenteRef = useRef(null);
     const handleClickFiltro = (nuevoFiltro) => {
@@ -126,7 +140,15 @@ const Dashboard = () => {
                     </div>
                     <div className="p-3 mt-4">
                         <header className="head_dash no-print">
-                            {permisoSelectorClientes ? (
+                            {esFranquicia ? (
+                                <div className="bienvenidaFranquicia">
+                                    <div className="bienvenidaFranquiciaTexto">
+                                        <h4>Bienvenido noticias(d) {clienteLogueado?.name}</h4>
+                                        <h5>¿Qué dashboard desea ver?</h5>
+                                    </div>
+                                    <SelectorCliente />
+                                </div>
+                            ) : permisoSelectorClientes ? (
                                 <SelectorCliente />
                             ) : (
                                 <>

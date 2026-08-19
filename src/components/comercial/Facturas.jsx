@@ -27,7 +27,7 @@ const Facturas = () =>  {
     
     const token = useSelector((state) => state.formulario.token);
     const idUsuario = useSelector((state) => state.formulario.usuario.id);
-    const idClienteLogueado = useSelector((state) => state.formulario.id_cliente);
+    const idClienteLogueado = useSelector((state) => state.formulario.usuario.id_cliente);
     const permisoAlta = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Facturas: Alta") || false);
     const permisoEdicion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Facturas: Edicion") || false);
     const permisoBorrado = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Facturas: Borrado") || false);

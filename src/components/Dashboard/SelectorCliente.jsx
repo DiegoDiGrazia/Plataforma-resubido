@@ -20,7 +20,7 @@ const SelectorCliente= () => {
     const paisID = useSelector((state) => state.formulario.usuario.id_pais)
     const nombreCliente = useSelector((state) => state.formulario.cliente)
     const TOKEN = useSelector((state) => state.formulario.token)
-    const idClienteLogueado = useSelector((state) => state.formulario.id_cliente)
+    const idClienteLogueado = useSelector((state) => state.formulario.usuario.id_cliente)
     const todosLosClientes = useSelector((state) => state.dashboard.todosLosClientes) || []
     const navigate = useNavigate();
     const [esFranquicia, setEsFranquicia] = useState(false);

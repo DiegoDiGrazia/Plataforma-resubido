@@ -18,8 +18,11 @@ const Formulario = () => {
     const [contraseñaIncorrecta, setContraseñaIncorrecta] = useState(false)
 
     useEffect(() => {
-        obtenerGeo().then(setGeo);
-    }, []);
+        obtenerGeo().then((datos) => {
+            setGeo(datos);
+            dispatch(updateGeo(datos?.paises || []));
+        });
+    }, [dispatch]);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -45,7 +48,6 @@ const Formulario = () => {
                 dispatch(updateEsEditor(false))
                 dispatch(updateUsuario(response.data.item))
                 dispatch(updateIdUsuario(response.data.id))
-                dispatch(updateGeo(geo.paises))
 
                 if(!response.data.item.cliente){
                     console.log("entre porque no tiene cliente")

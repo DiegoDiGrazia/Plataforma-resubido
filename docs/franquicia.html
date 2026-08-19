@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documentación · Cliente FRANQUICIA</title>
+<style>
+  :root {
+    --bg: #fbfcfc;
+    --panel: #ffffff;
+    --border: #e7dfdf;
+    --text: #0e0e0e;
+    --muted: #667085;
+    --accent: #ff5c1c;
+    --accent-dark: #c94510;
+    --code-bg: #1e1e2e;
+    --code-text: #e5e7eb;
+    --tag-bg: #fff1ea;
+    --tag-text: #c94510;
+    --ok: #1a7f37;
+    --warn: #a15c00;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.55;
+  }
+  .layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: 100vh;
+  }
+  nav.toc {
+    border-right: 1px solid var(--border);
+    padding: 28px 20px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    background: var(--panel);
+  }
+  nav.toc .brand {
+    font-weight: 800;
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
+  nav.toc .brand span { color: var(--accent); }
+  nav.toc .subtitle {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 24px;
+  }
+  nav.toc ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    counter-reset: toc;
+  }
+  nav.toc li {
+    counter-increment: toc;
+    margin-bottom: 4px;
+  }
+  nav.toc a {
+    display: block;
+    padding: 7px 10px;
+    border-radius: 6px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 14px;
+  }
+  nav.toc a:before {
+    content: counter(toc) ". ";
+    color: var(--muted);
+  }
+  nav.toc a:hover { background: var(--tag-bg); color: var(--accent-dark); }
+
+  main {
+    padding: 40px 56px 100px;
+    max-width: 900px;
+  }
+  header.hero {
+    margin-bottom: 40px;
+  }
+  header.hero h1 {
+    font-size: 32px;
+    margin: 0 0 8px;
+  }
+  header.hero p {
+    color: var(--muted);
+    font-size: 16px;
+    margin: 0;
+    max-width: 640px;
+  }
+  section {
+    margin-bottom: 48px;
+    scroll-margin-top: 24px;
+  }
+  section h2 {
+    font-size: 22px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+    margin-bottom: 16px;
+  }
+  section h3 {
+    font-size: 16px;
+    margin: 24px 0 8px;
+  }
+  p { margin: 0 0 12px; }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+  }
+  .tag {
+    display: inline-block;
+    background: var(--tag-bg);
+    color: var(--tag-text);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 2px 9px;
+    border-radius: 999px;
+    letter-spacing: .02em;
+  }
+  code {
+    background: #f1eeee;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: "SF Mono", Consolas, Menlo, monospace;
+  }
+  pre {
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 16px 18px;
+    border-radius: 10px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 0 0 16px;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    color: inherit;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th {
+    color: var(--muted);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+  td code { white-space: nowrap; }
+  .flow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin: 16px 0;
+  }
+  .flow .step {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-family: "SF Mono", Consolas, Menlo, monospace;
+  }
+  .flow .arrow { color: var(--muted); }
+  ul.clean { margin: 0 0 12px; padding-left: 20px; }
+  ul.clean li { margin-bottom: 6px; }
+  .note {
+    border-left: 3px solid var(--accent);
+    background: var(--tag-bg);
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+  .warn {
+    border-left: 3px solid var(--warn);
+    background: #fff8ea;
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+  .file-badge {
+    font-family: "SF Mono", Consolas, Menlo, monospace;
+    font-size: 12.5px;
+    background: #f1eeee;
+    padding: 2px 8px;
+    border-radius: 5px;
+  }
+  footer {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 60px;
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+  }
+  @media (max-width: 860px) {
+    .layout { grid-template-columns: 1fr; }
+    nav.toc { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+    main { padding: 28px; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <nav class="toc">
+    <div class="brand">noticias<span>(d)</span></div>
+    <div class="subtitle">Documentación interna · Cliente FRANQUICIA</div>
+    <ol>
+      <li><a href="#concepto">Qué es una FRANQUICIA</a></li>
+      <li><a href="#modelo">Modelo de datos</a></li>
+      <li><a href="#usuario-logueado">Quién está logueado</a></li>
+      <li><a href="#patron">Patrón de filtrado</a></li>
+      <li><a href="#pantallas">Pantalla por pantalla</a></li>
+      <li><a href="#apis">APIs (Apis/apis.js)</a></li>
+      <li><a href="#limitaciones">Limitaciones conocidas</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <header class="hero">
+      <h1>Cómo funciona el cliente FRANQUICIA</h1>
+      <p>
+        Documentación del comportamiento agregado al sistema de gestión de cuentas para
+        soportar un nuevo tipo de cliente, <code>FRANQUICIA</code>, que puede crear sus propias
+        cuentas y solo ve lo que le pertenece.
+      </p>
+    </header>
+
+    <section id="concepto">
+      <h2>1. Qué es una FRANQUICIA</h2>
+      <p>
+        <code>FRANQUICIA</code> es un valor más del campo <code>tipo</code> de <code>m_clientes</code>
+        (junto a <code>ENTE</code>, <code>EMPRESA</code>, <code>CAMPAÑA</code>, <code>AGENCIA</code> y
+        <code>GESTION</code>). A diferencia de los demás tipos, una franquicia:
+      </p>
+      <ul class="clean">
+        <li>Puede crear nuevos clientes desde el panel de administración.</li>
+        <li>Cada cuenta que crea queda "linkeada" a ella como su creadora.</li>
+        <li>En todas las pantallas de gestión, <strong>solo ve a sí misma y a las cuentas que creó</strong> — nunca al resto de los clientes de la plataforma.</li>
+        <li>No puede crear otra cuenta de tipo <code>FRANQUICIA</code> (para evitar franquicias anidadas).</li>
+      </ul>
+      <div class="note">
+        Todo lo descrito acá es <strong>lógica de frontend</strong>: filtra qué se muestra y qué se
+        puede seleccionar. Ver la sección <a href="#limitaciones">Limitaciones conocidas</a> sobre
+        por qué esto no reemplaza validación en el backend.
+      </div>
+    </section>
+
+    <section id="modelo">
+      <h2>2. Modelo de datos</h2>
+      <p>
+        No se agregaron columnas nuevas. Todo se apoya en dos campos que ya existían en
+        <code>m_clientes</code>: <code>tipo</code> y <code>datosFranquicia</code> (texto largo, se usa como JSON).
+        <code>datosFranquicia</code> tiene <strong>dos formas distintas</strong> según de qué registro se trate:
+      </p>
+
+      <h3>En el registro de la propia franquicia</h3>
+      <p>Guarda la lista de cuentas que esa franquicia fue creando:</p>
+      <pre><code>{
+  "cuentas_creadas": [
+    { "id": 301, "name": "Cliente A" },
+    { "id": 302, "name": "Cliente B" }
+  ]
+}</code></pre>
+
+      <h3>En cada cliente creado por una franquicia</h3>
+      <p>Queda "sellado" con quién lo creó:</p>
+      <pre><code>{
+  "creado_por_franquicia": true,
+  "franquicia_id": 248,
+  "franquicia_nombre": "Nombre de la franquicia"
+}</code></pre>
+
+      <div class="card">
+        <span class="tag">Dónde se escribe</span>
+        <p style="margin-top:10px">
+          Ambas escrituras pasan en <span class="file-badge">AbmClientes.jsx → handleSave()</span>,
+          al crear un cliente estando logueado como franquicia: primero el <code>POST /clientes</code>
+          incluye el <code>datosFranquicia</code> del hijo, y después un <code>PATCH /clientes/{id}</code>
+          actualiza la lista <code>cuentas_creadas</code> de la propia franquicia.
+        </p>
+      </div>
+    </section>
+
+    <section id="usuario-logueado">
+      <h2>3. Quién está logueado</h2>
+      <p>
+        Para saber "quién soy" en cada pantalla se usa siempre:
+      </p>
+      <pre><code>const idClienteLogueado = useSelector((state) => state.formulario.usuario.id_cliente);</code></pre>
+      <div class="warn">
+        <strong>Importante:</strong> no se usa <code>state.formulario.id_cliente</code> a secas.
+        Ese valor cambia cada vez que un editor navega o selecciona otra cuenta para
+        gestionar (por ejemplo desde <span class="file-badge">SelectorCliente.jsx</span>),
+        así que no representa de forma confiable "quién inició sesión". <code>state.formulario.usuario</code>
+        es el objeto que devuelve el login y no se toca después, por eso es la fuente confiable.
+      </div>
+    </section>
+
+    <section id="patron">
+      <h2>4. Patrón de filtrado (se repite en cada pantalla)</h2>
+      <p>Todas las pantallas afectadas siguen los mismos cuatro pasos:</p>
+      <div class="flow">
+        <div class="step">1. obtenerClientes(TOKEN)</div>
+        <span class="arrow">→</span>
+        <div class="step">2. buscar propio registro por id_cliente</div>
+        <span class="arrow">→</span>
+        <div class="step">3. tipo === 'FRANQUICIA' ?</div>
+        <span class="arrow">→</span>
+        <div class="step">4. filtrar por [propio id, ...cuentas_creadas]</div>
+      </div>
+      <pre><code>const clienteLogueado = clientes.find((c) => c.id == idClienteLogueado);
+const esFranquicia = clienteLogueado?.tipo === 'FRANQUICIA';
+
+let cuentasCreadas = [];
+try {
+  const datos = clienteLogueado.datosFranquicia
+    ? JSON.parse(clienteLogueado.datosFranquicia)
+    : null;
+  cuentasCreadas = Array.isArray(datos?.cuentas_creadas) ? datos.cuentas_creadas : [];
+} catch (err) {
+  cuentasCreadas = [];
+}
+
+const idsPermitidos = [clienteLogueado.id, ...cuentasCreadas.map((c) => c.id)];
+const visibles = todosLosItems.filter((item) =>
+  idsPermitidos.some((id) => id == item.id) // o item.id_cliente, según el caso
+);</code></pre>
+      <p>
+        La única variación entre pantallas es <strong>qué</strong> se filtra con
+        <code>idsPermitidos</code>: clientes, contratos, facturas (vía su contrato), o
+        nombres de cliente (en Distribución, que agrupa por nombre en vez de id).
+      </p>
+    </section>
+
+    <section id="pantallas">
+      <h2>5. Pantalla por pantalla</h2>
+      <table>
+        <thead>
+          <tr><th>Archivo</th><th>Qué cambia para una FRANQUICIA</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="file-badge">AbmClientes.jsx</span></td>
+            <td>
+              El listado solo muestra a sí misma y sus cuentas creadas. Al crear una cuenta
+              nueva, además del <code>POST /clientes</code> normal, se sella el
+              <code>datosFranquicia</code> del hijo y se actualiza la lista
+              <code>cuentas_creadas</code> propia. El dropdown de <strong>TIPO</strong> oculta la
+              opción <code>FRANQUICIA</code>. El selector de país/provincia/municipio
+              (<code>ArbolDistribucion</code>) ahora se muestra para cualquier tipo de cliente,
+              no solo <code>GESTION</code>.
+            </td>
+          </tr>
+          <tr>
+            <td><span class="file-badge">SelectorCliente.jsx</span></td>
+            <td>
+              El dropdown de cuentas (usado en el Dashboard) solo lista a la franquicia y sus
+              cuentas creadas. Se oculta la opción "Todas las cuentas".
+            </td>
+          </tr>
+          <tr>
+            <td><span class="file-badge">AbmContratos.jsx</span></td>
+            <td>
+              Los listados de clientes y contratos se filtran igual. Además, dentro del modal
+              de contrato, el selector de "Cliente" se reemplaza por un campo fijo de solo
+              lectura con el nombre de la propia franquicia — los contratos siempre son de
+              la franquicia, nunca de una cuenta hija.
+            </td>
+          </tr>
+          <tr>
+            <td><span class="file-badge">Facturas.jsx</span></td>
+            <td>
+              Las facturas no traen <code>id_cliente</code> directo, así que se arma un mapa
+              <code>id_contrato → id_cliente</code> a partir de los contratos para poder
+              filtrarlas. También se filtra el combo de "Contrato abierto" al cargar una
+              factura nueva.
+            </td>
+          </tr>
+          <tr>
+            <td><span class="file-badge">Distribucion.jsx</span></td>
+            <td>
+              Las notas están agrupadas por <em>nombre</em> de cliente (no por id), así que acá
+              el filtro construye una lista de nombres permitidos en vez de ids.
+            </td>
+          </tr>
+          <tr>
+            <td><span class="file-badge">Dashboard.jsx</span></td>
+            <td>
+              Header especial: "Bienvenido noticias(d) {nombre}" + "¿Qué dashboard desea ver?"
+              seguido del <code>SelectorCliente</code>, sin importar el permiso
+              <code>Dashboard: Selector clientes</code> (una franquicia siempre necesita poder
+              cambiar entre sus cuentas).
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="apis">
+      <h2>6. APIs agregadas — <span class="file-badge">src/components/Apis/apis.js</span></h2>
+      <p>
+        Se agregó el CRUD de clientes contra la API documentada
+        (<code>https://services.noticiasd.com</code>), reemplazando el endpoint legacy
+        (<code>panel.serviciosd.com/app_obtener_clientes</code>) en las pantallas tocadas, ya que
+        el legacy no garantiza traer <code>tipo</code> ni <code>datosFranquicia</code>.
+      </p>
+      <table>
+        <thead>
+          <tr><th>Función</th><th>Verbo / ruta</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>obtenerClientes(token)</code></td><td><code>GET /clientes</code></td></tr>
+          <tr><td><code>obtenerCliente(token, id)</code></td><td><code>GET /clientes/{id}</code></td></tr>
+          <tr><td><code>crearCliente(token, data)</code></td><td><code>POST /clientes</code></td></tr>
+          <tr><td><code>actualizarCliente(token, id, data)</code></td><td><code>PATCH /clientes/{id}</code></td></tr>
+          <tr><td><code>eliminarCliente(token, id)</code></td><td><code>DELETE /clientes/{id}</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="limitaciones">
+      <h2>7. Limitaciones conocidas</h2>
+      <ul class="clean">
+        <li>
+          <strong>Todo el filtrado es de frontend.</strong> Un usuario con el token de una
+          franquicia podría, en teoría, llamar a la API directamente y pedir datos de otro
+          cliente. Para cerrar esto de verdad hace falta que el backend valide también
+          <code>tipo === 'FRANQUICIA'</code> + pertenencia, no solo el frontend.
+        </li>
+        <li>
+          Al <strong>editar</strong> un cliente ya existente en <span class="file-badge">AbmClientes.jsx</span>,
+          los selectores de país/provincia/municipio arrancan vacíos — no hay pre-carga desde los
+          <code>pais_id</code> / <code>provincia_id</code> / <code>municipio_id</code> guardados. Como el
+          <code>PATCH</code> solo manda lo que cambia, el dato guardado no se pierde, pero tampoco
+          se ve reflejado en el modal hasta que se lo vuelve a seleccionar.
+        </li>
+        <li>
+          <code>eliminarCliente</code> ya existe en <span class="file-badge">Apis/apis.js</span> pero
+          todavía no está conectado a ningún botón de la UI.
+        </li>
+      </ul>
+    </section>
+
+    <footer>
+      Generado como documentación interna del feature de cuentas FRANQUICIA. Abrir con
+      Live Server u otro servidor estático — no depende del build de la app.
+    </footer>
+  </main>
+</div>
+</body>
+</html>

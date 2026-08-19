@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Experiencia de usuario · Cliente Franquicia</title>
+<style>
+  :root {
+    --bg: #fbfcfc;
+    --panel: #ffffff;
+    --border: #e7dfdf;
+    --text: #0e0e0e;
+    --muted: #667085;
+    --accent: #ff5c1c;
+    --accent-dark: #c94510;
+    --tag-bg: #fff1ea;
+    --tag-text: #c94510;
+    --ok-bg: #eafaf0;
+    --ok-text: #1a7f37;
+    --no-bg: #fdecec;
+    --no-text: #b42318;
+    --mock-bg: #f6f5f4;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.6;
+  }
+  header.hero {
+    padding: 56px 20px 40px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+  }
+  header.hero .brand {
+    font-weight: 800;
+    font-size: 16px;
+    color: var(--muted);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  header.hero .brand span { color: var(--accent); }
+  header.hero h1 {
+    font-size: 34px;
+    margin: 0 0 14px;
+  }
+  header.hero p {
+    max-width: 620px;
+    margin: 0 auto;
+    color: var(--muted);
+    font-size: 16px;
+  }
+  .quien {
+    max-width: 720px;
+    margin: 28px auto 0;
+    background: var(--tag-bg);
+    border-radius: 10px;
+    padding: 14px 20px;
+    font-size: 14px;
+    color: var(--accent-dark);
+    text-align: left;
+  }
+
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 56px 24px 100px;
+  }
+
+  .timeline {
+    position: relative;
+    padding-left: 34px;
+  }
+  .timeline:before {
+    content: "";
+    position: absolute;
+    left: 13px;
+    top: 6px;
+    bottom: 6px;
+    width: 2px;
+    background: var(--border);
+  }
+  .paso {
+    position: relative;
+    margin-bottom: 52px;
+  }
+  .paso .numero {
+    position: absolute;
+    left: -34px;
+    top: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    font-weight: 700;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .paso h2 {
+    font-size: 20px;
+    margin: 0 0 6px;
+  }
+  .paso .resumen {
+    color: var(--muted);
+    font-size: 15px;
+    margin: 0 0 16px;
+  }
+
+  .screen {
+    background: var(--mock-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+  .screen .barra {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .screen .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #d7d3d3;
+  }
+  .screen .titulo-app {
+    font-size: 11px;
+    color: var(--muted);
+    margin-left: 4px;
+  }
+  .screen-body {
+    background: var(--panel);
+    border-radius: 8px;
+    padding: 18px;
+    border: 1px solid var(--border);
+  }
+  .screen-body h3 {
+    margin: 0 0 4px;
+    font-size: 17px;
+  }
+  .screen-body .sub {
+    color: var(--muted);
+    font-size: 13px;
+    margin: 0 0 14px;
+  }
+  .pill {
+    display: inline-block;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 13px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+  }
+  .pill.activo {
+    border-color: var(--accent);
+    color: var(--accent-dark);
+    background: var(--tag-bg);
+    font-weight: 600;
+  }
+  .btn-mock {
+    display: inline-block;
+    background: var(--accent);
+    color: white;
+    border-radius: 7px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .lista-mock {
+    border-top: 1px solid var(--border);
+    margin-top: 14px;
+  }
+  .fila-mock {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13.5px;
+  }
+  .fila-mock .nombre { font-weight: 600; }
+  .fila-mock .detalle { color: var(--muted); }
+  .campo-mock {
+    margin-bottom: 10px;
+  }
+  .campo-mock label {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .campo-mock .valor {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 13.5px;
+  }
+  .campo-mock .valor.disabled {
+    color: var(--muted);
+    background: var(--mock-bg);
+  }
+
+  .callout {
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+  .callout.puede {
+    background: var(--ok-bg);
+    color: var(--ok-text);
+  }
+  .callout.nopuede {
+    background: var(--no-bg);
+    color: var(--no-text);
+  }
+  .callout b { font-weight: 700; }
+
+  .resumen-final {
+    margin-top: 60px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px 32px;
+  }
+  .resumen-final h2 {
+    margin-top: 0;
+    font-size: 22px;
+  }
+  .grid-resumen {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 18px;
+  }
+  @media (max-width: 620px) {
+    .grid-resumen { grid-template-columns: 1fr; }
+  }
+
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    padding: 30px 20px 60px;
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="brand">noticias<span>(d)</span></div>
+  <h1>La experiencia de una cuenta Franquicia</h1>
+  <p>
+    Guía en lenguaje simple de cómo se ve y qué puede hacer un usuario logueado con una
+    cuenta de tipo <strong>Franquicia</strong> dentro de la plataforma.
+  </p>
+  <div class="quien">
+    <strong>Para quién es esta guía:</strong> equipo de producto, atención al cliente o
+    cualquiera que necesite entender —sin leer código— qué experimenta una franquicia al
+    usar el sistema, paso a paso.
+  </div>
+</header>
+
+<main>
+  <div class="timeline">
+
+    <div class="paso">
+      <div class="numero">1</div>
+      <h2>Inicia sesión como siempre</h2>
+      <p class="resumen">El login no cambia en nada: mismo usuario y contraseña que cualquier otra cuenta.</p>
+    </div>
+
+    <div class="paso">
+      <div class="numero">2</div>
+      <h2>Llega a un Dashboard que la saluda por su nombre</h2>
+      <p class="resumen">
+        En vez del saludo genérico, ve un encabezado propio con su nombre y una pregunta
+        directa sobre qué cuenta quiere mirar.
+      </p>
+      <div class="screen">
+        <div class="barra"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span class="titulo-app">Dashboard</span></div>
+        <div class="screen-body">
+          <h3>Bienvenido noticias(d) Franquicia Norte</h3>
+          <div class="sub">¿Qué dashboard desea ver?</div>
+          <span class="pill activo">Franquicia Norte ▾</span>
+        </div>
+      </div>
+      <div class="callout puede"><b>Siempre disponible.</b> A diferencia de otros usuarios, este selector de cuentas le aparece sí o sí, tenga o no el permiso habitual — lo necesita para moverse entre sus propias cuentas.</div>
+    </div>
+
+    <div class="paso">
+      <div class="numero">3</div>
+      <h2>Cambia entre sus propias cuentas</h2>
+      <p class="resumen">
+        Al abrir el selector, la lista solo trae a la franquicia misma y a las cuentas
+        que ella fue creando. No aparece "Todas las cuentas".
+      </p>
+      <div class="screen">
+        <div class="barra"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span class="titulo-app">Selector de cuenta</span></div>
+        <div class="screen-body">
+          <div class="lista-mock">
+            <div class="fila-mock"><span class="nombre">Franquicia Norte</span><span class="detalle">(yo)</span></div>
+            <div class="fila-mock"><span class="nombre">Sucursal Rosario</span><span class="detalle">creada por mí</span></div>
+            <div class="fila-mock"><span class="nombre">Sucursal Santa Fe</span><span class="detalle">creada por mí</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="callout nopuede"><b>No ve</b> al resto de los clientes de la plataforma, aunque estén activos y sean de otras franquicias o cuentas independientes.</div>
+    </div>
+
+    <div class="paso">
+      <div class="numero">4</div>
+      <h2>Crea nuevas cuentas para sus sucursales</h2>
+      <p class="resumen">
+        Desde "Gestiona tus cuentas" puede dar de alta clientes nuevos —por ejemplo, una
+        sucursal— completando nombre, tipo, ubicación (país/provincia/municipio) y demás
+        datos habituales.
+      </p>
+      <div class="screen">
+        <div class="barra"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span class="titulo-app">Nueva cuenta</span></div>
+        <div class="screen-body">
+          <h3>Nueva Cuenta</h3>
+          <div class="campo-mock">
+            <label>Nombre</label>
+            <div class="valor">Sucursal Córdoba</div>
+          </div>
+          <div class="campo-mock">
+            <label>TIPO</label>
+            <div class="valor">EMPRESA ▾</div>
+          </div>
+          <span class="btn-mock">Guardar</span>
+        </div>
+      </div>
+      <div class="callout puede"><b>Puede crear</b> cuentas de cualquier tipo (Ente, Empresa, Campaña, Agencia, Gestión).</div>
+      <div class="callout nopuede"><b>No puede crear</b> otra cuenta de tipo <em>Franquicia</em> — esa opción directamente no aparece en el listado de tipos.</div>
+      <p class="resumen" style="margin-top:14px">
+        Apenas la guarda, esa cuenta nueva queda automáticamente asociada a ella: la
+        próxima vez que entre, ya la va a ver en su propio listado y en el selector de
+        cuentas, sin que tenga que hacer nada más.
+      </p>
+    </div>
+
+    <div class="paso">
+      <div class="numero">5</div>
+      <h2>Gestiona contratos, siempre a su propio nombre</h2>
+      <p class="resumen">
+        En "Gestiona tus Contratos" ve únicamente los contratos suyos y los de las cuentas
+        que creó. Al abrir el formulario de un contrato (nuevo o existente), el campo
+        "Cliente" no es un buscador para elegir cualquier cuenta: aparece fijo, con su
+        propio nombre.
+      </p>
+      <div class="screen">
+        <div class="barra"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span class="titulo-app">Editar contrato</span></div>
+        <div class="screen-body">
+          <div class="campo-mock">
+            <label>Cliente</label>
+            <div class="valor disabled">Franquicia Norte</div>
+          </div>
+        </div>
+      </div>
+      <div class="callout nopuede"><b>No puede</b> asignar un contrato a otra cuenta, ni siquiera a una que ella misma haya creado — los contratos son siempre entre la franquicia y noticias(d).</div>
+    </div>
+
+    <div class="paso">
+      <div class="numero">6</div>
+      <h2>Revisa sus facturas</h2>
+      <p class="resumen">
+        En "Gestiona tus Facturas" el listado, la búsqueda y la descarga a Excel muestran
+        solo las facturas que corresponden a sus contratos. Lo mismo pasa con el combo de
+        contratos abiertos al cargar una factura nueva.
+      </p>
+    </div>
+
+    <div class="paso">
+      <div class="numero">7</div>
+      <h2>Sigue la distribución de contenido de sus cuentas</h2>
+      <p class="resumen">
+        En "Distribución" el listado de cuentas con notas pendientes o publicadas también
+        se recorta a ella misma y a sus cuentas creadas — no ve la distribución de
+        contenido de otros clientes de la plataforma.
+      </p>
+    </div>
+
+  </div>
+
+  <div class="resumen-final">
+    <h2>Resumen: qué puede y qué no puede hacer</h2>
+    <div class="grid-resumen">
+      <div>
+        <div class="callout puede">✅ Ver y editar su propia cuenta</div>
+        <div class="callout puede">✅ Crear cuentas nuevas (sucursales)</div>
+        <div class="callout puede">✅ Elegir país / provincia / municipio al crear</div>
+        <div class="callout puede">✅ Cambiar entre sus propias cuentas desde el Dashboard</div>
+        <div class="callout puede">✅ Ver contratos y facturas propios</div>
+      </div>
+      <div>
+        <div class="callout nopuede">🚫 Ver clientes que no creó ella</div>
+        <div class="callout nopuede">🚫 Crear otra cuenta de tipo Franquicia</div>
+        <div class="callout nopuede">🚫 Ver "Todas las cuentas" de la plataforma</div>
+        <div class="callout nopuede">🚫 Asignar un contrato a otra cuenta</div>
+        <div class="callout nopuede">🚫 Ver facturas o distribución ajenas</div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  Guía de experiencia de usuario — pensada para leerse sin conocimientos técnicos.
+  Para el detalle de implementación, ver <code>franquicia.html</code>.
+</footer>
+
+</body>
+</html>

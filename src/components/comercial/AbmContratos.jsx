@@ -146,7 +146,7 @@ const AbmContratos
     const itemsPerPage = 10;  
     const desdeMarketing = new Date().toISOString().split('T')[0];
     const TOKEN = useSelector((state) => state.formulario.token);
-    const idClienteLogueado = useSelector((state) => state.formulario.id_cliente);
+    const idClienteLogueado = useSelector((state) => state.formulario.usuario.id_cliente);
     const [fechaDesde, setFechaDesde] = useState(primerMesDelAnio());
     const [fechaHasta, setFechaHasta] = useState(ultimoMesDelAnio());
     const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
@@ -321,6 +321,12 @@ const AbmContratos
     cargarDatos();
   }, [TOKEN, idClienteLogueado]);
 
+  // Si el cliente logueado es una FRANQUICIA, sus contratos siempre son consigo misma
+  const clienteLogueado = useMemo(() => (
+    clientes.find((c) => c.id == idClienteLogueado)
+  ), [clientes, idClienteLogueado]);
+  const esFranquicia = clienteLogueado?.tipo === 'FRANQUICIA';
+
 
   // Filtrar por búsqueda
   const contratosFiltrados = useMemo(() => {
@@ -420,12 +426,16 @@ const AbmContratos
       [comisionista1, comisionista2].filter(Boolean) /// solo los que existan
     );
     setModalidadSeleccionada(obtenerModalidadDelContrato(contrato));
-    setClienteSeleccionado(clientes.find(c => c.id === contrato.id_cliente) || '');
+    const clienteDelContrato = esFranquicia
+      ? clienteLogueado
+      : (clientes.find(c => c.id === contrato.id_cliente) || '');
+    setClienteSeleccionado(clienteDelContrato);
     setContratoSeleccionado({...contrato, id_usuario: id_usuario});
     setFormData({
       ...contrato,
       id_usuario,
-      ignore: '1'
+      ignore: '1',
+      ...(esFranquicia && clienteLogueado ? { id_cliente: clienteLogueado.id } : {})
     });
     const emisorObj = Emisor.find(
       e => e.nombre === contrato.empresa  
@@ -744,6 +754,18 @@ const handleSave = () => {
                 <>
                 <div className="seccionTitulo">Datos generales</div>
                 {/* cliente */}
+                  {esFranquicia ? (
+                    <div className="mb-3">
+                      <label className="form-label">Cliente</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={clienteLogueado?.name || ''}
+                        disabled
+                        readOnly
+                      />
+                    </div>
+                  ) : (
                   <SelectorConBuscador
                     title="Cliente"
                     options={clientes}
@@ -763,6 +785,7 @@ const handleSave = () => {
                       }));
                     }}
                     />
+                  )}
                   {clienteSeleccionado && (
                   <div className="mb-3">
                     <label className="form-label">Contratos del cliente: {clienteSeleccionado.name}</label>
