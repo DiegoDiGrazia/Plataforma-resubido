@@ -170,6 +170,13 @@ const Sidebar = ({ estadoActual }) => {
                   'bi bi-stack'
                 )}
             {renderSidebarButton(
+              'monitoreo',
+              'monitoreoEditorial',
+              '',
+              'Monitoreo',
+              'bi bi-display-fill'
+            )}
+            {renderSidebarButton(
               'autoEntrevistas',
               'autoEntrevistas',
               '/images/auto_entrevistas_icon.png',

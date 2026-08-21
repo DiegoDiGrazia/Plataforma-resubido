@@ -20,6 +20,7 @@ import AbmComisionistas from './components/comercial/AbmComisionistas';
 import AbmContratos from './components/comercial/AbmContratos';
 import Facturas from './components/comercial/Facturas';
 import AbmSitiosRelevantes from './components/administrador/gestores/AbmSitiosRelevantes';
+import MonitoreoEditorial from './components/monitoreoEditorial/MonitoreoEditorial.jsx';
 
 // 👇 Acá van tus componentes con lazy
 const Formulario = lazy(() => import('./components/login/Formulario'));
@@ -68,6 +69,7 @@ function App() {
               <Route path="/notas" element={<NotasParaEditorial />} />
               <Route path="/notasEditorial" element={<NotasParaEditorial />} />
               <Route path="/feed" element={<Feed />} />
+              <Route path="/monitoreoEditorial" element= {<MonitoreoEditorial />}></Route>
 
               
 

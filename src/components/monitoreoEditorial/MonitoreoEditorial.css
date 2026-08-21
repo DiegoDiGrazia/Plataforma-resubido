@@ -1,0 +1,11 @@
+.contenedor-monitoreo {
+
+    height: 100%;
+    
+    .texto-filtro {
+        
+        font-size: 13px;
+        margin-bottom: 2px;
+        
+    }
+}
