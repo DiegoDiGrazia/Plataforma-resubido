@@ -14,7 +14,7 @@ import PerfilesAdmin from './components/administrador/gestores/PerfilesAdmin';
 import DistribucionAdmin from './components/administrador/gestores/Distribucion';
 import NotaFreemiumDistribucion from './components/notaFreemium/NotaFreemiumDistribucion';
 import Comercial from './components/comercial/Comercial';
-import CalculadoraVentas from './components/comercial/calculadoraDeVentas';
+import CalculadoraDeVentas from './components/comercial/CalculadoraDeVentas';
 import AbmPlanes from './components/comercial/AbmPlanes';
 import AbmComisionistas from './components/comercial/AbmComisionistas';
 import AbmContratos from './components/comercial/AbmContratos';
@@ -73,7 +73,7 @@ function App() {
 
               {/* COMERCIAL */}
               <Route path="/comercial" element={<Comercial />} />
-              <Route path="/comercial/calculadora-ventas" element={<CalculadoraVentas />} />
+              <Route path="/comercial/calculadora-ventas" element={<CalculadoraDeVentas />} />
               <Route path="/comercial/abm-planes" element={<AbmPlanes />} />
               <Route path="/comercial/abm-comisionistas" element={<AbmComisionistas />} />
               <Route path="/comercial/abm-contratos" element={<AbmContratos />} />

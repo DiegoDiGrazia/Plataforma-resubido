@@ -1,229 +1,332 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "../miPerfil/miPerfil.css";
 import { useSelector } from 'react-redux';
-import axios from 'axios';
-import ModalMensaje from '../administrador/gestores/ModalMensaje';
-import { obtenerPoblacion, obtenerClientes, obtenerGeo} from '../administrador/gestores/apisUsuarios'; // Importa la función para obtener usuarios
+import { obtenerPoblacion, obtenerGeo} from '../administrador/gestores/apisUsuarios';
 import ArbolDistribucion from '../nota/Editorial/ArbolDistribucion';
-import SelectorConBuscador from '../nota/Editorial/SelectorConBuscador';
 import SelectorNumerosEnteros from '../nota/Editorial/SelectorNumerosEnteros';
 import TablaReadOnly from './TablaReadOnly';
 import InputNumerico from '../nota/Editorial/InputNumerico';
+import { descargarExcel } from '../funciones/creacionCSV';
 
-
-
-const tiposPlataformas = [
-  {'id': "1", 'nombre': "META"},
-  {'id': "2", 'nombre': "DV"},
-];
-
-const clienteVacio = {
-  id: "0",
-  name: "",
-  slug: "",
-  code: "",
-  population_connected: "",
-  population_shown: "",
-  authors: "",
-  fecha_alta: "",
-  id_plan: "",
-  jurisdiccion: "",
-  muestra_consumo: "0",
-  municipio_id: "",
-  pais_id: "",
-  provincia_id: "",
-  term_id: "",
-  tipo: ""
-};
-
-const CalculadoraVentas
- = () => {
+const CalculadoraDeVentas = () => {
   const [pais, setPais] = useState("Argentina");
   const [provincia, setProvincia] = useState("");
   const [municipio, setMunicipio] = useState("");
   const [poblacionEstimada, setPoblacionEstimada] = useState("");
-  const [clientes, setClientes] = useState([]);
-  const [canalSelected, setCanalSelected] = useState(null);
   const [geo, setGeo] = useState([]);
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
-  const itemsPerPage = 10;  
   const TOKEN = useSelector((state) => state.formulario.token);
+
   const [cantidadDeNotas, setCantidadDeNotas] = useState(1);
   const [alcancePorNota, setalcancePorNota] = useState(null);
-  const [margen, setMargen] = useState(70);
+  const [rentabilidad, setRentabilidad] = useState(65);
   const [data, setData] = useState([[]]);
-  const [margenAgencia, setMargenAgencia] = useState(15);
-  const [margenAgencia2, setMargenAgencia2] = useState(0);
-  const [cpmPersonalizado, setCpmPersonalizado] = useState(0);
-  const costoPorNota = 100;
+  const [feeAgencia, setFeeAgencia] = useState(15);
   const [selectedRows, setSelectedRows] = useState([true, true, true, true]);
 
+  const [tableOverrides, setTableOverrides] = useState({});
 
-  const columns = ["CPM", 'CPM + Plataforma', "Costo por nota", "Costo total", 'Precio por nota', 'Precio de venta neto', 'Precio con Agencia']
-  const rows = ["dv 360", "Meta", 'Youtube', 'Personalizado', "Total seleccionado"]
+  const [showExcelModal, setShowExcelModal] = useState(false);
+  const [excelFileName, setExcelFileName] = useState("Presupuesto");
+  const [exportApi, setExportApi] = useState(true);
 
+  const columns = ["CPM", "% Inversión", "Alcance", "Frecuencia", "Impresiones", "Costo mkt por nota", "Costo de Marketing", 'Costo con Fee', 'Precio de Venta']
+  const rows = ["dv 360", "Meta", 'Youtube', 'X', "Totales"]
 
-  useEffect(() => {
-    obtenerClientes(TOKEN).then(setClientes);
-    obtenerGeo().then(setGeo);
-}, [TOKEN]);
+  const editableColumns = [0, 1, 3]; // guarda los index de las columnas que van a ser inputs.
+  const currencyColumns = [0, 5, 6, 7, 8]; // guarda los index de las columnas que llevan el signo $.
+  const highlightedTotalColumns = [5, 6, 7, 8]; // guarda los index de las columnas que estanr esaltadas en color. 
 
-  // Filtrar por búsqueda
-  const filteredClientes = useMemo(() => {
-    return clientes.filter((item) =>  //-- Cambia esto a usuarios cuando tengas la API
-      item.name.toLowerCase().includes(search.toLowerCase()) 
-    );
-  }, [search, clientes]);
+  const [searchOverrides, setSearchOverrides] = useState({});
+  const [searchSelected, setSearchSelected] = useState([true]);
+  const [searchData, setSearchData] = useState([[]]);
 
-  const totalPages = Math.ceil(filteredClientes.length / itemsPerPage);
+  const searchColumns = ["CPC", "Clics", "Costo en pesos", "Valor USD", "Costo en USD", "Costo con Fee", "Precio de Venta"];
+  const searchRows = ["Search"];
+  const searchEditableColumns = [0, 1, 3]; // CPC, Clics, Valor USD
+  const searchCurrencyColumns = [0, 2, 3, 4, 5, 6]; // guarda los index de las columnas que llevan el signo $ para la tabla search.
 
-  const pagedItems = useMemo(() => {
-    const start = (page - 1) * itemsPerPage;
-    return filteredClientes.slice(start, start + itemsPerPage);
-  }, [filteredClientes, page]);
+  const apiRows = ["dv 360", "Meta", "Youtube", "Totales"];
+  const apiEditableColumns = []; 
+  const [apiSelectedRows, setApiSelectedRows] = useState([true, true, true]);
+  const [apiData, setApiData] = useState([[]]);
 
-  const goToPage = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setPage(newPage);
-    }
+  const toggleApiRow = (index) => {
+    setApiSelectedRows(prev => {
+      const copy = [...prev];
+      copy[index] = !copy[index];
+      return copy;
+    });
   };
 
   useEffect(() => {
-    setPage(1);
-  }, [search]);
+    obtenerGeo().then(setGeo);
+  }, [TOKEN]);
 
-  const handleEditClick = (client) => {
-    setSelectedClient(client);
-    setFormData({ 
-        ...client,
-        tipo_cliente: client.tipo 
-    }); 
-    const modal = new window.bootstrap.Modal(document.getElementById('editModal'));
-    modal.show();
-};
+  const obtenerPaisId = (paises = [], nombrePais) => {
+    if (!Array.isArray(paises) || !nombrePais) return null;
 
-const obtenerPaisId = (paises = [], nombrePais) => {
-  if (!Array.isArray(paises) || !nombrePais) return null;
+    const nombre =
+      typeof nombrePais === 'string'
+        ? nombrePais
+        : nombrePais?.nombre;
 
-  const nombre =
-    typeof nombrePais === 'string'
-      ? nombrePais
-      : nombrePais?.nombre;
+    if (!nombre) return null;
 
-  if (!nombre) return null;
+    const paisEncontrado = paises.find(
+      (p) => p.nombre?.toLowerCase() === nombre.toLowerCase()
+    );
 
-  const paisEncontrado = paises.find(
-    (p) => p.nombre?.toLowerCase() === nombre.toLowerCase()
-  );
+    return paisEncontrado?.pais_id ?? null;
+  };
 
-  return paisEncontrado?.pais_id ?? null;
-};
+  useEffect(() => {
+      const fetchPoblacion = async () => {
+        console.log('geo data:', geo);
+        console.log('Fetching poblacion for:', { pais, provincia, municipio });
+
+          if(!pais) return; 
+          const poblacion = await obtenerPoblacion(
+              TOKEN,
+              municipio ? 'municipio' : provincia ? 'provincia' : 'pais',
+              municipio ? municipio.municipio_id : provincia ? provincia.provincia_id : obtenerPaisId(geo.paises, pais)
+              // obtenerPaisId(geo.paises, pais.nombre) || provincia.provincia_id || municipio.municipio_id
+          );
+
+          setPoblacionEstimada(poblacion);
+      };
+
+      fetchPoblacion();
+  }, [pais, provincia, municipio]);
+
+  const toggleRow = (index) => {
+    setSelectedRows(prev => {
+      const copy = [...prev];
+      copy[index] = !copy[index];
+      return copy;
+    });
+  };
+
+  const handleCellChange = (rowIndex, colIndex, value) => {
+    setTableOverrides(prev => ({
+      ...prev,
+      [rowIndex]: {
+        ...(prev[rowIndex] || {}),
+        [colIndex]: value
+      }
+    }));
+  };
+
+  const toggleSearchRow = (index) => {
+    setSearchSelected(prev => {
+      const copy = [...prev];
+      copy[index] = !copy[index];
+      return copy;
+    });
+  };
+
+  const handleSearchCellChange = (rowIndex, colIndex, value) => {
+    setSearchOverrides(prev => ({
+      ...prev,
+      [rowIndex]: {
+        ...(prev[rowIndex] || {}),
+        [colIndex]: value
+      }
+    }));
+  };
 
 useEffect(() => {
-    const fetchPoblacion = async () => {
-      console.log('geo data:', geo);
-      console.log('Fetching poblacion for:', { pais, provincia, municipio });
-
-        if(!pais) return; 
-        const poblacion = await obtenerPoblacion(
-            TOKEN,
-            municipio ? 'municipio' : provincia ? 'provincia' : 'pais',
-            municipio ? municipio.municipio_id : provincia ? provincia.provincia_id : obtenerPaisId(geo.paises, pais)
-            // obtenerPaisId(geo.paises, pais.nombre) || provincia.provincia_id || municipio.municipio_id
-        );
-
-        setPoblacionEstimada(poblacion);
-    };
-
-    fetchPoblacion();
-}, [pais, provincia, municipio]);
-const toggleRow = (index) => {
-  setSelectedRows(prev => {
-    const copy = [...prev];
-    copy[index] = !copy[index];
-    return copy;
-  });
-};
-useEffect(() => {
-  console.log(poblacionEstimada);
   if(!poblacionEstimada ) return;
-  // setalcancePorNota(Math.floor(poblacionEstimada.poblacion * 0.6));
+  
+  const getValor = (rowIdx, colIdx, valorPorDefecto) => {
+    const editado = tableOverrides[rowIdx]?.[colIdx];
+    if (editado === "") return 0;
+    return editado !== undefined ? Number(editado) : valorPorDefecto;
+  };
 
-  const dv_cpm = Number(poblacionEstimada?.gv?.cpm ?? 0);
-  const cpm_agencia = dv_cpm / (1 - margenAgencia/100);
-  const dv_costo_por_nota = cpm_agencia * alcancePorNota * 3/1000;
-  const dv_costo_total = dv_costo_por_nota * cantidadDeNotas;
-  const dv_precio_por_nota = dv_costo_por_nota / (1-margen/100)
-  const dv_precio_total = dv_precio_por_nota * cantidadDeNotas;
-  const dv_precioConAgencia = dv_precio_total / (1 - margenAgencia2/100);
+  const calcularFila = (rowIdx, defaultCpm, defaultFrecuencia, isApiTable = false) => {
+    const cpm = isApiTable ? defaultCpm : getValor(rowIdx, 0, defaultCpm);
+    const inversion = getValor(rowIdx, 1, 100);
+    const alcance_usuarios = alcancePorNota * (inversion / 100);
+    const frecuencia = getValor(rowIdx, 3, defaultFrecuencia);
+    
+    const impresiones = cantidadDeNotas * alcance_usuarios * frecuencia;
+    const costo_marketing = (impresiones * cpm) / 1000;
+    const costo_con_fee = costo_marketing * (feeAgencia / 100) + costo_marketing;
+    const costo_mkt_por_nota = costo_marketing / cantidadDeNotas;
+    const precio_de_venta = costo_con_fee / (1 - rentabilidad / 100);
 
-  const meta_cpm = Number(poblacionEstimada?.meta?.cpm ?? 0);
-  const meta_cpm_agencia = meta_cpm / (1 - margenAgencia/100);
-  const meta_costo_por_nota = meta_cpm_agencia * alcancePorNota * 2/1000;
-  const meta_costo_total = meta_costo_por_nota * cantidadDeNotas;
-  const meta_precio_por_nota = meta_costo_por_nota / (1-margen/100)
-  const meta_precio_total = meta_precio_por_nota * cantidadDeNotas;
-  const meta_precioConAgencia = meta_precio_total / (1 - margenAgencia2/100);
+    return [
+      cpm, 
+      inversion, 
+      alcance_usuarios, 
+      frecuencia, 
+      impresiones, 
+      costo_mkt_por_nota, 
+      costo_marketing, 
+      costo_con_fee, 
+      precio_de_venta
+    ];
+  };
 
-  const youtube_cpm = Number(poblacionEstimada?.meta?.cpm ?? 0);
-  const youtube_cpm_agencia = meta_cpm / (1 - margenAgencia/100);
-  const youtube_costo_por_nota = meta_cpm_agencia * alcancePorNota * 2/1000;
-  const youtube_costo_total = meta_costo_por_nota * cantidadDeNotas;
-  const youtube_precio_por_nota = meta_costo_por_nota / (1-margen/100)
-  const youtube_precio_total = meta_precio_por_nota * cantidadDeNotas;
-  const youtube_precioConAgencia = meta_precio_total / (1 - margenAgencia2/100);
+  const cpm_dv = Number(poblacionEstimada?.gv?.cpm ?? 0);
+  const cpm_meta = Number(poblacionEstimada?.meta?.cpm ?? 0);
 
-  const personalizado_cpm = cpmPersonalizado;
-  const personalizado_cpm_agencia = personalizado_cpm / (1 - margenAgencia/100);
-  const personalizado_costo_por_nota = personalizado_cpm_agencia * alcancePorNota * 2/1000;
-  const personalizado_costo_total = personalizado_costo_por_nota * cantidadDeNotas;
-  const personalizado_precio_por_nota = personalizado_costo_por_nota / (1-margen/100)
-  const personalizado_precio_total = personalizado_precio_por_nota * cantidadDeNotas;
-  const personalizado_precioConAgencia = personalizado_precio_total / (1 - margenAgencia2/100);
+  // CALCULO PRIMER TABLA 
 
   const filas = [
-  {
-    activo: selectedRows[0],
-    valores: [dv_cpm, cpm_agencia, dv_costo_por_nota, dv_costo_total, dv_precio_por_nota, dv_precio_total, dv_precioConAgencia]
-  },
-  {
-    activo: selectedRows[1],
-    valores: [meta_cpm, meta_cpm_agencia, meta_costo_por_nota, meta_costo_total, meta_precio_por_nota, meta_precio_total, meta_precioConAgencia]
-  },
-  {
-    activo: selectedRows[2],
-    valores: [youtube_cpm, youtube_cpm_agencia, youtube_costo_por_nota, youtube_costo_total, youtube_precio_por_nota, youtube_precio_total, youtube_precioConAgencia]
-  },
-  {
-    activo: selectedRows[3],
-    valores: [personalizado_cpm, personalizado_cpm_agencia, personalizado_costo_por_nota, personalizado_costo_total, personalizado_precio_por_nota, personalizado_precio_total, personalizado_precioConAgencia]
-  }
-];
+    {
+      activo: selectedRows[0],
+      valores: calcularFila(0, cpm_dv, 3)
+    },
+    {
+      activo: selectedRows[1],
+      valores: calcularFila(1, cpm_meta, 2)
+    },
+    {
+      activo: selectedRows[2],
+      valores: calcularFila(2, cpm_meta, 2)
+    },
+    {
+      activo: selectedRows[3],
+      valores: calcularFila(3, 0, 2)
+    }
+  ];
 
-const totales = new Array(7).fill(0);
+  // el numero de columnas del cual se quere calcular el total
+  const columnasASumar = [2, 4, 5, 6, 7, 8];
 
-filas.forEach(fila => {
-  if (!fila.activo) return;
+  const totales = new Array(9).fill("");
+  
+  columnasASumar.forEach(i => totales[i] = 0);
 
-  fila.valores.forEach((val, i) => {
-    totales[i] += val;
+  filas.forEach(fila => {
+    if (!fila.activo) return;
+
+    columnasASumar.forEach((i) => {
+      totales[i] += fila.valores[i];
+    });
   });
-});
 
-setData([
-  filas[0].valores.map(v => v.toFixed(2)),
-  filas[1].valores.map(v => v.toFixed(2)),
-  filas[2].valores.map(v => v.toFixed(2)),
-  filas[3].valores.map(v => v.toFixed(2)),
-  totales.map(v => v.toFixed(2))
-]);
+  setData([
+    filas[0].valores,
+    filas[1].valores,
+    filas[2].valores,
+    filas[3].valores,
+    totales
+  ]);
 
-}, [poblacionEstimada, alcancePorNota, cantidadDeNotas, margen, 
-  margenAgencia, cpmPersonalizado, selectedRows, margenAgencia2]);
+  // CALCULO SEGUNDA TABLA 
 
+  const getSearchValor = (colIdx, valorPorDefecto) => {
+    const editado = searchOverrides[0]?.[colIdx];
+    if (editado === "") return 0;
+    return editado !== undefined ? Number(editado) : valorPorDefecto;
+  };
+
+  const search_cpc = getSearchValor(0, 400);
+  const search_clics = getSearchValor(1, 0);
+  const search_costo_pesos = search_cpc * search_clics;
+  const search_valor_usd = getSearchValor(3, 1400);
+  const search_costo_usd = search_valor_usd ? search_costo_pesos / search_valor_usd : 0;
+  const search_costo_fee = (search_costo_pesos * (feeAgencia / 100)) + search_costo_pesos;
+  const search_precio_venta = search_costo_fee / (1 - rentabilidad / 100);
+
+  setSearchData([
+    [search_cpc, search_clics, search_costo_pesos, search_valor_usd, search_costo_usd, search_costo_fee, search_precio_venta]
+  ]);
+
+  // CALCULO TERCER TABLA 
+
+    const apiFilas = [
+    { activo: apiSelectedRows[0], valores: calcularFila(0, cpm_dv, 3, true) },
+    { activo: apiSelectedRows[1], valores: calcularFila(1, cpm_meta, 2, true) },
+    { activo: apiSelectedRows[2], valores: calcularFila(2, cpm_meta, 2, true) },
+  ];
+
+  const apiTotales = new Array(9).fill("");
+  columnasASumar.forEach(i => apiTotales[i] = 0);
+
+  apiFilas.forEach(fila => {
+    if (!fila.activo) return;
+    columnasASumar.forEach((i) => {
+      apiTotales[i] += fila.valores[i];
+    });
+  });
+
+  setApiData([
+    apiFilas[0].valores,
+    apiFilas[1].valores,
+    apiFilas[2].valores,
+    apiTotales
+  ]);
+  
+}, [poblacionEstimada, alcancePorNota, cantidadDeNotas, rentabilidad, feeAgencia, selectedRows, tableOverrides, searchOverrides, apiSelectedRows]);
+
+const confirmarDescargaExcel = () => {
+    const datosAExportar = [];
+    
+    // DESCARGA PRIMER TABLA
+    for (let i = 0; i < rows.length - 1; i++) {
+      if (selectedRows[i]) { 
+        let filaObj = { Plataforma: rows[i] };
+        columns.forEach((columna, colIndex) => {
+          filaObj[columna] = data[i]?.[colIndex] ?? "-";
+        });
+        datosAExportar.push(filaObj);
+      }
+    }
+
+    let filaTotales = { Plataforma: rows[rows.length - 1] };
+    columns.forEach((columna, colIndex) => {
+      filaTotales[columna] = data[data.length - 1]?.[colIndex] ?? "-";
+    });
+    datosAExportar.push(filaTotales);
+
+    // DESCARGA SEGUNDA TABLA (SEARCH ALINEADA)
+    if (searchSelected[0]) {
+      datosAExportar.push({}); 
+      datosAExportar.push({ Plataforma: "--- SEARCH ---" }); 
+      
+      let searchHeaderObj = { Plataforma: "Plataforma" };
+      columns.forEach((columna, colIndex) => {
+        searchHeaderObj[columna] = searchColumns[colIndex] || "";
+      });
+      datosAExportar.push(searchHeaderObj);
+
+      let filaSearch = { Plataforma: searchRows[0] };
+      columns.forEach((columna, colIndex) => {
+        filaSearch[columna] = searchData[0]?.[colIndex] ?? "";
+      });
+      datosAExportar.push(filaSearch);
+    }
+
+    // DESCARGA TERCER TABLA
+    if (exportApi) {
+      datosAExportar.push({}); 
+      datosAExportar.push({ Plataforma: "--- PRESUPUESTO HISTÓRICO ---" });
+
+      for (let i = 0; i < apiRows.length - 1; i++) {
+        if (apiSelectedRows[i]) { 
+          let filaObj = { Plataforma: apiRows[i] };
+          columns.forEach((columna, colIndex) => {
+            filaObj[columna] = apiData[i]?.[colIndex] ?? "-";
+          });
+          datosAExportar.push(filaObj);
+        }
+      }
+
+      let filaTotalesApi = { Plataforma: apiRows[apiRows.length - 1] };
+      columns.forEach((columna, colIndex) => {
+        filaTotalesApi[columna] = apiData[apiData.length - 1]?.[colIndex] ?? "-";
+      });
+      datosAExportar.push(filaTotalesApi);
+    }
+
+    descargarExcel(datosAExportar, excelFileName || "Presupuesto");
+    setShowExcelModal(false);
+  };
 
   return (
     <div className="content flex-grow-1 crearNotaGlobal">
@@ -254,15 +357,6 @@ setData([
             <h3>población: {Number(poblacionEstimada?.poblacion || 0).toLocaleString('es-AR') || 0} </h3>
           </div>
           <div className='col-6 '>
-              {/* <div className="dropdown p-0">
-                <SelectorConBuscador
-                  title="Plataformas"
-                  options={tiposPlataformas}
-                  selectedOption={canalSelected}
-                  onSelect={setCanalSelected}
-                  onClear={() => setCanalSelected(null)}
-                />  
-              </div> */}
               <div className="dropdown p-0">
                 <SelectorNumerosEnteros
                   title="Cantidad de notas"
@@ -283,63 +377,160 @@ setData([
                   isDecimal={false}
                 />
                 <InputNumerico
-                  title="Margen"
-                  selectedValue={margen}
+                  title="Rentabilidad"
+                  selectedValue={rentabilidad}
                   isPercentual ={true}
                   min={0}
                   max={99.9}
-                  onSelect={setMargen}
-                  onClear={() => setMargen(null)}
+                  onSelect={setRentabilidad}
+                  onClear={() => setRentabilidad(null)}
                   isDecimal={true}
                 />
                 <InputNumerico
-                  title="Fee plataformas"
-                  selectedValue={margenAgencia}
+                  title="Fee Agencia"
+                  selectedValue={feeAgencia}
                   isPercentual ={true}
                   min={0}
                   max={99.9}
-                  onSelect={setMargenAgencia}
-                  onClear={() => setMargenAgencia(null)}
+                  onSelect={setFeeAgencia}
+                  onClear={() => setFeeAgencia(null)}
                   isDecimal={true}
                 />
 
-                <InputNumerico
-                  title="Margen agencia"
-                  selectedValue={margenAgencia2}
-                  isPercentual ={true}
-                  min={0}
-                  max={99.9}
-                  onSelect={setMargenAgencia2}
-                  onClear={() => setMargenAgencia2(0)}
-                  isDecimal={true}
-                />
-                <InputNumerico
-                  title="CPM personalizado (opcional)"
-                  selectedValue={cpmPersonalizado}
-                  isPercentual ={false}
-                  min={0}
-                  max={10000000}
-                  onSelect={setCpmPersonalizado}
-                  onClear={() => setCpmPersonalizado(0)}
-                  isDecimal={true}
-                />
               </div>
               
             </div>
         <div style={{ padding: "20px" }}>
-          <h2>Datos </h2>
+          <div className='d-flex flex-row justify-content-between align-items-center'>
+
+            <h2>Presupuesto por Plataformas</h2>
+            <button 
+                id='descargar-excel' 
+                className='btn w-auto h-50 bg-success'
+                title="Descargar presupuesto en Excel"
+                onClick={() => setShowExcelModal(true)}
+                >
+                <i className="bi bi-filetype-xlsx fs-4 m-0" style={{color:'rgb(41, 40, 40)'}}></i> {/**bi-file-earmark-excel-fill / bi-journal-x / bi-filetype-xlsx*/}
+            </button>
+          </div>
+
+          {/* TABLA PRINCIPAL */}
           <TablaReadOnly
             columns={columns}
             rows={rows}
             data={data}
             selectedRows={selectedRows}
             onToggleRow={toggleRow}
+            editableColumns={editableColumns}
+            tableOverrides={tableOverrides}
+            onCellChange={handleCellChange}
+            currencyColumns={currencyColumns}
+            highlightedTotalColumns={highlightedTotalColumns}
+          />
+          
+          <h3 className="mt-4 mb-3"></h3>
+          
+          {/* TABLA SEARCH */}
+          <TablaReadOnly
+            columns={searchColumns}
+            rows={searchRows}
+            data={searchData}
+            selectedRows={searchSelected}
+            onToggleRow={toggleSearchRow}
+            editableColumns={searchEditableColumns}
+            tableOverrides={searchOverrides}
+            onCellChange={handleSearchCellChange}
+            hasTotalsRow={false}
+            currencyColumns={searchCurrencyColumns}
+          />
+          
+          {/* TABLA CON CPM HISTÓRICO */}
+          <h2>Presupuesto Histórico</h2>
+          <TablaReadOnly
+            columns={columns} 
+            rows={apiRows}
+            data={apiData}
+            selectedRows={apiSelectedRows}
+            onToggleRow={toggleApiRow}
+            editableColumns={apiEditableColumns} 
+            tableOverrides={{}} 
+            onCellChange={() => {}} 
+            currencyColumns={currencyColumns}
+            highlightedTotalColumns={highlightedTotalColumns}
           />
         </div>
       </div>
+
+      {/* Modal de Descargar Excel */}
+      {showExcelModal && (
+        <div className="modal fade show d-block" tabIndex="-1" style={{ background: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Descargar Presupuesto</h5>
+                <button type="button" className="btn-close" onClick={() => setShowExcelModal(false)}></button>
+              </div>
+              <div className="modal-body">
+                <div className="mb-3">
+                  <label className="form-label fw-bold">Nombre del archivo:</label>
+                  <input 
+                    type="text" 
+                    className="form-control" 
+                    value={excelFileName} 
+                    onChange={(e) => setExcelFileName(e.target.value)} 
+                  />
+                </div>
+                <label className="form-label mb-2 fw-bold">Seleccione las plataformas a incluir:</label>
+                {rows.slice(0, -1).map((plataforma, index) => (
+                  <div className="form-check d-flex gap-2 p-0" key={index}>
+                    <input 
+                      type="checkbox" 
+                      id={`check-${index}`}
+                      checked={selectedRows[index]} 
+                      onChange={() => toggleRow(index)} 
+                      style={{ cursor: "pointer" }}
+                    />
+                    <label className="form-check-label" htmlFor={`check-${index}`} style={{ cursor: "pointer" }}>
+                      {plataforma}
+                    </label>
+                  </div>
+                ))}
+                <div className="form-check d-flex gap-2 p-0">
+                  <input 
+                    type="checkbox" 
+                    id="check-search"
+                    checked={searchSelected[0]} 
+                    onChange={() => toggleSearchRow(0)} 
+                    style={{ cursor: "pointer" }}
+                  />
+                  <label className="form-check-label" htmlFor="check-search" style={{ cursor: "pointer" }}>
+                    Search
+                  </label>
+                </div>
+                <div className="form-check d-flex gap-2 p-0">
+                  <input 
+                    type="checkbox" 
+                    id="check-api-export"
+                    checked={exportApi} 
+                    onChange={() => setExportApi(!exportApi)} 
+                    style={{ cursor: "pointer" }}
+                  />
+                  <label className="form-check-label" htmlFor="check-api-export" style={{ cursor: "pointer" }}>
+                    Presupuesto Histórico
+                  </label>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button className="btn btn-secondary" onClick={() => setShowExcelModal(false)}>Cancelar</button>
+                <button className="btn btn-success" onClick={confirmarDescargaExcel}>Descargar XLSX</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
 
-export default CalculadoraVentas
-;
+export default CalculadoraDeVentas;
