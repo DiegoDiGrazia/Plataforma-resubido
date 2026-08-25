@@ -14,9 +14,14 @@ const TablaReadOnly = ({
   highlightedTotalColumns = []
 }) => {
   
-  const formatearNumero = (numero) => {
+  const formatearNumero = (numero, colIndex) => {
     if (numero === "" || numero === undefined || numero === null || isNaN(numero)) return "";
-    return Math.round(Number(numero)).toLocaleString('es-AR');
+    
+    if (colIndex === 0) {
+      const truncado = Math.trunc(Number(numero) * 100) / 100;
+      return truncado.toLocaleString('es-AR', { maximumFractionDigits: 2 });
+    }
+    return Math.round(Number(numero)).toLocaleString('es-AR', { maximumFractionDigits: 0 });
   };
 
   return (
@@ -77,6 +82,7 @@ const TablaReadOnly = ({
                             {isCurrency && <span>$</span>}
                             <input
                               type="number"
+                              step="0.01"
                               value={valorOverride !== undefined ? valorOverride : valorCalculado}
                               onChange={(e) => onCellChange(rowIndex, colIndex, e.target.value)}
                               style={{ width: "75px", padding: "4px", border: "1px solid #ccc", borderRadius: "4px" }}
@@ -84,7 +90,7 @@ const TablaReadOnly = ({
                           </div>
                         ) : (
                           valorCalculado !== "" ? (
-                            <>{isCurrency && <span>$ </span>}{formatearNumero(valorCalculado)}</>
+                            <>{isCurrency && <span>$ </span>}{formatearNumero(valorCalculado, colIndex)}</>
                           ) : "-"
                         )}
                       </td>
