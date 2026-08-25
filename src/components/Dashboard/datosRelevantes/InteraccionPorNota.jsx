@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./InteraccionPorNota.css"
 import { useSelector, useDispatch } from 'react-redux';
-import { seleccionPorFiltro } from '../../barplot/Barplot';
+import { filtrarUltimosMeses } from '../../barplot/Barplot';
 import axios from 'axios';
 import { setNotasMayorInteraccion } from '../../../redux/interaccionesPorNotaSlice';
 import { formatNumberMiles } from '../Dashboard.jsx';
@@ -41,8 +41,7 @@ const InteraccionPorNota = ({datosLocales, paisFiltro}) => {
     const token = useSelector(state => state.formulario.token);
     const FiltroActual = useSelector(state => state.dashboard.filtro);
     const ultimaFechaCargadaBarplot = useSelector(state => state.barplot.ultimaFechaCargadaBarplot);
-    const cantidad_meses = seleccionPorFiltro(FiltroActual);
-    
+
     useEffect(() => {
         let periodos = periodos_api.split(",");
         let fecha_inicio_creacion = `${periodos[0]}-01`;
@@ -72,7 +71,7 @@ const InteraccionPorNota = ({datosLocales, paisFiltro}) => {
     const notasDeApi = useSelector(state => state.interaccionesPorNota.notasMayorInteraccion); 
     const notasLocales = datosLocales?.notasMayorInteraccion;
     const notasAUsar = notasLocales ? notasLocales : notasDeApi;
-    const meses = notasAUsar.slice(cantidad_meses);
+    const meses = filtrarUltimosMeses(notasAUsar, FiltroActual, 'periodo');
     let todas_las_notas = meses.flatMap(mes => mes.notas);
     console.log("todas_las_notas", todas_las_notas);
 

@@ -75,6 +75,9 @@ const obtenerColorDeEstadoDistribucion = (campoAChequear, datosDelCiente) => {
   return tieneAlgunNull ? 'text-danger' : 'text-success';
 }
 
+const notaSinNingunaDistribucion = (nota) =>
+  PLATAFORMAS.every(plataforma => nota[plataforma.campoPrimerDato] == null);
+
 const filtrarClientesSegunPendientes = (clientesObj, pendientes) => {
   const clientesFiltradosEntries = Object.entries(clientesObj).filter(([nombre, datos]) => {
     if (!datos.notas || datos.notas.length === 0) return false;
@@ -99,27 +102,24 @@ const filtrarClientesSegunPendientes = (clientesObj, pendientes) => {
   return Object.fromEntries(clientesFiltradosEntries);
 };
 
-const obtenerTimestampUltimaActualizacion = (nota) =>
-  nota.ultima_actualizacion ? new Date(nota.ultima_actualizacion).getTime() : 0;
+const ordenarNotasPorId = (notas) =>
+  [...notas].sort((a, b) => (Number(b.id) || 0) - (Number(a.id) || 0));
 
-const ordenarNotasPorUltimaActualizacion = (notas) =>
-  [...notas].sort((a, b) => obtenerTimestampUltimaActualizacion(b) - obtenerTimestampUltimaActualizacion(a));
-
-const obtenerUltimaActualizacionMasReciente = (notas) => {
+const obtenerIdMasGrande = (notas) => {
   if (!notas || notas.length === 0) return 0;
-  return Math.max(...notas.map(obtenerTimestampUltimaActualizacion));
+  return Math.max(...notas.map(n => Number(n.id) || 0));
 };
 
-const ordenarClientesPorUltimaActualizacion = (dicClientes) =>
+const ordenarClientesPorId = (dicClientes) =>
   Object.fromEntries(
     Object.entries(dicClientes).sort(([, a], [, b]) =>
-      obtenerUltimaActualizacionMasReciente(b.notas) - obtenerUltimaActualizacionMasReciente(a.notas)
+      obtenerIdMasGrande(b.notas) - obtenerIdMasGrande(a.notas)
     )
   );
 
 function agregarPlanAlDiccionarioDeNotas(dicNotas, clientes, planes) {
   const entradasOrdenadas = Object.entries(dicNotas).sort(([, notasA], [, notasB]) =>
-    obtenerUltimaActualizacionMasReciente(notasB) - obtenerUltimaActualizacionMasReciente(notasA)
+    obtenerIdMasGrande(notasB) - obtenerIdMasGrande(notasA)
   );
 
   const nuevoDic = {};
@@ -132,7 +132,7 @@ function agregarPlanAlDiccionarioDeNotas(dicNotas, clientes, planes) {
       : null;
 
     nuevoDic[nombreCliente] = {
-      notas: ordenarNotasPorUltimaActualizacion(notas),
+      notas: ordenarNotasPorId(notas),
       plan: plan || null
     };
   }
@@ -384,10 +384,10 @@ useEffect(() => {
       const notasDeVideoPrevias = actualizado[nombreCliente]?.notas?.filter(n => n.esNotaDeVideo) || [];
       actualizado[nombreCliente] = {
         plan: datos.plan,
-        notas: ordenarNotasPorUltimaActualizacion([...datos.notas, ...notasDeVideoPrevias])
+        notas: ordenarNotasPorId([...datos.notas, ...notasDeVideoPrevias])
       };
     }
-    return ordenarClientesPorUltimaActualizacion(actualizado);
+    return ordenarClientesPorId(actualizado);
   });
   })
   .finally(() => setLoading(false));
@@ -410,15 +410,15 @@ useEffect(() => {
         if (actualizado[nombreCliente]) {
           actualizado[nombreCliente] = {
             ...actualizado[nombreCliente],
-            notas: ordenarNotasPorUltimaActualizacion([...actualizado[nombreCliente].notas, ...notasDeVideo])
+            notas: ordenarNotasPorId([...actualizado[nombreCliente].notas, ...notasDeVideo])
           };
         } else {
           const municipio = clientes.find(m => m.name === nombreCliente);
           const plan = municipio ? planes.find(p => p.id === municipio.id_plan) : null;
-          actualizado[nombreCliente] = { notas: ordenarNotasPorUltimaActualizacion(notasDeVideo), plan: plan || null };
+          actualizado[nombreCliente] = { notas: ordenarNotasPorId(notasDeVideo), plan: plan || null };
         }
       }
-      return ordenarClientesPorUltimaActualizacion(actualizado);
+      return ordenarClientesPorId(actualizado);
     });
   });
 
@@ -567,7 +567,7 @@ const goToPage = (newPage) => {
                       <div className="row pt-0 w-100">
                         <div className="col-2">
                           <button onClick={() => irANotasDelCliente(data, cliente, fechaDesde, fechaHasta)} className="btn btn-link p-0 m-0 text-start">
-                            <strong className='text-primary' style={{ fontSize: '18px' }}>{cliente}</strong>
+                            <strong className={(data.notas.some(notaSinNingunaDistribucion) ? 'text-danger' : 'text-primary')} style={{ fontSize: '18px' }}>{cliente}</strong>
                           </button>
                           
                           <div className="row p-1">
@@ -598,7 +598,7 @@ const goToPage = (newPage) => {
                               {!nota.esNotaDeVideo && (
                               <div className="col">
                                 <div className="row p-1">
-                                  <span><strong>ID: </strong>{termIdsPorGeneracion[nota.id_generacion] ?? 'cargando...'}</span>
+                                  <span className={notaSinNingunaDistribucion(nota) ? 'text-danger' : ''}><strong>ID: </strong>{termIdsPorGeneracion[nota.id_generacion] ?? 'cargando...'}</span>
                                 </div>
                                 <div className="row p-1">
                                   <button className="btn btn-outline-primary w-100" onClick={() => abrirNota(nota)}>Abrir nota</button>

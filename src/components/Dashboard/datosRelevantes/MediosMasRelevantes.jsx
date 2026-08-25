@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 import { setMediosMayorInteraccion } from '../../../redux/interaccionesPorNotaSlice';
 import { formatNumberMiles } from '../Dashboard';
-import { seleccionPorFiltro } from '../../barplot/Barplot';
+import { filtrarUltimosMeses } from '../../barplot/Barplot';
 
 const multiplicador = 1
 
@@ -40,7 +40,6 @@ const MediosMasRelevantes = ({datosLocales, paisFiltro}) => {
     const dispatch = useDispatch();
     const token = useSelector((state) => state.formulario.token);
     const FiltroActual = useSelector((state) => state.dashboard.filtro);
-    let cantidad_meses = seleccionPorFiltro(FiltroActual);
     const ultimaFechaCargadaBarplot = useSelector((state) => state.barplot.ultimaFechaCargadaBarplot);
     const CANTIDAD_MEDIOS_A_MOSTRAR = 5
     console.log("datos adentro de medios", datosLocales)
@@ -81,7 +80,7 @@ const MediosMasRelevantes = ({datosLocales, paisFiltro}) => {
         });
     }, [nombreCliente, ultimaFechaCargadaBarplot, paisFiltro]);
 
-    const meses = useSelector(state => state.interaccionesPorNota.mediosMayorInteraccion || []).slice(cantidad_meses);
+    const meses = filtrarUltimosMeses(useSelector(state => state.interaccionesPorNota.mediosMayorInteraccion || []), FiltroActual, 'periodo');
     let todas_los_medios = [];
     for (let mes of meses) {
         todas_los_medios.push(...mes.medios);

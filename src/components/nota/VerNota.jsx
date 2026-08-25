@@ -177,7 +177,7 @@ const VerNota = () => {
 
                         <div className='datos-resumen row g-1'>
                             <div className='col-lg-12 col-xl col-6 m-2 back-white cuadro-impresion'>
-                                <PlataformaMasImpresiones resumenCliente={resumenNota} loading={loadingUsuarios} />
+                                <PlataformaMasImpresiones resumenCliente={resumenNota} loading={loadingUsuarios} aplicarFiltroMeses={false} />
                             </div>
                             <div className='col-lg-12 col-xl col-6 m-2 back-white cuadro-impresion'>
                                 <MediosMasRelevantesNotas id_noti={id_noti} TOKEN={TOKEN} cliente={CLIENTE} fpub={FPUB} dataLocalNota={dataLocalNota?.mediosNoticia} paisFiltro={paisFiltro} />

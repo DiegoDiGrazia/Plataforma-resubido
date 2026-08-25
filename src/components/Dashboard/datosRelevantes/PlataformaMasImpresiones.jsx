@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./InteraccionPorNota.css";
 import { useSelector } from 'react-redux';
-import { seleccionPorFiltro } from '../../barplot/Barplot';
+import { filtrarUltimosMeses } from '../../barplot/Barplot';
 import { formatNumberMiles } from '../Dashboard';
 import { useMemo } from 'react';
 
@@ -43,7 +43,7 @@ const CAMPOS_METRICAS = [
 
 ];
 
-const PlataformaMasImpresiones = ({datosLocales, resumenCliente= null, loading = false}) => {
+const PlataformaMasImpresiones = ({datosLocales, resumenCliente= null, loading = false, aplicarFiltroMeses = true}) => {
     const FiltroActual = useSelector((state) => state.dashboard.filtro);
 
     const sumarCampos = (data, campos) => {
@@ -57,9 +57,10 @@ const PlataformaMasImpresiones = ({datosLocales, resumenCliente= null, loading =
 
     const totalesInteracciones = useMemo(() => {
         if (!resumenCliente) return null;
-        return sumarCampos(resumenCliente, CAMPOS_METRICAS);
+        const datos = aplicarFiltroMeses ? filtrarUltimosMeses(resumenCliente, FiltroActual, 'month') : resumenCliente;
+        return sumarCampos(datos, CAMPOS_METRICAS);
 
-    }, [resumenCliente, FiltroActual]);
+    }, [resumenCliente, FiltroActual, aplicarFiltroMeses]);
 
     const plataformasData = [
         {

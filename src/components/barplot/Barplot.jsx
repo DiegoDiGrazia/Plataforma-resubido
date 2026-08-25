@@ -57,6 +57,28 @@ export function seleccionPorFiltro(filtro) {
     return -12;
 }
 
+///Recibe un filtro, y devuelve la cantidad de meses que representa (positivo)
+export function cantidadMesesPorFiltro(filtro) {
+    if (filtro === "Ultimos 3 meses") return 3;
+    if (filtro === "Ultimos 6 meses") return 6;
+    return 12;
+}
+
+/// Filtra una lista de objetos agrupados por mes (campo "YYYY-MM") quedandose
+/// solo con los ultimos `cantidadMeses` meses calendario, sin importar si la
+/// lista tiene "huecos" (meses sin datos que no vinieron en la respuesta).
+/// Usar esto en vez de slice(-N), porque slice(-N) cuenta posiciones del
+/// array y no meses reales: si faltan meses en el medio, termina trayendo
+/// datos de mas atras de lo que corresponde.
+export function filtrarUltimosMeses(lista, filtro, campoFecha = 'month') {
+    const cantidadMeses = cantidadMesesPorFiltro(filtro);
+    const cutoff = new Date();
+    cutoff.setDate(1);
+    cutoff.setMonth(cutoff.getMonth() - (cantidadMeses - 1));
+    const cutoffStr = `${cutoff.getFullYear()}-${String(cutoff.getMonth() + 1).padStart(2, '0')}`;
+    return (lista || []).filter(item => item?.[campoFecha] >= cutoffStr);
+}
+
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const Barplot = ({datosLocales, resumenCliente = null, loading = false, paisFiltro}) => {
@@ -66,9 +88,8 @@ const Barplot = ({datosLocales, resumenCliente = null, loading = false, paisFilt
 
     useEffect(() => {
         if (resumenCliente) {
-            const cantidad_meses = seleccionPorFiltro(FiltroActual);
             setTotales(
-            resumenCliente.slice(cantidad_meses).reduce((acumulador, mes) => {
+            filtrarUltimosMeses(resumenCliente, FiltroActual, 'month').reduce((acumulador, mes) => {
                 ///totalRRSS
                 acumulador.usuariosTotalesRRSS =
                 (acumulador.usuariosTotalesRRSS || 0) +

@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 import { setCategoriasMayorInteraccion } from '../../../redux/interaccionesPorNotaSlice';
 import { formatNumberMiles } from '../Dashboard';
-import { seleccionPorFiltro } from '../../barplot/Barplot';
+import { filtrarUltimosMeses } from '../../barplot/Barplot';
 
 function reduceBykeyCategorias(lista_medios) {
     let sitios = {};
@@ -13,6 +13,7 @@ function reduceBykeyCategorias(lista_medios) {
         if (!sitios[medio.categoria]) {
             sitios[medio.categoria] = {
                 ...medio,
+                interacciones: Number(medio.interacciones),
                 impresiones: Number(medio.interacciones)
             };
         } else {
@@ -29,7 +30,6 @@ const CategoriasMasRelevantes = ({datosLocales, paisFiltro}) => {
     const token = useSelector((state) => state.formulario.token);
     const FiltroActual = useSelector((state) => state.dashboard.filtro);
     const ultimaFechaCargadaBarplot = useSelector((state) => state.barplot.ultimaFechaCargadaBarplot);
-    let cantidad_meses = seleccionPorFiltro(FiltroActual);
 
     useEffect(() => {
         let periodos = periodos_api.split(",");
@@ -65,10 +65,13 @@ const CategoriasMasRelevantes = ({datosLocales, paisFiltro}) => {
         });
     }, [nombreCliente, ultimaFechaCargadaBarplot, paisFiltro]);
 
-    const categoriasPorMes = useSelector(state => state.interaccionesPorNota.categoriasMayorInteraccion || []).slice(cantidad_meses);
+    const categoriasPorMes = filtrarUltimosMeses(useSelector(state => state.interaccionesPorNota.categoriasMayorInteraccion || []), FiltroActual, 'periodo');
+    const categoriasLocalesPorMes = filtrarUltimosMeses(datosLocales?.tresCategorias || [], FiltroActual, 'periodo');
     let todasLasCategorias = [];
-    for (let mes of datosLocales ? datosLocales.tresCategorias : categoriasPorMes) {
-        todasLasCategorias.push(...mes.categoria);
+    for (let mes of datosLocales ? categoriasLocalesPorMes : categoriasPorMes) {
+        if (Array.isArray(mes?.categoria)) {
+            todasLasCategorias.push(...mes.categoria.filter((cat) => cat?.categoria));
+        }
     }
     const categoriasSinRepetir = Object.values(reduceBykeyCategorias(todasLasCategorias));
     const listaTresCategorias = categoriasSinRepetir.sort((categoriaA, categoriaB) => Number(categoriaB.interacciones) - Number(categoriaA.interacciones)).slice(0, 3);
