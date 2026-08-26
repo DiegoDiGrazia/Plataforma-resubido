@@ -143,7 +143,7 @@ const Barplot = ({datosLocales, resumenCliente = null, loading = false, paisFilt
             {
                 label: `Impresiones totales`,
                 data: totales.usuariosGooglePorMes,
-                backgroundColor: '#666CFF',
+                backgroundColor: '#34A853',
                 barPercentage: 1.0,
                 categoryPercentage: 0.7,
             },
@@ -209,14 +209,14 @@ const Barplot = ({datosLocales, resumenCliente = null, loading = false, paisFilt
                     
                     <div className='col-4 barra_lateral'>
                         <p className='leyenda_barplot'>
-                            <span className="blue-dot-user"></span> Usuarios Redes Sociales
+                            <span className="blue-dot-impresiones "></span> Usuarios Redes Sociales
                             <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "Son las personas que llegaron a tus notas desde nuestra difusión en redes sociales."/>  
                         </p>
                         <p className='totales'>{formatNumberMiles(totales.usuariosTotalesRRSS)}</p>
                     </div>
                     <div className='col' style={{ paddingLeft: '20px' }}>
                         <p className='leyenda_barplot'>
-                            <span className="blue-dot-impresiones"></span>Usuarios Medios
+                            <span className="blue-dot-user"></span>Usuarios Medios
                             <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "Son las personas que llegaron a tus notas desde nuestra difusión en otros medios de noticias."/>  
                         </p>
                         <p className='totales'>{formatNumberMiles(totales.usuariosTotalesGoogle)}</p>
