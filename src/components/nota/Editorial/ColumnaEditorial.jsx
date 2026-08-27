@@ -59,8 +59,11 @@ const ColumnaEditorial = ({ indice }) => {
         return titulo
             .normalize("NFD")
             .replace(/[\u0300-\u036f]/g, "") // saca acentos
+            .toLowerCase()
+            .replace(/[^\w\s-]/g, "") // saca caracteres que no sean palabras (?, !, :, etc)
+            .trim()
             .replace(/\s+/g, "-") // espacios por guiones
-            .toLowerCase();
+            .replace(/-+/g, "-"); // colapsa guiones repetidos
     }
 
     useEffect(() => {
