@@ -4,6 +4,9 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { Button, Modal } from 'react-bootstrap';
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
+import '../../App.css';
+import '../Dashboard/Dashboard.css';
+import './nota.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link} from 'react-router-dom';
 import { setCategoriasActivasEnStore, setImagenRRSS } from '../../redux/crearNotaSlice'; // Asegúrate de importar setImagenPrincipal
