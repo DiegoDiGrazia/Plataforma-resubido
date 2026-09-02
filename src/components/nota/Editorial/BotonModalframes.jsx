@@ -6,15 +6,14 @@ import GoogleStyleSlider from './GoogleStyleSlider';
 import SliderVertical from './SliderVertical';
 import IframeNotaEscalable from '../IframeNotaEscalable';
 import SelectorNumerosEnteros from './SelectorNumerosEnteros';
-import { obtenerFeedsPorCliente, agregarNotaAFeed, crearFeed, editarDistribucionGeneracion } from '@/components/Apis/apis';
+import { obtenerFeedsPorCliente, agregarNotaAFeed, crearFeed, editarDistribucionGeneracion, obtenerDistribucionGeneracion } from '@/components/Apis/apis';
+import { parseBannerData } from '@/utils/bannerData';
 
     const BotonModalIframes = ({id_nota, token}) => {
 
         const [showConfirmModal, setShowConfirmModal] = useState(false);
         const [posicion, setPosicion] = useState(50);
         const [tipo, setTipo] = useState(1);
-
-        // Feed
         const id_cliente = useSelector((state) => state.formulario.id_cliente);
         const [showFeedModal, setShowFeedModal] = useState(false);
         const [feeds, setFeeds] = useState([]);
@@ -26,6 +25,23 @@ import { obtenerFeedsPorCliente, agregarNotaAFeed, crearFeed, editarDistribucion
         const [creandoFeed, setCreandoFeed] = useState(false);
 
         const URLIFRAME = `https://builder.ntcias.de/preview.php?id=${id_nota}`;
+        const URLCREATIVO1 = `https://reportes-creativos.noticiasd.com/creativo/${id_nota}?tipo=1&token=${token}`;
+        const URLCREATIVO2 = `https://reportes-creativos.noticiasd.com/creativo/${id_nota}?tipo=2&token=${token}`;
+
+        // Precarga posicion y tipo desde el banner_data guardado de la generacion, si existe
+        useEffect(() => {
+            if (!id_nota || !token) return;
+            let activo = true;
+            obtenerDistribucionGeneracion(token, id_nota).then((datos) => {
+                if (!activo) return;
+                const data = parseBannerData(datos?.[0]?.banner_data);
+                if (!data) return;
+                if (data.vp != null && !Number.isNaN(Number(data.vp))) setPosicion(Number(data.vp));
+                if (data.historiaTipo != null && !Number.isNaN(Number(data.historiaTipo))) setTipo(Number(data.historiaTipo));
+            });
+            return () => { activo = false; };
+        }, [id_nota, token]);
+
         useEffect(() => {
             document.querySelectorAll(".banner-iframe").forEach(
             (i) => i.contentWindow.postMessage({vp: posicion + '%'}, "https://builder.ntcias.de"))
@@ -133,7 +149,7 @@ import { obtenerFeedsPorCliente, agregarNotaAFeed, crearFeed, editarDistribucion
                         <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
                             tipo 1
                             <IframeNotaEscalable
-                            url={`https://reporte.noticiasd.com/creativo/${id_nota}?tipo=1`}
+                            url={URLCREATIVO1}
                             width={180}
                             height={320}
                             baseWidth={720}
@@ -143,7 +159,7 @@ import { obtenerFeedsPorCliente, agregarNotaAFeed, crearFeed, editarDistribucion
                         <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
                             tipo 2
                             <IframeNotaEscalable
-                            url={`https://reporte.noticiasd.com/creativo/${id_nota}?tipo=2`}
+                            url={URLCREATIVO2}
                             width={180}
                             height={320}
                             baseWidth={720}
