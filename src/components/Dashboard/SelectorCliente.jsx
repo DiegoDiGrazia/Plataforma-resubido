@@ -11,7 +11,7 @@ import { updateActivarTodosLosClientes, updateCliente, updateIdCliente } from '.
 import './Dashboard.css';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { setClienteNota } from '../../redux/crearNotaSlice';
-import { borrarTildes } from '../comercial/Facturas.jsx';
+import { borrarTildes } from '../../utils/funcionesVarias';
 
 
 

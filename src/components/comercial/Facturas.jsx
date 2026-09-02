@@ -11,6 +11,7 @@ import { obtenerFacturas, editarFactura, unificarFacturas, dividirFactura,
          eliminarArchivo, cargarArchivo, agregarComentario } from '../administrador/gestores/apisUsuarios.jsx';
 import { obtenerClientes } from '../Apis/apis';
 import { descargarExcel } from '../funciones/creacionCSV';
+import { borrarTildes } from '../../utils/funcionesVarias.js'
 
 const SpinnerCarga = ({ texto = "Cargando..." }) => (
     <div className="text-center p-4 border rounded fw-bold w-100">
@@ -19,9 +20,7 @@ const SpinnerCarga = ({ texto = "Cargando..." }) => (
     </div>
 );
 
- export const borrarTildes = (texto) => {
-        return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    };
+
 
 const Facturas = () =>  {
     

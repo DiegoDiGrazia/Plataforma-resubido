@@ -6,7 +6,7 @@ import SelectorCliente from '../../Dashboard/SelectorCliente';
 import { obtenerSitiosPaises, obtenerSitiosProvincias, eliminarSitiosPaises, eliminarSitiosProvincias, agregarSitioPaises, agregarSitioProvincias, editarSitio } from './apisUsuarios';
 import { Accordion, AccordionItem } from 'react-bootstrap';
 import './AbmSitiosRelevantes.css';
-import { borrarTildes } from '../../comercial/Facturas';
+import { borrarTildes } from '../../../utils/funcionesVarias';
 
 const AbmSitiosRelevantes = () => {
     

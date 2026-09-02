@@ -75,7 +75,7 @@ const ReloginModal = ({ onLoginExitoso }) => {
                 />
               </div>
               
-              <button type="submit" className="btn btn-primary w-100 py-2 fw-semibold">
+              <button type="submit" className="btn w-100 py-2 fw-semibold text-light" style={{backgroundColor: '#FF653B'}}>
                 Volver a la sesión
               </button>
             </form>

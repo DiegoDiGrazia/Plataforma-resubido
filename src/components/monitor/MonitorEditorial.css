@@ -1,0 +1,128 @@
+.contenedor-monitorEditorial {
+
+    .icono_tusNotas {
+        color: #3e4658ff;
+        margin-right: 5px;
+        font-size: 24px;
+    }
+
+    .label-filtro-fecha {
+        font-size: 13px;
+    }
+
+    .input-fecha-custom {
+        font-size: 13px;
+        border: none;
+        outline: none;
+        border-radius: 6px;
+        padding-inline: 5px;
+        width: 105px;
+    }
+    
+    .input-fecha-custom::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+    }
+
+    .text-brand {
+        color: #FF653B !important;
+    }
+
+    .bg-brand {
+        background-color: #FF653B !important;
+        color: white;
+    }
+
+    .btn-brand {
+        background-color: #FF653B;
+        color: white;
+        border: none;
+    }
+
+    .btn-brand:hover {
+        background-color: #e55a35;
+        color: white;
+    }
+
+    .nav-tabs .nav-link.active-brand-tab {
+        border-bottom: 2px solid #FF653B;
+        color: black;
+        font-weight: bold;
+        background-color: transparent;
+        border-top: none;
+        border-left: none;
+        border-right: none;
+    }
+
+    .nav-tabs .nav-link {
+        color: #6c757d;
+        border: none;
+        cursor: pointer;
+    }
+
+    .list-group-item.active-brand {
+        border-left: 4px solid #FF653B !important;
+        font-weight: bold;
+        background-color: #f8f9fa;
+        color: black;
+        border-top: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+        border-right: 1px solid #ddd;
+    }
+
+    .list-group-item {
+        cursor: pointer;
+    }
+
+    .form-check-input:checked {
+        background-color: #FF653B;
+        border-color: #FF653B;
+    }
+
+    .lista-izquierda-abm {
+        height: 400px; 
+        overflow-y: auto;
+    }
+
+    .lista-derecha-abm {
+        height: 300px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .react-collapse {
+        display: grid;
+        grid-template-rows: 0fr;
+        transition: grid-template-rows 0.35s ease;
+    }
+    
+    .react-collapse.show {
+        grid-template-rows: 1fr;
+    }
+    
+    .react-collapse-inner {
+        overflow: hidden;
+    }
+
+    .contenedor-info-cliente {
+        max-width: 55%;
+    }
+
+    .texto-comentario {
+        word-break: break-word; 
+        white-space: normal;
+        font-size: 0.85rem; 
+    }
+
+    .texto-comentario-vacio {
+        font-size: 0.85rem;
+        font-style: italic;
+    }
+
+    .btn-editar-comentario {
+        cursor: pointer;
+    }
+}
+
+.modal-backdrop.show {
+    opacity: 0.2 !important; 
+}

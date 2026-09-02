@@ -23,6 +23,7 @@ const Sidebar = ({ estadoActual }) => {
   const permisoDashboard = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Dashboard: Datos") || false);
   const permisoFeed = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Feed") || false);
   const permisoAdmin = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Administracion") || false);
+  const permisoMonitor = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Monitor Editorial") || false);
 
   useEffect(() => {
     if (!PerfilUsuario) return;
@@ -169,6 +170,13 @@ const Sidebar = ({ estadoActual }) => {
                   'Notas',
                   'bi bi-stack'
                 )}
+            {permisoMonitor && renderSidebarButton(
+              'monitor',
+              'monitorEditorial',
+              '/images/auto_entrevistas_icon.png',
+              'Monitor Contenido',
+              'bi bi-display-fill'
+            )}
             {renderSidebarButton(
               'autoEntrevistas',
               'autoEntrevistas',
@@ -176,14 +184,14 @@ const Sidebar = ({ estadoActual }) => {
               'Auto-entrevistas',
               'bi bi-mic-fill'
             )}
-            {(PerfilUsuario == '1' || permisoAdmin) && renderSidebarButton(
+            {(permisoAdmin) && renderSidebarButton(
               'Administrador',
               'administrador',
               '/images/auto_entrevistas_icon.png',
               'Administración',
               'bi bi-gear-fill'
             )}
-            {PerfilUsuario == '1' || permisoFeed && renderSidebarButton(
+            {permisoAdmin || permisoFeed && renderSidebarButton(
               'Feed',
               'feed',
               '/images/auto_entrevistas_icon.png',

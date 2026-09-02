@@ -1,6 +1,23 @@
-@media (max-width: 1366px) {
-   
-    a {
-        font-size: 10px !important;   
+.dropdown-filtro-container {
+    
+    @media (max-width: 1366px) {
+        a {
+            font-size: 10px !important;   
+        }
+    }
+
+    .dropdown-filtro-btn {
+        font-size: 13px;
+    }
+
+    .input-group {
+        width: 98%;
+        margin-left: 5px;
+    }
+
+    .dropdown-menu-scroll {
+        max-height: 300px;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 }

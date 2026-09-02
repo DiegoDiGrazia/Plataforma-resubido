@@ -37,3 +37,7 @@ export const actualizarSRCDeUnHTML = (html, images, id_att, numeroAtachmentActua
   return updatedHTML;
 
 };
+
+export const borrarTildes = (texto) => {
+  return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+};
