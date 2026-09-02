@@ -153,6 +153,8 @@ const initialState = {
   distribucion_yt_link: "",
   distribucion_search_titulo: "",
   distribucion_search_descripcion: "",
+  distribucion_banner_data: "",
+
 };
 
 const crearNotaSlice = createSlice({
@@ -409,6 +411,9 @@ const crearNotaSlice = createSlice({
     setDistribucionSearchDescripcion: (state, action) => {
       state.distribucion_search_descripcion = action.payload;
     },
+    setDistribucionBannerData: (state, action) => {
+      state.distribucion_banner_data = action.payload;
+    },
 
     resetCrearNota: () => initialState,
   }
@@ -421,7 +426,7 @@ export const {
   setDistribucionProioritaria, setTipoContenido, setFechaVencimiento, setBajada, setEngagement, setComentario, setSelectedOptionDistribucion,
   setAutor, setMunicipio,setEpigrafeImagenPpal,setDemo, setMunicipios,setIdNoti, setProvincia,setPais, setIdAtt,setProvincias, resetCrearNota, setEpigrafeDeImagen, setListaImagenesContenidoEnBase64, setAtachment, setSumarUnoAlNumeroDeAtachment,
   setDistribucionFechaVencimiento, setDistribucionComentarios, setDistribucionMetaTitulo, setDistribucionMetaEngagement, setDistribucionXDescripcion, setDistribucionYtTitulo, setDistribucionYtDescripcion, setDistribucionYtLink,
-  setDistribucionSearchTitulo, setDistribucionSearchDescripcion
+  setDistribucionSearchTitulo, setDistribucionSearchDescripcion, setDistribucionBannerData
 } = crearNotaSlice.actions;
 
 export default crearNotaSlice.reducer;
