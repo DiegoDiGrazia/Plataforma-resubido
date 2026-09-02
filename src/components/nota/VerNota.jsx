@@ -19,6 +19,8 @@ import PlataformaMasImpresiones from '../Dashboard/datosRelevantes/PlataformaMas
 import IframeNota from './IframeNota';
 import IframeNotaEscalable from './IframeNotaEscalable';
 import SelectorConBuscador from '../nota/Editorial/SelectorConBuscador';
+import { obtenerDistribucionGeneracion } from '../Apis/apis';
+import { getTipoHistoria } from '../../utils/bannerData';
 
 export const RUTA = "http://localhost:4000/";
 
@@ -41,6 +43,16 @@ const VerNota = () => {
     const TOKEN_ESTADO = useSelector((state) => state.formulario.token);
     const [TOKEN, setTOKEN] = useState(TOKEN_ESTADO);
     const [CLIENTE, setCLIENTE] = useState("");
+    const [tipoHistoria, setTipoHistoria] = useState(1); // desde banner_data.historiaTipo; 1 si es null
+
+    useEffect(() => {
+        if (!id_noti || !TOKEN || !Nota) return;
+        let activo = true;
+        obtenerDistribucionGeneracion(TOKEN, Nota.id).then((datos) => {
+            if (activo) setTipoHistoria(getTipoHistoria(datos?.[0]?.banner_data));
+        });
+        return () => { activo = false; };
+    }, [id_noti, TOKEN, Nota]);
 
     useEffect(() => {
         if (!id_para_api) return;
@@ -223,28 +235,18 @@ const VerNota = () => {
                                 <IframeNota url={`https://builder.ntcias.de/preview.php?template=explore_insta&id_noti=${id_noti}`} width={340} height={500} baseHeight={500} baseWidth={340} title='Explorar'/>
                             </div>
                         </div>
-                         {/* <div className='row g-1'>
-                        <h2 className='tituloCreativo'>Creativos Historias</h2>
-                        <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
-                            <IframeNotaEscalable 
-                            url={`https://reporte.noticiasd.com/creativo/${id_noti}?tipo=1`} 
-                            width={360} 
-                            height={640} 
-                            baseWidth={720} 
-                            baseHeight={1280}
-                            />                       
+                        <div className='row g-1'>
+                            <h2 className='tituloCreativo'>Creativos Historias</h2>
+                            <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                                <IframeNotaEscalable
+                                url={`https://reportes-creativos.noticiasd.com/creativo/${Nota.id}?tipo=${tipoHistoria}&token=${TOKEN}`}
+                                width={360}
+                                height={640}
+                                baseWidth={720}
+                                baseHeight={1280}
+                                />
+                            </div>
                         </div>
-                        <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
-                            <IframeNotaEscalable 
-                            url={`https://reporte.noticiasd.com/creativo/${id_noti}?tipo=2`} 
-                            width={360} 
-                            height={640} 
-                            baseWidth={720} 
-                            baseHeight={1280}
-                            />                       
-                        </div>
-
-                    </div> */}
                     </div>
                 </div>
             }

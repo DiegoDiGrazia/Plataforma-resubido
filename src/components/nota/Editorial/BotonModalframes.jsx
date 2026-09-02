@@ -7,16 +7,7 @@ import SliderVertical from './SliderVertical';
 import IframeNotaEscalable from '../IframeNotaEscalable';
 import SelectorNumerosEnteros from './SelectorNumerosEnteros';
 import { obtenerFeedsPorCliente, agregarNotaAFeed, crearFeed, editarDistribucionGeneracion, obtenerDistribucionGeneracion } from '@/components/Apis/apis';
-
-    // banner_data llega como string tipo "{'vp':69, 'historiaTipo':2}" (comillas simples) o null
-    const parseBannerData = (raw) => {
-        if (!raw) return null;
-        try {
-            return JSON.parse(String(raw).replace(/'/g, '"'));
-        } catch {
-            return null;
-        }
-    };
+import { parseBannerData } from '@/utils/bannerData';
 
     const BotonModalIframes = ({id_nota, token}) => {
 

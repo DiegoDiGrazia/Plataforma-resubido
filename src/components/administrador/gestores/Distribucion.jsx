@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import ModalMensaje from '../gestores/ModalMensaje';
 import {obtenerPlanesMarketing, obtenerVideosYoutube, obtenerGeo, obtenerContratos } from './apisUsuarios';
 import { obtenerDistribucionPorFechaVencimiento, obtenerGeneracion, editarDistribucionGeneracion, obtenerClientes } from '../../Apis/apis';
+import { getTipoHistoria } from '../../../utils/bannerData';
 import CopiarTexto from './CopiarTexto';
 import IconosDistribucionConMonto, { PLATAFORMAS } from './IconosDistribucionConMonto';
 import { Accordion } from 'react-bootstrap';
@@ -56,6 +57,12 @@ const descargarJpg = async (nota, imagenFeed) => {
     a.click();
     window.URL.revokeObjectURL(url);
   }, "image/jpeg", 0.92);
+};
+
+const descargarCreativo = (nota, token) => {
+  const tipo = getTipoHistoria(nota.banner_data); // 1 si banner_data es null
+  const url = `https://reportes-creativos.noticiasd.com/creativo/${nota.id_generacion}?tipo=${tipo}&token=${token}&descargarjpg=si`;
+  window.open(url, '_blank');
 };
 
 export const obtenerUltimoDiaMes = (año, mes) => {
@@ -626,7 +633,7 @@ const goToPage = (newPage) => {
                                 <div className="row p-1">
                                   <span>
                                     {nota.video && (
-                                    <button className='btn btn-outline-secondary w-100' onClick={() => descargar(nota)}>descargar creativo</button>
+                                    <button className='btn btn-outline-secondary w-100' onClick={() => descargar(nota)}>Imagen historia</button>
                                     )}
                                     {!nota.video && (
                                       <strong>Nota sin video</strong>
@@ -683,6 +690,14 @@ const goToPage = (newPage) => {
                                       onClick={() => descargarJpg(nota, imagenesFeedPorGeneracion[nota.id_generacion])}
                                     >
                                       Descargar jpg
+                                    </button>
+                                  )}
+                                  {nota.id_generacion && (
+                                    <button
+                                      className="btn btn-outline-secondary w-100 mt-2"
+                                      onClick={() => descargarCreativo(nota, TOKEN)}
+                                    >
+                                      Descargar creativo
                                     </button>
                                   )}
                                 </div>
