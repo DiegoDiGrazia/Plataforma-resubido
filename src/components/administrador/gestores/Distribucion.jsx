@@ -697,7 +697,7 @@ const goToPage = (newPage) => {
                                       className="btn btn-outline-secondary w-100 mt-2"
                                       onClick={() => descargarCreativo(nota, TOKEN)}
                                     >
-                                      Descargar creativo
+                                      Descargar historia
                                     </button>
                                   )}
                                 </div>

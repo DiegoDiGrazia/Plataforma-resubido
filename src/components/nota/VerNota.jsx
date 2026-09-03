@@ -239,7 +239,7 @@ const VerNota = () => {
                             <h2 className='tituloCreativo'>Creativos Historias</h2>
                             <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
                                 <IframeNotaEscalable
-                                url={`https://reportes-creativos.noticiasd.com/creativo/${Nota.id}?tipo=${tipoHistoria}&token=${TOKEN}`}
+                                url={`https://reportes-creativos.noticiasd.com/creativo/${Nota.id_generaciones}?tipo=${tipoHistoria}&token=${TOKEN}`}
                                 width={360}
                                 height={640}
                                 baseWidth={720}
