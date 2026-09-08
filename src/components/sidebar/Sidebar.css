@@ -207,4 +207,20 @@ html, body {
     padding-top: 3px;
 }
 
+@media(max-width: 1366px) {
+    .sidebar.open {
+        width: 210px;
+    }
+
+    .sidebar.open .boton_sidebar_clickeado, .sidebar.open .boton_sidebar_Noclickeado  {
+        width: 190px;
+        margin-left: 10px;
+    }
+
+    .sidebar-toggle {
+        left: 180px;
+        top: 15px;
+    }
+}
+
 

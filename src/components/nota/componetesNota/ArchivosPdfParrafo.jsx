@@ -4,7 +4,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'cropperjs/dist/cropper.css';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
-import {setAtachment, setAttachmentArchivo, setContenidoPorIndice, setEpigrafeDearchivoPDFLista, setSumarUnoAlNumeroDeAtachment } from '../../../redux/crearNotaSlice';
+import {setAtachment, setAttachmentArchivo, setContenidoPorIndice, setSumarUnoAlNumeroDeAtachment } from '../../../redux/crearNotaSlice';
 import BotoneraContenido from './botoneraContenido';
 
 

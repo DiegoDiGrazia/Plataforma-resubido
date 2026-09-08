@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { periodoUltimoAño } from '../components/barplot/Barplot.jsx';
 
 const dashboardSlice = createSlice({
   name: 'dashboard',

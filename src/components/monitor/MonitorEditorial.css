@@ -6,6 +6,10 @@
         font-size: 24px;
     }
 
+    #input-fechas-container {
+        height: 33.5px;
+    }
+
     .label-filtro-fecha {
         font-size: 13px;
     }
@@ -121,8 +125,133 @@
     .btn-editar-comentario {
         cursor: pointer;
     }
-}
 
+    #input-buscar-tag {
+        max-width: 145px;
+    }
+
+    .info-nota-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+        align-items: center;
+        flex-grow: 1; 
+    }
+
+    .dato-nota {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+    }
+
+    .dato-nota .label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        font-weight: bold;
+        color: #6c757d; 
+    }
+
+    .dato-nota .valor {
+        font-size: 0.9rem !important;
+    }
+    
+    .tags-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.3rem;
+        align-items: center;
+    }
+
+    #switch-geo-container {
+        width: 150px;
+        height: 33.5px;
+    }
+
+    #switchGeo:checked {
+        background-color: #FF653B;
+        border-color: #FF653B;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+    }
+
+    #switchGeo {
+        border-color: #CCCCCC;
+        box-shadow: none;
+        outline: none;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23FF653B'/%3e%3c/svg%3e");
+    }
+
+    .resumen-monitor {
+        display: flex;
+        justify-content: space-between;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem 1.5rem;
+    }
+
+    .dato-resumen {
+        display: flex;
+        flex-direction: column;
+        gap: 0.1rem;
+    }
+
+    .dato-resumen .label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        font-weight: bold;
+        color: #6c757d;
+    }
+
+    .dato-resumen .valor {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #3e4658ff;
+    }
+
+    @media (max-width: 1366px) {
+        #input-buscar-tag {
+            max-width: 120px;
+        }
+        #input-tag {
+            font-size: 12px;
+        }
+        #buscador-icon {
+            font-size: 11px;
+        }
+        #input-fechas-container {
+            height: 29px !important;
+            width: 175px !important;
+            align-items: center;
+            font-size: 12px;
+        }
+        #input-fechas-container label, #input-fechas-container input {
+            font-size: 11px;
+            width: 85px;
+        }
+        #boton-gestion {
+            width: 29px;
+            height: 29px;
+            padding: 0 !important;
+        }
+        
+        #boton-gestion i {
+            margin-top: 15px !important;
+            font-size: 14px !important;
+        }
+
+        #switch-geo-container {
+            width: 120px;
+            height: 29px;
+            font-size: 12px;
+        }
+
+        #switch-geo-container label{
+            font-size: 12px;
+        }
+
+    }
+}
 .modal-backdrop.show {
     opacity: 0.2 !important; 
 }

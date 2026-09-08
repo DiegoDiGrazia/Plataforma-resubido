@@ -212,11 +212,11 @@ export const eliminarAutor = (token, id_autor) =>
     headers: headers(token),
   });
 
-export const obtenerMonitor = (token, id_clientes, fecha_desde, fecha_hasta) =>
+export const obtenerMonitor = (token, id_clientes, autores, fecha_desde, fecha_hasta) =>
   fetch(`${BASE_URL}/monitor/`, {
     headers: jsonHeaders(token),
     method: "POST",
-    body: JSON.stringify({ id_clientes, fecha_desde, fecha_hasta }),
+    body: JSON.stringify({ id_clientes, autores, fecha_desde, fecha_hasta }),
   }).then((res) => res.json());
 
 export const editarComentarioCliente = (token, id_cliente, comentario) =>

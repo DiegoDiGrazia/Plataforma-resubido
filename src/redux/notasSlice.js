@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { periodoUltimoAño } from '../components/barplot/Barplot.jsx';
+import { periodoUltimoAnio } from '../components/barplot/Barplot.jsx'; // NO ELIMINAR, ROMPE ESTILOS
 
 const notasSlice = createSlice({
   name: 'notas',
