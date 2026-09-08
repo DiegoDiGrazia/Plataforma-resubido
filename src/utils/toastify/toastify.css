@@ -1,0 +1,38 @@
+
+.toast-custom-exito, .toast-custom-error, .toast-custom-info {
+    background-color: #ffffff !important;
+    color: #3e4658 !important; 
+    border-radius: 8px !important;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+.toast-custom-exito { border-left: 5px solid #FF653B !important; }
+.toast-custom-error { border-left: 5px solid #dc3545 !important; }
+.toast-custom-info  { border-left: 5px solid #6c757d !important; }
+
+.toast-progress-brand {
+    background: #FF653B !important;
+}
+
+.Toastify__close-button {
+    color: #6c757d !important;
+    opacity: 0.7;
+}
+.Toastify__close-button:hover {
+    opacity: 1;
+}
+
+.logo-nd-toastify {
+    width: 30px;
+    height: 30px;
+}
+
+:root {
+    --toastify-color-success: #FF653B;
+    --toastify-color-progress-success: #FF653B;
+}
+
+.Toastify__toast-body {
+    font-size: 9px !important; 
+}

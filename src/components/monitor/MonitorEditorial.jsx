@@ -7,6 +7,9 @@ import { obtenerGrupos, obtenerAutores, obtenerClientes, obtenerGruposClientes, 
          crearAutor, actualizarGrupo, actualizarAutor, eliminarGrupo, eliminarAutor, 
          obtenerMonitor, editarComentarioCliente } from '../Apis/apis.js';
 import DropdownFiltro from '../comercial/DropdownFiltro.jsx';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { toastExito, toastError } from '../../utils/toastify/toastify.jsx';
 
 const MonitorEditorial = () => {
     
@@ -269,9 +272,10 @@ const MonitorEditorial = () => {
         crearGrupo(TOKEN, nuevoItem).then(() => {
             setNuevoItem("");
             setRefreshData(prev => !prev);
+            toastExito("¡El grupo fue creado exitosamente!")
         })
         .catch(error => {
-            console.error(error);
+            toastError("Ocurrió un error al crear el grupo")
             setLoading(false);
         })
         .finally(() => {
@@ -287,10 +291,12 @@ const MonitorEditorial = () => {
         crearAutor(TOKEN, nuevoItem, null).then(() => {
             setNuevoItem("");
             setRefreshData(prev => !prev);
+            toastExito("¡El Editor fue agregado exitosamente!")
         })
         .catch(error => {
             console.error(error);
             setLoading(false);
+            toastError("Ocurrió un error al agregar el editor")
         })
         .finally(() => {
             setLoading(false);
@@ -306,10 +312,12 @@ const MonitorEditorial = () => {
         eliminarGrupo(TOKEN, selectedGrupo.id).then(() => {
             setSelectedGrupo('');
             setRefreshData(prev => !prev);
+            toastExito("¡El Grupo fue eliminado exitosamente!")
         })
         .catch(error => {
             console.error(error);
             setLoading(false);
+            toastError("El Grupo no existe")
         })
         .finally(() => {
             setLoading(false);
@@ -325,10 +333,12 @@ const MonitorEditorial = () => {
         eliminarAutor(TOKEN, selectedAutor.id).then(() => {
             setSelectedAutor('');
             setRefreshData(prev => !prev);
+            toastExito("¡El Editor fue eliminado exitosamente!")
         })
         .catch(error => {
             console.error(error);
             setLoading(false);
+            toastError("El Editor no existe")
         })
         .finally(() => {
             setLoading(false);
@@ -344,9 +354,11 @@ const MonitorEditorial = () => {
         actualizarGrupo(TOKEN, selectedGrupo.id, autoresNombres)
             .then(() => {
                 setRefreshData(prev => !prev); 
+                toastExito('¡Editores asignados correctamente!')
             })
             .catch(error => {
                 console.error("Error al actualizar el grupo:", error);
+                toastError('Ocurrió un problema al asignar los editores')
             })
             .finally(() => {
                 setLoading(false);
@@ -366,9 +378,11 @@ const MonitorEditorial = () => {
         Promise.all(promesas)
             .then(() => {
                 setRefreshData(prev => !prev);
+                toastExito('¡Clientes asignados correctamente!')
             })
             .catch(error => {
                 console.error("Error al actualizar el editor:", error);
+                toastError('Ocurrió un problema al asignar los clientes')
             })
             .finally(() => {
                 setLoading(false);
@@ -376,7 +390,14 @@ const MonitorEditorial = () => {
     };
 
     const handleEditarComentario = (id_cliente, comentario) => {
-        editarComentarioCliente(TOKEN, id_cliente, comentario).then(() => setRefreshData(prev => !prev));
+        editarComentarioCliente(TOKEN, id_cliente, comentario)
+        .then(() => 
+            setRefreshData(prev => !prev),
+            toastExito('¡Comentario agregado exitosamente!')
+        )
+        .catch(error => {
+            toastError('Ocurrió un error al agregar el comentario')
+        })
     };
 
     const filtroPorAmplificacion = (nota) => {
@@ -1016,6 +1037,11 @@ const MonitorEditorial = () => {
                     </div>
                 </div>
             </div>
+            <ToastContainer 
+                position="top-right" 
+                autoClose={3000} 
+                hideProgressBar={false} 
+            />
         </div>
     )
 }
