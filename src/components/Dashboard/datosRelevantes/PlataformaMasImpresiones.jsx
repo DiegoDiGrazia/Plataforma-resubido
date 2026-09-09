@@ -275,7 +275,7 @@ const PlataformaMasImpresiones = ({datosLocales, resumenCliente= null, loading =
                                         <img src="/images/clock_25.png" alt="25" className='icono-ctr img-fluid me-2' />
                                         <div className='veinticinco'>
                                             <span className='d-block'>25% visto</span>
-                                            <span className='d-block'>{formatNumberMiles(plataforma.play)}</span>
+                                            <span className='d-block'>{formatNumberMiles(plataforma.veinticinco)}</span>
                                         </div>
                                     </div>    
                                     }
@@ -284,7 +284,7 @@ const PlataformaMasImpresiones = ({datosLocales, resumenCliente= null, loading =
                                         <span className='icono-ctr bi bi-circle-half d-flex align-items-center justify-content-center img-fluid me-2' style={{ color: '#36383b', fontSize: '18px' }}/>
                                         <div className='cincuenta'>
                                             <span className='d-block'>50% visto</span>
-                                            <span className='d-block'>{formatNumberMiles(plataforma.play)}</span>
+                                            <span className='d-block'>{formatNumberMiles(plataforma.cincuenta)}</span>
                                         </div>
                                     </div>    
                                     }
@@ -293,7 +293,7 @@ const PlataformaMasImpresiones = ({datosLocales, resumenCliente= null, loading =
                                         <img src="/images/clock_75.png" alt="75" className='icono-ctr img-fluid me-2' />
                                         <div className='setentaycinco'>
                                             <span className='d-block'>75% visto</span>
-                                            <span className='d-block'>{formatNumberMiles(plataforma.play)}</span>
+                                            <span className='d-block'>{formatNumberMiles(plataforma.setentaycinco)}</span>
                                         </div>
                                     </div>    
                                     }
@@ -302,7 +302,7 @@ const PlataformaMasImpresiones = ({datosLocales, resumenCliente= null, loading =
                                         <img src="/images/clock_100.png" alt="100" className='icono-ctr img-fluid me-2' />
                                         <div className='cien'>
                                             <span className='d-block'>100% visto</span>
-                                            <span className='d-block'>{formatNumberMiles(plataforma.play)}</span>
+                                            <span className='d-block'>{formatNumberMiles(plataforma.cien)}</span>
                                         </div>
                                     </div>    
                                     }
