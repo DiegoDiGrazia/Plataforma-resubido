@@ -33,6 +33,12 @@ const Emisor = [
   {'id': "1", 'nombre': "ADLATAM SA"},
   {'id': "2", 'nombre': "GUIAD SA"},
 ];
+
+const CAMPOS_COMISIONISTA = ["comisionista1", "comisionista2", "comisionista3"];
+const CAMPOS_COMISION = ["comision", "comision2", "comision3"];
+const CAMPOS_PORCENTAJE = ["porcentaje_comision", "porcentaje_comision2", "porcentaje_comision3"];
+const MAX_COMISIONISTAS = 3;
+
 export const formatearARS = (valor) => {
   return Number(valor || 0).toLocaleString('es-AR', {
     minimumFractionDigits: 2,
@@ -101,8 +107,14 @@ const contratoVacio = {
 
   comisionista1: "",
   comisionista2: "",
+  comisionista3: "",
   com1: "",
   com2: "",
+  com3: "",
+  comision3: "0",
+  porcentaje_comision3: "0",
+
+  id_vendedor: "",
 
   con_meta: "0",
   con_search: "0",
@@ -154,6 +166,7 @@ const AbmContratos
     const [EmisorSeleccionado, setEmisorSeleccionado] = useState(null);
     const [comisionistas, setComisionistas] = useState([]);
     const [comisionistasSeleccionados, setComisionistasSeleccionados] = useState([]);
+    const [vendedorSeleccionado, setVendedorSeleccionado] = useState(null);
     const id_usuario = useSelector((state) => state.formulario.usuario.id);
     const [showModalComentariosDelContrato, setShowModalComentariosDelContrato] = useState(false);
     const [comentariosContrato, setComentariosDelContrato] = useState([]);
@@ -206,26 +219,17 @@ const AbmContratos
 
     const seleccionarComisionista = (option) => {
       setComisionistasSeleccionados(prev => {
-        if (prev.length >= 2) return prev;
+        if (prev.length >= MAX_COMISIONISTAS) return prev;
         if (prev.some(c => c.id === option.id)) return prev;
 
         const nuevo = [...prev, option];
+        const idx = nuevo.length - 1;
 
-        if (nuevo.length === 1) {
-          setFormData(fd => ({
-            ...fd,
-            comisionista1: option.id,
-            comision: fd.comision || '0',
-          }));
-        }
-
-        if (nuevo.length === 2) {
-          setFormData(fd => ({
-            ...fd,
-            comisionista2: option.id,
-            comision2: fd.comision2 || '0',
-          }));
-        }
+        setFormData(fd => ({
+          ...fd,
+          [CAMPOS_COMISIONISTA[idx]]: option.id,
+          [CAMPOS_COMISION[idx]]: fd[CAMPOS_COMISION[idx]] || '0',
+        }));
 
         return nuevo;
       });
@@ -247,14 +251,17 @@ const AbmContratos
     setComisionistasSeleccionados(prev => {
     const nuevos = prev.filter(c => c.id !== id);
 
-    setFormData(fd => ({
-      ...fd,
-      comisionista1: nuevos[0]?.id || '',
-      comision: nuevos[0] ? fd.comision : '0',
-
-      comisionista2: nuevos[1]?.id || '',
-      comision2: nuevos[1] ? fd.comision2 : '0',
-    }));
+    setFormData(fd => {
+      const actualizado = { ...fd };
+      CAMPOS_COMISIONISTA.forEach((campo, i) => {
+        actualizado[campo] = nuevos[i]?.id || '';
+        if (!nuevos[i]) {
+          actualizado[CAMPOS_COMISION[i]] = '0';
+          actualizado[CAMPOS_PORCENTAJE[i]] = '0';
+        }
+      });
+      return actualizado;
+    });
 
     return nuevos;
   });
@@ -422,8 +429,16 @@ const AbmContratos
       ? comisionistas.find(c => comisionistaCoincideConTexto(c, contrato.com2))
       : null;
 
+    const comisionista3 = contrato.com3
+      ? comisionistas.find(c => comisionistaCoincideConTexto(c, contrato.com3))
+      : null;
+
     setComisionistasSeleccionados(
-      [comisionista1, comisionista2].filter(Boolean) /// solo los que existan
+      [comisionista1, comisionista2, comisionista3].filter(Boolean) /// solo los que existan
+    );
+
+    setVendedorSeleccionado(
+      comisionistas.find(c => String(c.id) === String(contrato.id_vendedor)) || null
     );
     setModalidadSeleccionada(obtenerModalidadDelContrato(contrato));
     const clienteDelContrato = esFranquicia
@@ -460,6 +475,35 @@ const totales = useMemo(() => {
     { facturado: 0, facturas: 0, montosTotal: 0, totalComision: 0 }
   );
 }, [contratosFiltrados]);
+
+// Suma de los costos de marketing de los contratos bonificados del vendedor
+// seleccionado, tomando los que empezaron (fecha_inicio) este mes hasta hoy.
+// Alimenta el aviso de la modalidad "Bonificado".
+const bonificadoDelMesDelVendedor = useMemo(() => {
+  const idVendedor = formData.id_vendedor;
+  if (!idVendedor) return 0;
+
+  const hoy = new Date();
+  const anioMesActual = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}`;
+  const hoyISO = hoy.toISOString().split('T')[0];
+
+  return contratos.reduce((acc, c) => {
+    if (String(c.id_vendedor) !== String(idVendedor)) return acc;
+    if (c.bonificado !== "SI") return acc;
+    if (!c.fecha_inicio) return acc;
+    if (!c.fecha_inicio.startsWith(anioMesActual)) return acc;
+    if (c.fecha_inicio > hoyISO) return acc;
+
+    const costosMarketing =
+      Number(c.con_meta || 0) +
+      Number(c.con_youtube || 0) +
+      Number(c.con_search || 0) +
+      Number(c.con_dv360 || 0) +
+      Number(c.con_x || 0);
+
+    return acc + costosMarketing;
+  }, 0);
+}, [contratos, formData.id_vendedor]);
 
 const handleSave = () => {
   setShowModal(true); // mostrar modal
@@ -802,6 +846,26 @@ const handleSave = () => {
                   )}
 
                   
+                  {/* Vendedor (obligatorio) */}
+                  <SelectorConBuscador
+                    title="Vendedor *"
+                    options={comisionistas}
+                    selectedOption={vendedorSeleccionado}
+                    onSelect={(option) => {
+                      setVendedorSeleccionado(option);
+                      setFormData(prev => ({ ...prev, id_vendedor: option.id }));
+                    }}
+                    onClear={() => {
+                      setVendedorSeleccionado(null);
+                      setFormData(prev => ({ ...prev, id_vendedor: '' }));
+                    }}
+                  />
+                  {!formData.id_vendedor && (
+                    <div className="text-danger mb-3" style={{ fontSize: '13px', marginTop: '-6px' }}>
+                      El vendedor es obligatorio.
+                    </div>
+                  )}
+
                   <InputFecha
                     label="Fecha inicio:"
                     name="fecha_inicio"
@@ -895,6 +959,11 @@ const handleSave = () => {
                       }));
                     }}
                   />
+              {ModalidadSeleccionada?.bonificado === "SI" && (
+                <div className="mb-3" style={{ fontSize: '14px', fontWeight: 500 }}>
+                  Hasta el momento lleva ${formatearARS(bonificadoDelMesDelVendedor)} bonificados en el mes
+                </div>
+              )}
               { ModalidadSeleccionada?.abierto === "SI" && (
                 <>
                 {/* Margen */}
@@ -939,7 +1008,7 @@ const handleSave = () => {
                   )}
 
                   <SelectorConBuscador
-                    title="Comisionistas (Max 2)"
+                    title="Agentes comerciales (Máx 3)"
                     options={comisionistas}
                     selectedOption={''}
                     onSelect={(option) => { seleccionarComisionista(option)}}
@@ -948,8 +1017,7 @@ const handleSave = () => {
                   <div className="mb-3">
                     <ul>
                       {comisionistasSeleccionados.map((comisionista, index) => {
-                        const campo = index === 0 ? "comision" : "comision2";
-                        const campoPorcentaje = index === 0 ? "porcentaje_comision" : "porcentaje_comision2";
+                        const campoPorcentaje = CAMPOS_PORCENTAJE[index];
 
 
                         return (
@@ -1030,7 +1098,7 @@ const handleSave = () => {
                     />
                   )}
                   <SelectorConBuscador
-                    title="Comisionistas (Max 2)"
+                    title="Agentes comerciales (Máx 3)"
                     options={comisionistas}
                     selectedOption={''}
                     onSelect={(option) => { seleccionarComisionista(option)}}
@@ -1040,7 +1108,7 @@ const handleSave = () => {
                   <div className="mb-3">
                     <ul>
                       {comisionistasSeleccionados.map((comisionista, index) => {
-                       const porcentajeCampo = index === 0 ? "porcentaje_comision" : "porcentaje_comision2";
+                       const porcentajeCampo = CAMPOS_PORCENTAJE[index];
 
                         return (
                           <li 
@@ -1220,7 +1288,7 @@ const handleSave = () => {
                 type="button"
                 className="btn btn-primary"
                 onClick={() => handleSave()}
-                disabled={!formData.razon_social}
+                disabled={!formData.razon_social || !formData.id_vendedor}
               >
                 Guardar
               </button>

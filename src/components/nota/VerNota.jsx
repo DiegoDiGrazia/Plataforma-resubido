@@ -21,6 +21,7 @@ import IframeNotaEscalable from './IframeNotaEscalable';
 import SelectorConBuscador from '../nota/Editorial/SelectorConBuscador';
 import { obtenerDistribucionGeneracion } from '../Apis/apis';
 import { getTipoHistoria } from '../../utils/bannerData';
+import { setDistribucionYtLink } from '../../redux/crearNotaSlice';
 
 export const RUTA = "http://localhost:4000/";
 
@@ -44,12 +45,17 @@ const VerNota = () => {
     const [TOKEN, setTOKEN] = useState(TOKEN_ESTADO);
     const [CLIENTE, setCLIENTE] = useState("");
     const [tipoHistoria, setTipoHistoria] = useState(1); // desde banner_data.historiaTipo; 1 si es null
+    const [distribucionYtLink, setDistribucionYtLink] = useState(null);
 
     useEffect(() => {
         if (!id_noti || !TOKEN || !Nota) return;
+        console.log()
         let activo = true;
-        obtenerDistribucionGeneracion(TOKEN, Nota.id).then((datos) => {
-            if (activo) setTipoHistoria(getTipoHistoria(datos?.[0]?.banner_data));
+        obtenerDistribucionGeneracion(TOKEN, Nota.id_generaciones).then((datos) => {
+            if (activo) {
+                setTipoHistoria(getTipoHistoria(datos?.[0]?.banner_data));
+                setDistribucionYtLink(datos?.[0]?.youtube_link_video);
+            }
         });
         return () => { activo = false; };
     }, [id_noti, TOKEN, Nota]);
@@ -246,6 +252,18 @@ const VerNota = () => {
                                 baseHeight={1280}
                                 />
                             </div>
+                            {distribucionYtLink &&(
+                            <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                                
+                                <IframeNotaEscalable
+                                    url={distribucionYtLink}
+                                    width={360}
+                                    height={640}
+                                    baseWidth={720}
+                                    baseHeight={1280}
+                                />
+                            </div>
+                            )}
                         </div>
                     </div>
                 </div>

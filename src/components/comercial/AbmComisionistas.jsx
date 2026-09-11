@@ -104,11 +104,11 @@ const handleSave = () => {
       <div className='row miPerfilContainer soporteContainer'>
         <div className='col p-0'>
           <h3 id="saludo" className='headerTusNotas ml-0'>
-            <i className="icon me-2 icono_tusNotas bi bi-bag-fill" alt="Icono 1" /> Gestiona comisionistas
+            <i className="icon me-2 icono_tusNotas bi bi-bag-fill" alt="Icono 1" /> Gestiona Agentes Comerciales
           </h3>
-          <h4 className='infoCuenta'>Gestiona tus comisionstas</h4>
+          <h4 className='infoCuenta'>Gestiona tus agentes comerciales</h4>
           <div className='abajoDeTusNotas'>
-            En esta seccion podras gestionar los comisionistas de la plataforma.
+            En esta seccion podras gestionar los agentes comerciales de la plataforma.
           </div>
         </div>
       </div>
@@ -116,7 +116,7 @@ const handleSave = () => {
       <div className='row miPerfilContainer soporteContainer mt-4 p-0 mb-3'>
         <div className='col buscadorNotas'> 
           {permisoAlta && (
-            <button className="mb-2 btn btn-primary" onClick={() => handleEditClick(comisionistaVacio)}>Crear nuevo comisionista</button>
+            <button className="mb-2 btn btn-primary" onClick={() => handleEditClick(comisionistaVacio)}>Crear nuevo Agente Comercial</button>
           )}
           <form className='buscadorNotasForm'>
             <input
@@ -188,7 +188,7 @@ const handleSave = () => {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title">
-                {selectedComisionista ? "Editar Perfil" : "Nuevo Perfil"}
+                {selectedComisionista ? "Editar Agente Comercial" : "Nuevo Agente Comercial"}
               </h5>
               <button
                 type="button"
