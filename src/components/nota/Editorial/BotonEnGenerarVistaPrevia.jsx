@@ -35,7 +35,6 @@ const BotonEnGenerarVistaPrevia = ({ status }) => {
     const bajadaText = useSelector((state) => state.crearNota.bajada);
     const tipoAutor = useSelector((state) => state.crearNota.autor);
     const pais = useSelector((state) => state.crearNota.pais);
-    const id_noti = useSelector((state) => state.crearNota.id_noti);
     const epigrafeImagenPpal = useSelector((state) => state.crearNota.epigrafeImagenPpal);
     const id_att = useSelector((state) => state.crearNota.id_att);
     const clienteActual = useSelector((state) => state.formulario.cliente);
@@ -108,7 +107,6 @@ const BotonEnGenerarVistaPrevia = ({ status }) => {
                 provincia,
                 municipio,
                 pais,
-                id_noti,
                 id_att,
                 cliente,
                 epigrafeImagenPpal,

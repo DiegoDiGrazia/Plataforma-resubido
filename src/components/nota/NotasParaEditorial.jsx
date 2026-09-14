@@ -109,17 +109,18 @@ const NotasParaEditorial = () => {
 
     dispatch(setContenidoAEditar(contenido));
     try {
-        const [base64PPAL, base64RRSS] = await Promise.all([
-            convertirImagenBase64("https://static.noticiasd.com/img" + notaABM.imagen_principal + "?cb=" + Math.random()),
-            convertirImagenBase64("https://static.noticiasd.com/img" + notaABM.imagen_feed + "?cb=" + Math.random())
-        ]);
-
+        const base64PPAL = await convertirImagenBase64("https://static.noticiasd.com/img" + notaABM.imagen_principal + "?cb=" + Math.random());
         dispatch(setImagenPrincipal(base64PPAL));
+    } catch (error) {
+        console.error("Error al convertir la imagen principal:", error);
+        dispatch(setImagenPrincipal(null));
+    }
+
+    try {
+        const base64RRSS = await convertirImagenBase64("https://static.noticiasd.com/img" + notaABM.imagen_feed + "?cb=" + Math.random());
         dispatch(setImagenRRSS(base64RRSS));
     } catch (error) {
-        console.error("Error al convertir una o ambas imágenes:", error);
-        // Opcional: si querés manejar errores parciales, pasá a Promise.allSettled
-        dispatch(setImagenPrincipal(null));
+        console.error("Error al convertir la imagen de RRSS:", error);
         dispatch(setImagenRRSS(null));
     }
 
