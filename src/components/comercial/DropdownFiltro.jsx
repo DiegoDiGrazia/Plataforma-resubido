@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './DropdownFiltro.css';
 
-const DropdownFiltro = ({ label, opciones, valorActual, onChange, mostrarBuscador = false }) => {
+const DropdownFiltro = ({ label, opciones, valorActual, onChange, mostrarBuscador = false, alineacionDerecha = false }) => {
   const [busqueda, setBusqueda] = useState('');
 
   const normalizarTexto = (texto) => 
@@ -12,7 +12,7 @@ const DropdownFiltro = ({ label, opciones, valorActual, onChange, mostrarBuscado
   );
 
   return (
-    <div className="dropdown-filtro-container">
+    <div className="dropdown dropdown-filtro-container">
       <a 
         className="btn btn-secondary dropdown-toggle w-100 h-100 d-flex justify-content-between align-items-center dropdown-filtro-btn"
         href="#" 
@@ -23,7 +23,7 @@ const DropdownFiltro = ({ label, opciones, valorActual, onChange, mostrarBuscado
         <strong className='text-start'>{label}:</strong>&nbsp;{valorActual}
       </a>
       
-      <ul className="dropdown-menu dropdown-menu-scroll">
+      <ul className={`dropdown-menu dropdown-menu-scroll ${alineacionDerecha ? 'dropdown-menu-end' : ''}`}>
         
         {mostrarBuscador && (
           <div className="input-group mb-2">

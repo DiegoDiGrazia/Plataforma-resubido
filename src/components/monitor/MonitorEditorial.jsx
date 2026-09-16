@@ -53,6 +53,7 @@ const MonitorEditorial = () => {
     const [filtroCategoria, setFiltroCategoria] = useState("Todas");
     const [filtroCrawler, setFiltroCrawler] = useState("Todas");
     const [filtroTag, setFiltroTag] = useState("");
+    const [filtroCliente, setFiltroCliente] = useState("Todas");
     const [mostrarGeo, setMostrarGeo] = useState(false);
 
     const toggleEditor = (id) => {
@@ -427,7 +428,13 @@ const MonitorEditorial = () => {
     };
 
     const monitorFiltrado = monitorData.map(editor => {
-        const clientesConNotasFiltradas = editor.clientes.map(cliente => ({
+
+        const clientesFiltrados = editor.clientes.filter(cliente => {
+            return filtroCliente === "Todas" || 
+                  (cliente.nombre_cliente === filtroCliente);
+        });
+
+        const clientesConNotasFiltradas = clientesFiltrados.map(cliente => ({
             ...cliente,
             notas: cliente.notas.filter(nota => 
                 filtroPorAmplificacion(nota) && 
@@ -472,8 +479,19 @@ const MonitorEditorial = () => {
                     </div>
                 </div>
             </div>
-            
-            <div className='d-flex justify-content-between mx-5 mt-5' id='filtros-container'>
+
+            <div className='d-flex justify-content-end px-5 mt-2'>
+                <button 
+                    className='btn bg-secondary' 
+                    id='boton-gestion'
+                    data-bs-toggle="modal" 
+                    data-bs-target="#modalGestionABM"
+                    >
+                    <i className='bi bi-gear-fill text-light fs-5'></i>
+                </button>
+            </div>
+         
+            <div className='d-flex flex-wrap justify-content-between mx-5 mt-3' id='filtros-container'>
                 <div className='d-flex align-items-center gap-1'>
                     <div id="input-buscar-tag" className="input-group">
                         <input 
@@ -509,12 +527,15 @@ const MonitorEditorial = () => {
                     <DropdownFiltro
                         className='boton-filtro'
                         label= "Grupo"
-                        valorActual={grupoFiltro ? grupoFiltro : "Seleccionar..."}
+                        valorActual={grupoFiltro ? grupoFiltro : "- -"}
                         opciones={gruposFiltrados.map(g => g.nombre )}
                         onChange={setGrupoFiltro}
                         mostrarBuscador={true}
                     />
 
+
+                </div>
+                <div className='d-flex align-items-center gap-1'>
                     <DropdownFiltro
                         className='boton-filtro'
                         label= "Amplificación"
@@ -549,20 +570,20 @@ const MonitorEditorial = () => {
                                 style={{ cursor: 'pointer' }}
                             />
                             <label className="form-check-label label-filtro-fecha mb-0" htmlFor="switchGeo" style={{ cursor: 'pointer' }}>
-                                Incluir Geos
+                                Geos
                             </label>
                         </div>
                     </div>
+                    <DropdownFiltro
+                        className='boton-filtro'
+                        label= "Cuenta"
+                        valorActual={filtroCliente}
+                        opciones={["Todas", ...clientesUnicos.map(c => c.name)]}
+                        onChange={setFiltroCliente}
+                        mostrarBuscador={true}
+                        alineacionDerecha={true}
+                    />
                 </div>
-                
-                <button 
-                    className='btn bg-secondary' 
-                    id='boton-gestion'
-                    data-bs-toggle="modal" 
-                    data-bs-target="#modalGestionABM"
-                >
-                    <i className='bi bi-gear-fill text-light fs-5'></i>
-                </button>
             </div>
 
             <div className="mt-5 mx-5 mb-4">

@@ -1,8 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateToken } from '../redux/formularioSlice';
-import axios from 'axios';
-import { obtenerFacturas, validarToken } from '../components/administrador/gestores/apisUsuarios';
+import { validarToken, obtenerPaginas } from '../components/administrador/gestores/apisUsuarios';
+import {  
+    updateToken, 
+    updateCliente, 
+    updateIdCliente, 
+    updateEsEditor, 
+    updateUsuario, 
+    updateIdUsuario,
+    updatePaginasDelUsuario 
+} from '../redux/formularioSlice';
 
 export const useSessionManager = () => {
   const [mostrarModal, setMostrarModal] = useState(false);
@@ -11,6 +18,7 @@ export const useSessionManager = () => {
   const tokenActual = useSelector((state) => state.formulario.token);
 
   useEffect(() => {
+    let isMounted = true; 
     const channel = new BroadcastChannel('sesion_plataforma');
 
     channel.onmessage = (event) => {
@@ -23,26 +31,53 @@ export const useSessionManager = () => {
     };
 
     const intervalo = setInterval( async () => {
+      if (!tokenActual) return; 
+
       const sesionActiva = await validarToken(tokenActual); 
+
+      if (!isMounted) return; 
 
       if (!sesionActiva) {
         setMostrarModal(true);
         channel.postMessage({ type: 'SESION_EXPIRADA' }); 
       }
-    }, 30000); // se fija si el token expiró cada 30seg
+    }, 30000); 
 
     return () => {
+      isMounted = false; 
       clearInterval(intervalo);
       channel.close();
     };
   }, [dispatch, tokenActual]);
 
-  const reloguear = (nuevoToken) => {
+  const reloguear = async (dataCompletaApi) => {
     setMostrarModal(false);
-    dispatch(updateToken(nuevoToken));
+    
+    const item = dataCompletaApi.item;
+    
+    dispatch(updateToken(item.token));
+    dispatch(updateCliente(item.cliente));
+    dispatch(updateIdCliente(item.id_cliente));
+    dispatch(updateUsuario(item));
+    dispatch(updateIdUsuario(dataCompletaApi.id));
+    
+    if(!item.cliente){
+        dispatch(updateCliente(""));
+        dispatch(updateIdCliente(""));
+        dispatch(updateEsEditor(true));
+    } else {
+        dispatch(updateEsEditor(false));
+    }
+
+    try {
+        const paginas = await obtenerPaginas(item.token, item.perfil);
+        dispatch(updatePaginasDelUsuario(paginas));
+    } catch (error) {
+        console.error("Error al recuperar las páginas tras el relogin:", error);
+    }
 
     const channel = new BroadcastChannel('sesion_plataforma');
-    channel.postMessage({ type: 'SESION_RESTAURADA', token: nuevoToken });
+    channel.postMessage({ type: 'SESION_RESTAURADA', token: item.token });
     channel.close();
   };
 

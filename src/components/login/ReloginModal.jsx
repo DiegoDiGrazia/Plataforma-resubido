@@ -20,7 +20,7 @@ const ReloginModal = ({ onLoginExitoso }) => {
 
         if (response.data.status === "true" && response.data.item.token) {
             setErrorLogin(false);
-            onLoginExitoso(response.data.item.token); 
+            onLoginExitoso(response.data); 
         } else {
             setErrorLogin(true);
         }

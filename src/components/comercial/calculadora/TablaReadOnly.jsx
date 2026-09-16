@@ -85,7 +85,12 @@ const TablaReadOnly = ({
                               step="0.01"
                               value={valorOverride !== undefined ? valorOverride : valorCalculado}
                               onChange={(e) => onCellChange(rowIndex, colIndex, e.target.value)}
-                              style={{ width: "75px", padding: "4px", border: "1px solid #ccc", borderRadius: "4px" }}
+                              style={{ 
+                                width: colIndex === 2 ? "105px" : "75px",
+                                padding: "4px", 
+                                border: "1px solid #ccc", 
+                                borderRadius: "4px" 
+                              }}
                             />
                           </div>
                         ) : (

@@ -163,7 +163,7 @@
     }
 
     #switch-geo-container {
-        width: 150px;
+        width: 105px;
         height: 33.5px;
     }
 
@@ -221,14 +221,23 @@
         }
         #input-fechas-container {
             height: 29px !important;
-            width: 175px !important;
+            width: 169px !important;
             align-items: center;
-            font-size: 12px;
+            font-size: 10px;
         }
         #input-fechas-container label, #input-fechas-container input {
-            font-size: 11px;
+            font-size: 10px;
             width: 85px;
         }
+
+        .label-filtro-fecha {
+            font-size: 10px;
+        }
+        
+        .input-fecha-custom {
+            font-size: 10px;
+        }
+
         #boton-gestion {
             width: 29px;
             height: 29px;
@@ -241,13 +250,14 @@
         }
 
         #switch-geo-container {
-            width: 120px;
+            width: 100px;
             height: 29px;
             font-size: 12px;
+            padding-right: 0px !important;
         }
 
         #switch-geo-container label{
-            font-size: 12px;
+            font-size: 10px;
         }
 
     }

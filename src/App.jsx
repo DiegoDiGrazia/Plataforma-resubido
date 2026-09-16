@@ -14,7 +14,7 @@ import PerfilesAdmin from './components/administrador/gestores/PerfilesAdmin';
 import DistribucionAdmin from './components/administrador/gestores/Distribucion';
 import NotaFreemiumDistribucion from './components/notaFreemium/NotaFreemiumDistribucion';
 import Comercial from './components/comercial/Comercial';
-import CalculadoraDeVentas from './components/comercial/CalculadoraDeVentas';
+import CalculadoraDeVentas from './components/comercial/calculadora/CalculadoraDeVentas';
 import AbmPlanes from './components/comercial/AbmPlanes';
 import AbmComisionistas from './components/comercial/AbmComisionistas';
 import AbmContratos from './components/comercial/AbmContratos';
