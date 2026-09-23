@@ -341,6 +341,7 @@ const Facturas = () =>  {
     {/* FUNCION SUBIR ARCHIVO */}
     const handleSubirArchivo = (e) => {
         const archivoSeleccionado = e.target.files[0];
+        const inputTarget = e.target;
         if (!archivoSeleccionado) return; 
 
         setSubiendoArchivo(true); 
@@ -352,7 +353,7 @@ const Facturas = () =>  {
             mostrarAlertaExito("¡Archivo cargado exitosamente!");
         }).finally(() => {
             setSubiendoArchivo(false);
-            e.target.value = null; 
+            inputTarget.value = null; 
         });
     };
 
