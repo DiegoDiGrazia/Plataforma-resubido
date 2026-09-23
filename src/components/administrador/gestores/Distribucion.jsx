@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import ModalMensaje from '../gestores/ModalMensaje';
 import {obtenerPlanesMarketing, obtenerVideosYoutube, obtenerGeo, obtenerContratos } from './apisUsuarios';
 import { obtenerDistribucionPorFechaVencimiento, obtenerGeneracion, editarDistribucionGeneracion, obtenerClientes } from '../../Apis/apis';
-import { getTipoHistoria } from '../../../utils/bannerData';
+import { getTipoHistoria, getColorHistoria, armarParamsColorCreativo } from '../../../utils/bannerData';
 import CopiarTexto from './CopiarTexto';
 import IconosDistribucionConMonto, { PLATAFORMAS } from './IconosDistribucionConMonto';
 import { Accordion } from 'react-bootstrap';
@@ -61,7 +61,8 @@ const descargarJpg = async (nota, imagenFeed) => {
 
 const descargarCreativo = (nota, token) => {
   const tipo = getTipoHistoria(nota.banner_data); // 1 si banner_data es null
-  const url = `https://reportes-creativos.noticiasd.com/creativo/${nota.id_generacion}?tipo=${tipo}&token=${token}&descargarjpg=si`;
+  const color = getColorHistoria(nota.banner_data); // solo aplica a tipo 3, 4 y 5
+  const url = `https://reportes-creativos.noticiasd.com/creativo/${nota.id_generacion}?tipo=${tipo}&token=${token}${armarParamsColorCreativo(color)}&descargarjpg=si`;
   window.open(url, '_blank');
 };
 

@@ -6,14 +6,16 @@ import GoogleStyleSlider from './GoogleStyleSlider';
 import SliderVertical from './SliderVertical';
 import IframeNotaEscalable from '../IframeNotaEscalable';
 import SelectorNumerosEnteros from './SelectorNumerosEnteros';
+import SelectorColor from './SelectorColor';
 import { obtenerFeedsPorCliente, agregarNotaAFeed, crearFeed, editarDistribucionGeneracion, obtenerDistribucionGeneracion } from '@/components/Apis/apis';
-import { parseBannerData } from '@/utils/bannerData';
+import { parseBannerData, armarParamsColorCreativo } from '@/utils/bannerData';
 
     const BotonModalIframes = ({id_nota, token}) => {
 
         const [showConfirmModal, setShowConfirmModal] = useState(false);
         const [posicion, setPosicion] = useState(50);
         const [tipo, setTipo] = useState(1);
+        const [color, setColor] = useState('ee4c01');
         const id_cliente = useSelector((state) => state.formulario.id_cliente);
         const [showFeedModal, setShowFeedModal] = useState(false);
         const [feeds, setFeeds] = useState([]);
@@ -27,6 +29,9 @@ import { parseBannerData } from '@/utils/bannerData';
         const URLIFRAME = `https://builder.ntcias.de/preview.php?id=${id_nota}`;
         const URLCREATIVO1 = `https://reportes-creativos.noticiasd.com/creativo/${id_nota}?tipo=1&token=${token}`;
         const URLCREATIVO2 = `https://reportes-creativos.noticiasd.com/creativo/${id_nota}?tipo=2&token=${token}`;
+        const URLCREATIVO3 = `https://reportes-creativos.noticiasd.com/creativo/${id_nota}?tipo=3&token=${token}${armarParamsColorCreativo(color)}`;
+        const URLCREATIVO4 = `https://reportes-creativos.noticiasd.com/creativo/${id_nota}?tipo=4&token=${token}${armarParamsColorCreativo(color)}`;
+        const URLCREATIVO5 = `https://reportes-creativos.noticiasd.com/creativo/${id_nota}?tipo=5&token=${token}${armarParamsColorCreativo(color)}`;
 
         // Precarga posicion y tipo desde el banner_data guardado de la generacion, si existe
         useEffect(() => {
@@ -38,6 +43,7 @@ import { parseBannerData } from '@/utils/bannerData';
                 if (!data) return;
                 if (data.vp != null && !Number.isNaN(Number(data.vp))) setPosicion(Number(data.vp));
                 if (data.historiaTipo != null && !Number.isNaN(Number(data.historiaTipo))) setTipo(Number(data.historiaTipo));
+                if (data.color) setColor(data.color);
             });
             return () => { activo = false; };
         }, [id_nota, token]);
@@ -49,7 +55,7 @@ import { parseBannerData } from '@/utils/bannerData';
 
         const guardarPosicion = async (token, id_nota, posicion) => {
             await editarDistribucionGeneracion(token, id_nota, {
-                banner_data: `{'vp':${posicion}, 'historiaTipo':${tipo}}`,
+                banner_data: `{"vp":${posicion}, "historiaTipo":${tipo}, "color":"${color}"}`,
             });
         }
 
@@ -142,7 +148,7 @@ import { parseBannerData } from '@/utils/bannerData';
                         <div className='row g-1'>
                         <h2 className='tituloCreativo'>Creativos Historias</h2>
                         <p className='ps-5 pe-5'>
-                        <SelectorNumerosEnteros title= 'tipo de historia' start={1} end={2} selectedValue={tipo}
+                        <SelectorNumerosEnteros title= 'tipo de historia' start={1} end={5} selectedValue={tipo}
                         onSelect={setTipo} onClear={() => setTipo(1)}/>
                         </p>
 
@@ -160,6 +166,42 @@ import { parseBannerData } from '@/utils/bannerData';
                             tipo 2
                             <IframeNotaEscalable
                             url={URLCREATIVO2}
+                            width={180}
+                            height={320}
+                            baseWidth={720}
+                            baseHeight={1280}
+                            />
+                        </div>
+
+                        <p className='ps-5 pe-5 w-100'>
+                        <SelectorColor title= 'color creativos 3, 4 y 5' selectedValue={color}
+                        onSelect={setColor}/>
+                        </p>
+
+                        <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                            tipo 3
+                            <IframeNotaEscalable
+                            url={URLCREATIVO3}
+                            width={180}
+                            height={320}
+                            baseWidth={720}
+                            baseHeight={1280}
+                            />
+                        </div>
+                        <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                            tipo 4
+                            <IframeNotaEscalable
+                            url={URLCREATIVO4}
+                            width={180}
+                            height={320}
+                            baseWidth={720}
+                            baseHeight={1280}
+                            />
+                        </div>
+                        <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                            tipo 5
+                            <IframeNotaEscalable
+                            url={URLCREATIVO5}
                             width={180}
                             height={320}
                             baseWidth={720}
