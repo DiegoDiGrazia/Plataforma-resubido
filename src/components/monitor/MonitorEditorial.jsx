@@ -3,9 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { borrarTildes } from '../../utils/funcionesVarias';
-import { obtenerGrupos, obtenerAutores, obtenerClientes, obtenerGruposClientes, crearGrupo, 
+import { obtenerGrupos, obtenerAutores, obtenerGruposClientes, crearGrupo, 
          crearAutor, actualizarGrupo, actualizarAutor, eliminarGrupo, eliminarAutor, 
-         obtenerMonitor, editarComentarioCliente } from '../Apis/apis.js';
+       } from '../Apis/gruposApi.js';
+import { obtenerClientes, editarComentarioCliente } from '../Apis/apis.js';
+import { obtenerMonitor } from '../Apis/monitorApi.js';
 import DropdownFiltro from '../comercial/DropdownFiltro.jsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';

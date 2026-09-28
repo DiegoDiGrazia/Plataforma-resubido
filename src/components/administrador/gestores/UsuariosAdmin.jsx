@@ -124,9 +124,9 @@ const handleSave = () => {
     .then(() => {
       setMensajeModalExito('Los cambios se realizaron correctamente.');
       setShowModal(true);
-      setTimeout(() => {
-        window.location.reload(); 
-      }, 1500);
+      // setTimeout(() => {
+      //   window.location.reload(); 
+      // }, 1500);
       
     })
     .catch((err) => {
@@ -446,7 +446,7 @@ const handleInputKeyDown = (e) => {
                               onClick={() => {
                                 setFormData({
                                   ...formData,
-                                  id_cliente: c.id,
+                                  id_cliente: c.name,
                                   cliente: c.name,
                                 });
                               }}

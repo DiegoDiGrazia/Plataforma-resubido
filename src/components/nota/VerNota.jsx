@@ -49,7 +49,7 @@ const VerNota = () => {
     const [distribucionYtLink, setDistribucionYtLink] = useState(null);
 
     useEffect(() => {
-        if (!id_noti || !TOKEN || !Nota) return;
+        if (!id_noti || !TOKEN || !Nota.id_generaciones) return;
         console.log()
         let activo = true;
         obtenerDistribucionGeneracion(TOKEN, Nota.id_generaciones).then((datos) => {

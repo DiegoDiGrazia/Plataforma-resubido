@@ -10,7 +10,7 @@ const TablasPorPresupuesto = ({
     feeAgencia, 
     onEliminar, 
     onDataUpdate,
-    titulo // Para poder pasarle "Presupuesto por Plataformas" o "Presupuesto Alternativo"
+    titulo 
 }) => {
     
     // --- ESTADOS TABLA PRINCIPAL ---
@@ -78,7 +78,6 @@ const TablasPorPresupuesto = ({
         const calcularFila = (rowIdx, defaultCpm, defaultFrecuencia) => {
             const cpm = getValor(rowIdx, 0, defaultCpm);
 
-            // Obtenemos qué celda se editó explícitamente en el estado
             const manualInversion = tableOverrides[rowIdx]?.[1];
             const manualAlcance = tableOverrides[rowIdx]?.[2];
 
@@ -86,14 +85,10 @@ const TablasPorPresupuesto = ({
             let alcance_usuarios;
             const baseAlcance = alcancePorNota || 0; 
 
-            // Si hay un alcance manual definido, ignoramos la inversión para el cálculo.
-            // Tratamos ese alcance manual como la nueva base.
             if (manualAlcance !== undefined && manualAlcance !== "") {
                 alcance_usuarios = Number(manualAlcance);
-                // Mantenemos la inversión visual tal cual está (o 100 por defecto) sin modificarla por código.
                 inversion = manualInversion !== undefined && manualInversion !== "" ? Number(manualInversion) : 100;
             } 
-            // Si NO hay alcance manual, calculamos en base a la inversión.
             else {
                 inversion = manualInversion !== undefined && manualInversion !== "" ? Number(manualInversion) : 100;
                 alcance_usuarios = baseAlcance * (inversion / 100);
@@ -180,11 +175,17 @@ const TablasPorPresupuesto = ({
         <div className={onEliminar ? "mt-5 pt-4 border-top" : ""}>
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h2 className="fw-bold">{titulo || "Presupuesto"}</h2>
-                {onEliminar && (
-                    <button className="btn btn-danger btn-sm" onClick={() => onEliminar(id)}>
-                        <i className="bi bi-trash3 me-1"></i> Eliminar
+                <div className='d-flex gap-2'>
+                    <button className="btn btn-primary btn-sm" title='Guardar Presupuesto'>
+                        <i className="bi bi-folder-plus"></i>
                     </button>
-                )}
+                    {onEliminar && (
+
+                        <button className="btn btn-danger btn-sm" title='Eliminar' onClick={() => onEliminar(id)}>
+                            <i className="bi bi-trash3"></i>
+                        </button>
+                    )}
+                </div>
             </div>
             
             {/* TABLA PRINCIPAL */}
