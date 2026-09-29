@@ -10,6 +10,7 @@ const TablasPorPresupuesto = ({
     feeAgencia, 
     onEliminar, 
     onDataUpdate,
+    onGuardar,
     titulo 
 }) => {
     
@@ -19,7 +20,7 @@ const TablasPorPresupuesto = ({
     const [tableOverrides, setTableOverrides] = useState({});
 
     const columns = ["CPM", "% Inversión", "Alcance", "Frecuencia", "Impresiones", "% Rentabilidad", "Costo mkt por nota", "Costo de Marketing", 'Costo con Fee', 'Precio de Venta'];
-    const rows = ["dv 360", "Meta", 'Youtube', 'X', "Totales"];
+    const rows = ["dv360", "Meta", 'Youtube', 'X', "Totales"];
     const editableColumns = [0, 1, 2, 3, 5];
     const currencyColumns = [0, 6, 7, 8, 9];
     const highlightedTotalColumns = [6, 7, 8, 9];
@@ -147,7 +148,7 @@ const TablasPorPresupuesto = ({
         const search_cpc = getSearchValor(0, 400);
         const search_clics = getSearchValor(1, 0);
         const search_costo_pesos = search_cpc * search_clics;
-        const search_valor_usd = getSearchValor(3, 1400);
+        const search_valor_usd = getSearchValor(3, 1500);
         const search_costo_usd = search_valor_usd ? search_costo_pesos / search_valor_usd : 0;
         const search_rentabilidad = getSearchValor(5, rentabilidad);
         const search_costo_fee = (search_costo_pesos * (feeAgencia / 100)) + search_costo_pesos;
@@ -169,18 +170,21 @@ const TablasPorPresupuesto = ({
             });
         }
 
-    }, [poblacionEstimada, alcancePorNota, cantidadDeNotas, rentabilidad, feeAgencia, selectedRows, tableOverrides, searchOverrides]);
+    }, [poblacionEstimada, alcancePorNota, cantidadDeNotas, rentabilidad, feeAgencia, selectedRows, searchSelected, tableOverrides, searchOverrides]);
 
     return (
         <div className={onEliminar ? "mt-5 pt-4 border-top" : ""}>
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h2 className="fw-bold">{titulo || "Presupuesto"}</h2>
                 <div className='d-flex gap-2'>
-                    <button className="btn btn-primary btn-sm" title='Guardar Presupuesto'>
+                    <button 
+                        className="btn btn-primary btn-sm" 
+                        title='Guardar Presupuesto'
+                        onClick={() => onGuardar && onGuardar(id)}
+                    >
                         <i className="bi bi-folder-plus"></i>
                     </button>
                     {onEliminar && (
-
                         <button className="btn btn-danger btn-sm" title='Eliminar' onClick={() => onEliminar(id)}>
                             <i className="bi bi-trash3"></i>
                         </button>

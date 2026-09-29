@@ -19,3 +19,17 @@ export const obtenerPresupuestosPorUser = async (token, usuario_id) => {
   if (!res.ok) return null;
   return res.json();
 };
+
+export const crearPresupuesto = async (token, payload) => {
+  const res = await fetch(`${BASE_URL}/presupuestos`, {
+    method: "POST",
+    headers: jsonHeaders(token),
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    console.error("Error en POST /presupuestos:", errorData);
+    throw new Error("Error al guardar el presupuesto");
+  }
+  return res.json();
+};

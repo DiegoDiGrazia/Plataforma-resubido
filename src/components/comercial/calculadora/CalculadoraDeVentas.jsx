@@ -10,6 +10,11 @@ import TablaReadOnly from './TablaReadOnly';
 import InputNumerico from '../../nota/Editorial/InputNumerico';
 import { descargarExcel } from '../../funciones/creacionCSV';
 import TablasPorPresupuesto from './TablasPorPresupuesto';
+import SelectorCliente from '../../Dashboard/SelectorCliente';
+import { crearPresupuesto } from '../../Apis/presupuestosApi';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { toastExito, toastError } from '../../../utils/toastify/toastify.jsx';
 
 const CalculadoraDeVentas = () => {
   const [pais, setPais] = useState("Argentina");
@@ -17,7 +22,11 @@ const CalculadoraDeVentas = () => {
   const [municipio, setMunicipio] = useState("");
   const [poblacionEstimada, setPoblacionEstimada] = useState("");
   const [geo, setGeo] = useState([]);
+
   const TOKEN = useSelector((state) => state.formulario.token);
+  const USUARIO_ID = useSelector((state) => state.formulario.usuario?.id);
+  const CLIENTE_ID = useSelector((state) => state.formulario.id_cliente);
+  const NOMBRE_CLIENTE = useSelector((state) => state.formulario.cliente);
 
   const [cantidadDeNotas, setCantidadDeNotas] = useState(1);
   const [alcancePorNota, setalcancePorNota] = useState(null);
@@ -26,17 +35,21 @@ const CalculadoraDeVentas = () => {
 
   const [showExcelModal, setShowExcelModal] = useState(false);
   const [excelFileName, setExcelFileName] = useState("Presupuesto");
-  
-  const [exportPlatforms, setExportPlatforms] = useState([true, true, true, true]); // dv 360, Meta, Youtube, X
+  const [exportPlatforms, setExportPlatforms] = useState([true, true, true, true]);
   const [exportSearch, setExportSearch] = useState(true);
   const [exportApi, setExportApi] = useState(true);
 
-  const columns = ["CPM", "% Inversión", "Alcance", "Frecuencia", "Impresiones", "% Rentabilidad", "Costo mkt por nota", "Costo de Marketing", 'Costo con Fee', 'Precio de Venta']
-  const rows = ["dv 360", "Meta", 'Youtube', 'X', "Totales"]
+  const [showGuardarModal, setShowGuardarModal] = useState(false);
+  const [presupuestoAGuardarId, setPresupuestoAGuardarId] = useState(null);
+  const [nombrePresupuesto, setNombrePresupuesto] = useState("");
+  const [guardandoPresupuesto, setGuardandoPresupuesto] = useState(false);
+
+  const columns = ["CPM", "% Inversión", "Alcance", "Frecuencia", "Impresiones", "% Rentabilidad", "Costo mkt por nota", "Costo de Marketing", 'Costo con Fee', 'Precio de Venta'];
+  const rows = ["dv360", "Meta", 'Youtube', 'X', "Totales"];
   const searchColumns = ["CPC", "Clics", "Costo en pesos", "Valor USD", "Costo en USD", "% Rentabilidad", "Costo con Fee", "Precio de Venta"];
   const searchRows = ["Search"];
 
-  const apiRows = ["dv 360", "Meta", "Youtube", "Totales"];
+  const apiRows = ["dv360", "Meta", "Youtube", "Totales"];
   const apiEditableColumns = []; 
   const currencyColumns = [0, 6, 7, 8, 9];
   const highlightedTotalColumns = [6, 7, 8, 9];
@@ -78,7 +91,7 @@ const CalculadoraDeVentas = () => {
           setPoblacionEstimada(poblacion);
       };
       fetchPoblacion();
-  }, [pais, provincia, municipio]);
+  }, [pais, provincia, municipio, geo, TOKEN]);
 
   const agregarCalculadora = () => {
     setCalculadorasExtras([...calculadorasExtras, { id: siguienteId }]);
@@ -92,6 +105,119 @@ const CalculadoraDeVentas = () => {
 
   const handleUpdateDatos = (id, infoCargada) => {
       datosPresupuestos.current[id] = infoCargada;
+  };
+
+  const handleAbrirModalGuardar = (idCalculadora) => {
+    if (!CLIENTE_ID) {
+      toastError("Por favor, seleccioná una cuenta antes de guardar el presupuesto.");
+      return;
+    }
+    setPresupuestoAGuardarId(idCalculadora);
+    setNombrePresupuesto("");
+    setShowGuardarModal(true);
+  };
+
+  const confirmarGuardarPresupuesto = async () => {
+    const info = datosPresupuestos.current[presupuestoAGuardarId];
+    if (!info) return;
+
+    if (!nombrePresupuesto.trim()) {
+      toastError("Por favor, ingresá un nombre para el presupuesto.");
+      return;
+    }
+
+    const valorUsd = Number(info.searchData?.[0]?.[3] || 1400);
+    const cpm_dv = Math.trunc(Number(poblacionEstimada?.gv?.cpm ?? 0) * 100) / 100;
+    const cpm_meta = Math.trunc(Number(poblacionEstimada?.meta?.cpm ?? 0) * 100) / 100;
+    const historicosCpm = [cpm_dv, cpm_meta, cpm_meta, 0];
+    
+    const nombresProductos = ["dv360", "Meta", "Youtube", "X"];
+
+    const productos = [];
+
+    for (let i = 0; i < nombresProductos.length; i++) {
+      if (info.selectedRows[i]) {
+        const fila = info.data[i] || [];
+        const impresiones = Number(fila[4] || 0);
+        const costoNota = Math.round(Number(fila[6] || 0));
+        const costoMkt = Math.round(Number(fila[7] || 0));
+        const costoFee = Math.round(Number(fila[8] || 0));
+
+        productos.push({
+          producto: nombresProductos[i],
+          costo_unitario_manual: Number(fila[0] || 0),
+          costo_unitario_historico: historicosCpm[i],
+          costo_unitario_tipo: "CPM",
+          porcentaje_inversion: Number(fila[1] || 0) / 100,
+          alcance: Number(fila[2] || 0),
+          factor: Number(fila[3] || 0),
+          unidades: impresiones / 1000,
+          rentabilidad_personalizada: Number(fila[5] || 0),
+          costo_x_nota: costoNota,
+          costo_x_nota_usd: valorUsd ? Number((costoNota / valorUsd).toFixed(2)) : 0,
+          costo_marketing: costoMkt,
+          costo_marketing_usd: valorUsd ? Number((costoMkt / valorUsd).toFixed(2)) : 0,
+          costo_marketing_fee: costoFee,
+          costo_marketing_fee_usd: valorUsd ? Number((costoFee / valorUsd).toFixed(2)) : 0,
+          precio_venta: Math.round(Number(fila[9] || 0)),
+        });
+      }
+    }
+
+    // 2. Plataforma Search
+    if (info.searchSelected?.[0]) {
+      const sFila = info.searchData[0] || [];
+      const sCostoPesos = Math.round(Number(sFila[2] || 0));
+      const sCostoUsd = Number(sFila[4] || 0);
+      const sCostoFee = Math.round(Number(sFila[6] || 0));
+      const sCostoNota = cantidadDeNotas ? Math.round(sCostoPesos / cantidadDeNotas) : 0;
+
+      productos.push({
+        producto: "Search",
+        costo_unitario_manual: Number(sFila[0] || 0),
+        costo_unitario_historico: 400,
+        costo_unitario_tipo: "CPC",
+        porcentaje_inversion: 1,
+        alcance: 0,
+        factor: 1,
+        unidades: Number(sFila[1] || 0),
+        rentabilidad_personalizada: Number(sFila[5] || 0),
+        costo_x_nota: sCostoNota,
+        costo_x_nota_usd: valorUsd ? Number((sCostoNota / valorUsd).toFixed(2)) : 0,
+        costo_marketing: sCostoPesos,
+        costo_marketing_usd: Number(sCostoUsd.toFixed(2)),
+        costo_marketing_fee: sCostoFee,
+        costo_marketing_fee_usd: valorUsd ? Number((sCostoFee / valorUsd).toFixed(2)) : 0,
+        precio_venta: Math.round(Number(sFila[7] || 0)),
+      });
+    }
+
+    const payload = {
+      cliente_id: Number(CLIENTE_ID),
+      usuario_id: Number(USUARIO_ID),
+      descripcion: nombrePresupuesto.trim(),
+      valor_usd: valorUsd,
+      rentabilidad: Number(rentabilidad || 0),
+      fee_agencia: Number(feeAgencia || 0),
+      usuarios_x_nota: Number(alcancePorNota || 0),
+      pais_id: Number(obtenerPaisId(geo.paises, pais) || 0),
+      provincia_id: Number(provincia?.provincia_id || 0),
+      municipio_id: Number(municipio?.municipio_id || 0),
+      notas: Number(cantidadDeNotas || 1),
+      productos: productos
+    };
+
+    try {
+      setGuardandoPresupuesto(true);
+      await crearPresupuesto(TOKEN, payload);
+      setShowGuardarModal(false);
+      toastExito("¡Presupuesto guardado exitosamente!");
+    } catch (error) {
+      console.error(error);
+      toastError("Ocurrió un error al guardar el presupuesto.");
+    } finally {
+      setGuardandoPresupuesto(false);
+    }
   };
 
   // CÁLCULO HISTÓRICO
@@ -256,18 +382,23 @@ const CalculadoraDeVentas = () => {
       {/* FILTROS */}
       <div className='row miPerfilContainer soporteContainer mt-4 p-0 mb-3'>
           <div className='col-6'>
-          <ArbolDistribucion  
-            TOKEN={TOKEN}
-            pais={pais}
-            provincia={provincia}
-            municipio={municipio}
-            onSetPais={(p) => setPais(p)}
-            onSetProvincia={(p) => setProvincia(p)}
-            onSetMunicipio={(m) => setMunicipio(m)}
+            <div className="mb-3 d-flex justify-content-between align-items-center">
+              <div className="fw-bold m-0">Cuenta</div>
+              <SelectorCliente incluirTodos={false} />
+            </div>
+
+            <ArbolDistribucion  
+              TOKEN={TOKEN}
+              pais={pais}
+              provincia={provincia}
+              municipio={municipio}
+              onSetPais={(p) => setPais(p)}
+              onSetProvincia={(p) => setProvincia(p)}
+              onSetMunicipio={(m) => setMunicipio(m)}
             />
             <h3>población: {Number(poblacionEstimada?.poblacion || 0).toLocaleString('es-AR') || 0} </h3>
           </div>
-          <div className='col-6 '>
+          <div className='col-6'>
               <div className="dropdown p-0">
                 <SelectorNumerosEnteros
                   title="Cantidad de notas"
@@ -334,6 +465,7 @@ const CalculadoraDeVentas = () => {
               rentabilidad={rentabilidad}
               feeAgencia={feeAgencia}
               onDataUpdate={handleUpdateDatos}
+              onGuardar={handleAbrirModalGuardar}
           />
 
           {/* PRESUPUESTOS EXTRAS */}
@@ -341,6 +473,7 @@ const CalculadoraDeVentas = () => {
              <TablasPorPresupuesto
                 key={calc.id}
                 id={calc.id}
+                titulo={`Presupuesto Alternativo #${calc.id}`}
                 onEliminar={eliminarCalculadora}
                 poblacionEstimada={poblacionEstimada}
                 alcancePorNota={alcancePorNota}
@@ -348,6 +481,7 @@ const CalculadoraDeVentas = () => {
                 rentabilidad={rentabilidad}
                 feeAgencia={feeAgencia}
                 onDataUpdate={handleUpdateDatos}
+                onGuardar={handleAbrirModalGuardar}
              />
           ))}
 
@@ -373,6 +507,52 @@ const CalculadoraDeVentas = () => {
           />
         </div>
       </div>
+
+      {/* Modal de Guardar Presupuesto */}
+      {showGuardarModal && (
+        <div className="modal fade show d-block" tabIndex="-1" style={{ background: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title fw-bold">Guardar Presupuesto</h5>
+                <button type="button" className="btn-close" onClick={() => setShowGuardarModal(false)}></button>
+              </div>
+              <div className="modal-body">
+                <div className="mb-2 text-muted small">
+                  Cliente seleccionado: <strong className="text-dark">{NOMBRE_CLIENTE}</strong>
+                </div>
+                <div className="mb-3">
+                  <label className="form-label fw-bold">Nombre:</label>
+                  <input 
+                    type="text" 
+                    className="form-control" 
+                    placeholder="Ej: Presupuesto Campaña..."
+                    value={nombrePresupuesto} 
+                    onChange={(e) => setNombrePresupuesto(e.target.value)} 
+                    autoFocus
+                  />
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button 
+                  className="btn btn-secondary" 
+                  onClick={() => setShowGuardarModal(false)}
+                  disabled={guardandoPresupuesto}
+                >
+                  Cancelar
+                </button>
+                <button 
+                  className="btn btn-primary" 
+                  onClick={confirmarGuardarPresupuesto}
+                  disabled={guardandoPresupuesto || !nombrePresupuesto.trim()}
+                >
+                  {guardandoPresupuesto ? "Guardando..." : "Guardar"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal de Descargar Excel */}
       {showExcelModal && (
@@ -451,6 +631,7 @@ const CalculadoraDeVentas = () => {
         </div>
       )}
 
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
     </div>
   );
 };
