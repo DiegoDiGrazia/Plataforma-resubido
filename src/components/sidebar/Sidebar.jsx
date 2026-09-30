@@ -21,7 +21,7 @@ const Sidebar = ({ estadoActual }) => {
   const dispatch = useDispatch();
 
   const permisoDashboard = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Dashboard: Datos") || false);
-  const permisoFeed = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Feed") || false);
+  const permisoFeed = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Feed" || permiso.id === 92) || false);
   const permisoAdmin = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Administracion") || false);
   const permisoMonitor = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Monitor Editorial") || false);
 
@@ -191,7 +191,7 @@ const Sidebar = ({ estadoActual }) => {
               'Administración',
               'bi bi-gear-fill'
             )}
-            {permisoAdmin || permisoFeed && renderSidebarButton(
+            {(permisoAdmin || permisoFeed) && renderSidebarButton(
               'Feed',
               'feed',
               '/images/auto_entrevistas_icon.png',
