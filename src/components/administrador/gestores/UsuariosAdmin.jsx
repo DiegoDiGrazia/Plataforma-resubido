@@ -3,9 +3,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "../../miPerfil/miPerfil.css";
 import { useSelector } from 'react-redux';
-import axios from 'axios';
 import ModalMensaje from '../gestores/ModalMensaje';
-import { obtenerUsuarios, obtenerClientes, obtenerPerfiles, obtenerGeo } from './apisUsuarios'; // Importa la función para obtener usuarios
+import { obtenerClientes, obtenerPerfiles, obtenerGeo } from './apisUsuarios'; // Importa la función para obtener usuarios
+import { obtenerUsuarios, crearUsuario, editarUsuario, eliminarUsuarioPorId, cambiarClaveUsuario } from '../../Apis/usuariosApi.js';
+import { ToastContainer } from 'react-toastify';
+import { toastExito, toastError } from '../../../utils/toastify/toastify.jsx';
+import { formatearFecha } from '../../../utils/funcionesVarias.js'
 
 const usuarioVacio = {
   celular_reporte: "",
@@ -46,7 +49,6 @@ const UsuariosAdmin = () => {
   const [mensajeModalExito, setMensajeModalExito] = useState("Los cambios se realizaron correctamente.");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [inputPage, setInputPage] = useState(page);
   const [selectedUser, setSelectedUser] = useState(null);
   const [formData, setFormData] = useState({});
   const itemsPerPage = 10;  
@@ -110,75 +112,69 @@ const UsuariosAdmin = () => {
   };
 
 const handleSave = () => {
-  axios
-    .post(
-      "https://panel.serviciosd.com/app_usuario_edit",
-      {
-        token: TOKEN,
-        ...formData,
-      },
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      }
-    )
-    .then(() => {
-      setMensajeModalExito('Los cambios se realizaron correctamente.');
-      setShowModal(true);
-      // setTimeout(() => {
-      //   window.location.reload(); 
-      // }, 1500);
-      
-    })
-    .catch((err) => {
-      console.log("Error al guardar cambios:", err);
-    });
-};
+    const payload = {
+      nombre: formData.nombre || "",
+      email: formData.email || "",
+      tipo_usuario: formData.tipo,
+      cliente: formData.cliente || "",
+      id_pais: Number(formData.id_pais) || 0,
+      reporte_whatsapp: Number(formData.reporte_whatsapp) || 0,
+      reporte_email: Number(formData.reporte_acceso) || 0,
+      celular_reporte: formData.celular_reporte || "",
+      email_reporte: formData.email_reporte || "",
+      modulo_contactos: Number(formData.modulo_contactos) || 0,
+      modulo_comunicacion: Number(formData.modulo_comunicacion) || 0,
+      administrador_encuesta: Number(formData.administrador_encuesta) || 0
+    };
+
+    const esNuevoUsuario = formData.id === "0";
+
+    const peticion = esNuevoUsuario 
+      ? crearUsuario(TOKEN, payload)
+      : editarUsuario(TOKEN, formData.id, payload);
+
+    peticion
+      .then(() => {
+        toastExito('Los cambios se realizaron correctamente.');
+        
+        const modalElement = document.getElementById('editModal');
+        const modalInstance = window.bootstrap.Modal.getInstance(modalElement);
+        if (modalInstance) {
+          modalInstance.hide();
+        }
+
+        obtenerUsuarios(TOKEN).then(setUsuarios);
+      })
+      .catch((err) => {
+        console.error("Error al guardar cambios:", err);
+        toastError("Error al guardar cambios");
+      });
+  };
 
 const eliminarUsuario = (id) => {
-  axios
-    .post(
-      "https://panel.serviciosd.com/app_usuario_eliminar",
-      {
-        token: TOKEN,
-        id: id,
-      },
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      }
-    )
+    eliminarUsuarioPorId(TOKEN, id)
       .then(() => {
-        setMensajeModalExito('El usuario se elimino correctamente');
-        setShowModal(true); // mostrar modal
-        setTimeout(() => {
-          window.location.reload(); // recargar luego de 3s
-        }, 1500);
+        toastExito('El usuario se eliminó correctamente');
+        obtenerUsuarios(TOKEN).then(setUsuarios);
       })
-    .catch((err) => {
-      console.log("Error al guardar cambios:", err);
-    });
-};
+      .catch((err) => {
+        console.error("Error al eliminar usuario:", err);
+        toastError("Error al eliminar usuario");
+      });
+  };
 
-const generarContrasenia= (id, contrasenia) => {
-  axios
-    .post(
-      "https://panel.serviciosd.com/app_modificar_clave_usuario",
-      {
-        token: TOKEN,
-        id_usuario: id,
-        clave: contrasenia,
-      },
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      }
-    )
+const generarContrasenia = (id, contrasenia) => {
+    cambiarClaveUsuario(TOKEN, id, contrasenia)
       .then(() => {
-        setMensajeModalExito('La nueva contraseña es: '+contrasenia);
-        setShowModal(true); // mostrar modal
+        toastExito('Contraseña generada con exito!');
+        setMensajeModalExito('La nueva contraseña es: ' + contrasenia);
+        setShowModal(true); 
       })
-    .catch((err) => {
-      console.log("Error al guardar cambios:", err);
-    });
-};
+      .catch((err) => {
+        console.error("Error al generar contraseña:", err);
+        toastError("Error al generar contraseña");
+      });
+  };
 
 /* input para la paginación
 const handleInputChange = (e) => {
@@ -200,6 +196,9 @@ const handleInputKeyDown = (e) => {
 */
   return (
     <div className="content flex-grow-1 crearNotaGlobal">
+      
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
+
       <div className='row miPerfilContainer soporteContainer'>
         <div className='col p-0'>
           <h3 id="saludo" className='headerTusNotas ml-0'>
@@ -255,7 +254,7 @@ const handleInputKeyDown = (e) => {
                       {item.cliente && <em className='cuenta-text'>Cuenta: {item.cliente}</em>}
                     </div>
                     <div className='col-3'>
-                      <span className="text-muted">Creado: {item.fecha_creacion}</span>
+                      <span className="text-muted">Creado: {formatearFecha(item.fecha_creacion)}</span>
                     </div>
                   </div>
                 </li>

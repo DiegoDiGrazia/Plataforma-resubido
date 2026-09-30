@@ -4,9 +4,8 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "../../miPerfil/miPerfil.css";
 import { useSelector } from 'react-redux';
 import axios from 'axios';
-import { Button } from 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import ModalMensaje from './ModalMensaje';
-import { obtenerUsuarios, obtenerPaginas, obtenerPerfiles, eliminarPaginaDelPerfil, agregarPaginaDelPerfil } from './apisUsuarios'; // Importa la función para obtener usuarios
+import { obtenerPaginas, obtenerPerfiles, eliminarPaginaDelPerfil, agregarPaginaDelPerfil } from './apisUsuarios'; // Importa la función para obtener usuarios
 
 const perfilVacio = {
   nombre: "",

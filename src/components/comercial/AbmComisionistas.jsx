@@ -5,11 +5,8 @@ import '@/components/miPerfil/miPerfil.css';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import ModalMensaje from '@/components/administrador/gestores/ModalMensaje';
-import { obtenerUsuarios, obtenerClientes, obtenerPerfiles, obtenerGeo, obtenerPlanesMarketing, obtenerComisionistas } from '@/components/administrador/gestores/apisUsuarios';
-import ArbolDistribucion from '@/components/nota/Editorial/ArbolDistribucion';
+import { obtenerComisionistas } from '@/components/administrador/gestores/apisUsuarios';
 import '@/components/administrador/gestores/AbmsMobile.css';
-import DropdawnSiNo from '@/components/comercial/DropdawnSiNo';
-
 
 const comisionistaVacio = {
   nombre: "",
@@ -22,10 +19,7 @@ const comisionistaVacio = {
 
 const AbmPerfiles
  = () => {
-  const [usuarios, setUsuarios] = useState([]);
   const [planes, setPlanes] = useState([]);
-  const [clientes, setClientes] = useState([]);
-  const [geo, setGeo] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [mensajeModalExito, setMensajeModalExito] = useState("Los cambios se realizaron correctamente.");
   const [search, setSearch] = useState("");
@@ -33,7 +27,6 @@ const AbmPerfiles
   const [selectedComisionista, setselectedComisionista] = useState(null);
   const [formData, setFormData] = useState({});
   const itemsPerPage = 10;  
-  const desdeMarketing = new Date().toISOString().split('T')[0];
   const TOKEN = useSelector((state) => state.formulario.token);
   const [comisionistas, setComisionistas] = useState([]);
 
@@ -42,7 +35,6 @@ const AbmPerfiles
 
   useEffect(() => {
     obtenerComisionistas(TOKEN).then(setComisionistas);
-    obtenerGeo().then(setGeo);
 }, [TOKEN]);
 
   const comisionistasFiltrados = useMemo(() => {

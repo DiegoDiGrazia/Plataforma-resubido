@@ -41,3 +41,13 @@ export const actualizarSRCDeUnHTML = (html, images, id_att, numeroAtachmentActua
 export const borrarTildes = (texto) => {
   return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 };
+
+export const formatearFecha = (date) => {
+    if (!date) return '- -';
+    const soloFecha = String(date).slice(0, 10);
+    const partes = soloFecha.split('-');
+    if (partes.length === 3) {
+        return `${partes[2]}/${partes[1]}/${partes[0]}`;
+    }
+    return date;
+};

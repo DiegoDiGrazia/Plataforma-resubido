@@ -5,8 +5,7 @@ import "../miPerfil/miPerfil.css";
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import ModalMensaje from '../administrador/gestores/ModalMensaje';
-import { obtenerUsuarios, obtenerClientes, obtenerPerfiles, obtenerGeo, obtenerPlanesMarketing } from '../administrador/gestores/apisUsuarios'; // Importa la función para obtener usuarios
-import ArbolDistribucion from '../nota/Editorial/ArbolDistribucion';
+import { obtenerPlanesMarketing } from '../administrador/gestores/apisUsuarios'; // Importa la función para obtener usuarios
 import '../administrador/gestores/AbmsMobile.css';
 import DropdawnSiNo from './DropdawnSiNo'
 
@@ -24,10 +23,7 @@ const perfilVacio = {
 
 const AbmPlanes
  = () => {
-  const [usuarios, setUsuarios] = useState([]);
   const [planes, setPlanes] = useState([]);
-  const [clientes, setClientes] = useState([]);
-  const [geo, setGeo] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [mensajeModalExito, setMensajeModalExito] = useState("Los cambios se realizaron correctamente.");
   const [search, setSearch] = useState("");
@@ -42,10 +38,7 @@ const AbmPlanes
   const permisoEdicion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Planes: Edicion") || false);
 
   useEffect(() => {
-    obtenerUsuarios(TOKEN).then(setUsuarios);
-    obtenerClientes(TOKEN).then(setClientes);
     obtenerPlanesMarketing(TOKEN, desdeMarketing, desdeMarketing).then(setPlanes);
-    obtenerGeo().then(setGeo);
 }, [TOKEN]);
 
 
