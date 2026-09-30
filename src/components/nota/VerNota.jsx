@@ -20,7 +20,7 @@ import IframeNota from './IframeNota';
 import IframeNotaEscalable from './IframeNotaEscalable';
 import SelectorConBuscador from '../nota/Editorial/SelectorConBuscador';
 import { obtenerDistribucionGeneracion } from '../Apis/apis';
-import { getTipoHistoria, getColorHistoria, armarParamsColorCreativo } from '../../utils/bannerData';
+import { getTipoHistoria, getColorHistoria, getDesplazamientoHistoria, armarParamsColorCreativo } from '../../utils/bannerData';
 import { setDistribucionYtLink } from '../../redux/crearNotaSlice';
 
 export const RUTA = "http://localhost:4000/";
@@ -45,7 +45,8 @@ const VerNota = () => {
     const [TOKEN, setTOKEN] = useState(TOKEN_ESTADO);
     const [CLIENTE, setCLIENTE] = useState("");
     const [tipoHistoria, setTipoHistoria] = useState(1); // desde banner_data.historiaTipo; 1 si es null
-    const [colorHistoria, setColorHistoria] = useState(null); // desde banner_data.color; solo aplica a tipo 3, 4 y 5
+    const [colorHistoria, setColorHistoria] = useState(null); // desde banner_data.color; solo aplica a tipo 1, 2 y 3
+    const [desplazamientoHistoria, setDesplazamientoHistoria] = useState(null); // desde banner_data.desplazamiento
     const [distribucionYtLink, setDistribucionYtLink] = useState(null);
 
     useEffect(() => {
@@ -56,6 +57,7 @@ const VerNota = () => {
             if (activo) {
                 setTipoHistoria(getTipoHistoria(datos?.[0]?.banner_data));
                 setColorHistoria(getColorHistoria(datos?.[0]?.banner_data));
+                setDesplazamientoHistoria(getDesplazamientoHistoria(datos?.[0]?.banner_data));
                 setDistribucionYtLink(datos?.[0]?.youtube_link_video);
             }
         });
@@ -247,7 +249,7 @@ const VerNota = () => {
                             <h2 className='tituloCreativo'>Creativos Historias</h2>
                             <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
                                 <IframeNotaEscalable
-                                url={`https://reportes-creativos.noticiasd.com/creativo/${Nota.id_generaciones}?tipo=${tipoHistoria}&token=${TOKEN}${armarParamsColorCreativo(colorHistoria)}`}
+                                url={`https://reportes-creativos.noticiasd.com/creativo/${Nota.id_generaciones}?tipo=${tipoHistoria}&token=${TOKEN}${armarParamsColorCreativo(colorHistoria, desplazamientoHistoria)}`}
                                 width={360}
                                 height={640}
                                 baseWidth={720}

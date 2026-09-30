@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'cropperjs/dist/cropper.css';
@@ -27,6 +27,7 @@ import SelectorCliente2 from './SelectorCliente2';
 import EsDemo from './EsDemo';
 import { replace } from 'react-router-dom';
 import { obtenerDistribucionGeneracion } from '../../Apis/apis';
+import DistribucionGeneracionFields from './DistribucionGeneracionFields';
 
 
 
@@ -96,15 +97,22 @@ const ColumnaEditorial = ({ indice }) => {
         });
     }, [nota.id_noti, TOKEN]);
 
+    // Autocompletan meta_titulo/meta_engagement una sola vez (al cargar la nota), para no
+    // pisar un campo que el usuario dejó vacío a propósito.
+    const yaAutocompletoMetaTitulo = useRef(false);
+    const yaAutocompletoMetaEngagement = useRef(false);
+
     useEffect(() => {
-        if (!distribucionMetaTitulo && tituloNota) {
+        if (!yaAutocompletoMetaTitulo.current && !distribucionMetaTitulo && tituloNota) {
             dispatch(setDistribucionMetaTitulo(tituloNota));
+            yaAutocompletoMetaTitulo.current = true;
         }
     }, [tituloNota, distribucionMetaTitulo]);
 
     useEffect(() => {
-        if (!distribucionMetaEngagement && nota.bajada) {
+        if (!yaAutocompletoMetaEngagement.current && !distribucionMetaEngagement && nota.bajada) {
             dispatch(setDistribucionMetaEngagement(nota.bajada));
+            yaAutocompletoMetaEngagement.current = true;
         }
     }, [nota.bajada, distribucionMetaEngagement]);
 
@@ -121,35 +129,22 @@ const ColumnaEditorial = ({ indice }) => {
         dispatch(setUrl(normaliarAUrl(e.target.value)));
     }
 
-    const dispacharDistribucionFechaVencimiento = (e) => {
-        dispatch(setDistribucionFechaVencimiento(e.target.value));
+    const setterDistribucion = {
+        fecha_vencimiento: setDistribucionFechaVencimiento,
+        comentarios: setDistribucionComentarios,
+        meta_titulo: setDistribucionMetaTitulo,
+        meta_engagement: setDistribucionMetaEngagement,
+        x_descripcion: setDistribucionXDescripcion,
+        youtube_titulo: setDistribucionYtTitulo,
+        youtube_descripcion: setDistribucionYtDescripcion,
+        youtube_link_video: setDistribucionYtLink,
+        search_titulo: setDistribucionSearchTitulo,
+        search_descripcion: setDistribucionSearchDescripcion,
     };
-    const dispacharDistribucionComentarios = (e) => {
-        dispatch(setDistribucionComentarios(e.target.value));
-    };
-    const dispacharDistribucionMetaTitulo = (e) => {
-        dispatch(setDistribucionMetaTitulo(e.target.value));
-    };
-    const dispacharDistribucionMetaEngagement = (e) => {
-        dispatch(setDistribucionMetaEngagement(e.target.value));
-    };
-    const dispacharDistribucionXDescripcion = (e) => {
-        dispatch(setDistribucionXDescripcion(e.target.value));
-    };
-    const dispacharDistribucionYtTitulo = (e) => {
-        dispatch(setDistribucionYtTitulo(e.target.value));
-    };
-    const dispacharDistribucionYtDescripcion = (e) => {
-        dispatch(setDistribucionYtDescripcion(e.target.value));
-    };
-    const dispacharDistribucionYtLink = (e) => {
-        dispatch(setDistribucionYtLink(e.target.value));
-    };
-    const dispacharDistribucionSearchTitulo = (e) => {
-        dispatch(setDistribucionSearchTitulo(e.target.value));
-    };
-    const dispacharDistribucionSearchDescripcion = (e) => {
-        dispatch(setDistribucionSearchDescripcion(e.target.value));
+
+    const dispacharCampoDistribucion = (campo, valor) => {
+        const accion = setterDistribucion[campo];
+        if (accion) dispatch(accion(valor));
     };
 
     return (
@@ -256,122 +251,21 @@ const ColumnaEditorial = ({ indice }) => {
                 </div> */}
                 
                 {nota.con_distribucion == 1 && (
-                    <div className="datosDistribucion">
-                        <span className="datosDistribucionTitulo">Datos distribución</span>
-
-                        <div className="datosDistribucionCampo">
-                            <label>Fecha vencimiento</label>
-                            <input
-                                type="date"
-                                className="form-control"
-                                value={distribucionFechaVencimiento}
-                                onChange={dispacharDistribucionFechaVencimiento}
-                            />
-                        </div>
-
-                        <div className="datosDistribucionCampo">
-                            <label>Comentarios</label>
-                            <textarea
-                                className="form-control"
-                                value={distribucionComentarios}
-                                onChange={dispacharDistribucionComentarios}
-                            />
-                        </div>
-
-                        <div className="datosDistribucionPlataforma">META</div>
-                        
-                        <div className="datosDistribucionCampo">
-                            <label>Titulo</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                maxLength={130}
-                                value={distribucionMetaTitulo}
-                                onChange={dispacharDistribucionMetaTitulo}
-                            />
-                            <p className="caracteresRestantes">Carácteres restantes: {130 - (distribucionMetaTitulo?.length || 0)}</p>
-                        </div>
-                        
-                        <div className="datosDistribucionCampo">
-                            <label>Engagement</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                maxLength={130}
-                                value={distribucionMetaEngagement}
-                                onChange={dispacharDistribucionMetaEngagement}
-                            />
-                            <p className="caracteresRestantes">Carácteres restantes: {130 - (distribucionMetaEngagement?.length || 0)}</p>
-                        </div>
-
-                        <div className="datosDistribucionPlataforma">X</div>
-                        
-                        <div className="datosDistribucionCampo">
-                            <label>Descripción</label>
-                            <textarea
-                                className="form-control"
-                                maxLength={280}
-                                value={distribucionXDescripcion}
-                                onChange={dispacharDistribucionXDescripcion}
-                            />
-                            <p className="caracteresRestantes">Carácteres restantes: {280 - (distribucionXDescripcion?.length || 0)}</p>
-                        </div>
-
-                        <div className="datosDistribucionPlataforma">Youtube</div>
-                        
-                        <div className="datosDistribucionCampo">
-                            <label>Titulo</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                maxLength={40}
-                                value={distribucionYtTitulo}
-                                onChange={dispacharDistribucionYtTitulo}
-                            />
-                            <p className="caracteresRestantes">Carácteres restantes: {40 - (distribucionYtTitulo?.length || 0)}</p>
-                        </div>
-                        
-                        <div className="datosDistribucionCampo">
-                            <label>Descripción</label>
-                            <textarea
-                                className="form-control"
-                                maxLength={90}
-                                value={distribucionYtDescripcion}
-                                onChange={dispacharDistribucionYtDescripcion}
-                            />
-                            <p className="caracteresRestantes">Carácteres restantes: {90 - (distribucionYtDescripcion?.length || 0)}</p>
-                        </div>
-                        
-                        <div className="datosDistribucionCampo">
-                            <label>Link al video</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                value={distribucionYtLink}
-                                onChange={dispacharDistribucionYtLink}
-                            />
-                        </div>
-
-                        <div className="datosDistribucionPlataforma">Search</div>
-                        
-                        <div className="datosDistribucionCampo">
-                            <label>Titulo</label>
-                            <textarea
-                                className="form-control"
-                                value={distribucionSearchTitulo}
-                                onChange={dispacharDistribucionSearchTitulo}
-                            />
-                        </div>
-                        
-                        <div className="datosDistribucionCampo">
-                            <label>Descripción</label>
-                            <textarea
-                                className="form-control"
-                                value={distribucionSearchDescripcion}
-                                onChange={dispacharDistribucionSearchDescripcion}
-                            />
-                        </div>
-                    </div>
+                    <DistribucionGeneracionFields
+                        valores={{
+                            fecha_vencimiento: distribucionFechaVencimiento,
+                            comentarios: distribucionComentarios,
+                            meta_titulo: distribucionMetaTitulo,
+                            meta_engagement: distribucionMetaEngagement,
+                            x_descripcion: distribucionXDescripcion,
+                            youtube_titulo: distribucionYtTitulo,
+                            youtube_descripcion: distribucionYtDescripcion,
+                            youtube_link_video: distribucionYtLink,
+                            search_titulo: distribucionSearchTitulo,
+                            search_descripcion: distribucionSearchDescripcion,
+                        }}
+                        onChange={dispacharCampoDistribucion}
+                    />
                 )}
                 {/* <TextareaWithCounter/> */}
             </div>

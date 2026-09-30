@@ -16,10 +16,17 @@ export const getTipoHistoria = (raw) => {
     return !Number.isNaN(tipo) && tipo > 0 ? tipo : 1;
 };
 
-// Devuelve el color guardado para los creativos tipo 3, 4 y 5. Si no hay, devuelve null.
+// Devuelve el color guardado para los creativos tipo 1, 2 y 3. Si no hay, devuelve null.
 export const getColorHistoria = (raw) => {
     const data = parseBannerData(raw);
     return data?.color || null;
+};
+
+// Devuelve el desplazamiento guardado (entero 1-100) para los creativos tipo 1, 2 y 3. Si no hay, devuelve null.
+export const getDesplazamientoHistoria = (raw) => {
+    const data = parseBannerData(raw);
+    const desplazamiento = Number(data?.desplazamiento);
+    return !Number.isNaN(desplazamiento) && desplazamiento >= 1 && desplazamiento <= 100 ? desplazamiento : null;
 };
 
 // Devuelve el color de texto (sin '#') acorde al color de fondo del creativo.
@@ -28,9 +35,13 @@ export const getColorTexto = (color) => {
     return color === 'efef43' ? '111111' : 'ffffff';
 };
 
-// Arma el fragmento "&color=...&colorTexto=..." (URL-encodeado) para los creativos tipo 3, 4 y 5.
-export const armarParamsColorCreativo = (color) => {
+// Arma el fragmento "&color=...&colorTexto=...&desplazamiento=..." (URL-encodeado) para los creativos tipo 1, 2 y 3.
+export const armarParamsColorCreativo = (color, desplazamiento) => {
     if (!color) return '';
     const colorTexto = getColorTexto(color);
-    return `&color=${encodeURIComponent('#' + color)}&colorTexto=${encodeURIComponent('#' + colorTexto)}`;
+    let params = `&color=${encodeURIComponent('#' + color)}&colorTexto=${encodeURIComponent('#' + colorTexto)}`;
+    if (desplazamiento != null && !Number.isNaN(Number(desplazamiento))) {
+        params += `&desplazamiento=${Number(desplazamiento)}`;
+    }
+    return params;
 };

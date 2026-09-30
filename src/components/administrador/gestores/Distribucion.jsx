@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import ModalMensaje from '../gestores/ModalMensaje';
 import {obtenerPlanesMarketing, obtenerVideosYoutube, obtenerGeo, obtenerContratos } from './apisUsuarios';
 import { obtenerDistribucionPorFechaVencimiento, obtenerGeneracion, editarDistribucionGeneracion, obtenerClientes } from '../../Apis/apis';
-import { getTipoHistoria, getColorHistoria, armarParamsColorCreativo } from '../../../utils/bannerData';
+import { getTipoHistoria, getColorHistoria, getDesplazamientoHistoria, armarParamsColorCreativo } from '../../../utils/bannerData';
 import CopiarTexto from './CopiarTexto';
 import IconosDistribucionConMonto, { PLATAFORMAS } from './IconosDistribucionConMonto';
 import { Accordion } from 'react-bootstrap';
@@ -61,8 +61,9 @@ const descargarJpg = async (nota, imagenFeed) => {
 
 const descargarCreativo = (nota, token) => {
   const tipo = getTipoHistoria(nota.banner_data); // 1 si banner_data es null
-  const color = getColorHistoria(nota.banner_data); // solo aplica a tipo 3, 4 y 5
-  const url = `https://reportes-creativos.noticiasd.com/creativo/${nota.id_generacion}?tipo=${tipo}&token=${token}${armarParamsColorCreativo(color)}&descargarjpg=si`;
+  const color = getColorHistoria(nota.banner_data); // solo aplica a tipo 1, 2 y 3
+  const desplazamiento = getDesplazamientoHistoria(nota.banner_data);
+  const url = `https://reportes-creativos.noticiasd.com/creativo/${nota.id_generacion}?tipo=${tipo}&token=${token}${armarParamsColorCreativo(color, desplazamiento)}&descargarjpg=si`;
   window.open(url, '_blank');
 };
 
@@ -110,24 +111,28 @@ const filtrarClientesSegunPendientes = (clientesObj, pendientes) => {
   return Object.fromEntries(clientesFiltradosEntries);
 };
 
-const ordenarNotasPorId = (notas) =>
-  [...notas].sort((a, b) => (Number(b.id) || 0) - (Number(a.id) || 0));
+const ordenarNotasPorUltimaActualizacion = (notas) =>
+  [...notas].sort((a, b) => {
+    const fechaA = a.ultima_actualizacion ? new Date(a.ultima_actualizacion).getTime() : 0;
+    const fechaB = b.ultima_actualizacion ? new Date(b.ultima_actualizacion).getTime() : 0;
+    return fechaB - fechaA;
+  });
 
-const obtenerIdMasGrande = (notas) => {
+const obtenerUltimaActualizacionMasReciente = (notas) => {
   if (!notas || notas.length === 0) return 0;
-  return Math.max(...notas.map(n => Number(n.id) || 0));
+  return Math.max(...notas.map(n => n.ultima_actualizacion ? new Date(n.ultima_actualizacion).getTime() : 0));
 };
 
 const ordenarClientesPorId = (dicClientes) =>
   Object.fromEntries(
     Object.entries(dicClientes).sort(([, a], [, b]) =>
-      obtenerIdMasGrande(b.notas) - obtenerIdMasGrande(a.notas)
+      obtenerUltimaActualizacionMasReciente(b.notas) - obtenerUltimaActualizacionMasReciente(a.notas)
     )
   );
 
 function agregarPlanAlDiccionarioDeNotas(dicNotas, clientes, planes) {
   const entradasOrdenadas = Object.entries(dicNotas).sort(([, notasA], [, notasB]) =>
-    obtenerIdMasGrande(notasB) - obtenerIdMasGrande(notasA)
+    obtenerUltimaActualizacionMasReciente(notasB) - obtenerUltimaActualizacionMasReciente(notasA)
   );
 
   const nuevoDic = {};
@@ -140,7 +145,7 @@ function agregarPlanAlDiccionarioDeNotas(dicNotas, clientes, planes) {
       : null;
 
     nuevoDic[nombreCliente] = {
-      notas: ordenarNotasPorId(notas),
+      notas: ordenarNotasPorUltimaActualizacion(notas),
       plan: plan || null
     };
   }
@@ -392,7 +397,7 @@ useEffect(() => {
       const notasDeVideoPrevias = actualizado[nombreCliente]?.notas?.filter(n => n.esNotaDeVideo) || [];
       actualizado[nombreCliente] = {
         plan: datos.plan,
-        notas: ordenarNotasPorId([...datos.notas, ...notasDeVideoPrevias])
+        notas: ordenarNotasPorUltimaActualizacion([...datos.notas, ...notasDeVideoPrevias])
       };
     }
     return ordenarClientesPorId(actualizado);
@@ -418,12 +423,12 @@ useEffect(() => {
         if (actualizado[nombreCliente]) {
           actualizado[nombreCliente] = {
             ...actualizado[nombreCliente],
-            notas: ordenarNotasPorId([...actualizado[nombreCliente].notas, ...notasDeVideo])
+            notas: ordenarNotasPorUltimaActualizacion([...actualizado[nombreCliente].notas, ...notasDeVideo])
           };
         } else {
           const municipio = clientes.find(m => m.name === nombreCliente);
           const plan = municipio ? planes.find(p => p.id === municipio.id_plan) : null;
-          actualizado[nombreCliente] = { notas: ordenarNotasPorId(notasDeVideo), plan: plan || null };
+          actualizado[nombreCliente] = { notas: ordenarNotasPorUltimaActualizacion(notasDeVideo), plan: plan || null };
         }
       }
       return ordenarClientesPorId(actualizado);
@@ -619,6 +624,9 @@ const goToPage = (newPage) => {
                                 </div>
                                 <div className="row p-1">
                                   <span><strong>Fecha vencimiento: </strong>{nota.fecha_vencimiento}</span>
+                                </div>
+                                <div className="row p-1">
+                                  <span><strong>Última actualización: </strong>{nota.ultima_actualizacion}</span>
                                 </div>
                               </div>
                               )}

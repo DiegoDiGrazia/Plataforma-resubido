@@ -13,6 +13,7 @@ import { useCallback } from 'react';
 import { resetCrearNota, setClienteNota, setIdNoti } from '../../redux/crearNotaSlice';
 import { analizarHTML, convertirImagenBase64, setContenidoAEditar, setContenidoNota, setImagenPrincipal, setImagenRRSS, setNotaAEditar } from '../../redux/crearNotaSlice';
 import BotonEliminarNota from './Editorial/botonEliminarNota';
+import BotonEditarDistribucionGeneracion from './Editorial/BotonEditarDistribucionGeneracion';
 import { updateCliente, updateNotaFreemiumDistribucion } from '../../redux/formularioSlice';
 import BotonCrearNota from './Editorial/BotonCrearNota';
 import "./nota.css";
@@ -552,7 +553,11 @@ const NotasParaEditorial = () => {
                                         </button>
                                         }
                                         
-                                        {permisoBorrado && 
+                                        {nota.estado === "PUBLICADO" && (
+                                            <BotonEditarDistribucionGeneracion id_generacion={nota.id} token={TOKEN} />
+                                        )}
+
+                                        {permisoBorrado &&
                                         (
                                             <BotonEliminarNota id={nota.id} token={TOKEN}></BotonEliminarNota>
                                         )}
