@@ -37,10 +37,22 @@ const AbmFeed = () => {
   const [showModal, setShowModal] = useState(false);
   const [mensajeModal, setMensajeModal] = useState('');
 
+  const esClienteConFeed = useSelector((state) => state.formulario.usuario.perfil === '34');
+  const loggedClienteId = useSelector((state) => state.formulario.id_cliente);
+
   useEffect(() => {
     obtenerClientes(TOKEN).then(setClientes);
   }, [TOKEN]);
 
+  useEffect(() => {
+    if (esClienteConFeed && clientes.length > 0 && loggedClienteId) {
+      const clienteLogueado = clientes.find(c => c.id == loggedClienteId);
+      if (clienteLogueado) {
+        handleSeleccionarCliente(clienteLogueado);
+      }
+    }
+  }, [esClienteConFeed, clientes, loggedClienteId]);
+  
   const cargarFeeds = (cliente) => {
     setLoading(true);
     obtenerFeedsPorCliente(TOKEN, cliente.id)
@@ -271,23 +283,30 @@ const AbmFeed = () => {
           <h3 id="saludo" className="headerTusNotas ml-0">
             <i className="bi bi-rss-fill icon me-2 icono_tusNotas" /> Gestión de Feeds
           </h3>
-          <h4 className="infoCuenta">Administrá los feeds curados por cliente</h4>
+          <h4 className="infoCuenta">Administrá los feeds curados de {esClienteConFeed ? 'tu cuenta' : 'las cuentas '}</h4>
         </div>
       </div>
 
-      {/* Selector de cliente */}
-      <div className="row miPerfilContainer soporteContainer mt-4 p-0 mb-3">
-        <div className="col-2">
-          <SelectorConBuscador
-            title="Cliente"
-            options={clientes}
-            selectedOption={clienteSeleccionado || ''}
-            onSelect={handleSeleccionarCliente}
-            onClear={() => { setClienteSeleccionado(null); setFeeds([]); }}
-          />
+      {!esClienteConFeed ? (
+        /* Selector de cliente */
+        <div className="row miPerfilContainer soporteContainer mt-4 p-0 mb-3">
+          <div className="col-2">
+            <SelectorConBuscador
+              title="Cuenta"
+              options={clientes}
+              selectedOption={clienteSeleccionado || ''}
+              onSelect={handleSeleccionarCliente}
+              onClear={() => { setClienteSeleccionado(null); setFeeds([]); }}
+            />
+          </div>
         </div>
-      </div>
-
+      ) : (
+        <div className="row miPerfilContainer soporteContainer mt-4 p-0 mb-3">
+          <div className="col">
+            <strong>Cuenta: {clienteSeleccionado ? clienteSeleccionado.name : 'Cargando tu cuenta...'} </strong>
+          </div>
+        </div> 
+      )}
       {/* Lista de feeds */}
       {clienteSeleccionado && (
         <div className="row miPerfilContainer soporteContainer mt-2 p-0">
