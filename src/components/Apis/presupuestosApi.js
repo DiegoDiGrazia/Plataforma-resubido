@@ -28,8 +28,33 @@ export const crearPresupuesto = async (token, payload) => {
   });
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));
-    console.error("Error en POST /presupuestos:", errorData);
+    console.error("Error al crear el presupuesto:", errorData);
     throw new Error("Error al guardar el presupuesto");
   }
   return res.json();
+};
+
+export const actualizarPresupuesto = async (token, presupuesto_id, payload) => {
+  const res = await fetch(`${BASE_URL}/presupuestos/${presupuesto_id}`, {
+    method: "PATCH",
+    headers: jsonHeaders(token),
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    console.error("Error al editar el presupuesto:", errorData);
+    throw new Error("Error al actualizar el presupuesto");
+  }
+  return res.json();
+};
+
+export const eliminarPresupuesto = async (token, presupuesto_id) => {
+  const res = await fetch(`${BASE_URL}/presupuestos/${presupuesto_id}`, {
+    method: "DELETE",
+    headers: headers(token),
+  });
+  if (!res.ok) throw new Error("Error al eliminar el presupuesto");
+  
+  if (res.status === 204) return true;
+  return res.json().catch(() => true);
 };

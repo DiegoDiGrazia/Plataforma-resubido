@@ -12,7 +12,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { setClienteNota } from '../../redux/crearNotaSlice';
 import { borrarTildes } from '../../utils/funcionesVarias';
 
-const SelectorCliente = ({ incluirTodos = true }) => {
+const SelectorCliente = ({ incluirTodos = true, editorial = true, clientePreseleccionado = null }) => {
     const esEditor = useSelector((state) => state.formulario.esEditor);
     const paisID = useSelector((state) => state.formulario.usuario.id_pais);
     const nombreCliente = useSelector((state) => state.formulario.cliente);
@@ -70,11 +70,22 @@ const SelectorCliente = ({ incluirTodos = true }) => {
         dispatch(updateActivarTodosLosClientes(false));
     };
 
+    useEffect(() => {
+        if (clientePreseleccionado && todosLosClientes.length > 0) {
+            const clienteEncontrado = todosLosClientes.find(c => String(c.id) === String(clientePreseleccionado));
+            if (clienteEncontrado && clienteEncontrado.name !== nombreCliente) {
+                editarCliente(clienteEncontrado);
+            }
+        }
+    }, [clientePreseleccionado, todosLosClientes, nombreCliente]);
+
     const TodosLosClientesParaEditor = () => {
         dispatch(updateCliente(""));
         dispatch(updateIdCliente(""));
         dispatch(updateActivarTodosLosClientes(true));
-        navigate("/notasEditorial");
+        if(editorial) {
+            navigate("/notasEditorial");
+        }
     };
 
     const [filtro, setFiltro] = useState('');

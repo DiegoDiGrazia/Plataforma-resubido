@@ -17,10 +17,10 @@ const Comercial = () => {
     const permisoListadoFacturas = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Facturas: Listado") || false);
     
     const DEF = {
-        "Calculadora de ventas": {
-            "descripcion": "Calculá el costo de distribución de tu contenido.",
-            "url": "comercial/calculadora-ventas",
-            "titulo": "Calculadora",
+        "ABM Presupuestos": {
+            "descripcion": "Calculá el costo de distribución de tu contenido y guardá los presupuestos de las cuentas.",
+            "url": "comercial/abm-presupuestos",
+            "titulo": "ABM Presupuestos",
             "permiso": "true"
             },
         "ABM Planes": {

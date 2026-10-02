@@ -31,7 +31,7 @@ const Administrador = () => {
         "perfiles": {
             "descripcion": "Gestiona los perfiles de los usuarios, asignando roles y permisos específicos.",
             "url": "perfiles",
-            "titulo": "Perfil",
+            "titulo": "Perfiles",
             "permiso": permisoListadoPerfiles
             },
         "clientes": {

@@ -51,3 +51,14 @@ export const formatearFecha = (date) => {
     }
     return date;
 };
+
+export const formatearMoneda = (valor) => {
+  if(valor === null || valor === undefined) return "$0";
+  return "$" + Math.round(Number(valor)).toLocaleString('es-AR');
+};
+
+
+export const formatearUsd = (valor) => {
+  if (valor === null || valor === undefined || isNaN(valor)) return "U$D 0,00";
+  return "U$D " + Number(valor).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+};

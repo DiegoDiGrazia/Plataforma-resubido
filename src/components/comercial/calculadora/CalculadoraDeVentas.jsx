@@ -11,12 +11,13 @@ import InputNumerico from '../../nota/Editorial/InputNumerico';
 import { descargarExcel } from '../../funciones/creacionCSV';
 import TablasPorPresupuesto from './TablasPorPresupuesto';
 import SelectorCliente from '../../Dashboard/SelectorCliente';
-import { crearPresupuesto } from '../../Apis/presupuestosApi';
+import { crearPresupuesto, actualizarPresupuesto} from '../../Apis/presupuestosApi';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { toastExito, toastError } from '../../../utils/toastify/toastify.jsx';
 
-const CalculadoraDeVentas = () => {
+const CalculadoraDeVentas = ({ datosEdicion, onGuardadoExitoso }) => {
+
   const [pais, setPais] = useState("Argentina");
   const [provincia, setProvincia] = useState("");
   const [municipio, setMunicipio] = useState("");
@@ -72,6 +73,44 @@ const CalculadoraDeVentas = () => {
     obtenerGeo().then(setGeo);
   }, [TOKEN]);
 
+  useEffect(() => {
+    if (datosEdicion) {
+      setCantidadDeNotas(datosEdicion.notas || 1);
+      setalcancePorNota(datosEdicion.usuarios_x_nota || 0);
+      setRentabilidad(datosEdicion.rentabilidad || 65);
+      setFeeAgencia(datosEdicion.fee_agencia || 15);
+
+      if (geo.paises && datosEdicion.pais_id) {
+        const paisEncontrado = geo.paises.find(p => String(p.pais_id) === String(datosEdicion.pais_id));
+        if (paisEncontrado) {
+          setPais(paisEncontrado);
+          
+          if (datosEdicion.provincia_id) {
+            const provEncontrada = paisEncontrado.provincias?.find(pr => String(pr.provincia_id) === String(datosEdicion.provincia_id));
+            if (provEncontrada) setProvincia(provEncontrada);
+            
+            if (datosEdicion.municipio_id && provEncontrada) {
+              const munEncontrado = provEncontrada.municipios?.find(m => String(m.municipio_id) === String(datosEdicion.municipio_id));
+              if (munEncontrado) setMunicipio(munEncontrado);
+            }
+          }
+        }
+      }
+    }else {
+      setPais("Argentina");
+      setProvincia("");
+      setMunicipio("");
+    }
+  }, [datosEdicion, geo]);
+
+  useEffect(() => {
+    if (datosEdicion && datosEdicion.descripcion) {
+      setNombrePresupuesto(datosEdicion.descripcion);
+    } else {
+      setNombrePresupuesto("");
+    }
+  }, [datosEdicion]);
+
   const obtenerPaisId = (paises = [], nombrePais) => {
     if (!Array.isArray(paises) || !nombrePais) return null;
     const nombre = typeof nombrePais === 'string' ? nombrePais : nombrePais?.nombre;
@@ -108,12 +147,19 @@ const CalculadoraDeVentas = () => {
   };
 
   const handleAbrirModalGuardar = (idCalculadora) => {
-    if (!CLIENTE_ID) {
+    if (!CLIENTE_ID && !(datosEdicion && datosEdicion.cliente_id)) {
       toastError("Por favor, seleccioná una cuenta antes de guardar el presupuesto.");
       return;
     }
+    
     setPresupuestoAGuardarId(idCalculadora);
-    setNombrePresupuesto("");
+    
+    if (datosEdicion && datosEdicion.descripcion) {
+      setNombrePresupuesto(datosEdicion.descripcion);
+    } else {
+      setNombrePresupuesto("");
+    }
+    
     setShowGuardarModal(true);
   };
 
@@ -193,7 +239,7 @@ const CalculadoraDeVentas = () => {
     }
 
     const payload = {
-      cliente_id: Number(CLIENTE_ID),
+      cliente_id: Number(CLIENTE_ID) || Number(datosEdicion?.cliente_id), 
       usuario_id: Number(USUARIO_ID),
       descripcion: nombrePresupuesto.trim(),
       valor_usd: valorUsd,
@@ -209,9 +255,21 @@ const CalculadoraDeVentas = () => {
 
     try {
       setGuardandoPresupuesto(true);
-      await crearPresupuesto(TOKEN, payload);
+      
+      if (datosEdicion && datosEdicion.presupuesto_id) {
+        await actualizarPresupuesto(TOKEN, datosEdicion.presupuesto_id, payload);
+        toastExito("¡Presupuesto actualizado exitosamente!");
+      } else {
+        await crearPresupuesto(TOKEN, payload);
+        toastExito("¡Presupuesto guardado exitosamente!");
+      }
+      
       setShowGuardarModal(false);
-      toastExito("¡Presupuesto guardado exitosamente!");
+      
+      if (onGuardadoExitoso) {
+        onGuardadoExitoso();
+      }
+
     } catch (error) {
       console.error(error);
       toastError("Ocurrió un error al guardar el presupuesto.");
@@ -365,8 +423,8 @@ const CalculadoraDeVentas = () => {
   };
 
   return (
-    <div className="content flex-grow-1 crearNotaGlobal">
-      <div className='row miPerfilContainer soporteContainer d-flex align-items-stretch'>
+    <div>
+      <div className='row miPerfilContainer soporteContainer d-flex align-items-stretch mt-0 pt-0'>
         <h3 id="saludo" className='headerTusNotas ml-0 mb-3 p-0'>
           <i className={`fs-4 mb-4 bi bi-bag-fill`} style={{color: '#3e4658ff', marginRight: '5px', bottom: '10px'}}></i>
             {" Calculadora de ventas "}
@@ -384,7 +442,11 @@ const CalculadoraDeVentas = () => {
           <div className='col-6'>
             <div className="mb-3 d-flex justify-content-between align-items-center">
               <div className="fw-bold m-0">Cuenta</div>
-              <SelectorCliente incluirTodos={false} />
+              <SelectorCliente 
+                  key={datosEdicion ? datosEdicion.cliente_id : 'nuevo'} 
+                  incluirTodos={false} 
+                  clientePreseleccionado={datosEdicion ? datosEdicion.cliente_id : null}
+              />
             </div>
 
             <ArbolDistribucion  
@@ -466,6 +528,7 @@ const CalculadoraDeVentas = () => {
               feeAgencia={feeAgencia}
               onDataUpdate={handleUpdateDatos}
               onGuardar={handleAbrirModalGuardar}
+              datosEdicion={datosEdicion}
           />
 
           {/* PRESUPUESTOS EXTRAS */}
@@ -514,7 +577,9 @@ const CalculadoraDeVentas = () => {
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title fw-bold">Guardar Presupuesto</h5>
+                <h5 className="modal-title fw-bold">
+                  {datosEdicion ? "Actualizar Presupuesto" : "Guardar Nuevo Presupuesto"}
+                </h5>
                 <button type="button" className="btn-close" onClick={() => setShowGuardarModal(false)}></button>
               </div>
               <div className="modal-body">
@@ -546,7 +611,9 @@ const CalculadoraDeVentas = () => {
                   onClick={confirmarGuardarPresupuesto}
                   disabled={guardandoPresupuesto || !nombrePresupuesto.trim()}
                 >
-                  {guardandoPresupuesto ? "Guardando..." : "Guardar"}
+                  {guardandoPresupuesto 
+                    ? (datosEdicion ? "Actualizando..." : "Guardando...") 
+                    : (datosEdicion ? "Actualizar" : "Guardar")}
                 </button>
               </div>
             </div>

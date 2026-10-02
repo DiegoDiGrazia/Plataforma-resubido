@@ -11,7 +11,8 @@ const TablasPorPresupuesto = ({
     onEliminar, 
     onDataUpdate,
     onGuardar,
-    titulo 
+    titulo,
+    datosEdicion
 }) => {
     
     // --- ESTADOS TABLA PRINCIPAL ---
@@ -34,7 +35,45 @@ const TablasPorPresupuesto = ({
     const searchRows = ["Search"];
     const searchEditableColumns = [0, 1, 3, 5]; 
     const searchCurrencyColumns = [0, 2, 3, 4, 6, 7]; 
-
+    
+    useEffect(() => {
+        if (datosEdicion && datosEdicion.productos && id === "principal") {
+            const nuevosTableOverrides = {};
+            const nuevosSearchOverrides = {};
+            const nuevosSelectedRows = [false, false, false, false];
+            let searchActivo = false;
+            
+            const mapaFilas = { "dv360": 0, "Meta": 1, "Youtube": 2, "X": 3 };
+            
+            datosEdicion.productos.forEach(prod => {
+                if (prod.producto === "Search") {
+                    searchActivo = true;
+                    nuevosSearchOverrides[0] = {
+                        0: prod.costo_unitario_manual,     // CPC
+                        1: prod.unidades,                  // Clics
+                        3: datosEdicion.valor_usd,         // Valor USD
+                        5: prod.rentabilidad_personalizada // % Rentab
+                    };
+                } else if (mapaFilas[prod.producto] !== undefined) {
+                    const rIdx = mapaFilas[prod.producto];
+                    nuevosSelectedRows[rIdx] = true;
+                    nuevosTableOverrides[rIdx] = {
+                        0: prod.costo_unitario_manual,         // CPM
+                        1: prod.porcentaje_inversion * 100,    // % Inversión
+                        2: prod.alcance,                       // Alcance
+                        3: prod.factor,                        // Frecuencia
+                        5: prod.rentabilidad_personalizada     // % Rentab
+                    };
+                }
+            });
+            
+            setTableOverrides(nuevosTableOverrides);
+            setSearchOverrides(nuevosSearchOverrides);
+            setSelectedRows(nuevosSelectedRows);
+            setSearchSelected([searchActivo]);
+        }
+    }, [datosEdicion, id]);
+    
     const toggleRow = (index) => {
         setSelectedRows(prev => {
             const copy = [...prev];
