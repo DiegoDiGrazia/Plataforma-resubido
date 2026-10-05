@@ -28,6 +28,7 @@ import EsDemo from './EsDemo';
 import { replace } from 'react-router-dom';
 import { obtenerDistribucionGeneracion } from '../../Apis/apis';
 import DistribucionGeneracionFields from './DistribucionGeneracionFields';
+import { normaliarAUrl } from '../../../utils/normalizarUrl';
 
 
 
@@ -56,27 +57,12 @@ const ColumnaEditorial = ({ indice }) => {
 
 
 
-    const normaliarAUrl = (titulo) => {
-        return titulo
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "") // saca acentos
-            .toLowerCase()
-            .replace(/[^\w\s-]/g, "") // saca caracteres que no sean palabras (?, !, :, etc)
-            .trim()
-            .replace(/\s+/g, "-") // espacios por guiones
-            .replace(/-+/g, "-"); // colapsa guiones repetidos
-    }
-
     useEffect(() => {
-    console.log("url:", JSON.stringify(url));
-    console.log("regex:", /^-\d+$/.test(url?.trim()));
-
-    if (!url || /^-\d+$/.test(url.trim())) {
-        console.log("ENTRO");
-        const urlLimpia = tituloNota ? normaliarAUrl(tituloNota) : '';
-        dispatch(setUrl(urlLimpia));
-    }
-}, [url, tituloNota]);
+        if (!url || /^-\d+$/.test(url.trim())) {
+            const urlLimpia = tituloNota ? normaliarAUrl(tituloNota) : '';
+            dispatch(setUrl(urlLimpia));
+        }
+    }, [url, tituloNota]);
 
     useEffect(() => {
         if (!nota.id_noti) return;

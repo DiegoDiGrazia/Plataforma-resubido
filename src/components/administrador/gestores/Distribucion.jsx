@@ -59,6 +59,15 @@ const descargarJpg = async (nota, imagenFeed) => {
   }, "image/jpeg", 0.92);
 };
 
+const formatearFechaHoraLegible = (fecha) => {
+  if (!fecha) return '';
+  const d = new Date(fecha);
+  if (Number.isNaN(d.getTime())) return fecha;
+  d.setHours(d.getHours() - 3);
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
+
 const descargarCreativo = (nota, token) => {
   const tipo = getTipoHistoria(nota.banner_data); // 1 si banner_data es null
   const color = getColorHistoria(nota.banner_data); // solo aplica a tipo 1, 2 y 3
@@ -626,7 +635,10 @@ const goToPage = (newPage) => {
                                   <span><strong>Fecha vencimiento: </strong>{nota.fecha_vencimiento}</span>
                                 </div>
                                 <div className="row p-1">
-                                  <span><strong>Última actualización: </strong>{nota.ultima_actualizacion}</span>
+                                  <span><strong>Última actualización: </strong>{formatearFechaHoraLegible(nota.ultima_actualizacion)}</span>
+                                </div>
+                                <div className="row p-1">
+                                  <span><strong>Enviado a distribuir: </strong>{formatearFechaHoraLegible(nota.fecha_creacion)}</span>
                                 </div>
                               </div>
                               )}
