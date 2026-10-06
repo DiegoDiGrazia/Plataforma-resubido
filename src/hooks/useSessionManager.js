@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { validarToken, obtenerPaginas } from '../components/administrador/gestores/apisUsuarios';
+import { validarToken } from '../components/administrador/gestores/apisUsuarios';
+import { obtenerPaginas } from '../components/Apis/paginasApi.js';
+
 import {  
     updateToken, 
     updateCliente, 

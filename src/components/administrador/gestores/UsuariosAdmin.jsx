@@ -4,8 +4,9 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "../../miPerfil/miPerfil.css";
 import { useSelector } from 'react-redux';
 import ModalMensaje from '../gestores/ModalMensaje';
-import { obtenerClientes, obtenerPerfiles, obtenerGeo } from './apisUsuarios'; // Importa la función para obtener usuarios
+import { obtenerClientes, obtenerGeo } from './apisUsuarios'; // Importa la función para obtener usuarios
 import { obtenerUsuarios, crearUsuario, editarUsuario, eliminarUsuarioPorId, cambiarClaveUsuario } from '../../Apis/usuariosApi.js';
+import { obtenerPerfiles } from '../../Apis/perfilesApi.js';
 import { ToastContainer } from 'react-toastify';
 import { toastExito, toastError } from '../../../utils/toastify/toastify.jsx';
 import { formatearFecha } from '../../../utils/funcionesVarias.js'

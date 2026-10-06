@@ -4,7 +4,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "../../miPerfil/miPerfil.css";
 import { useSelector } from 'react-redux';
 import ModalMensaje from '../gestores/ModalMensaje';
-import { obtenerUsuarios, obtenerPerfiles, obtenerGeo, obtenerPlanesMarketing } from './apisUsuarios'; // Importa la función para obtener usuarios
+import { obtenerUsuarios, obtenerGeo, obtenerPlanesMarketing } from './apisUsuarios'; // Importa la función para obtener usuarios
 import { obtenerClientes, crearCliente, actualizarCliente } from '../../Apis/apis';
 import ArbolDistribucion from '../../nota/Editorial/ArbolDistribucion';
 import './AbmsMobile.css';

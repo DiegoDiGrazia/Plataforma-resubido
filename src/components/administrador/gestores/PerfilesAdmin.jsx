@@ -3,9 +3,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "../../miPerfil/miPerfil.css";
 import { useSelector } from 'react-redux';
-import axios from 'axios';
-import ModalMensaje from './ModalMensaje';
-import { obtenerPaginas, obtenerPerfiles, eliminarPaginaDelPerfil, agregarPaginaDelPerfil } from './apisUsuarios'; // Importa la función para obtener usuarios
+import { obtenerPerfiles, crearPerfil, editarPerfil, eliminarPerfilPorId } from '../../Apis/perfilesApi.js';
+import { obtenerPaginas, crearAcceso, eliminarAccesosId } from '../../Apis/paginasApi.js';
+import { ToastContainer } from 'react-toastify';
+import { toastExito, toastError } from '../../../utils/toastify/toastify.jsx';
+import 'react-toastify/dist/ReactToastify.css';
 
 const perfilVacio = {
   nombre: "",
@@ -13,34 +15,39 @@ const perfilVacio = {
   id: "0",
 };
 
-
-
 const PerfilesAdmin = () => {
   const [paginasPerfil, setPaginasPerfil] = useState([]);
   const [paginasFaltantes, setPaginasFaltantes] = useState([]);
   const [paginasTodas, setPaginasTodas] = useState([]);
   const [perfiles, setPerfiles] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [mensajeModalExito, setMensajeModalExito] = useState("Los cambios se realizaron correctamente.");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [selectedPerfil, setSelectedPerfil] = useState(null);
   const [formData, setFormData] = useState({});
+  const [guardando, setGuardando] = useState(false);
   const itemsPerPage = 10;  
+
   const TOKEN = useSelector((state) => state.formulario.token);
   const permisoAlta = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Perfiles: Alta") || false);
   const permisoEdicion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Perfiles: Edicion") || false);
 
-  // Cargar usuarios
-  useEffect(() => {
-    obtenerPerfiles(TOKEN).then(setPerfiles);
-    obtenerPaginas(TOKEN, '').then(setPaginasTodas);
+  const fetchPerfiles = async () => {
+    try {
+      const data = await obtenerPerfiles(TOKEN);
+      setPerfiles(data || []);
+    } catch (error) {
+      console.error("Error al obtener perfiles:", error);
+    }
+  };
 
-}, [TOKEN]);
+  useEffect(() => {
+    fetchPerfiles();
+    obtenerPaginas(TOKEN).then((data) => setPaginasTodas(data || []));
+  }, [TOKEN]);
 
   // Filtrar por búsqueda
   const perfilesFiltrados = useMemo(() => {
-    return perfiles.filter((item) =>  //-- Cambia esto a usuarios cuando tengas la API
+    return perfiles.filter((item) =>  
       item.nombre.toLowerCase().includes(search.toLowerCase())
     );
   }, [search, perfiles]);
@@ -65,9 +72,8 @@ const PerfilesAdmin = () => {
   // Abrir modal con datos
   const handleEditClick = (perfil) => {
     setSelectedPerfil(perfil);
-    setFormData({ ...perfil} ); // copia datos
-    obtenerPaginas(TOKEN, perfil.id).then(setPaginasPerfil);
-
+    setFormData({ ...perfil} ); 
+    obtenerPaginas(TOKEN, perfil.id).then((data) => setPaginasPerfil(data || []));
 
     const modal = new window.bootstrap.Modal(document.getElementById('editModal'));
     modal.show();
@@ -78,86 +84,96 @@ const PerfilesAdmin = () => {
       item => !paginasPerfil.some(p => p.id === item.id)
     );
     setPaginasFaltantes(Paginasfaltantes);
-  }, [paginasPerfil]);
+  }, [paginasPerfil, paginasTodas]);
 
-  // Guardar cambios
-const handleSave = () => {
-  axios
-    .post(
-      "https://panel.serviciosd.com/app_editar_perfil",
-      {
-        token: TOKEN,
-        ...formData,
-      },
-      {
-        headers: { "Content-Type": "multipart/form-data" },
+  const cerrarModal = () => {
+    const modalEl = document.getElementById('editModal');
+    const modal = window.bootstrap.Modal.getInstance(modalEl);
+    if (modal) modal.hide();
+  };
+
+  // Guardar o Crear Perfil
+  const handleSave = async () => {
+    setGuardando(true);
+    try {
+      const payload = {
+        nombre: formData.nombre,
+        descripcion: formData.descripcion,
+        plataforma: formData.plataforma || null, 
+      };
+
+      if (formData.id === "0") {
+        await crearPerfil(TOKEN, payload);
+        toastExito('¡El perfil fue creado exitosamente!');
+      } else {
+        await editarPerfil(TOKEN, formData.id, payload);
+        toastExito('¡Los cambios se guardaron correctamente!');
       }
-    )
-    .then(() => {
-      setMensajeModalExito('Los cambios se realizaron correctamente.');
-      setShowModal(true); // mostrar modal
-      setTimeout(() => {
-        window.location.reload(); // recargar luego de 3s
-      }, 1500);
-      
-    })
-    .catch((err) => {
-      console.log("Error al guardar cambios:", err);
-    });
-};
 
-const eliminarPerfil = (id) => {
-  axios
-    .post(
-      "https://panel.serviciosd.com/app_eliminar_perfil",
-      {
-        token: TOKEN,
-        id: id,
-      },
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      }
-    )
-      .then(() => {
-        setMensajeModalExito('El usuario se elimino correctamente');
-        setShowModal(true); // mostrar modal
-        setTimeout(() => {
-          window.location.reload(); // recargar luego de 3s
-        }, 1500);
-      })
-    .catch((err) => {
-      console.log("Error al guardar cambios:", err);
-    });
-};
+      await fetchPerfiles(); 
+      cerrarModal();
 
-const handleEliminarPaginaDelPerfil = (id_perfil, id_pagina) => {
-  eliminarPaginaDelPerfil(TOKEN, id_perfil, id_pagina).then(() => {
-    obtenerPaginas(TOKEN,  id_perfil).then(setPaginasPerfil);
-  });
-};
+    } catch (error) {
+      console.error("Error al guardar el perfil:", error);
+      toastError('Ocurrió un error al guardar el perfil.');
+    } finally {
+      setGuardando(false);
+    }
+  };
 
-const handleAgregarPaginaDelPerfil = (id_perfil, id_pagina) => {
-  agregarPaginaDelPerfil(TOKEN, id_perfil, id_pagina).then(() => {
-    obtenerPaginas(TOKEN, id_perfil ).then(setPaginasPerfil);
-  });
-};
+  const eliminarPerfil = async (id) => {
+    try {
+      await eliminarPerfilPorId(TOKEN, id);
+      toastExito('¡El perfil se eliminó correctamente!');
+      await fetchPerfiles(); 
+    } catch (error) {
+      console.error("Error al eliminar perfil:", error);
+      toastError('Ocurrió un error al eliminar el perfil.');
+    }
+  };
 
+  const handleEliminarPaginaDelPerfil = async (id_perfil, id_pagina) => {
+    try {
+      await eliminarAccesosId(TOKEN, id_perfil, id_pagina);
+      toastExito("¡Acceso eliminado correctamente!");
+      const dataActualizada = await obtenerPaginas(TOKEN, id_perfil);
+      setPaginasPerfil(dataActualizada || []);
+    } catch (error) {
+      console.error(error);
+      toastError("Ocurrió un error al eliminar el acceso.");
+    }
+  };
 
-
+  const handleAgregarPaginaDelPerfil = async (id_perfil, id_pagina) => {
+    try {
+      const payload = {
+        id_perfil: Number(id_perfil),
+        id_pagina: Number(id_pagina)
+      };
+      await crearAcceso(TOKEN, payload);
+      toastExito("¡Acceso agregado correctamente!");
+      const dataActualizada = await obtenerPaginas(TOKEN, id_perfil);
+      setPaginasPerfil(dataActualizada || []);
+    } catch (error) {
+      console.error(error);
+      toastError("Ocurrió un error al agregar el acceso.");
+    }
+  };
 
   return (
     <div className="content flex-grow-1 crearNotaGlobal">
       <div className='row miPerfilContainer soporteContainer'>
         <div className='col p-0'>
           <h3 id="saludo" className='headerTusNotas ml-0'>
-            <i className="icon me-2 icono_tusNotas bi bi-gear-fill" alt="Icono 1" /> Gestiona tus perfiles
+            <i className="icon me-2 icono_tusNotas bi bi-gear-fill" alt="Icono" /> Gestiona tus perfiles
           </h3>
           <h4 className='infoCuenta'>Gestiona tus perfiles</h4>
           <div className='abajoDeTusNotas'>
-            En esta seccion podrás gestionar la creación, eliminación y edición de todos los usuarios de la plataforma.
+            En esta sección podrás gestionar la creación, eliminación y edición de todos los perfiles de la plataforma.
           </div>
         </div>
       </div>
+      
       {/* Búsqueda */}
       <div className='row miPerfilContainer soporteContainer mt-4 p-0 mb-3'>
         <div className='col buscadorNotas'> 
@@ -196,7 +212,7 @@ const handleAgregarPaginaDelPerfil = (id_perfil, id_pagina) => {
                       </button>
                     </div>
                     <div className='col-10 text-end'>
-                      <span className="text-muted">descripcion: {item.descripcion  || item.nombre}</span>
+                      <span className="text-muted">Descripción: {item.descripcion  || item.nombre}</span>
                     </div>
                   </div>
                 </li>
@@ -225,13 +241,13 @@ const handleAgregarPaginaDelPerfil = (id_perfil, id_pagina) => {
         </div>
       </div>
 
-      {/* Modal */}
+      {/* Modal Edición / Creación */}
       <div className="modal fade" id="editModal" tabIndex="-1" aria-hidden="true">
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title">
-                {formData.id != '0' ? "Editar Perfil" : "Nuevo Perfil"}
+                {formData.id !== '0' ? "Editar Perfil" : "Nuevo Perfil"}
               </h5>
               <button
                 type="button"
@@ -256,9 +272,9 @@ const handleAgregarPaginaDelPerfil = (id_perfil, id_pagina) => {
                     />
                   </div>
 
-                  {/* Email */}
+                  {/* Descripcion */}
                   <div className="mb-3">
-                    <label className="form-label">Descripcion</label>
+                    <label className="form-label">Descripción</label>
                     <input
                       type="text"
                       className="form-control"
@@ -270,7 +286,7 @@ const handleAgregarPaginaDelPerfil = (id_perfil, id_pagina) => {
                   </div>
 
 
-                  {/* paginas del perfil */}
+                  {/* Páginas del perfil */}
                   {formData.id !== "0" && (
                   <div className="mb-3">
                     <label className="form-label">Acceso a:</label>
@@ -286,7 +302,7 @@ const handleAgregarPaginaDelPerfil = (id_perfil, id_pagina) => {
                             {/* Botón con cruz para eliminar */}
                             <button
                               type="button"
-                              className="btn-close"
+                              className="btn-close ms-2"
                               aria-label="Eliminar"
                               onClick={() => {handleEliminarPaginaDelPerfil(formData.id, c.id)}}
                             />
@@ -295,8 +311,8 @@ const handleAgregarPaginaDelPerfil = (id_perfil, id_pagina) => {
                       </ul>
                     </div>
                     )}
-                  {/* todas las paginas para agregar*/}
 
+                  {/* Páginas disponibles para agregar */}
                   {formData.id !== "0" && (
                   <div className="mb-3">
                     <label className="form-label">Páginas disponibles para agregar</label>
@@ -309,10 +325,9 @@ const handleAgregarPaginaDelPerfil = (id_perfil, id_pagina) => {
                           >
                               {c.nombre}
 
-                            {/* Botón con cruz para eliminar */}
                             <button
                               type="button"
-                              className="btn btn-sm btn-outline-primary ms-1"
+                              className="btn btn-sm btn-outline-primary ms-2"
                               onClick={() => {handleAgregarPaginaDelPerfil(formData.id, c.id)}}
                             >
                               +
@@ -322,7 +337,6 @@ const handleAgregarPaginaDelPerfil = (id_perfil, id_pagina) => {
                       </ul>
                     </div>
                     )}
-
                 </>
               )}
             </div>
@@ -335,35 +349,32 @@ const handleAgregarPaginaDelPerfil = (id_perfil, id_pagina) => {
               >
                 Cerrar
               </button>
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-                onClick={() => eliminarPerfil(formData.id)}
-                disabled={formData.id == '0'}
-
-              >
-                Eliminar
-              </button>
-
+              
+              {formData.id !== '0' && (
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  data-bs-dismiss="modal"
+                  onClick={() => eliminarPerfil(formData.id)}
+                >
+                  Eliminar
+                </button>
+              )}
 
               <button
                 type="button"
                 className="btn btn-primary"
-                onClick={() => handleSave()}
-                disabled={!formData.nombre}
+                onClick={handleSave}
+                disabled={!formData.nombre || guardando}
               >
-                Guardar
+                {guardando ? "Guardando..." : "Guardar"}
               </button>
             </div>
           </div>
         </div>
       </div>
-      <ModalMensaje
-        show={showModal}
-        mensaje={mensajeModalExito}
-        onClose={() => setShowModal(false)}  // 👈 cierra solo con la cruz
-      />
+
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
 
     </div>
   );

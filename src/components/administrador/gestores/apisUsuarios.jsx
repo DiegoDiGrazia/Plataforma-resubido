@@ -71,14 +71,6 @@ export const obtenerClientes = (token) =>
     cliente: "",
   });
 
-export const obtenerPerfiles = (token) =>
-  fetchData("https://panel.serviciosd.com/app_obtener_perfiles", token);
-
-export const obtenerPaginas = (token, id_perfil) =>
-  fetchData("https://panel.serviciosd.com/app_obtener_paginas", token, {
-    id_perfil,
-  });
-
   export const obtenerContratos = (token) =>
   fetchData("https://panel.serviciosd.com/app_get_contratos", token, {
   });
