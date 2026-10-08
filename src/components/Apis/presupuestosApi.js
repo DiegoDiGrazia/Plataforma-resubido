@@ -13,9 +13,14 @@ const jsonHeaders = (token) => ({
 });
 
 export const obtenerPresupuestosPorUser = async (token, usuario_id) => {
-  const res = await fetch(`${BASE_URL}/presupuestos?usuario_id=${usuario_id}`, {
+  const url = (usuario_id && usuario_id !== 0) 
+    ? `${BASE_URL}/presupuestos?usuario_id=${usuario_id}` 
+    : `${BASE_URL}/presupuestos`;
+
+  const res = await fetch(url, {
     headers: headers(token),
   });
+  
   if (!res.ok) return null;
   return res.json();
 };

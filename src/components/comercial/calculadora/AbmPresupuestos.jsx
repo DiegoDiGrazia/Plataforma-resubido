@@ -24,7 +24,7 @@ const AbmPresupuestos = ({ onEditar }) => {
     const [presupuestoAEliminar, setPresupuestoAEliminar] = useState(null);
     const [eliminando, setEliminando] = useState(false);    
     const TOKEN = useSelector((state) => state.formulario.token);
-    const usuario_id = useSelector((state) => state.formulario.usuario?.id || state.formulario.id_usuario);
+    const usuario_id = useSelector((state) => state.formulario.usuario?.id);
     const cliente_id = useSelector((state) => state.formulario.id_cliente); 
 
     useEffect(() => {
@@ -33,16 +33,12 @@ const AbmPresupuestos = ({ onEditar }) => {
           setCargando(true);
           try {
             const [respuestaTodos, dataGeo, dataClientes] = await Promise.all([
-              obtenerPresupuestosPorUser(TOKEN, 0), 
+              obtenerPresupuestosPorUser(TOKEN, null), 
               obtenerGeo(),
               obtenerClientes(TOKEN)
             ]);
 
-            const misPresupuestos = await obtenerPresupuestosPorUser(TOKEN, usuario_id);
-            const combinados = [...(misPresupuestos || []), ...(respuestaTodos || [])];
-            const presupuestosFinales = Array.from(new Map(combinados.map(p => [p.presupuesto_id, p])).values());
-
-            setPresupuestos(presupuestosFinales);
+            setPresupuestos(respuestaTodos || []);
             setGeoList(dataGeo || { paises: [] });
             setClientesList(dataClientes || []);
           } catch (error) {
@@ -116,7 +112,6 @@ const AbmPresupuestos = ({ onEditar }) => {
     });
   };
 
-  // --- LÓGICA DE FILTRADO EN EL FRONTEND ---
   const presupuestosFiltrados = presupuestos.filter((p) => {
     const textoBusqueda = busqueda.toLowerCase();
     const coincideBusqueda = !textoBusqueda || 
@@ -125,27 +120,24 @@ const AbmPresupuestos = ({ onEditar }) => {
 
     const coincideCliente = !cliente_id || cliente_id === '0' || cliente_id === 'Todos' || String(p.cliente_id) === String(cliente_id);
 
-    // NUEVO: Filtro en tiempo real por usuario
     const coincideUsuario = filtroUsuario === "Todos" || String(p.usuario_id) === String(usuario_id);
 
     let coincideFechas = true;
     if (p.created_at) {
-        const fechaCortaP = p.created_at.substring(0, 10); // Toma solo "YYYY-MM-DD"
+        const fechaCortaP = p.created_at.substring(0, 10);
         if (fechaDesde && fechaCortaP < fechaDesde) coincideFechas = false;
         if (fechaHasta && fechaCortaP > fechaHasta) coincideFechas = false;
     }
 
-    // Agregamos coincideUsuario al return final
     return coincideBusqueda && coincideCliente && coincideFechas && coincideUsuario;
   });
 
   return (
     <div className="p-4 mt-1 pt-0">
 
-      {/* BARRA DE FILTROS */}
       <div className="d-flex flex-wrap justify-content-between align-items-center mb-4 p-3 filtros-container shadow-sm gap-3">
         
-        {/* Buscador */}
+        {/* FILTROS */}
         <div className="input-group search-input-container">
             <input
                 type="text"
@@ -159,7 +151,6 @@ const AbmPresupuestos = ({ onEditar }) => {
             </span>
         </div>
 
-        {/* Filtros de la derecha */}
         <div className="d-flex flex-wrap align-items-center gap-3">
             
             <div className="d-flex align-items-center gap-2">
