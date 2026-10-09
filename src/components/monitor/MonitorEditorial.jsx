@@ -6,7 +6,7 @@ import { borrarTildes } from '../../utils/funcionesVarias';
 import { obtenerGrupos, obtenerAutores, obtenerGruposClientes, crearGrupo, 
          crearAutor, actualizarGrupo, actualizarAutor, eliminarGrupo, eliminarAutor, 
        } from '../Apis/gruposApi.js';
-import { obtenerClientes, editarComentarioCliente } from '../Apis/apis.js';
+import { obtenerClientes, editarComentarioCliente, obtenerCategorias } from '../Apis/apis.js';
 import { obtenerMonitor } from '../Apis/monitorApi.js';
 import DropdownFiltro from '../comercial/DropdownFiltro.jsx';
 import { ToastContainer } from 'react-toastify';
@@ -16,7 +16,7 @@ import { toastExito, toastError } from '../../utils/toastify/toastify.jsx';
 const MonitorEditorial = () => {
     
     const [monitorData, setMonitorData] = useState([]);
-    const categorias = useSelector((state) => state.crearNota.categorias);
+    const [categorias, setCategorias] = useState([]);
     const categoriasNombres = categorias.map(c => c.unidad);
 
     const TOKEN = useSelector((state) => state.formulario.token);
@@ -90,13 +90,15 @@ const MonitorEditorial = () => {
             obtenerGrupos(TOKEN),
             obtenerAutores(TOKEN),
             obtenerClientes(TOKEN),
-            obtenerGruposClientes(TOKEN)
+            obtenerGruposClientes(TOKEN),
+            obtenerCategorias(TOKEN, "categorias")
         ])
-        .then(([resGrupos, resAutores, resClientes, resRelaciones]) => {
+        .then(([resGrupos, resAutores, resClientes, resRelaciones, resCategorias]) => {
             setGrupos(resGrupos);
             setAutores(resAutores);
             setClientes(resClientes);
             setClientesRelacionados(resRelaciones);
+            setCategorias(resCategorias);
         })
     }, [TOKEN, refreshData]);
 

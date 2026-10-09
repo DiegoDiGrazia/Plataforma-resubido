@@ -110,6 +110,11 @@ export const obtenerGeneracion = async (token, id_generacion) => {
   return response.json();
 };
 
+export const obtenerCategorias = (token, dimension) =>
+  fetch(`${BASE_URL}/generaciones/categorias?dimension=${dimension}`, {
+    headers: headers(token),
+  }).then((r) => r.json());
+
 // Clientes
 
 export const obtenerClientes = (token) =>
