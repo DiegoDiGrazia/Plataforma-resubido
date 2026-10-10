@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import SelectorCliente from '../../Dashboard/SelectorCliente';
-import { obtenerSitiosPaises, obtenerSitiosProvincias, eliminarSitiosPaises, eliminarSitiosProvincias, agregarSitioPaises, agregarSitioProvincias, editarSitio } from './apisUsuarios';
+import { editarSitio } from './apisUsuarios';
+import { obtenerSitiosPaises, obtenerSitiosProvincias, eliminarSitioPaises, eliminarSitioProvincias, agregarSitioPaises, agregarSitioProvincias } from '../../Apis/sitiosApi';
 import { Accordion, AccordionItem } from 'react-bootstrap';
 import './AbmSitiosRelevantes.css';
 import { borrarTildes } from '../../../utils/funcionesVarias';
+import { ToastContainer } from 'react-toastify';
+import { toastExito, toastError } from '../../../utils/toastify/toastify.jsx';
 
 const AbmSitiosRelevantes = () => {
     
@@ -56,67 +58,77 @@ const AbmSitiosRelevantes = () => {
     if (!sitioActual) return;
     
     const { sitioGeo, medio } = sitioActual;
-    if (sitioGeo.pais_id) {
-      await eliminarSitiosPaises(token, sitioGeo.pais_id, medio.id);
-
-      setSitiosPaises(paisesActuales => 
-        paisesActuales.map(pais => 
-          pais.pais_id === sitioGeo.pais_id 
-            ? { ...pais, medios: pais.medios.filter(m => m.id !== medio.id) }
-            : pais
-        )
-      );
-    } else if (sitioGeo.provincia_id) {
-      await eliminarSitiosProvincias(token, sitioGeo.provincia_id, medio.id);
-
-      setSitiosProvincias(provinciasActuales => 
-        provinciasActuales.map(provincia => 
-          provincia.provincia_id === sitioGeo.provincia_id 
-            ? { ...provincia, medios: provincia.medios.filter(m => m.id !== medio.id) }
-            : provincia
-        )
-      );
+    try {
+      if (sitioGeo.pais_id) {
+        await eliminarSitioPaises(token, sitioGeo.pais_id, medio.id);
+        setSitiosPaises(paisesActuales => 
+          paisesActuales.map(pais => 
+            pais.pais_id === sitioGeo.pais_id 
+              ? { ...pais, medios: pais.medios.filter(m => m.id !== medio.id) }
+              : pais
+          )
+        );
+      } else if (sitioGeo.provincia_id) {
+        await eliminarSitioProvincias(token, sitioGeo.provincia_id, medio.id);
+        setSitiosProvincias(provinciasActuales => 
+          provinciasActuales.map(provincia => 
+            provincia.provincia_id === sitioGeo.provincia_id 
+              ? { ...provincia, medios: provincia.medios.filter(m => m.id !== medio.id) }
+              : provincia
+          )
+        );
+      }
+      toastExito("¡Sitio eliminado correctamente!");
+      document.getElementById('btn-cerrar-modal-eliminar')?.click();
+    } catch (error) {
+      console.error("Error al eliminar sitio:", error);
+      toastError("Ocurrió un error al eliminar el sitio.");
     }
-    document.getElementById('btn-cerrar-modal-eliminar')?.click();
   }
 
   // FUNCION AGREGAR SITIO RELEVANTE
-  const agregarSitioRelevante = () => {
+  const agregarSitioRelevante = async () => {
     if(sitioActual && nuevoSitio) {
-      
-      if(sitioActual.pais_id) {
-        agregarSitioPaises(token, sitioActual.pais_id, nuevoSitio).then(() => {
-          obtenerSitiosPaises(token, "").then((sitiosActualizados) => {
-            setSitiosPaises(sitiosActualizados);
-          })
-          
-        });
-
-      } else if(sitioActual.provincia_id) {
-        agregarSitioProvincias(token, sitioActual.provincia_id, nuevoSitio).then(() => {
-          obtenerSitiosProvincias(token, "").then((sitiosActualizados) => {
-            setSitiosProvincias(sitiosActualizados);
-          })
-          
-        });
+      try {
+        if(sitioActual.pais_id) {
+          await agregarSitioPaises(token, sitioActual.pais_id, nuevoSitio);
+          const sitiosActualizados = await obtenerSitiosPaises(token, "");
+          setSitiosPaises(sitiosActualizados);
+        } else if(sitioActual.provincia_id) {
+          await agregarSitioProvincias(token, sitioActual.provincia_id, nuevoSitio);
+          const sitiosActualizados = await obtenerSitiosProvincias(token, "");
+          setSitiosProvincias(sitiosActualizados);
+        }
+        toastExito("¡Sitio agregado correctamente!");
+        document.getElementById('btn-cerrar-modal-agregar')?.click();
+      } catch (error) {
+        console.error("Error al agregar sitio:", error);
+        toastError("Ocurrió un error al agregar el sitio.");
       }
     }
-    document.getElementById('btn-cerrar-modal-agregar')?.click();
   }
 
   // FUNCION EDITAR SITIO RELEVANTE
-  const editarSitioRelevante = () => {
+  const editarSitioRelevante = async () => {
     if (sitioActual && archivoImagen) {
-      editarSitio(token, sitioActual.id, sitioActual.sitio, archivoImagen).then(() =>
-        obtenerSitiosProvincias(token, "").then((sitiosActualizados) => {
-            setSitiosProvincias(sitiosActualizados);
-          }),
-        obtenerSitiosPaises(token, "").then((sitiosActualizados) => {
-            setSitiosPaises(sitiosActualizados);
-          })
-      )
+      try {
+        await editarSitio(token, sitioActual.id, sitioActual.sitio, archivoImagen);
+        
+        const [sitiosProvActualizados, sitiosPaisActualizados] = await Promise.all([
+          obtenerSitiosProvincias(token, ""),
+          obtenerSitiosPaises(token, "")
+        ]);
+        
+        setSitiosProvincias(sitiosProvActualizados);
+        setSitiosPaises(sitiosPaisActualizados);
+        
+        toastExito("¡Icono actualizado correctamente!");
+        document.getElementById('btn-cerrar-modal-editar')?.click();
+      } catch (error) {
+        console.error("Error al editar sitio:", error);
+        toastError("Ocurrió un error al actualizar el ícono.");
+      }
     }
-    document.getElementById('btn-cerrar-modal-editar')?.click();
   }
 
   const limpiarURL = (texto) => {
@@ -343,8 +355,8 @@ const AbmSitiosRelevantes = () => {
           </div>
         </div>
         
+        <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
         
-
       </div>
       
       
