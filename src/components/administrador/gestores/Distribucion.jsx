@@ -59,11 +59,11 @@ const descargarJpg = async (nota, imagenFeed) => {
   }, "image/jpeg", 0.92);
 };
 
-const formatearFechaHoraLegible = (fecha) => {
+const formatearFechaHoraLegible = (fecha, restarHoras = 0) => {
   if (!fecha) return '';
   const d = new Date(fecha);
   if (Number.isNaN(d.getTime())) return fecha;
-  d.setHours(d.getHours() - 3);
+  if (restarHoras) d.setHours(d.getHours() - restarHoras);
   const pad = (n) => String(n).padStart(2, '0');
   return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 };
