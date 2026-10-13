@@ -1,8 +1,10 @@
 import React from 'react';
+import './colEditorial.css';
 
 // Campos de "distribucion_generaciones" (META, X, Youtube, Search).
 // valores: { fecha_vencimiento, comentarios, meta_titulo, meta_engagement, x_descripcion,
-//            youtube_titulo, youtube_descripcion, youtube_link_video, search_titulo, search_descripcion }
+//            youtube_titulo, youtube_descripcion, youtube_link_video, search_titulo, search_descripcion,
+//            diferida, fecha_diferida, hora_diferida }
 // onChange(campo, valor)
 const DistribucionGeneracionFields = ({ valores, onChange }) => {
     const dispacharCampo = (campo) => (e) => onChange(campo, e.target.value);
@@ -29,6 +31,42 @@ const DistribucionGeneracionFields = ({ valores, onChange }) => {
                     onChange={dispacharCampo('comentarios')}
                 />
             </div>
+
+            <div className="datosDistribucionCampo form-check">
+                <input
+                    type="checkbox"
+                    className="form-check-input"
+                    id="distribucionDiferidaCheck"
+                    checked={!!valores.diferida}
+                    onChange={(e) => onChange('diferida', e.target.checked)}
+                />
+                <label className="form-check-label" htmlFor="distribucionDiferidaCheck">
+                    Distribución con fecha diferida
+                </label>
+            </div>
+
+            {valores.diferida && (
+                <div className="datosDistribucionCampo d-flex gap-2">
+                    <div className="flex-fill">
+                        <label>Fecha</label>
+                        <input
+                            type="date"
+                            className="form-control"
+                            value={valores.fecha_diferida || ''}
+                            onChange={dispacharCampo('fecha_diferida')}
+                        />
+                    </div>
+                    <div className="flex-fill">
+                        <label>Hora</label>
+                        <input
+                            type="time"
+                            className="form-control"
+                            value={valores.hora_diferida || ''}
+                            onChange={dispacharCampo('hora_diferida')}
+                        />
+                    </div>
+                </div>
+            )}
 
             <div className="datosDistribucionPlataforma">META</div>
 

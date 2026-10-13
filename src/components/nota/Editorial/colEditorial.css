@@ -1,8 +1,8 @@
-.col_editorial input{
+.col_editorial input:not([type="checkbox"]):not([type="radio"]){
     border: 1px solid #EAECF0 !important;
     border-radius: 10px;
 
-} 
+}
 .form_editorial{
     padding-left: 15px;
 }
@@ -19,20 +19,53 @@
 }
 
 .datosDistribucion .datosDistribucionTitulo {
-    font-size: 20px;
-    font-weight: bold;
+    font-size: 18px;
+    font-weight: 700;
+    color: #101828;
     margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #EAECF0;
     display: block;
 }
 
 .datosDistribucion .datosDistribucionPlataforma {
-    font-size: 15px;
-    font-weight: bold;
-    color: #667085;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    background: #475467;
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 12px;
     text-transform: uppercase;
     letter-spacing: .04em;
-    margin-top: 15px;
-    margin-bottom: 8px;
+    margin-top: 18px;
+    margin-bottom: 10px;
+}
+
+.datosDistribucion .datosDistribucionCampo.form-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+    margin-bottom: 18px;
+}
+
+.datosDistribucion .datosDistribucionCampo.form-check .form-check-input {
+    width: 1.1em;
+    height: 1.1em;
+    margin: 0;
+    border: 1px solid #D0D5DD;
+    border-radius: 4px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.datosDistribucion .datosDistribucionCampo.form-check .form-check-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #344054;
+    margin-bottom: 0;
+    cursor: pointer;
 }
 
 .datosDistribucion .datosDistribucionPlataforma:first-of-type {

@@ -22,6 +22,9 @@ import {
     setDistribucionYtLink,
     setDistribucionSearchTitulo,
     setDistribucionSearchDescripcion,
+    setDistribucionDiferida,
+    setDistribucionFechaDiferida,
+    setDistribucionHoraDiferida,
 } from '../../../redux/crearNotaSlice';
 import SelectorCliente2 from './SelectorCliente2';
 import EsDemo from './EsDemo';
@@ -29,6 +32,7 @@ import { replace } from 'react-router-dom';
 import { obtenerDistribucionGeneracion } from '../../Apis/apis';
 import DistribucionGeneracionFields from './DistribucionGeneracionFields';
 import { normaliarAUrl } from '../../../utils/normalizarUrl';
+import { extraerDiferidaDesdeUltimaActualizacion } from '../../../utils/distribucionGeneracion';
 
 
 
@@ -54,6 +58,9 @@ const ColumnaEditorial = ({ indice }) => {
     const distribucionYtLink = useSelector((state) => state.crearNota.distribucion_yt_link);
     const distribucionSearchTitulo = useSelector((state) => state.crearNota.distribucion_search_titulo);
     const distribucionSearchDescripcion = useSelector((state) => state.crearNota.distribucion_search_descripcion);
+    const distribucionDiferida = useSelector((state) => state.crearNota.distribucion_diferida);
+    const distribucionFechaDiferida = useSelector((state) => state.crearNota.distribucion_fecha_diferida);
+    const distribucionHoraDiferida = useSelector((state) => state.crearNota.distribucion_hora_diferida);
 
 
 
@@ -80,6 +87,11 @@ const ColumnaEditorial = ({ indice }) => {
             dispatch(setDistribucionYtLink(datos[0].youtube_link_video || ''));
             dispatch(setDistribucionSearchTitulo(datos[0].search_titulo || ''));
             dispatch(setDistribucionSearchDescripcion(datos[0].search_descripcion || ''));
+
+            const diferida = extraerDiferidaDesdeUltimaActualizacion(datos[0].ultima_actualizacion);
+            dispatch(setDistribucionDiferida(diferida.diferida));
+            dispatch(setDistribucionFechaDiferida(diferida.fecha_diferida));
+            dispatch(setDistribucionHoraDiferida(diferida.hora_diferida));
         });
     }, [nota.id_noti, TOKEN]);
 
@@ -126,6 +138,9 @@ const ColumnaEditorial = ({ indice }) => {
         youtube_link_video: setDistribucionYtLink,
         search_titulo: setDistribucionSearchTitulo,
         search_descripcion: setDistribucionSearchDescripcion,
+        diferida: setDistribucionDiferida,
+        fecha_diferida: setDistribucionFechaDiferida,
+        hora_diferida: setDistribucionHoraDiferida,
     };
 
     const dispacharCampoDistribucion = (campo, valor) => {
@@ -249,6 +264,9 @@ const ColumnaEditorial = ({ indice }) => {
                             youtube_link_video: distribucionYtLink,
                             search_titulo: distribucionSearchTitulo,
                             search_descripcion: distribucionSearchDescripcion,
+                            diferida: distribucionDiferida,
+                            fecha_diferida: distribucionFechaDiferida,
+                            hora_diferida: distribucionHoraDiferida,
                         }}
                         onChange={dispacharCampoDistribucion}
                     />

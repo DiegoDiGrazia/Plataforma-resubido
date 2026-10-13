@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button, Modal, Spinner } from 'react-bootstrap';
 import { editarDistribucionGeneracion, obtenerDistribucionGeneracion } from '../../Apis/apis';
 import DistribucionGeneracionFields from './DistribucionGeneracionFields';
+import { armarPayloadDistribucion, extraerDiferidaDesdeUltimaActualizacion } from '../../../utils/distribucionGeneracion';
 
 const valoresIniciales = {
     fecha_vencimiento: '',
@@ -14,6 +15,9 @@ const valoresIniciales = {
     youtube_link_video: '',
     search_titulo: '',
     search_descripcion: '',
+    diferida: false,
+    fecha_diferida: '',
+    hora_diferida: '',
 };
 
 const BotonEditarDistribucionGeneracion = ({ id_generacion, token }) => {
@@ -41,6 +45,7 @@ const BotonEditarDistribucionGeneracion = ({ id_generacion, token }) => {
                     youtube_link_video: dato?.youtube_link_video || '',
                     search_titulo: dato?.search_titulo || '',
                     search_descripcion: dato?.search_descripcion || '',
+                    ...extraerDiferidaDesdeUltimaActualizacion(dato?.ultima_actualizacion),
                 });
             })
             .catch(() => setError('No se pudo cargar la distribución de esta nota.'))
@@ -55,7 +60,7 @@ const BotonEditarDistribucionGeneracion = ({ id_generacion, token }) => {
         setGuardando(true);
         setError('');
         try {
-            await editarDistribucionGeneracion(token, id_generacion, valores);
+            await editarDistribucionGeneracion(token, id_generacion, armarPayloadDistribucion(valores));
             setShowModal(false);
         } catch {
             setError('No se pudieron guardar los cambios.');

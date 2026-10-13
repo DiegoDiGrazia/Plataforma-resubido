@@ -154,6 +154,9 @@ const initialState = {
   distribucion_search_titulo: "",
   distribucion_search_descripcion: "",
   distribucion_banner_data: "",
+  distribucion_diferida: false,
+  distribucion_fecha_diferida: "",
+  distribucion_hora_diferida: "",
 
 };
 
@@ -411,6 +414,15 @@ const crearNotaSlice = createSlice({
     setDistribucionSearchDescripcion: (state, action) => {
       state.distribucion_search_descripcion = action.payload;
     },
+    setDistribucionDiferida: (state, action) => {
+      state.distribucion_diferida = action.payload;
+    },
+    setDistribucionFechaDiferida: (state, action) => {
+      state.distribucion_fecha_diferida = action.payload;
+    },
+    setDistribucionHoraDiferida: (state, action) => {
+      state.distribucion_hora_diferida = action.payload;
+    },
     setDistribucionBannerData: (state, action) => {
       state.distribucion_banner_data = action.payload;
     },
@@ -426,7 +438,8 @@ export const {
   setDistribucionProioritaria, setTipoContenido, setFechaVencimiento, setBajada, setEngagement, setComentario, setSelectedOptionDistribucion,
   setAutor, setMunicipio,setEpigrafeImagenPpal,setDemo, setMunicipios,setIdNoti, setProvincia,setPais, setIdAtt,setProvincias, resetCrearNota, setEpigrafeDeImagen, setListaImagenesContenidoEnBase64, setAtachment, setSumarUnoAlNumeroDeAtachment,
   setDistribucionFechaVencimiento, setDistribucionComentarios, setDistribucionMetaTitulo, setDistribucionMetaEngagement, setDistribucionXDescripcion, setDistribucionYtTitulo, setDistribucionYtDescripcion, setDistribucionYtLink,
-  setDistribucionSearchTitulo, setDistribucionSearchDescripcion, setDistribucionBannerData
+  setDistribucionSearchTitulo, setDistribucionSearchDescripcion, setDistribucionBannerData,
+  setDistribucionDiferida, setDistribucionFechaDiferida, setDistribucionHoraDiferida
 } = crearNotaSlice.actions;
 
 export default crearNotaSlice.reducer;

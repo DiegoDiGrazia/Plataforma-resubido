@@ -190,10 +190,19 @@ const completarContratoEnNotas = (notas, contratos) => {
   });
 };
 
+const esDistribucionDiferidaFutura = (nota) => {
+  if (!nota.ultima_actualizacion) return false;
+  const fecha = new Date(nota.ultima_actualizacion);
+  return !Number.isNaN(fecha.getTime()) && fecha > new Date();
+};
+
 const agruparNotasPorCliente = (notas) => {
   if(!notas || notas.length === 0) return {};
   return notas.reduce((acc, nota) => {
     if(!nota.fecha_vencimiento){
+      return acc;
+    }
+    if (esDistribucionDiferidaFutura(nota)) {
       return acc;
     }
     if (!acc[nota.cliente]) {
@@ -209,6 +218,7 @@ const agruparVideosPorCliente = (videos) => {
   if (!videos || videos.length === 0) return {};
   return videos.reduce((acc, video) => {
     if (!video.cliente) return acc;
+    if (esDistribucionDiferidaFutura(video)) return acc;
     const notaDeVideo = { ...video, esNotaDeVideo: true };
     if (!acc[video.cliente]) {
       acc[video.cliente] = [notaDeVideo];
@@ -634,9 +644,7 @@ const goToPage = (newPage) => {
                                 <div className="row p-1">
                                   <span><strong>Fecha vencimiento: </strong>{nota.fecha_vencimiento}</span>
                                 </div>
-                                <div className="row p-1">
-                                  <span><strong>Última actualización: </strong>{formatearFechaHoraLegible(nota.ultima_actualizacion)}</span>
-                                </div>
+
                                 <div className="row p-1">
                                   <span><strong>Enviado a distribuir: </strong>{formatearFechaHoraLegible(nota.fecha_creacion)}</span>
                                 </div>
@@ -710,7 +718,7 @@ const goToPage = (newPage) => {
                                       className="btn btn-outline-secondary w-100 mt-2"
                                       onClick={() => descargarJpg(nota, imagenesFeedPorGeneracion[nota.id_generacion])}
                                     >
-                                      Descargar jpg
+                                      Descargar Creativo X
                                     </button>
                                   )}
                                   {nota.id_generacion && (
@@ -718,7 +726,7 @@ const goToPage = (newPage) => {
                                       className="btn btn-outline-secondary w-100 mt-2"
                                       onClick={() => descargarCreativo(nota, TOKEN)}
                                     >
-                                      Descargar historia
+                                      Desgargar Creativo META
                                     </button>
                                   )}
                                 </div>

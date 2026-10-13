@@ -3,6 +3,7 @@ import { Button, Modal } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import { clickearEnPublicarNota } from '../../../utils/publicarNotaHelper';
 import { editarDistribucionGeneracion } from '../../Apis/apis';
+import { armarPayloadDistribucion } from '../../../utils/distribucionGeneracion';
 import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { ArchivoContext } from '../../../context/archivoContext';
@@ -54,6 +55,9 @@ const BotonPublicarNota = ({ status, isLoading, setIsLoading }) => {
     const distribucionYtLink = useSelector((state) => state.crearNota.distribucion_yt_link);
     const distribucionSearchTitulo = useSelector((state) => state.crearNota.distribucion_search_titulo);
     const distribucionSearchDescripcion = useSelector((state) => state.crearNota.distribucion_search_descripcion);
+    const distribucionDiferida = useSelector((state) => state.crearNota.distribucion_diferida);
+    const distribucionFechaDiferida = useSelector((state) => state.crearNota.distribucion_fecha_diferida);
+    const distribucionHoraDiferida = useSelector((state) => state.crearNota.distribucion_hora_diferida);
 
     const tipoAutor = useSelector((state) => state.crearNota.autor);
     const pais = useSelector((state) => state.crearNota.pais);
@@ -159,16 +163,21 @@ const BotonPublicarNota = ({ status, isLoading, setIsLoading }) => {
 
                 if (status === "PUBLICADO" && distribucionFechaVencimiento && selectedOptionDistribucion == 1) {
                     editarDistribucionGeneracion(TOKEN, response.item, {
-                        fecha_vencimiento: distribucionFechaVencimiento,
-                        comentarios: distribucionComentarios,
-                        meta_titulo: distribucionMetaTitulo,
-                        meta_engagement: distribucionMetaEngagement,
-                        x_descripcion: distribucionXDescripcion,
-                        youtube_titulo: distribucionYtTitulo,
-                        youtube_descripcion: distribucionYtDescripcion,
-                        youtube_link_video: distribucionYtLink,
-                        search_titulo: distribucionSearchTitulo,
-                        search_descripcion: distribucionSearchDescripcion,
+                        ...armarPayloadDistribucion({
+                            fecha_vencimiento: distribucionFechaVencimiento,
+                            comentarios: distribucionComentarios,
+                            meta_titulo: distribucionMetaTitulo,
+                            meta_engagement: distribucionMetaEngagement,
+                            x_descripcion: distribucionXDescripcion,
+                            youtube_titulo: distribucionYtTitulo,
+                            youtube_descripcion: distribucionYtDescripcion,
+                            youtube_link_video: distribucionYtLink,
+                            search_titulo: distribucionSearchTitulo,
+                            search_descripcion: distribucionSearchDescripcion,
+                            diferida: distribucionDiferida,
+                            fecha_diferida: distribucionFechaDiferida,
+                            hora_diferida: distribucionHoraDiferida,
+                        }),
                         cliente,
                     }).catch((error) => {
                         console.error("Error al guardar los datos de distribución:", error);
