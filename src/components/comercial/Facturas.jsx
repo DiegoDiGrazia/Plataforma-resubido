@@ -38,6 +38,7 @@ const Facturas = () =>  {
     const [deuda, setDeuda] = useState("Todas");
     const [empresa, setEmpresa] = useState("Cualquiera");
     const [certificacion, setCertificacion] = useState ("Cualquiera");
+    const [orden, setOrden] = useState("Todas");
     const [facturas, setFacturas] = useState([]);
     const [facturaActual, setFacturaActual] = useState("");
     const [estadoSeleccionado, setEstadoSeleccionado] = useState("");    
@@ -431,10 +432,16 @@ const Facturas = () =>  {
               (certificacion === "No" && factura.lleva_certificacion === "NO")
     }
 
+    const filtrarPorOrden = (factura) => {
+        return orden === "Todas" ||
+              (orden === "Con Orden" && factura.orden_compra) ||
+              (orden === "Sin Orden" && !factura.orden_compra)
+    }
+
     const facturasFiltradas = facturasVisibles && facturasVisibles.length > 0 ?
         facturasVisibles.filter((factura) => filtrarPorBusqueda(factura) && filtrarPorEmision(factura) &&
                                      filtrarPorDeuda(factura) && filtrarPorEmpresa(factura) &&
-                                     filtrarPorCertificacion(factura)) : [];
+                                     filtrarPorCertificacion(factura) && filtrarPorOrden(factura)) : [];
     
     {/* FUNCION PREPARAR EXCEL */}
     const handleDescargarExcel = () => {
@@ -518,7 +525,7 @@ const Facturas = () =>  {
             {/* FILTROS */}
             
             <div className='miPerfilContainer soporteContainer mt-4 mb-3 ms-5 me-5 p-0'>
-                <div className='row buscadorNotas d-flex flex-wrap align-items-center justify-content-between mt-3 p-0 w-100'>
+                <div className='row buscadorNotas d-flex flex-wrap align-items-center justify-content-start gap-1 mt-3 p-0 w-100'>
                     {/* Buscador cuenta */}
                     <form className='col-2 buscadorNotasForm mt-2 ps-0'>
                         <input
@@ -531,32 +538,41 @@ const Facturas = () =>  {
                         />
                     </form>                    
                     {/* Fechas */}
-                        <div className='col-3 w-auto d-flex align-items-center gap-2 mt-2 me-4 p-0 text-nowrap'>
-                            <span className="vencimiento-desde align-items-center d-flex gap-2" style={{ fontSize: "14px"}}>Vencimiento desde:
-                                <input 
-                                    type="month" 
-                                    value={fechaDesde} 
-                                    onChange={(e) => setFechaDesde(e.target.value)} 
-                                    style={{ fontSize: "13px", border: "1px solid #ccc", borderRadius: "4px", padding: "2px 5px"}}
-                                />
-                            </span>
-                            <span className="vencimiento-hasta align-items-center d-flex gap-2 ms-5" style={{ fontSize: "14px"}}>Vencimiento hasta:
-                              <input 
-                                  type="month" 
-                                  value={fechaHasta} 
-                                  onChange={(e) => setFechaHasta(e.target.value)}
-                                  style={{ fontSize: "13px", border: "1px solid #ccc", borderRadius: "4px", padding: "2px 5px"}}
-                              />
-                            </span>
+                    <div className='col-3 w-auto d-flex align-items-center gap-2 mt-2 p-0 text-nowrap' title="Vencimiento desde">
+                        <div className="vencimiento-desde d-flex align-items-center gap-1">
+                            <span className="align-items-center d-flex gap-2">Desde:</span>
+                            <input 
+                                type="month" 
+                                className='input-fechas'
+                                value={fechaDesde} 
+                                onChange={(e) => setFechaDesde(e.target.value)} 
+                            />
                         </div>
+                        <div className="vencimiento-hasta d-flex align-items-center gap-2" title="Vencimiento hasta">
+                            <span className="align-items-center d-flex gap-2">Hasta:</span>
+                            <input 
+                                type="month" 
+                                className='input-fechas'
+                                value={fechaHasta} 
+                                onChange={(e) => setFechaHasta(e.target.value)}
+                            />
+                        </div>
+                    </div>
                     {/* Filtros dropdown */}
-                    <div id= 'botones-filtros' className="col-5 d-flex flex-wrap align-items-end justify-content-end gap-2 mt-2 w-auto">
+                    <div id= 'botones-filtros' className="col-5 d-flex flex-wrap align-items-end justify-content-end gap-1 mt-2 w-auto">
                         <DropdownFiltro
                             className= 'boton-filtro'
                             label= "Emisión"
                             valorActual={emision}
                             opciones= {["Todas", "Emitidas", "No emitidas"]}
                             onChange={setEmision}
+                        />
+                        <DropdownFiltro
+                            className= 'boton-filtro'
+                            label= "Orden"
+                            valorActual={orden}
+                            opciones= {["Todas", "Con Orden", "Sin Orden"]}
+                            onChange={setOrden}
                         />
                         <DropdownFiltro 
                             className= 'boton-filtro'

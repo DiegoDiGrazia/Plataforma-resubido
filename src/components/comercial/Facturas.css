@@ -15,12 +15,12 @@ i {
     font-size: 24px;
 }
 
-.vencimiento-desde {
-    width: 260px !important;
-}
-
-.vencimiento-hasta {
-    width: 260px !important;
+.input-fechas {
+    width: 150px;
+    font-size: 13px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 2px 5px;
 }
 
 .form-check-input.flex-shrink-0.mt-0 {
@@ -45,13 +45,13 @@ i {
     }
 
     .vencimiento-desde {
-        width: 200px !important;
+        width: 153px !important;
         font-size: 11px !important;
         margin-right: 5px !important;
     }
 
     .vencimiento-hasta {
-        width: 200px !important;
+        width: 160px !important;
         font-size: 11px !important;
         left: 0px !important;
     }
@@ -65,7 +65,9 @@ i {
         width: 125px;
         font-size: 10px !important;
     }
-
+    .input-fechas {
+        width: 115px !important;
+    }
     .row.buscadorNotas.d-flex.flex-wrap.align-items-center.justify-content-between.mt-3.p-0.w-100 {
         flex-wrap: nowrap !important;
     }
@@ -78,6 +80,14 @@ i {
     
     .buscadorNotasForm {
         width: 142px !important;
+        height: 32px !important;
+    }
+
+    .inputBuscadorNotas {
+        font-size: 11px !important;
+        padding: 6px 8px !important;
+        background-size: 14px 14px !important;
+        background-position: 6px center !important;
     }
 
     .inputBuscadorNotas::placeholder {
@@ -95,8 +105,14 @@ i {
         padding-right: 0px !important;
     }
 
-    #botones-filtros a {
+    #botones-filtros .dropdown-filtro-btn {
         font-size: 11px !important;
+        padding: 3px 8px !important;
+    }
+
+    #botones-filtros .dropdown-item {
+        font-size: 11px !important;
+        padding: 3px 12px !important;
     }
 
     .datos-factura  {

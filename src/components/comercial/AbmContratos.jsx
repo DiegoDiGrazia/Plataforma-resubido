@@ -206,9 +206,6 @@ const AbmContratos
             }
             setMensajeModalExito('El contrato se elimino correctamente');
             setShowModal(true); // mostrar modal
-            setTimeout(() => {
-              window.location.reload(); // recargar luego de 3s
-            }, 1500);
           })
         .catch((err) => {
           console.log("Error al eliminar contrato:", err);
@@ -410,15 +407,17 @@ const AbmContratos
     }
   }
 
-  useEffect(() => {
-      if(contratosDelClienteSeleccionado?.length > 0){
-      setFormData(fd => ({
-        ...fd,
-        razon_social: contratosDelClienteSeleccionado.find(c => c.razon_social)?.razon_social || '',
-        cuit: contratosDelClienteSeleccionado.find(c => c.cuit)?.cuit || '',
-      }));
-    }
-  }, [contratosDelClienteSeleccionado]);
+  const datosFacturacionDelCliente = (idCliente, idContratoActual) => {
+    const ultimoContrato = contratos
+      .filter(c => c.id_cliente == idCliente && c.id != idContratoActual)
+      .sort((a, b) => Number(b.id) - Number(a.id))[0];
+
+    return {
+      razon_social: ultimoContrato?.razon_social || '',
+      cuit: ultimoContrato?.cuit || '',
+      donde: ultimoContrato?.donde || '',
+    };
+  };
 
   const handleEditClick = (contrato) => {
     const comisionista1 = contrato.com1
@@ -534,11 +533,6 @@ const handleSave = () => {
     .then((res) => {
       setMensajeModalExito(res.data.message || 'Los cambios se realizaron correctamente');
       setShowModal(true);
-      if (!res.data.message) {
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000)
-    }
     })
     .catch((err) => {
       console.log("Error al guardar cambios:", err);
@@ -818,7 +812,8 @@ const handleSave = () => {
                       setClienteSeleccionado(cliente);
                       setFormData(prev => ({
                         ...prev,
-                        id_cliente: cliente.id
+                        id_cliente: cliente.id,
+                        ...datosFacturacionDelCliente(cliente.id, prev.id)
                       }));
                     }}
                     onClear={(cliente) => {
