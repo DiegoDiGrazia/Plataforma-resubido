@@ -3,77 +3,78 @@
     
 }
 
-h2{
-    
+.containerFormulario h2{
     font-weight: bold;
-    margin-bottom: 20px;
-    margin-top: 30px;
+    margin-bottom: 10px;
     font-size: 35px;
-    color: black;
+    color: #1a1a1a;
 }
 
-h3{
-    font-size:medium;
-    color: black;
-    font-size: 20px;
-    width: 80%;
-    align-items: center;
-    margin-left: 40px;
-    margin-top: 30px;
+.containerFormulario h3{
+    color: #666;
+    font-size: 16px;
+    font-weight: normal;
+    width: 100%;
+    margin: 0 auto 10px;
 }
 
 .mb-3 label{
     font-size: 12px;
     font-weight: bold;
-    
+
 }
-.mb3 input{
-    padding: 10px;
-    border-radius:20px;
+.containerFormulario .form-control{
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1px solid #E0E0E0;
+    font-size: 14px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.containerFormulario .form-control:focus{
+    border-color: rgba(255, 102, 0, 0.7);
+    box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.15);
 }
 .mb-3 ::placeholder{
     font-size: 12px
 
 }
 
-#formulario{
-    margin-top: 50px;
-    margin-left: 50px;
-    
-} 
-
-#imagen{    
-    margin-right: 50px;
+.containerFormulario{
+    width: 100%;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e9e9ec;
 }
 
-.row{
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100vh;
-} 
-
-#imagen {
+#formulario{
+    width: 100%;
+    max-width: 440px;
+    background-color: #fff;
+    border-radius: 20px;
+    padding: 48px 40px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    height: 90vh; /* La imagen ocupará el 100% de la altura de la ventana */
-  }
-  
-  .image-container img {
-    height: 100%;
-    width: auto;
-    max-height: 100%;
-    padding-bottom: 30px;
-  }
+    position: relative;
+    top: -50px;
+}
+
+#formulario > *{
+    width: 100%;
+}
 
   #logo-nd{
-    width: 33% !important;
+    width: 50% !important;
   }
 
   #iniciar_sesion {
-    background-color: rgba(255, 102, 0, 0.548); /* Naranja medio transparente */
-    border: 0px solid  rgba(255, 102, 0, 0.548); /* Borde negro */
+    background-color: #FF6600; /* Naranja sólido */
+    border: 0px solid #FF6600;
     border-radius: 12px; /* Bordes redondeados */
     color: white; /* Color del texto */
     display: flex;
@@ -87,6 +88,15 @@ h3{
     text-decoration: none; /* Elimina subrayado si es un enlace */
     cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
     box-sizing: border-box; /* Incluye padding y border en el ancho y alto del elemento */
+    transition: background-color 0.15s ease, transform 0.1s ease;
+  }
+
+  #iniciar_sesion:hover {
+    background-color: #e65c00;
+  }
+
+  #iniciar_sesion:active {
+    transform: scale(0.99);
   }
 
   #iniciar_sesion_google{
@@ -109,35 +119,19 @@ h3{
     
 }
 
-@keyframes inicio{
-    0%{
-        top: 100vh;
-    }
-    100%{
-        top: 0vh;
-    }
-}
-  #olvide_contraseña{
+  #olvide_contraseña, .olvide_contraseña{
     color: orangered;
     text-align: center;
     justify-content: center;
     align-content: center;
     display: flex;
     width: 100%;
-    position: relative;
-    animation:  inicio 1s; 
   }
     .emailbox{
-        position: relative;
-        animation:  inicio 1s; 
-        
+        margin-bottom: 20px;
     }
-    .contraseña{    
-        position: relative;
-        animation:  inicio 1s; 
-        animation-delay: initial;
-        animation-delay: 0.5s;
-
+    .contraseña{
+        margin-bottom: 20px;
     }
 
     .cartel {

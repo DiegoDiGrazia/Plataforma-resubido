@@ -1,20 +1,15 @@
 @media (max-width: 768px) {
-    
-    .containerFormulario .row {
-        gap: 120px;
+
+    .containerFormulario {
+        padding: 20px;
     }
 
     .containerFormulario h3 {
         width: 300px;
     }
 
-    .containerFormulario #imagen {
-        display: none;
-    }
-
     .containerFormulario #formulario {
-        order: 1;
-        margin-left: 5px;
+        padding: 32px 24px;
     }
 }
 

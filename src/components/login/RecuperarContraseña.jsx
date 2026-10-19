@@ -69,67 +69,59 @@ const RecuperarContraseña = () => {
     };
 
     return (
-        <div className="container-fluid">
-            <div className="row" id="imagenLogo">
-                <div className="col-6" id='imagen'>
-                    <div className="image-container">
-                        <img src="/images/foto-login.png" alt="Imagen de ejemplo" className="img-fluid" />
+        <div className="container-fluid containerFormulario">
+            {(codigoRecuperacion === "") ? (
+                <div id='formulario'>
+                    <div className="text-center mb-4">
+                        <img src="/images/noticiasdlogo.png" alt="Imagen de ejemplo" className="img-fluid mb-4" id='logo-nd'/>
+                        <h2>Recuperar Acceso</h2>
+                        <h3>Ingrsá el email asosiado a tu cuenta, y te enviaremos un codigo de recuperacion</h3>
                     </div>
+                    <form className="mt-4" onSubmit={handleRecuperarAcceso}>
+                        <div className="mb-3 emailbox">
+                            <label htmlFor="email" className="form-label">Email:</label>
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                className="form-control"
+                                required
+                                placeholder='Ingresa tu email aquí'
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                        </div>
+                        <button type="submit" id='iniciar_sesion'>Recuperar acceso</button>
+
+                        <button type="button" className="btn btn-link" id="olvide_contraseña" onClick={volverALogin}>Volver</button>
+                    </form>
                 </div>
-
-                {(codigoRecuperacion === "") ? (
-                    <div className="col-4" id='formulario'>
-                        <div className="text-center mb-4">
-                            <img src="/images/noticiasdlogo.png" alt="Imagen de ejemplo" className="img-fluid mb-4" id='logo-nd'/>
-                            <h2>Recuperar Acceso</h2>
-                            <h3>Ingrsá el email asosiado a tu cuenta, y te enviaremos un codigo de recuperacion</h3>
-                        </div>
-                        <form className="mt-4" onSubmit={handleRecuperarAcceso}>
-                            <div className="mb-3 emailbox">
-                                <label htmlFor="email" className="form-label">Email:</label>
-                                <input 
-                                    type="email" 
-                                    id="email" 
-                                    name="email" 
-                                    className="form-control" 
-                                    required 
-                                    placeholder='Ingresa tu email aquí' 
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                />
-                            </div>
-                            <button type="submit" id='iniciar_sesion'>Recuperar acceso</button>
-
-                            <button type="button" className="btn btn-link" id="olvide_contraseña" onClick={volverALogin}>Volver</button>
-                        </form>
+            ) : (
+                <div id='formulario'>
+                    <div className="text-center mb-4">
+                        <img src="/images/noticiasdlogo.png" alt="Imagen de ejemplo" className="img-fluid mb-4" id='logo-nd'/>
+                        <h2>Recuperar Contraseña</h2>
+                        <h3>Te enviamos un codigo al mail {email}</h3>
                     </div>
-                ) : (
-                    <div className="col-4" id='formulario'>
-                        <div className="text-center mb-4">
-                            <img src="/images/noticiasdlogo.png" alt="Imagen de ejemplo" className="img-fluid mb-4" id='logo-nd'/>
-                            <h2>Recuperar Contraseña</h2>
-                            <h3>Te enviamos un codigo al mail {email}</h3>
+                    <form className="mt-4" onSubmit={handleVerificarCodigo}>
+                        <div className="mb-3">
+                            <label htmlFor="codigo" className="form-label">Codigo:</label>
+                            <input
+                                type="codigo"
+                                id="codigo"
+                                name="codigo"
+                                className="form-control"
+                                required
+                                placeholder='Ingresa tu codigo aquí'
+                                value={codigoTipeado}
+                                onChange={(e) => setCodigoTipeado(e.target.value)}
+                            />
                         </div>
-                        <form className="mt-4" onSubmit={handleVerificarCodigo}>
-                            <div className="mb-3">
-                                <label htmlFor="codigo" className="form-label">Codigo:</label>
-                                <input 
-                                    type="codigo" 
-                                    id="codigo" 
-                                    name="codigo" 
-                                    className="form-control" 
-                                    required 
-                                    placeholder='Ingresa tu codigo aquí' 
-                                    value={codigoTipeado}
-                                    onChange={(e) => setCodigoTipeado(e.target.value)}
-                                />
-                            </div>
-                            {codigoIncorrecto && <p id= "inputError">codigoIncorrecto</p>}
-                            <button type="submit" id='iniciar_sesion'>Recuperar contraseña</button>
-                        </form>
-                    </div>
-                )}
-            </div>
+                        {codigoIncorrecto && <p id= "inputError">codigoIncorrecto</p>}
+                        <button type="submit" id='iniciar_sesion'>Recuperar contraseña</button>
+                    </form>
+                </div>
+            )}
         </div>
     );
 };
