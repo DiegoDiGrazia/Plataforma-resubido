@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./InteraccionPorNota.css";
-import axios from 'axios';
+import { obtenerTopMediosNoticia } from '../../Apis/dashboardApi';
 import { formatNumberMiles } from '../Dashboard';
 const multiplicador= 1
 
@@ -26,43 +26,20 @@ function reduceByKeyMedios(lista_medios) {
     }, {});
 }
 
-const MediosMasRelevantesNotas = ({ id_noti, TOKEN, cliente, fpub, dataLocalNota, paisFiltro }) => {
-    const fechaCompleta = new Date(fpub);
-    fechaCompleta.setDate(1);
-    const desde = fpub ? fechaCompleta.toISOString().split('T')[0] : null;
-    fechaCompleta.setMonth(fechaCompleta.getMonth() + 6);
-    const hasta = fpub ? fechaCompleta.toISOString().split('T')[0] : null;
-
+const MediosMasRelevantesNotas = ({ id_noti, TOKEN, cliente_id, dataLocalNota, paisFiltro }) => {
     const [mediosNota, setMediosNota] = useState([]);
 
     useEffect(() => {
-        axios.post(
-            "https://panel.serviciosd.com/app_obtener_medios_noticia",
-            {
-                cliente,
-                desde,
-                hasta,
-                token: TOKEN,
-                id_noti,
-                pais_id: paisFiltro?.pais_id || null,
-            },
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            }
-        )
-        .then((response) => {
-            if (response.data.status === "true") {
-                setMediosNota(dataLocalNota ?  dataLocalNota : response.data.item);
-            } else {
-                console.error('Error en la respuesta de la API:', response.data.message);
+        obtenerTopMediosNoticia(TOKEN, cliente_id, id_noti, paisFiltro?.pais_id)
+        .then((resultado) => {
+            if (resultado) {
+                setMediosNota(dataLocalNota ? dataLocalNota : (resultado[0]?.medios || []));
             }
         })
         .catch((error) => {
             console.error('Error al hacer la solicitud:', error);
         });
-    }, [desde, hasta, TOKEN, id_noti, cliente, paisFiltro]);
+    }, [TOKEN, id_noti, cliente_id, paisFiltro]);
 
     const todosLosMediosSinRepetir = Object.values(reduceByKeyMedios(mediosNota));
     const listaTresMedios = todosLosMediosSinRepetir

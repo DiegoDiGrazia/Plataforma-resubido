@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./InteraccionPorNota.css";
 import { useSelector, useDispatch } from 'react-redux';
-import axios from 'axios';
+import { obtenerTopMedios } from '../../Apis/dashboardApi';
 import { setMediosMayorInteraccion } from '../../../redux/interaccionesPorNotaSlice';
 import { formatNumberMiles } from '../Dashboard';
 import { filtrarUltimosMeses } from '../../barplot/Barplot';
@@ -35,7 +35,7 @@ function reduceBykeyMedios(lista_medios) {
 }
 
 const MediosMasRelevantes = ({datosLocales, paisFiltro}) => {
-    const nombreCliente = useSelector((state) => state.formulario.cliente);
+    const cliente_id = useSelector((state) => state.formulario.id_cliente);
     const periodos_api = useSelector((state) => state.dashboard.periodos_api);
     const dispatch = useDispatch();
     const token = useSelector((state) => state.formulario.token);
@@ -44,41 +44,20 @@ const MediosMasRelevantes = ({datosLocales, paisFiltro}) => {
     const CANTIDAD_MEDIOS_A_MOSTRAR = 5
     console.log("datos adentro de medios", datosLocales)
 
-    let periodos = periodos_api.split(",");
-    let fecha_inicio_creacion = `${periodos[0]}-01`;
-    let [anio, mes] = periodos[periodos.length - 1].split("-");
-    let ultimo_dia = new Date(anio, mes, 0).getDate(); // mes siguiente (implícito) y día 0 => último día del mes anterior
-    let fecha_fin_creacion = `${anio}-${mes}-${ultimo_dia.toString().padStart(2, '0')}`;
-
-
     useEffect(() => {
-        axios.post(
-            "https://panel.serviciosd.com/app_obtener_medios",
-            {
-                cliente: nombreCliente,
-                periodos: periodos_api,
-                token: token,
-                f_pub_desde: fecha_inicio_creacion,
-                f_pub_hasta: fecha_fin_creacion,
-                pais_id: paisFiltro?.pais_id
-            },
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            }
-        )
-        .then((response) => {
-            if (response.data.status === "true") {
-                dispatch(setMediosMayorInteraccion(response.data.item));
-            } else {
-                console.error('Error en la respuesta de la API:', response.data.message);
+        obtenerTopMedios(token, cliente_id, {
+            periodos: periodos_api,
+            pais_id: paisFiltro?.pais_id
+        })
+        .then((medios) => {
+            if (medios) {
+                dispatch(setMediosMayorInteraccion(medios));
             }
         })
         .catch((error) => {
             console.error('Error al hacer la solicitud:', error);
         });
-    }, [nombreCliente, ultimaFechaCargadaBarplot, paisFiltro]);
+    }, [cliente_id, ultimaFechaCargadaBarplot, paisFiltro]);
 
     const meses = filtrarUltimosMeses(useSelector(state => state.interaccionesPorNota.mediosMayorInteraccion || []), FiltroActual, 'periodo');
     let todas_los_medios = [];
@@ -116,9 +95,9 @@ const MediosMasRelevantes = ({datosLocales, paisFiltro}) => {
                 </p>
             </div>
             {datosLocales
-            ? datosLocales.tresMedios?.map(renderMedio)
-            : listaTresMedios.map(renderMedio)
-}
+                ? datosLocales.tresMedios?.map(renderMedio)
+                : listaTresMedios.map(renderMedio)
+            }
         </div>
     );
 };

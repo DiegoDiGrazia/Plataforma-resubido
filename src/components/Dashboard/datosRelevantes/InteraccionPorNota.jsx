@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import "./InteraccionPorNota.css"
 import { useSelector, useDispatch } from 'react-redux';
 import { filtrarUltimosMeses } from '../../barplot/Barplot';
-import axios from 'axios';
+import { obtenerTopNotas } from '../../Apis/dashboardApi';
 import { setNotasMayorInteraccion } from '../../../redux/interaccionesPorNotaSlice';
 import { formatNumberMiles } from '../Dashboard.jsx';
 import { Link } from 'react-router-dom';
@@ -18,12 +18,6 @@ export function formatearFecha(fechaStr) {
     const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
     return `${fecha.getDate()} de ${meses[fecha.getMonth()]} de ${fecha.getFullYear()}`;
 }
-function reemplazarUrl(url) {
-    console.log("Original URL:", url); // Agrega este registro
-    const nuevaUrl = url.replace("https://www.noticiasd.com/wp-content/uploads/", "https://diego.serviciosd.com/uploads/");
-    console.log("Reemplazada URL:", nuevaUrl); // Agrega este registro
-    return nuevaUrl;
-}
 
 function seleccionarUrlImagenDeUnaNota(url) {
 
@@ -37,7 +31,7 @@ function seleccionarUrlImagenDeUnaNota(url) {
 const InteraccionPorNota = ({datosLocales, paisFiltro}) => {
     const dispatch = useDispatch();
     const periodos_api = useSelector(state => state.dashboard.periodos_api);
-    const nombreCliente = useSelector(state => state.formulario.cliente);
+    const cliente_id = useSelector(state => state.formulario.id_cliente);
     const token = useSelector(state => state.formulario.token);
     const FiltroActual = useSelector(state => state.dashboard.filtro);
     const ultimaFechaCargadaBarplot = useSelector(state => state.barplot.ultimaFechaCargadaBarplot);
@@ -48,22 +42,19 @@ const InteraccionPorNota = ({datosLocales, paisFiltro}) => {
         let [anio, mes] = periodos[periodos.length - 1].split("-");
         let ultimo_dia = new Date(anio, mes, 0).getDate(); // mes siguiente (implícito) y día 0 => último día del mes anterior
         let fecha_fin_creacion = `${anio}-${mes}-${ultimo_dia.toString().padStart(2, '0')}`;
-        axios.post("https://panel.serviciosd.com/app_obtener_notas", { cliente: nombreCliente, periodos: periodos_api, token: token, 
-                                                                        fecha_inicio_creacion: fecha_inicio_creacion,
-                                                                        fecha_fin_creacion: fecha_fin_creacion,
-                                                                        cat_pais: paisFiltro?.nombre
-                                                                     }, {
-            headers: { 'Content-Type': 'multipart/form-data' }
+        obtenerTopNotas(token, cliente_id, {
+            fecha_inicio_creacion,
+            fecha_fin_creacion,
+            periodos: periodos_api,
+            pais_id: paisFiltro?.pais_id
         })
-        .then(response => {
-            if (response.data.status === "true") {
-                dispatch(setNotasMayorInteraccion(response.data.item));
-            } else {
-                console.error('Error en la respuesta de la API:', response.data.message);
+        .then(notas => {
+            if (notas) {
+                dispatch(setNotasMayorInteraccion(notas));
             }
         })
         .catch(error => console.error('Error al hacer la solicitud:', error));
-    }, [nombreCliente, ultimaFechaCargadaBarplot, paisFiltro]);
+    }, [cliente_id, ultimaFechaCargadaBarplot, paisFiltro]);
 
 
 
@@ -78,11 +69,12 @@ const InteraccionPorNota = ({datosLocales, paisFiltro}) => {
     const agrupado = Object.values(
     todas_las_notas.reduce((acc, item) => {
         const id = item.id_noti;
+        const interacciones = Number(item.interacciones ?? item.total);
 
         if (!acc[id]) {
-        acc[id] = { ...item, total: Number(item.total) }; // convertimos a número
+        acc[id] = { ...item, total: interacciones };
         } else {
-        acc[id].total += Number(item.total); // sumamos como número
+        acc[id].total += interacciones;
         }
 
         return acc;
