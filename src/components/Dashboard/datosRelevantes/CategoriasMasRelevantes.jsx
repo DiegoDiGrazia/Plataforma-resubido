@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./InteraccionPorNota.css";
 import { useSelector, useDispatch } from 'react-redux';
-import axios from 'axios';
+import { obtenerTopCategorias } from '../../Apis/dashboardApi';
 import { setCategoriasMayorInteraccion } from '../../../redux/interaccionesPorNotaSlice';
 import { formatNumberMiles } from '../Dashboard';
 import { filtrarUltimosMeses } from '../../barplot/Barplot';
@@ -24,7 +24,7 @@ function reduceBykeyCategorias(lista_medios) {
 }
 
 const CategoriasMasRelevantes = ({datosLocales, paisFiltro}) => {
-    const nombreCliente = useSelector((state) => state.formulario.cliente);
+    const cliente_id = useSelector((state) => state.formulario.id_cliente);
     const periodos_api = useSelector((state) => state.dashboard.periodos_api);
     const dispatch = useDispatch();
     const token = useSelector((state) => state.formulario.token);
@@ -37,40 +37,29 @@ const CategoriasMasRelevantes = ({datosLocales, paisFiltro}) => {
         let [anio, mes] = periodos[periodos.length - 1].split("-");
         let ultimo_dia = new Date(anio, mes, 0).getDate(); // mes siguiente (implícito) y día 0 => último día del mes anterior
         let fecha_fin_creacion = `${anio}-${mes}-${ultimo_dia.toString().padStart(2, '0')}`;
-        axios.post(
-            "https://panel.serviciosd.com/app_obtener_categorias",
-            {
-                cliente: nombreCliente,
-                periodos: periodos_api,
-                token: token,
-                fecha_fin_creacion: fecha_fin_creacion,
-                fecha_inicio_creacion: fecha_inicio_creacion,
-                cat_pais: paisFiltro?.nombre
-            },
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            }
-        )
-        .then((response) => {
-            if (response.data.status === "true") {
-                dispatch(setCategoriasMayorInteraccion(response.data.item));
-            } else {
-                console.error('Error en la respuesta de la API:', response.data.message);
+        obtenerTopCategorias(token, cliente_id, {
+            fecha_inicio_creacion,
+            fecha_fin_creacion,
+            periodos: periodos_api,
+            pais_id: paisFiltro?.pais_id
+        })
+        .then((categorias) => {
+            if (categorias) {
+                dispatch(setCategoriasMayorInteraccion(categorias));
             }
         })
         .catch((error) => {
             console.error('Error al hacer la solicitud:', error);
         });
-    }, [nombreCliente, ultimaFechaCargadaBarplot, paisFiltro]);
+    }, [cliente_id, ultimaFechaCargadaBarplot, paisFiltro]);
 
     const categoriasPorMes = filtrarUltimosMeses(useSelector(state => state.interaccionesPorNota.categoriasMayorInteraccion || []), FiltroActual, 'periodo');
     const categoriasLocalesPorMes = filtrarUltimosMeses(datosLocales?.tresCategorias || [], FiltroActual, 'periodo');
     let todasLasCategorias = [];
     for (let mes of datosLocales ? categoriasLocalesPorMes : categoriasPorMes) {
-        if (Array.isArray(mes?.categoria)) {
-            todasLasCategorias.push(...mes.categoria.filter((cat) => cat?.categoria));
+        const categoriasDelMes = mes?.categorias ?? mes?.categoria;
+        if (Array.isArray(categoriasDelMes)) {
+            todasLasCategorias.push(...categoriasDelMes.filter((cat) => cat?.categoria));
         }
     }
     const categoriasSinRepetir = Object.values(reduceBykeyCategorias(todasLasCategorias));

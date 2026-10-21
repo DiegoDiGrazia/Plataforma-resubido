@@ -1,34 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import { Button } from 'react-bootstrap';
-import Sidebar from '../sidebar/Sidebar'; 
 import "./nota.css";
 import "./verNotaMobile.css";
 import "./VerNota.css";
-import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
-import { useLocation, useNavigate, useParams, Link } from 'react-router-dom';
-import BarplotNota, { generarPeriodosDesde } from '../barplot/BarplotNota';
-import PlataformaMasImpresionesNota from '../Dashboard/datosRelevantes/PlataformaMasImpresionesNota';
+import { useSelector } from 'react-redux';
+import { useLocation, useParams, Link } from 'react-router-dom';
+import BarplotNota from '../barplot/BarplotNota';
 import MediosMasRelevantesNotas from '../Dashboard/datosRelevantes/MediosMasRelevantesNotas';
 import { formatearFecha } from '../Dashboard/datosRelevantes/InteraccionPorNota';
 import { traerDatosDeNota } from '../../utils/buscarEnLocal';
-import { obtenerResumenDashboardNota } from '../administrador/gestores/apisUsuarios';
+import { obtenerNoticia, obtenerMetricasNoticia } from '../Apis/dashboardApi';
 import PlataformaMasImpresiones from '../Dashboard/datosRelevantes/PlataformaMasImpresiones';
 import IframeNota from './IframeNota';
 import IframeNotaEscalable from './IframeNotaEscalable';
 import SelectorConBuscador from '../nota/Editorial/SelectorConBuscador';
 import { obtenerDistribucionGeneracion } from '../Apis/apis';
 import { getTipoHistoria, getColorHistoria, getDesplazamientoHistoria, armarParamsColorCreativo } from '../../utils/bannerData';
-import { setDistribucionYtLink } from '../../redux/crearNotaSlice';
 
 export const RUTA = "http://localhost:4000/";
 
 const VerNota = () => {
     const [cargando, setCargando] = useState(true);
     const location = useLocation();
-    const { id, notaABM } = location.state || {};
+    const { id } = location.state || {};
     const [Nota, setNota] = useState({});
     const [FPUB, setFPUB] = useState("");
     const { id_ruta } = useParams();
@@ -38,22 +33,23 @@ const VerNota = () => {
     const [paisFiltro, setPaisFiltro] = useState(null);
     const paises = useSelector((state) => state.formulario.geo);
     
-    const id_para_api = id_ruta ? id_ruta : id;
-    const id_noti = id_para_api;
+    const id_nota = id_ruta ? id_ruta : id;
+    const id_noti = id_nota;
     const es_demo = id_ruta ? true : false;
     const TOKEN_ESTADO = useSelector((state) => state.formulario.token);
     const [TOKEN, setTOKEN] = useState(TOKEN_ESTADO);
     const [CLIENTE, setCLIENTE] = useState("");
+    const idClienteSesion = useSelector((state) => state.formulario.id_cliente);
+    const clienteIdNota = Nota.cliente_id || Nota.id_cliente || idClienteSesion;
     const [tipoHistoria, setTipoHistoria] = useState(1); // desde banner_data.historiaTipo; 1 si es null
     const [colorHistoria, setColorHistoria] = useState(null); // desde banner_data.color; solo aplica a tipo 1, 2 y 3
     const [desplazamientoHistoria, setDesplazamientoHistoria] = useState(null); // desde banner_data.desplazamiento
     const [distribucionYtLink, setDistribucionYtLink] = useState(null);
 
     useEffect(() => {
-        if (!id_noti || !TOKEN || !Nota.id_generaciones) return;
-        console.log()
+        if (!id_noti || !TOKEN || !Nota.id_generacion) return;
         let activo = true;
-        obtenerDistribucionGeneracion(TOKEN, Nota.id_generaciones).then((datos) => {
+        obtenerDistribucionGeneracion(TOKEN, Nota.id_generacion).then((datos) => {
             if (activo) {
                 setTipoHistoria(getTipoHistoria(datos?.[0]?.banner_data));
                 setColorHistoria(getColorHistoria(datos?.[0]?.banner_data));
@@ -65,17 +61,17 @@ const VerNota = () => {
     }, [id_noti, TOKEN, Nota]);
 
     useEffect(() => {
-        if (!id_para_api) return;
-        traerDatosDeNota(id_para_api).then((data) => {
+        if (!id_nota) return;
+        traerDatosDeNota(id_nota).then((data) => {
             setdataLocalNota(data);
         });
-    }, [id_para_api]);
+    }, [id_nota]);
 
     useEffect(() => {
         setLoadingUsuarios(true);
-        obtenerResumenDashboardNota(TOKEN, id_noti, paisFiltro?.pais_id)
+        obtenerMetricasNoticia(TOKEN, id_noti, paisFiltro?.pais_id)
             .then((res) => {
-                setResumenNota(res);
+                setResumenNota(res || []);
             })
             .catch((err) => {
                 console.error(err);
@@ -86,20 +82,13 @@ const VerNota = () => {
     }, [TOKEN, id_noti, paisFiltro]);
     
     useEffect(() => {
-        if (!id_para_api) return;
-        axios.post("https://panel.serviciosd.com/app_obtener_noticia", {
-            token: TOKEN,
-            id_noti: id_para_api
-        }, {
-            headers: { 'Content-Type': 'multipart/form-data' }
-        })
-        .then((response) => {
-            if (response.data.status === "true") {
-                setNota(response.data.item[0]);
-                setFPUB(response.data.item[0].f_pub || "");
-                setCLIENTE(response.data.item[0].cliente);
-            } else {
-                console.error('Error en la API:', response.data.message);
+        if (!id_nota) return;
+        obtenerNoticia(TOKEN, id_nota)
+        .then((noticia) => {
+            if (noticia) {
+                setNota(noticia);
+                setFPUB(noticia.f_pub || "");
+                setCLIENTE(noticia.cliente);
             }
         })
         .catch((error) => {
@@ -108,7 +97,7 @@ const VerNota = () => {
         .finally(() => {
             setCargando(false); 
         });
-    }, [id_para_api, es_demo]);
+    }, [id_nota, es_demo]);
 
     if (!Nota) {
         return <div>Cargando...</div>;
@@ -162,7 +151,7 @@ const VerNota = () => {
                                 </div>
                                 <div className='row order-last flex-grow-1'>
                                     <div>
-                                        <span className='vn_categoria'>{Nota.categorias}</span>
+                                        <span className='vn_categoria'>{Array.isArray(Nota.categorias) ? Nota.categorias.join(',') : Nota.categorias}</span>
                                     </div>
                                 </div>
                             </div>
@@ -202,7 +191,7 @@ const VerNota = () => {
                                 <PlataformaMasImpresiones resumenCliente={resumenNota} loading={loadingUsuarios} aplicarFiltroMeses={false} />
                             </div>
                             <div className='col-lg-12 col-xl col-6 m-2 back-white cuadro-impresion'>
-                                <MediosMasRelevantesNotas id_noti={id_noti} TOKEN={TOKEN} cliente={CLIENTE} fpub={FPUB} dataLocalNota={dataLocalNota?.mediosNoticia} paisFiltro={paisFiltro} />
+                                <MediosMasRelevantesNotas id_noti={id_noti} TOKEN={TOKEN} cliente_id={clienteIdNota} dataLocalNota={dataLocalNota?.mediosNoticia} paisFiltro={paisFiltro} />
                             </div>
                         </div>
                     </div>
@@ -249,7 +238,7 @@ const VerNota = () => {
                             <h2 className='tituloCreativo'>Creativos Historias</h2>
                             <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
                                 <IframeNotaEscalable
-                                url={`https://reportes-creativos.noticiasd.com/creativo/${Nota.id_generaciones}?tipo=${tipoHistoria}&token=${TOKEN}${armarParamsColorCreativo(colorHistoria, desplazamientoHistoria)}`}
+                                url={`https://reportes-creativos.noticiasd.com/creativo/${Nota.id_generacion}?tipo=${tipoHistoria}&token=${TOKEN}${armarParamsColorCreativo(colorHistoria, desplazamientoHistoria)}`}
                                 width={360}
                                 height={640}
                                 baseWidth={720}

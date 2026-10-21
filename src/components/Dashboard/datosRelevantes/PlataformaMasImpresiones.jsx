@@ -140,17 +140,15 @@ const PlataformaMasImpresiones = ({datosLocales, resumenCliente= null, loading =
             <div className="accordion">
                 {plataformasConDatos.map((plataforma, index) => (
                     <div className="accordion-item" key={index}>
-                        <div className="accordion-button pt-0 pb-0">
-                            <div className='row pt-0 mb-2'>
-                                <div className='col-1'>
+                        <div className="pt-0 pb-0 w-100">
+                            <div className='d-flex justify-content-between px-3 pt-0 mb-4'>
+                                <div className='d-flex align-items-center justify-content-center gap-2'>
                                     <img src={plataforma.logo} alt={`Icono ${plataforma.nombre}`} className='imagenWidwet' />
-                                </div>
-                                <div className='col pt-3 ps-0'>
-                                    <div className='row p-0 nombre_plataforma'>
+                                    <strong className='mt-1' style={{ color: '#052C65' }}>
                                         {plataforma.nombre}
-                                    </div>
+                                    </strong>
                                 </div>
-                                <div className='col totales_widget'>
+                                <div className='totales_widget'>
                                     <strong>{formatNumberMiles(plataforma.impresiones)}</strong> imps
                                 </div>
                             </div>

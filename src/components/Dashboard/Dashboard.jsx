@@ -25,7 +25,7 @@ import { setFechas } from '../../redux/barplotSlice.js';
 import { formatDate } from '../barplot/Barplot.jsx';
 import { setClienteNota } from '../../redux/crearNotaSlice.js';
 import { traerDatosLocalmente } from '../../utils/buscarEnLocal.js';
-import { obtenerResumenDashboardCliente } from '../administrador/gestores/apisUsuarios.jsx';
+import { obtenerMetricasCliente } from '../Apis/dashboardApi';
 import { obtenerClientes } from '../Apis/apis';
 import SelectorConBuscador from '../nota/Editorial/SelectorConBuscador.jsx';
 
@@ -97,9 +97,9 @@ const Dashboard = () => {
     useEffect(() => {
     setLoadingUsuarios(true);
 
-    obtenerResumenDashboardCliente(token, cliente_id, paisFiltro?.pais_id)
+    obtenerMetricasCliente(token, cliente_id, paisFiltro?.pais_id)
         .then((res) => {
-            setResumenCliente(res);
+            setResumenCliente(res || []);
         })
         .catch((err) => {
             console.error(err);
