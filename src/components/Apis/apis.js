@@ -84,6 +84,12 @@ export const editarDistribucionGeneracion = (token, generacion_id, data) =>
 
 
 
+export const eliminarDistribucionGeneracion = (token, id) =>
+  fetch(`${BASE_URL}/distribucion-generaciones/${id}`, {
+    method: "DELETE",
+    headers: headers(token),
+  });
+
 export const obtenerDistribucionGeneracion = async (token, generacion_id) => {
   const response = await fetch(`${BASE_URL}/distribucion-generaciones/${generacion_id}`, {
     headers: headers(token),
@@ -109,6 +115,13 @@ export const obtenerGeneracion = async (token, id_generacion) => {
   if (!response.ok) return null;
   return response.json();
 };
+
+export const editarGeneracion = (token, id_generacion, data) =>
+  fetch(`${BASE_URL}/generaciones/${id_generacion}`, {
+    method: "PATCH",
+    headers: jsonHeaders(token),
+    body: JSON.stringify(data),
+  }).then((r) => r.json());
 
 export const obtenerCategorias = (token, dimension) =>
   fetch(`${BASE_URL}/generaciones/categorias?dimension=${dimension}`, {

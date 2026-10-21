@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Modal, Spinner } from 'react-bootstrap';
-import { editarDistribucionGeneracion, obtenerDistribucionGeneracion } from '../../Apis/apis';
+import { editarDistribucionGeneracion, obtenerDistribucionGeneracion, editarGeneracion } from '../../Apis/apis';
 import DistribucionGeneracionFields from './DistribucionGeneracionFields';
 import { armarPayloadDistribucion, extraerDiferidaDesdeUltimaActualizacion } from '../../../utils/distribucionGeneracion';
 
@@ -60,7 +60,10 @@ const BotonEditarDistribucionGeneracion = ({ id_generacion, token }) => {
         setGuardando(true);
         setError('');
         try {
-            await editarDistribucionGeneracion(token, id_generacion, armarPayloadDistribucion(valores));
+            await Promise.all([
+                editarDistribucionGeneracion(token, id_generacion, armarPayloadDistribucion(valores)),
+                editarGeneracion(token, id_generacion, { con_distribucion: 1 }),
+            ]);
             setShowModal(false);
         } catch {
             setError('No se pudieron guardar los cambios.');

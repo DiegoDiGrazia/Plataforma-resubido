@@ -5,7 +5,7 @@ import "../../miPerfil/miPerfil.css";
 import { useSelector } from 'react-redux';
 import ModalMensaje from '../gestores/ModalMensaje';
 import {obtenerPlanesMarketing, obtenerVideosYoutube, obtenerGeo, obtenerContratos } from './apisUsuarios';
-import { obtenerDistribucionPorFechaVencimiento, obtenerGeneracion, editarDistribucionGeneracion, obtenerClientes } from '../../Apis/apis';
+import { obtenerDistribucionPorFechaVencimiento, obtenerGeneracion, editarDistribucionGeneracion, eliminarDistribucionGeneracion, obtenerDistribucionGeneracion, obtenerClientes } from '../../Apis/apis';
 import { getTipoHistoria, getColorHistoria, getDesplazamientoHistoria, armarParamsColorCreativo } from '../../../utils/bannerData';
 import CopiarTexto from './CopiarTexto';
 import IconosDistribucionConMonto, { PLATAFORMAS } from './IconosDistribucionConMonto';
@@ -242,6 +242,9 @@ const DistribucionAdmin = () => {
   const itemsPerPage = 100;
   const TOKEN = useSelector((state) => state.formulario.token);
   const idClienteLogueado = useSelector((state) => state.formulario.usuario.id_cliente);
+  const puedeBorrarDistribucion = useSelector((state) =>
+    state.formulario.usuario.id == "300" || state.formulario.usuario.perfil == "1"
+  );
   const [loading, setLoading] = useState(false); 
   const [geo, setGeo] = useState("");
   const [contratos, setContratos] = useState([]);
@@ -386,6 +389,33 @@ const DistribucionAdmin = () => {
       setShowModal(false);
     });
 };
+
+  const borrarDistribucion = async (nota) => {
+    if (!window.confirm('¿Seguro que querés borrar la distribución de esta nota?')) return;
+    // El DELETE espera el id de la fila de distribucion_generaciones, no el id_generacion
+    const filas = await obtenerDistribucionGeneracion(TOKEN, nota.id_generacion).catch(() => null);
+    const fila = filas?.find(f => f.id == nota.id) ?? (filas?.length === 1 ? filas[0] : null);
+    if (!fila) {
+      alert('No se pudo identificar la distribución a borrar.');
+      return;
+    }
+    const response = await eliminarDistribucionGeneracion(TOKEN, fila.id).catch(() => null);
+    if (!response?.ok) {
+      alert('No se pudo borrar la distribución.');
+      return;
+    }
+    setNotasGeneracionesAgrupadas(prev => {
+      const datosCliente = prev[nota.cliente];
+      if (!datosCliente) return prev;
+      return {
+        ...prev,
+        [nota.cliente]: {
+          ...datosCliente,
+          notas: datosCliente.notas.filter(n => !(n.id === nota.id && !n.esNotaDeVideo)),
+        },
+      };
+    });
+  };
 
   useEffect(() => {
     obtenerGeo().then(setGeo);
@@ -648,6 +678,11 @@ const goToPage = (newPage) => {
                                 <div className="row p-1">
                                   <span><strong>Enviado a distribuir: </strong>{formatearFechaHoraLegible(nota.fecha_creacion)}</span>
                                 </div>
+                                {puedeBorrarDistribucion && (
+                                  <div className="row p-1">
+                                    <button className="btn btn-outline-danger w-100" onClick={() => borrarDistribucion(nota)}>Borrar distribución</button>
+                                  </div>
+                                )}
                               </div>
                               )}
                               {nota.esNotaDeVideo && (
