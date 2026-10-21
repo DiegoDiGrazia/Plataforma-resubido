@@ -3,9 +3,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import '@/components/miPerfil/miPerfil.css';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
-import ModalMensaje from '@/components/administrador/gestores/ModalMensaje';
-import { obtenerComisionistas } from '@/components/administrador/gestores/apisUsuarios';
+import { ToastContainer } from 'react-toastify';
+import { toastExito, toastError } from '@/utils/toastify/toastify.jsx';
+import { obtenerComisionistas, crearComisionista, actualizarComisionista, eliminarComisionista } from '@/components/Apis/comisionistasApi';
 import '@/components/administrador/gestores/AbmsMobile.css';
 
 const comisionistaVacio = {
@@ -17,11 +17,9 @@ const comisionistaVacio = {
   cbu: ""
 };
 
-const AbmPerfiles
+const AbmComisionistas
  = () => {
   const [planes, setPlanes] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [mensajeModalExito, setMensajeModalExito] = useState("Los cambios se realizaron correctamente.");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [selectedComisionista, setselectedComisionista] = useState(null);
@@ -33,9 +31,25 @@ const AbmPerfiles
   const permisoAlta = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Comisionistas: Alta") || false);
   const permisoEdicion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Comisionistas: Edicion") || false);
 
+  const cargarComisionistas = () => {
+    obtenerComisionistas(TOKEN).then((data) => setComisionistas(Array.isArray(data) ? data : []));
+  };
+
   useEffect(() => {
-    obtenerComisionistas(TOKEN).then(setComisionistas);
+    cargarComisionistas();
 }, [TOKEN]);
+
+const handleEliminarComisionista = (id) => {
+  eliminarComisionista(TOKEN, id)
+    .then(() => {
+      toastExito('¡El agente comercial se eliminó exitosamente!');
+      cargarComisionistas();
+    })
+    .catch((err) => {
+      console.error("Error al eliminar el agente comercial:", err);
+      toastError("Error al eliminar el agente comercial");
+    });
+};
 
   const comisionistasFiltrados = useMemo(() => {
     return comisionistas.filter((item) => 
@@ -68,26 +82,34 @@ const AbmPerfiles
 };
 
 const handleSave = () => {
-  axios
-    .post(
-      "https://panel.serviciosd.com/app_comisionista_edit",
-      {
-        token: TOKEN,
-        ...formData,
-      },
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      }
-    )
+  const payload = {
+    nombre: formData.nombre,
+    apellido: formData.apellido,
+    mail: formData.mail,
+    whatsapp: formData.whatsapp,
+    cbu: formData.cbu,
+  };
+
+  const esNuevo = formData.id == '0';
+  const guardar = esNuevo
+    ? crearComisionista(TOKEN, payload)
+    : actualizarComisionista(TOKEN, formData.id, payload);
+
+  guardar
     .then(() => {
-      setMensajeModalExito('Los cambios se realizaron correctamente.');
-      setShowModal(true);
-      setTimeout(() => {
-        window.location.reload(); 
-      }, 1500);
+      toastExito('¡Los cambios se realizaron exitosamente!');
+
+      const modalElement = document.getElementById('editModal');
+      const modalInstance = window.bootstrap.Modal.getInstance(modalElement);
+      if (modalInstance) {
+        modalInstance.hide();
+      }
+
+      cargarComisionistas();
     })
     .catch((err) => {
-      console.log("Error al guardar cambios:", err);
+      console.error("Error al guardar cambios:", err);
+      toastError("Error al guardar cambios");
     });
   };
 
@@ -263,6 +285,15 @@ const handleSave = () => {
                 type="button"
                 className="btn btn-secondary"
                 data-bs-dismiss="modal"
+                onClick={() => handleEliminarComisionista(formData.id)}
+                disabled={formData.id == '0'}
+              >
+                Eliminar
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                data-bs-dismiss="modal"
               >
                 Cerrar
               </button>
@@ -278,14 +309,10 @@ const handleSave = () => {
           </div>
         </div>
       </div>
-      <ModalMensaje
-        show={showModal}
-        mensaje={mensajeModalExito}
-        onClose={() => setShowModal(false)}  // 👈 cierra solo con la cruz
-      />
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
 
     </div>
   );
 };
 
-export default AbmPerfiles;
+export default AbmComisionistas;

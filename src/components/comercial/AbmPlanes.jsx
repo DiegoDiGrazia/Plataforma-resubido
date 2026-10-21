@@ -3,9 +3,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "../miPerfil/miPerfil.css";
 import { useSelector } from 'react-redux';
-import axios from 'axios';
-import ModalMensaje from '../administrador/gestores/ModalMensaje';
-import { obtenerPlanesMarketing } from '../administrador/gestores/apisUsuarios'; // Importa la función para obtener usuarios
+import { ToastContainer } from 'react-toastify';
+import { toastExito, toastError } from '../../utils/toastify/toastify.jsx';
+import { obtenerPlanes, crearPlan, actualizarPlan, eliminarPlan } from '../Apis/planesApi';
 import '../administrador/gestores/AbmsMobile.css';
 import DropdawnSiNo from './DropdawnSiNo'
 
@@ -24,45 +24,34 @@ const perfilVacio = {
 const AbmPlanes
  = () => {
   const [planes, setPlanes] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [mensajeModalExito, setMensajeModalExito] = useState("Los cambios se realizaron correctamente.");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [selectedPerfil, setselectedPerfil] = useState(null);
   const [formData, setFormData] = useState({});
-  const itemsPerPage = 10;  
-  const desdeMarketing = new Date().toISOString().split('T')[0];
+  const itemsPerPage = 10;
   const TOKEN = useSelector((state) => state.formulario.token);
   
   const permisoAlta = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Planes: Alta") || false);
   const permisoEdicion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Planes: Edicion") || false);
 
+  const cargarPlanes = () => {
+    obtenerPlanes(TOKEN).then((data) => setPlanes(Array.isArray(data) ? data : []));
+  };
+
   useEffect(() => {
-    obtenerPlanesMarketing(TOKEN, desdeMarketing, desdeMarketing).then(setPlanes);
+    cargarPlanes();
 }, [TOKEN]);
 
 
-const eliminarPlan = (id) => {
-  axios
-    .post(
-      "https://panel.serviciosd.com/app_plan_eliminar",
-      {
-        token: TOKEN,
-        id: id,
-      },
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      }
-    )
+const handleEliminarPlan = (id) => {
+  eliminarPlan(TOKEN, id)
       .then(() => {
-        setMensajeModalExito('El usuario se elimino correctamente');
-        setShowModal(true); // mostrar modal
-        setTimeout(() => {
-          window.location.reload(); // recargar luego de 3s
-        }, 1500);
+        toastExito('¡El plan se eliminó exitosamente!');
+        cargarPlanes();
       })
     .catch((err) => {
-      console.log("Error al guardar cambios:", err);
+      console.error("Error al eliminar el plan:", err);
+      toastError("Error al eliminar el plan");
     });
 };
 
@@ -107,34 +96,36 @@ const handleEditClick = (perfil) => {
 };
 
 const handleSave = () => {
-  const dataToSend = {
-    ...formData,
+  const payload = {
+    nombre: formData.nombre,
+    notas_x_mes: Number(formData.notas_x_mes) || 0,
+    alcance_x_nota: Number(formData.alcance_x_nota) || 0,
     con_youtube: formData.con_youtube === "1" ? "SI" : "NO",
     con_meta: formData.con_meta === "1" ? "SI" : "NO",
     con_dv360: formData.con_dv360 === "1" ? "SI" : "NO",
     con_search: formData.con_search === "1" ? "SI" : "NO",
   };
 
-  axios
-    .post(
-      "https://panel.serviciosd.com/app_plan_edit",
-      {
-        token: TOKEN,
-        ...dataToSend,
-      },
-      {
-        headers: { "Content-Type": "multipart/form-data" },
+  const esNuevo = formData.id == '0';
+  const guardar = esNuevo
+    ? crearPlan(TOKEN, payload)
+    : actualizarPlan(TOKEN, formData.id, payload);
+
+  guardar
+    .then(() => {
+      toastExito('¡El plan se guardó exitosamente!');
+
+      const modalElement = document.getElementById('editModal');
+      const modalInstance = window.bootstrap.Modal.getInstance(modalElement);
+      if (modalInstance) {
+        modalInstance.hide();
       }
-    )
-        .then(() => {
-      setMensajeModalExito('Los cambios se realizaron correctamente.');
-      setShowModal(true);
-      setTimeout(() => {
-        window.location.reload(); 
-      }, 1500);
+
+      cargarPlanes();
     })
     .catch((err) => {
-      console.log("Error al guardar cambios:", err);
+      console.error("Error al guardar cambios:", err);
+      toastError("Error al guardar cambios");
     });
 };
 
@@ -321,7 +312,7 @@ const handleSave = () => {
                 type="button"
                 className="btn btn-secondary"
                 data-bs-dismiss="modal"
-                onClick={() => eliminarPlan(formData.id)}
+                onClick={() => handleEliminarPlan(formData.id)}
                 disabled={formData.id == '0'}
 
               >
@@ -346,11 +337,7 @@ const handleSave = () => {
           </div>
         </div>
       </div>
-      <ModalMensaje
-        show={showModal}
-        mensaje={mensajeModalExito}
-        onClose={() => setShowModal(false)}  // 👈 cierra solo con la cruz
-      />
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
 
     </div>
   );
