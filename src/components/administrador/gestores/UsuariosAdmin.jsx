@@ -43,7 +43,7 @@ const UsuariosAdmin = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [clientes, setClientes] = useState([]);
   const [perfiles, setPerfiles] = useState([]);
-  const [geo, setGeo] = useState([]);
+  const [geo, setGeo] = useState({ paises: [] });
   const [llevaCliente, setLlevaCliente] = useState(false);
   const [limitadoAJurisdiccion, setLimitadoAJurisdiccion] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -62,7 +62,9 @@ const UsuariosAdmin = () => {
     obtenerUsuarios(TOKEN).then(setUsuarios);
     obtenerClientes(TOKEN).then(setClientes);
     obtenerPerfiles(TOKEN).then(setPerfiles);
-    obtenerGeo().then(setGeo);
+    obtenerGeo()
+      .then((data) => setGeo(data?.paises ? data : { paises: [] }))
+      .catch(() => setGeo({ paises: [] }));
 }, [TOKEN]);
 
   // Filtrar por búsqueda
@@ -99,7 +101,7 @@ const UsuariosAdmin = () => {
       setLlevaCliente(true)
     }
     if (user?.id_pais) {
-      const paisNombre = geo.paises.find(g => g.pais_id === user.id_pais)?.nombre || '';
+      const paisNombre = (geo.paises || []).find(g => g.pais_id === user.id_pais)?.nombre || '';
       setFormData(prev => ({
         ...prev,
         id_pais: user.id_pais,
@@ -521,7 +523,7 @@ const handleInputKeyDown = (e) => {
                         </button>
 
                       <ul className="dropdown-menu w-100">
-                        {geo.paises.map((pais) => (
+                        {(geo.paises || []).map((pais) => (
                           <li key={pais.pais_id}>
                             <button
                               type="button"
