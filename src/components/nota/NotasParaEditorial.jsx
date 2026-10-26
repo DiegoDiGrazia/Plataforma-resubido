@@ -502,7 +502,7 @@ const NotasParaEditorial = () => {
                                             </button>
                                         } 
 
-                                        { nota.con_distribucion === "1" &&
+                                        { nota.con_distribucion === 1 &&
                                         <Link
                                             title="Grafico de Interacciones"
                                             className="link-sin-estilos"
