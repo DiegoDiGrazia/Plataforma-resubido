@@ -44,6 +44,7 @@ const UsuariosAdmin = () => {
   const [clientes, setClientes] = useState([]);
   const [perfiles, setPerfiles] = useState([]);
   const [geo, setGeo] = useState({ paises: [] });
+  const paisesLogin = useSelector((state) => state.formulario.geo);
   const [llevaCliente, setLlevaCliente] = useState(false);
   const [limitadoAJurisdiccion, setLimitadoAJurisdiccion] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -66,6 +67,12 @@ const UsuariosAdmin = () => {
       .then((data) => setGeo(data?.paises ? data : { paises: [] }))
       .catch(() => setGeo({ paises: [] }));
 }, [TOKEN]);
+
+  // Si el pedido de geo no trajo paises, se usan los que se cargaron en el login
+  const paises = geo.paises?.length ? geo.paises : (Array.isArray(paisesLogin) ? paisesLogin : []);
+
+  // Nombre del pais seleccionado; se compara como texto porque pais_id e id_pais pueden venir como numero o string
+  const paisSeleccionado = paises.find((p) => String(p.pais_id) === String(formData.id_pais))?.nombre;
 
   // Filtrar por búsqueda
   const filteredUsuarios = useMemo(() => {
@@ -96,19 +103,11 @@ const UsuariosAdmin = () => {
   const handleEditClick = (user) => {
     setSelectedUser(user);
     setFormData({ ...user,reporte_acceso: '0', tipo: user?.tipo_usuario || `1` } ); // copia datos
-    console.log(geo)
     if(user?.cliente){
       setLlevaCliente(true)
     }
     if (user?.id_pais) {
-      const paisNombre = (geo.paises || []).find(g => g.pais_id === user.id_pais)?.nombre || '';
-      setFormData(prev => ({
-        ...prev,
-        id_pais: user.id_pais,
-        pais: paisNombre,
-      }));
       setLimitadoAJurisdiccion(true);
-      console.log(paisNombre, "pais");
     }
     const modal = new window.bootstrap.Modal(document.getElementById('editModal'));
     modal.show();
@@ -118,7 +117,7 @@ const handleSave = () => {
     const payload = {
       nombre: formData.nombre || "",
       email: formData.email || "",
-      tipo_usuario: formData.tipo,
+      tipo_usuario: String(formData.tipo),
       cliente: formData.cliente || "",
       id_pais: Number(formData.id_pais) || 0,
       reporte_whatsapp: Number(formData.reporte_whatsapp) || 0,
@@ -517,13 +516,11 @@ const handleInputKeyDown = (e) => {
                         data-bs-toggle="dropdown"
                         aria-expanded="false"
                       >
-                        {formData.pais
-                          ? formData.pais
-                          : "Seleccionar pais..."}
+                        {paisSeleccionado || "Seleccionar pais..."}
                         </button>
 
                       <ul className="dropdown-menu w-100">
-                        {(geo.paises || []).map((pais) => (
+                        {paises.map((pais) => (
                           <li key={pais.pais_id}>
                             <button
                               type="button"
@@ -532,7 +529,6 @@ const handleInputKeyDown = (e) => {
                                 setFormData({
                                   ...formData,
                                   id_pais: pais.pais_id,
-                                  pais: pais.nombre,
                                 });
                               }}
                             >
