@@ -49,7 +49,7 @@ const MediosMasRelevantesNotas = ({ id_noti, TOKEN, cliente_id, dataLocalNota, p
     const renderMedio = (medio, index) => (
         <div key={index} className={`row medioRowNota`}>
             <div className='col-auto mr-2'>
-                <img src={`https://panel.serviciosd.com${medio.imagen}`} alt="Icono" className='imagenWidwetInteracciones' />
+                <img src={`https://www.google.com/s2/favicons?domain=${medio.sitio}&sz=64`} alt="Icono" className='imagenWidwetInteracciones' />
             </div>
             <div className='col pt-1'>
                 <div className='row p-0 nombre_plataforma'>{formatearTextoNombre(medio.sitio)}</div>
