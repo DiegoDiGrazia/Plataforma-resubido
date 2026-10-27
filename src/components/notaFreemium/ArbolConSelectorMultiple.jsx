@@ -33,8 +33,8 @@ const ArbolConSelectorMultiple = ({
     if (!pais) return;
 
     const ProvinciasDelPais = geo
-        .find((p) => p.pais_id === (pais?.pais_id || '1'))
-        ?.provincias.map((prov) => ({
+        .find((p) => String(p.pais_id) === String(pais?.pais_id || 1))
+        ?.provincias?.map((prov) => ({
         nombre: prov.nombre,
         provincia_id: prov.provincia_id
         })) || [];

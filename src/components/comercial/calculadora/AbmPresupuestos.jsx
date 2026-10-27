@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { obtenerPresupuestosPorUser, eliminarPresupuesto } from '../../Apis/presupuestosApi'; 
-import { obtenerGeo } from '../../administrador/gestores/apisUsuarios'; 
+import { obtenerGeo } from '../../Apis/geosApi';
 import { obtenerClientes } from '../../Apis/apis'; 
 import { formatearFecha, formatearMoneda, formatearUsd } from '../../../utils/funcionesVarias';
 import SelectorCliente from '../../Dashboard/SelectorCliente'; 
@@ -12,7 +12,7 @@ import './AbmPresupuestos.css';
 
 const AbmPresupuestos = ({ onEditar }) => {
     const [presupuestos, setPresupuestos] = useState([]);
-    const [geoList, setGeoList] = useState({ paises: [] });
+    const [paises, setPaises] = useState([]);
     const [clientesList, setClientesList] = useState([]);
     const [cargando, setCargando] = useState(true);
     const [presupuestoAbierto, setPresupuestoAbierto] = useState(null); 
@@ -34,12 +34,12 @@ const AbmPresupuestos = ({ onEditar }) => {
           try {
             const [respuestaTodos, dataGeo, dataClientes] = await Promise.all([
               obtenerPresupuestosPorUser(TOKEN, null), 
-              obtenerGeo(),
+              obtenerGeo().catch(() => null),
               obtenerClientes(TOKEN)
             ]);
 
             setPresupuestos(respuestaTodos || []);
-            setGeoList(dataGeo || { paises: [] });
+            setPaises(Array.isArray(dataGeo) ? dataGeo : []);
             setClientesList(dataClientes || []);
           } catch (error) {
             console.error("Error al obtener los datos", error);
@@ -77,10 +77,10 @@ const AbmPresupuestos = ({ onEditar }) => {
   };
 
   const obtenerNombresGeo = (pais_id, prov_id, mun_id) => {
-    if (!geoList.paises || !pais_id) return 'Alcance General';
+    if (!pais_id) return 'Alcance General';
     
     let nombres = [];
-    const pais = geoList.paises.find(p => String(p.pais_id) === String(pais_id));
+    const pais = paises.find(p => String(p.pais_id) === String(pais_id));
     
     if (pais) {
       nombres.push(pais.nombre);

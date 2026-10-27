@@ -48,6 +48,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/services/, ''),
       },
+      '/feed': {
+        target: 'https://feed.noticiasd.com/',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/feed/, ''),
+      },
 
     },
   },

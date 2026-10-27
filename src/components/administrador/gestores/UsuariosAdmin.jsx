@@ -4,7 +4,8 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "../../miPerfil/miPerfil.css";
 import { useSelector } from 'react-redux';
 import ModalMensaje from '../gestores/ModalMensaje';
-import { obtenerClientes, obtenerGeo } from './apisUsuarios'; // Importa la función para obtener usuarios
+import { obtenerClientes } from './apisUsuarios'; // Importa la función para obtener usuarios
+import { obtenerPaises } from '../../Apis/geosApi.js';
 import { obtenerUsuarios, crearUsuario, editarUsuario, eliminarUsuarioPorId, cambiarClaveUsuario } from '../../Apis/usuariosApi.js';
 import { obtenerPerfiles } from '../../Apis/perfilesApi.js';
 import { ToastContainer } from 'react-toastify';
@@ -43,8 +44,7 @@ const UsuariosAdmin = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [clientes, setClientes] = useState([]);
   const [perfiles, setPerfiles] = useState([]);
-  const [geo, setGeo] = useState({ paises: [] });
-  const paisesLogin = useSelector((state) => state.formulario.geo);
+  const [paises, setPaises] = useState([]);
   const [llevaCliente, setLlevaCliente] = useState(false);
   const [limitadoAJurisdiccion, setLimitadoAJurisdiccion] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -63,15 +63,11 @@ const UsuariosAdmin = () => {
     obtenerUsuarios(TOKEN).then(setUsuarios);
     obtenerClientes(TOKEN).then(setClientes);
     obtenerPerfiles(TOKEN).then(setPerfiles);
-    obtenerGeo()
-      .then((data) => setGeo(data?.paises ? data : { paises: [] }))
-      .catch(() => setGeo({ paises: [] }));
+    obtenerPaises()
+      .then((data) => setPaises(Array.isArray(data) ? data : []))
+      .catch((err) => console.error("Error al obtener paises:", err));
 }, [TOKEN]);
 
-  // Si el pedido de geo no trajo paises, se usan los que se cargaron en el login
-  const paises = geo.paises?.length ? geo.paises : (Array.isArray(paisesLogin) ? paisesLogin : []);
-
-  // Nombre del pais seleccionado; se compara como texto porque pais_id e id_pais pueden venir como numero o string
   const paisSeleccionado = paises.find((p) => String(p.pais_id) === String(formData.id_pais))?.nombre;
 
   // Filtrar por búsqueda

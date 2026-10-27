@@ -4,7 +4,8 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "../../miPerfil/miPerfil.css";
 import { useSelector } from 'react-redux';
 import ModalMensaje from '../gestores/ModalMensaje';
-import {obtenerPlanesMarketing, obtenerVideosYoutube, obtenerGeo, obtenerContratos } from './apisUsuarios';
+import {obtenerPlanesMarketing, obtenerVideosYoutube, obtenerContratos } from './apisUsuarios';
+import { obtenerGeo } from '../../Apis/geosApi';
 import { obtenerDistribucionPorFechaVencimiento, obtenerGeneracion, editarDistribucionGeneracion, eliminarDistribucionGeneracion, obtenerDistribucionGeneracion, obtenerClientes } from '../../Apis/apis';
 import { getTipoHistoria, getColorHistoria, getDesplazamientoHistoria, armarParamsColorCreativo } from '../../../utils/bannerData';
 import CopiarTexto from './CopiarTexto';
@@ -246,7 +247,7 @@ const DistribucionAdmin = () => {
     state.formulario.usuario.id == "300" || state.formulario.usuario.perfil == "1"
   );
   const [loading, setLoading] = useState(false); 
-  const [geo, setGeo] = useState("");
+  const [paises, setPaises] = useState([]);
   const [contratos, setContratos] = useState([]);
   const [comentarios, setComentarios] = useState({});
   const [termIdsPorGeneracion, setTermIdsPorGeneracion] = useState({});
@@ -418,7 +419,9 @@ const DistribucionAdmin = () => {
   };
 
   useEffect(() => {
-    obtenerGeo().then(setGeo);
+    obtenerGeo()
+      .then((data) => setPaises(Array.isArray(data) ? data : []))
+      .catch((err) => console.error('Error al obtener geo:', err));
     obtenerContratos(TOKEN).then(setContratos);
     obtenerClientes(TOKEN).then(setClientes);
     const [añoHasta, mesHasta] = fechaHasta.split("-");
@@ -529,6 +532,13 @@ const filteredClientes = useMemo(() => {
 
 const totalPages = Math.ceil(filteredClientes.length / itemsPerPage);
 
+// Listas planas del arbol geo para buscar la jurisdiccion de cada nota
+const geo = useMemo(() => {
+  const provincias = paises.flatMap((p) => p.provincias || []);
+  const municipios = provincias.flatMap((pr) => pr.municipios || []);
+  return { paises, provincias, municipios };
+}, [paises]);
+
 const pagedClientes = useMemo(() => {
   const start = (page - 1) * itemsPerPage;
   return filteredClientes.slice(start, start + itemsPerPage);
@@ -565,7 +575,7 @@ const goToPage = (newPage) => {
       <div className='row miPerfilContainer soporteContainer mt-4 p-0 mb-3'>
         <div className='col buscadorNotas d-flex align-items-center gap-3 justify-content-between'> 
           {/* <button className="mb-2 btn btn-primary" onClick={() => handleEditClick(usuarioVacio)}>Crear nuevo usuario</button> */}
-          <span style={{ fontSize: "14px"}}>Vencimiendo desde:
+          <span style={{ fontSize: "14px"}}>Vencimiento desde:
           <input 
               type="month" 
               value={fechaDesde} 

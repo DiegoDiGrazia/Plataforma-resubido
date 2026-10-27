@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import './Formulario.css';
 import './FormularioMobile.css';
 import { updateEmail, updateGeo, updateContraseña, updateToken, updateCliente, updateIdCliente, updateEsEditor, updateUsuario, updateIdUsuario, resetFormulario } from '../../redux/formularioSlice';
-import { obtenerGeo } from '../administrador/gestores/apisUsuarios';
+import { obtenerGeo } from '../Apis/geosApi.js';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import VideoBienvenida from './VideoBienvenida';
@@ -11,8 +11,7 @@ import VideoBienvenida from './VideoBienvenida';
 const Formulario = () => {
     const dispatch = useDispatch();
     const [email, setEmail] = useState('');
-    const [contraseña, setContraseña] = useState('');
-    const [geo, setGeo] = useState({paises: []});
+    const [contraseña, setContraseña] = useState('');   
     const navigate = useNavigate();
     const CLIENTE_DEFAULT = ""
     const ID_CLIENTE_DEFAULT = ""
@@ -21,9 +20,9 @@ const Formulario = () => {
 
     useEffect(() => {
         obtenerGeo().then((datos) => {
-            setGeo(datos);
-            dispatch(updateGeo(datos?.paises || []));
-        });
+            dispatch(updateGeo(Array.isArray(datos) ? datos : []));
+        })
+        .catch((err) => console.error('Error al obtener geo:', err));
     }, [dispatch]);
 
     const handleLogin = async (e) => {

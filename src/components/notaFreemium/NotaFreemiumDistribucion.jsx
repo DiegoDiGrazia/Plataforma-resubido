@@ -4,7 +4,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "../miPerfil/miPerfil.css";
 import { useSelector } from 'react-redux';
 import ModalMensaje from '../administrador/gestores/ModalMensaje';
-import { obtenerClientes, obtenerGeo, obtenerPrecioUsuario, setComprarDistribucion, obtenerConsolidacionCliente } from '../administrador/gestores/apisUsuarios';
+import { obtenerPrecioUsuario, setComprarDistribucion, obtenerConsolidacionCliente } from '../administrador/gestores/apisUsuarios';
 import ArbolConSelectorMultiple from './ArbolConSelectorMultiple';
 import InputFecha from '../nota/Editorial/InputFecha';
 import BotonDistribuirNota from './BotonDistribuir';

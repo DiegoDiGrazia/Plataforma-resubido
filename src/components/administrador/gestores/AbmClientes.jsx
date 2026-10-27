@@ -4,7 +4,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "../../miPerfil/miPerfil.css";
 import { useSelector } from 'react-redux';
 import ModalMensaje from '../gestores/ModalMensaje';
-import { obtenerUsuarios, obtenerGeo, obtenerPlanesMarketing } from './apisUsuarios'; // Importa la función para obtener usuarios
+import { obtenerUsuarios, obtenerPlanesMarketing } from './apisUsuarios'; // Importa la función para obtener usuarios
 import { obtenerClientes, crearCliente, actualizarCliente } from '../../Apis/apis';
 import ArbolDistribucion from '../../nota/Editorial/ArbolDistribucion';
 import './AbmsMobile.css';
@@ -48,7 +48,6 @@ const AbmClientes
   const [usuarios, setUsuarios] = useState([]);
   const [planes, setPlanes] = useState([]);
   const [clientes, setClientes] = useState([]);
-  const [geo, setGeo] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [mensajeModalExito, setMensajeModalExito] = useState("Los cambios se realizaron correctamente.");
   const [search, setSearch] = useState("");
@@ -66,7 +65,6 @@ const AbmClientes
     obtenerUsuarios(TOKEN).then(setUsuarios);
     obtenerClientes(TOKEN).then((data) => setClientes(Array.isArray(data) ? data : []));
     obtenerPlanesMarketing(TOKEN, desdeMarketing, desdeMarketing).then(setPlanes);
-    obtenerGeo().then(setGeo);
 }, [TOKEN]);
 
   // Cliente logueado y si es de tipo FRANQUICIA

@@ -50,16 +50,6 @@ const fetchDataDevolviendoMensaje = async (url, token, extraParams = {}) => {
   }
 };
 
-export const obtenerGeo = async () => {
-  try {
-    const response = await axios.get(`https://api.noticiasd.com/app_obtener_geo`);
-    return response.data.item.geo;
-  } catch (error) {
-    console.error('Error en obtener geo:', error);
-    throw error;
-  }
-};
-
 export const obtenerUsuarios = (token) =>
   fetchData("https://panel.serviciosd.com/app_obtener_usuarios_abm", token);
 

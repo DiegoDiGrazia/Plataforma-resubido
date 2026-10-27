@@ -56,15 +56,15 @@ const IconosDistribucionConMonto = ({ nota, token, geo, contratos }) => {
         if (!geo) return { division: null, divisionId: null };
 
         if (nota.pais && geo.paises) {
-            const paisData = geo.paises.find(p => p.nombre.toLowerCase() === nota.pais.toLowerCase());
+            const paisData = geo.paises.find(p => p.nombre?.toLowerCase() === nota.pais.toLowerCase());
             return { division: "pais", divisionId: paisData?.pais_id };
         }
         if (nota.provincia && geo.provincias) {
-            const provData = geo.provincias.find(prov => prov.nombre.toLowerCase() === nota.provincia.toLowerCase());
+            const provData = geo.provincias.find(prov => prov.nombre?.toLowerCase() === nota.provincia.toLowerCase());
             return { division: "provincia", divisionId: provData?.provincia_id };
         }
         if (nota.municipio && geo.municipios) {
-            const muniData = geo.municipios.find(muni => muni.nombre.toLowerCase() === nota.municipio.toLowerCase());
+            const muniData = geo.municipios.find(muni => muni.nombre?.toLowerCase() === nota.municipio.toLowerCase());
             return { division: "municipio", divisionId: muniData?.municipio_id };
         }
 

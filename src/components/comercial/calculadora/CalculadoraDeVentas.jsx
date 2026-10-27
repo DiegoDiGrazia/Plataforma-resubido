@@ -3,7 +3,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "../../miPerfil/miPerfil.css";
 import { useSelector } from 'react-redux';
-import { obtenerPoblacion, obtenerGeo } from '../../administrador/gestores/apisUsuarios';
+import { obtenerPoblacion } from '../../administrador/gestores/apisUsuarios';
+import { obtenerGeo } from '../../Apis/geosApi';
 import ArbolDistribucion from '../../nota/Editorial/ArbolDistribucion';
 import SelectorNumerosEnteros from '../../nota/Editorial/SelectorNumerosEnteros';
 import TablaReadOnly from './TablaReadOnly';
@@ -22,7 +23,7 @@ const CalculadoraDeVentas = ({ datosEdicion, onGuardadoExitoso }) => {
   const [provincia, setProvincia] = useState("");
   const [municipio, setMunicipio] = useState("");
   const [poblacionEstimada, setPoblacionEstimada] = useState("");
-  const [geo, setGeo] = useState([]);
+  const [paises, setPaises] = useState([]);
 
   const TOKEN = useSelector((state) => state.formulario.token);
   const USUARIO_ID = useSelector((state) => state.formulario.usuario?.id);
@@ -70,7 +71,9 @@ const CalculadoraDeVentas = ({ datosEdicion, onGuardadoExitoso }) => {
   };
 
   useEffect(() => {
-    obtenerGeo().then(setGeo);
+    obtenerGeo()
+      .then((data) => setPaises(Array.isArray(data) ? data : []))
+      .catch((err) => console.error('Error al obtener geo:', err));
   }, [TOKEN]);
 
   useEffect(() => {
@@ -80,8 +83,8 @@ const CalculadoraDeVentas = ({ datosEdicion, onGuardadoExitoso }) => {
       setRentabilidad(datosEdicion.rentabilidad || 65);
       setFeeAgencia(datosEdicion.fee_agencia || 15);
 
-      if (geo.paises && datosEdicion.pais_id) {
-        const paisEncontrado = geo.paises.find(p => String(p.pais_id) === String(datosEdicion.pais_id));
+      if (paises.length && datosEdicion.pais_id) {
+        const paisEncontrado = paises.find(p => String(p.pais_id) === String(datosEdicion.pais_id));
         if (paisEncontrado) {
           setPais(paisEncontrado);
           
@@ -101,7 +104,7 @@ const CalculadoraDeVentas = ({ datosEdicion, onGuardadoExitoso }) => {
       setProvincia("");
       setMunicipio("");
     }
-  }, [datosEdicion, geo]);
+  }, [datosEdicion, paises]);
 
   useEffect(() => {
     if (datosEdicion && datosEdicion.descripcion) {
@@ -125,12 +128,12 @@ const CalculadoraDeVentas = ({ datosEdicion, onGuardadoExitoso }) => {
           const poblacion = await obtenerPoblacion(
               TOKEN,
               municipio ? 'municipio' : provincia ? 'provincia' : 'pais',
-              municipio ? municipio.municipio_id : provincia ? provincia.provincia_id : obtenerPaisId(geo.paises, pais)
+              municipio ? municipio.municipio_id : provincia ? provincia.provincia_id : obtenerPaisId(paises, pais)
           );
           setPoblacionEstimada(poblacion);
       };
       fetchPoblacion();
-  }, [pais, provincia, municipio, geo, TOKEN]);
+  }, [pais, provincia, municipio, paises, TOKEN]);
 
   const agregarCalculadora = () => {
     setCalculadorasExtras([...calculadorasExtras, { id: siguienteId }]);
@@ -246,7 +249,7 @@ const CalculadoraDeVentas = ({ datosEdicion, onGuardadoExitoso }) => {
       rentabilidad: Number(rentabilidad || 0),
       fee_agencia: Number(feeAgencia || 0),
       usuarios_x_nota: Number(alcancePorNota || 0),
-      pais_id: Number(obtenerPaisId(geo.paises, pais) || 0),
+      pais_id: Number(obtenerPaisId(paises, pais) || 0),
       provincia_id: Number(provincia?.provincia_id || 0),
       municipio_id: Number(municipio?.municipio_id || 0),
       notas: Number(cantidadDeNotas || 1),

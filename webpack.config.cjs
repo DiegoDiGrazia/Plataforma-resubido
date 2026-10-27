@@ -55,6 +55,12 @@ module.exports = {
         pathRewrite: { '^/services': '' },
       },
       {
+        context: ['/feed'],
+        target: 'https://feed.noticiasd.com',
+        changeOrigin: true,
+        pathRewrite: { '^/feed': '' },
+      },
+      {
         context: [
           '/api',
           '/codigo_recuperacion',

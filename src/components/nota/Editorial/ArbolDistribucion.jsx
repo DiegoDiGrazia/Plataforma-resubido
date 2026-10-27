@@ -28,8 +28,8 @@ const ArbolDistribucion = ({
   useEffect(() => {
     if (!Paises || !pais) return;
     const ProvinciasDelPais = geo
-      .find((p) => p.pais_id === (pais?.pais_id || '1')) /// default pais argentina
-      ?.provincias.map((prov) => ({ nombre: prov.nombre, provincia_id: prov.provincia_id })) || [];
+      .find((p) => String(p.pais_id) === String(pais?.pais_id || 1)) /// default pais argentina
+      ?.provincias?.map((prov) => ({ nombre: prov.nombre, provincia_id: prov.provincia_id })) || [];
     setProvincias(ProvinciasDelPais);
 
   }, [TOKEN, pais]);
