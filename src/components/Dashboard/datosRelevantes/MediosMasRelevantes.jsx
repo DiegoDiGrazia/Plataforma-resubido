@@ -71,7 +71,7 @@ const MediosMasRelevantes = ({datosLocales, paisFiltro}) => {
     const renderMedio = (medio) => (
         <div className='row pt-1' key={medio.sitio}>
             <div className='col-auto'>
-                <img src={`https://panel.serviciosd.com${medio.imagen}`} alt="Icono 1" className='imagenWidwetInteracciones' />
+                <img src={`https://www.google.com/s2/favicons?domain=${medio.sitio}&sz=64`} alt="Icono 1" className='imagenWidwetInteracciones' />
             </div>
             <div className='col-7 pt-1 ml-2 columnaInteraccion'>
                 <div className='row p-0 nombre_plataforma'>

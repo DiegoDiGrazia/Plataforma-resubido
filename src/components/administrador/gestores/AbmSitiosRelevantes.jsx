@@ -213,7 +213,7 @@ const AbmSitiosRelevantes = () => {
                           <li key={index} className="list-group-item d-flex align-items-center justify-content-between gap-3">
                             <div className='d-flex align-items-center gap-3'>
                               <img 
-                                src={`https://panel.serviciosd.com${medio.imagen}`} 
+                                src={`https://www.google.com/s2/favicons?domain=${medio.sitio}&sz=64`} 
                                 style={{ width: '30px', height: '30px' }} 
                                 onError={(e) => { e.target.src = "/images/globe-americas-fill.svg"; }}/>
                               <a /* className='text-decoration-none' */ href={`https://www.${medio.sitio}`} target='_blank' rel="noreferrer">
