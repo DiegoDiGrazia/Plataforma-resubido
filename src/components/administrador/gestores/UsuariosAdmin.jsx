@@ -11,6 +11,7 @@ import { obtenerPerfiles } from '../../Apis/perfilesApi.js';
 import { ToastContainer } from 'react-toastify';
 import { toastExito, toastError } from '../../../utils/toastify/toastify.jsx';
 import { formatearFecha } from '../../../utils/funcionesVarias.js'
+import SelectorConBuscador from '../../nota/Editorial/SelectorConBuscador';
 
 const usuarioVacio = {
   celular_reporte: "",
@@ -420,40 +421,26 @@ const handleInputKeyDown = (e) => {
                   {/* Cuenta (dropdown) */}
                   {llevaCliente && (
                   <div className="mb-3">
-                    <label className="form-label">Cuenta</label>
-                    <div className="dropdown">
-                      <button
-                        className="btn btn-secondary dropdown-toggle w-100 text-start"
-                        type="button"
-                        data-bs-toggle="dropdown"
-                        data-bs-display="static"
-                        aria-expanded="false"
-                      >
-                        {formData.cliente
-                          ? formData.cliente
-                          : "Seleccionar cuenta..."}
-                        </button>
-
-                      <ul className="dropdown-menu w-100" style={{maxHeight: "170px", overflowY: "auto", marginTop: "12px",}}>
-                        {clientes.map((c) => (
-                          <li key={c.id}>
-                            <button
-                              type="button"
-                              className="dropdown-item"
-                              onClick={() => {
-                                setFormData({
-                                  ...formData,
-                                  id_cliente: c.name,
-                                  cliente: c.name,
-                                });
-                              }}
-                            >
-                              {c.name}
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                    <SelectorConBuscador
+                      title="Cuenta"
+                      alineacionDerecha={true}
+                      options={clientes}
+                      selectedOption={clientes.find((c) => c.name === formData.cliente) || (formData.cliente ? { name: formData.cliente } : null)}
+                      onSelect={(c) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          id_cliente: c.name,
+                          cliente: c.name,
+                        }))
+                      }
+                      onClear={() =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          id_cliente: '',
+                          cliente: '',
+                        }))
+                      }
+                    />
                   </div>
                   )}
 

@@ -49,7 +49,7 @@ const Facturas = () =>  {
     const [animarAlerta, setAnimarAlerta] = useState(false);
     const [contratosAbiertos, setContratosAbiertos] = useState([]);
     const [contratoSeleccionado, setContratoSeleccionado] = useState("");
-    const [montoSeleccionado, setMontoSeleccionado] = useState("");
+    const [montoSeleccionado, setMontoSeleccionado] = useState(0);
     const [facturasContrato, setFacturasContrato] = useState([]);
     const [facturasAUnificar, setFacturasAUnificar] = useState([]);
     const [procesandoUnificacion, setProcesandoUnificacion] = useState(false);

@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
+import { borrarTildes } from '../../../utils/funcionesVarias';
 
-const SelectorConBuscador = ({ title, options = [], selectedOption, onSelect, onClear }) => {
+const SelectorConBuscador = ({ title, options = [], selectedOption, onSelect, onClear, alineacionDerecha = false }) => {
     const [searchQuery, setSearchQuery] = useState(''); // Estado para el texto del buscador
 
     // Filtrar las opciones según el texto ingresado
+    
     const filteredOptions = (options || []).filter(option => {
         const text = option?.nombre ?? option?.name ?? '';
-        return text.toLowerCase().includes(searchQuery.toLowerCase());
+        return borrarTildes(text.toLowerCase()).includes(borrarTildes(searchQuery.toLowerCase()));
     });
 
     return (
@@ -24,7 +26,7 @@ const SelectorConBuscador = ({ title, options = [], selectedOption, onSelect, on
                         {selectedOption?.nombre || selectedOption?.name || "Ninguno"}
                     </button>
 
-                    <ul className="dropdown-menu listaClientes p-2" style={{ minWidth: "220px" }}>
+                    <ul className={`dropdown-menu listaClientes p-2 ${alineacionDerecha ? 'dropdown-menu-end' : ''}`} style={{ minWidth: "220px" }}>
                         
                         {/* Buscador */}
                         <li className="mb-2">
