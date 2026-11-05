@@ -39,6 +39,14 @@ const LineChartTwoLines = ({ data }) => {
         borderColor: "#1877F2", // Facebook
 
       },
+      {
+        label: data.line3.label,
+        data: data.line3.values,
+        tension: 0.3,
+        borderWidth: 2,
+        borderColor: "#dc3545", // YouTube
+
+      },
 
     ],
   };

@@ -2,17 +2,12 @@ import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
-import { useDispatch, useSelector } from 'react-redux';
 import "./Barplot.css";
-import axios from 'axios';
 import { formatNumberMiles } from '../Dashboard/Dashboard.jsx';
 import Barplot_Carga from './Barplot_mejorado_carga.jsx';
-import { formatDate } from './Barplot.jsx';
 import './BarplotMobile.css'
 import './BarplotNotaMobile.css'
 import LineChartTwoLines from './LineChartTwoLines.jsx';
-import { useEffectEvent } from 'react';
-const RUTA = "http://localhost:4000/"
 
  export function generarPeriodosDesde(f_pub, cantidadDeMesesAGenerar){
     if(f_pub){
@@ -41,7 +36,9 @@ const BarplotNota = ({id_noti, TOKEN, cliente, fpub, dataLocalNota, resumenNota 
     const [totales, setTotales] = useState({})
 
     useEffect(() => {
+        setLoading(true); 
         if (resumenNota) {
+
             setTotales(
             resumenNota.reduce((acumulador, mes) => {
                 ///totalRRSS
@@ -49,35 +46,57 @@ const BarplotNota = ({id_noti, TOKEN, cliente, fpub, dataLocalNota, resumenNota 
                 (acumulador.usuariosTotalesRRSS || 0) +
                 Number(mes.i_instagram_users || 0) +
                 Number(mes.i_facebook_users || 0) +
-                Number(mes.i_youtube_users  || 0);
+                Number(mes.i_x_users  || 0);
+
                 ///totalGOOGLE
                 acumulador.usuariosTotalesGoogle =
                 (acumulador.usuariosTotalesGoogle || 0) +
                 Number(mes.i_dv360_users || 0);
+
+                //totalVIDEOS
+                acumulador.usuariosTotalesVideos =
+                (acumulador.usuariosTotalesVideos || 0) +
+                Number(mes.i_youtube_users || 0);
+
                 ///totalImpresionesGOOGLE
                 acumulador.impresionesTotalesGoogle =
                 (acumulador.impresionesTotalesGoogle || 0) +
                 Number(mes.i_dv360_impressions || 0) +
                 Number(mes.i_search_impressions || 0);
+
                 ///totalImpresionesRRSS
                 acumulador.impresionesTotalesRRSS =
                 (acumulador.impresionesTotalesRRSS || 0) +
                 Number(mes.i_facebook_impressions || 0) +
                 Number(mes.i_instagram_impressions || 0) +
-                Number(mes.i_youtube_impressions || 0)
-                ///🔥 NUEVO → impresiones RRSS por mes
+                Number(mes.i_x_impressions || 0)
+                
+                ///totalImpresionesVIDEOS
+                acumulador.impresionesTotalesVideos =
+                (acumulador.impresionesTotalesVideos || 0) +
+                Number(mes.i_youtube_impressions || 0) +
+                Number(mes.i_x_starts || 0);
+
+                ///impresiones RRSS por mes
                 acumulador.impresionesRRSSPorMes = [
                     ...(acumulador.impresionesRRSSPorMes || []),
                     Number(mes.i_facebook_impressions || 0) +
                     Number(mes.i_instagram_impressions || 0) +
-                    Number(mes.i_youtube_impressions || 0)
+                    Number(mes.i_x_impressions || 0)
                 ];
 
-                ///🔥 NUEVO → impresiones Google por mes
+                ///impresiones Google por mes
                 acumulador.impresionesGooglePorMes = [
                     ...(acumulador.impresionesGooglePorMes || []),
                     Number(mes.i_dv360_impressions || 0) +
                     Number(mes.i_search_impressions || 0)
+                ];
+
+                ///impresiones Videos por mes
+                acumulador.impresionesVideosPorMes = [
+                    ...(acumulador.impresionesVideosPorMes || []),
+                    Number(mes.i_youtube_impressions || 0) +
+                    Number(mes.i_x_starts || 0)
                 ];
 
                 ///GOGGOLE user (acumulado)
@@ -94,9 +113,16 @@ const BarplotNota = ({id_noti, TOKEN, cliente, fpub, dataLocalNota, resumenNota 
                 ...(acumulador.usuariosMetaPorMes || []),
                 ultimoMeta +
                     Number(mes.i_instagram_users || 0) +
-                    Number(mes.i_youtube_users || 0) +
+                    Number(mes.i_x_users || 0) +
                     Number(mes.i_facebook_users || 0)
                 ];
+                ///usuariosVideosPorMes (acumulado)
+                const ultimoVideos = acumulador.usuariosVideosPorMes?.at(-1) || 0;
+                acumulador.usuariosVideosPorMes = [
+                ...(acumulador.usuariosVideosPorMes || []),
+                ultimoVideos + Number(mes.i_youtube_users || 0)
+                ];
+                   
                 ///meses
                 acumulador.f_dato = [
                 ...(acumulador.f_dato|| []),
@@ -108,22 +134,23 @@ const BarplotNota = ({id_noti, TOKEN, cliente, fpub, dataLocalNota, resumenNota 
             }, {})
             );
         }
+        setLoading(false);
         }, [resumenNota]);
 
-    useEffect(() => {
-        console.log('totales: ', totales)
-    },[totales])
-
     const datos = {
-    labels: totales.f_dato,
-    line1: {
-        label: `Usuarios Google \n ${totales.usuariosTotalesGoogle}`,
-        values: totales.usuariosGooglePorMes,
-    },  
-    line2: {
-        label: `Usuarios RRSS \n ${totales.usuariosTotalesRRSS}`,
-        values: totales.usuariosMetaPorMes,
-    },
+        labels: totales.f_dato,
+        line1: {
+            label: `Usuarios Google \n ${totales.usuariosTotalesGoogle}`,
+            values: totales.usuariosGooglePorMes,
+        },  
+        line2: {
+            label: `Usuarios RRSS \n ${totales.usuariosTotalesRRSS}`,
+            values: totales.usuariosMetaPorMes,
+        },
+        line3: {
+            label: `Usuarios Videos \n ${totales.usuariosTotalesVideos}`,
+            values: totales.usuariosVideosPorMes,
+        },
     };
 
 
@@ -147,6 +174,13 @@ const BarplotNota = ({id_noti, TOKEN, cliente, fpub, dataLocalNota, resumenNota 
                 barPercentage: 1.0,
                 categoryPercentage: 0.7,
             },
+            {
+                label: `impresiones Videos \n ${totales.usuariosTotalesVideos}`,
+                data: totales.impresionesVideosPorMes,
+                backgroundColor: '#dc3545',
+                barPercentage: 1.0,
+                categoryPercentage: 0.7,
+            }
         ],
     };
 
@@ -202,38 +236,45 @@ const BarplotNota = ({id_noti, TOKEN, cliente, fpub, dataLocalNota, resumenNota 
     // Mostrar el gráfico real una vez cargados los datos
     return (
         <div id='pantalla-barplotNota'>
-        <div className="container-fluid ml-5">
-            <div className="row cantidades mt-3 back-white">
-            <div className='col-4 barra_lateral'>
-                <p className='leyenda_barplot'>
-                    <span className="blue-dot-user"></span> Impresiones Medios
-                    <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "dv360 + search + noticias(d)"/>  
-                </p>
-                <p className='totales'>{formatNumberMiles(totales.impresionesTotalesGoogle)}</p>
-            </div>
-                <div className='col' style={{ paddingLeft: '20px' }}>
-                    <p className='leyenda_barplot'>
-                        <span className="blue-dot-impresiones"></span>Impresiones Redes
-                        <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "Instagram + Facebook + X"/>  
-                    </p>
-                    <p className='totales'>{formatNumberMiles(totales.impresionesTotalesRRSS)}</p>
+            <div className="container-fluid ml-5">
+                <div className="row cantidades mt-3 back-white">
+                    <div className='col-4 barra_lateral'>
+                        <p className='leyenda_barplot'>
+                            <span className="blue-dot-user"></span> Impresiones Medios
+                            <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "dv360 + search + noticias(d)"/>  
+                        </p>
+                        <p className='totales'>{formatNumberMiles(totales.impresionesTotalesGoogle)}</p>
+                    </div>
+                    <div className='col barra_lateral' style={{ paddingLeft: '20px' }}>
+                        <p className='leyenda_barplot'>
+                            <span className="blue-dot-impresiones"></span>Impresiones Redes
+                            <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "Instagram + Facebook + X"/>  
+                        </p>
+                        <p className='totales'>{formatNumberMiles(totales.impresionesTotalesRRSS)}</p>
+                    </div>
+                    <div className='col' style={{ paddingLeft: '20px' }}>
+                        <p className='leyenda_barplot'>
+                            <span className="blue-dot-impresiones bg-danger"></span>Impresiones Videos
+                            <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "Youtube + Videos de X"/>  
+                        </p>
+                        <p className='totales'>{formatNumberMiles(totales.impresionesTotalesVideos)}</p>
+                    </div>
                 </div>
-            </div>
-            <div className="row back-white">
-                <div className="col barplot">
-                    <div style={{ height: '100%' }}>
-                        <Bar data={dataReal} options={optionsReal} />
+                <div className="row back-white">
+                    <div className="col barplot">
+                        <div style={{ height: '100%' }}>
+                            <Bar data={dataReal} options={optionsReal} />
+                        </div>
+                    </div>
+                </div>
+                <div className="row back-white" id='linea'>
+                    <div className="col barplot">
+                        <div className='line' style={{ height: '100%', width: 'auto' }}>
+                            <LineChartTwoLines data={datos} ></LineChartTwoLines>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div className="row back-white" id='linea'>
-                <div className="col barplot">
-                    <div className='line' style={{ height: '100%', width: 'auto' }}>
-                        <LineChartTwoLines data={datos} ></LineChartTwoLines>
-                    </div>
-                </div>
-            </div>
-        </div>
         </div>
     );
 };

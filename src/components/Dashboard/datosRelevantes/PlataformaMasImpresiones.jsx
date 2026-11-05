@@ -39,8 +39,22 @@ const CAMPOS_METRICAS = [
     "i_youtube_reproduction_25",
     "i_youtube_reproduction_50",
     "i_youtube_reproduction_75",
-    "i_youtube_reproduction_100"
-
+    "i_youtube_reproduction_100",
+    "i_x_clicks",
+    "i_x_engagements",
+    "i_x_follows",
+    "i_x_impressions",
+    "i_x_likes",
+    "i_x_link_clicks",
+    "i_x_replies",
+    "i_x_reposts",
+    "i_x_users",
+    "i_x_video_played_25",
+    "i_x_video_played_50",
+    "i_x_video_played_75",
+    "i_x_video_completions",
+    "i_x_video_starts",
+    "i_x_video_views",
 ];
 
 const PlataformaMasImpresiones = ({datosLocales, resumenCliente= null, loading = false, aplicarFiltroMeses = true}) => {
@@ -88,6 +102,26 @@ const PlataformaMasImpresiones = ({datosLocales, resumenCliente= null, loading =
             compartido: totalesInteracciones.i_instagram_shared,
             usuariosUnicos: totalesInteracciones.i_instagram_users,
         },
+        {
+            nombre: "X",
+            logo: '/images/logo_x.png',
+            impresiones: totalesInteracciones.i_x_impressions,
+            interacciones: totalesInteracciones.i_x_engagements,
+            comentarios: totalesInteracciones.i_x_replies,
+            meGusta: totalesInteracciones.i_x_likes,
+            clicks: totalesInteracciones.i_x_clicks,
+            link_clicks: totalesInteracciones.i_x_link_clicks,
+            compartido: totalesInteracciones.i_x_reposts,
+            usuariosUnicos: totalesInteracciones.i_x_users,
+            seguidores: totalesInteracciones.i_x_follows,
+            veinticinco: totalesInteracciones.i_x_video_played_25,
+            cincuenta: totalesInteracciones.i_x_video_played_50,
+            setentaycinco: totalesInteracciones.i_x_video_played_75,
+            cien: totalesInteracciones.i_x_video_completions,
+            play: totalesInteracciones.i_x_video_starts,
+            vistas: totalesInteracciones.i_x_video_views,
+        },
+
         {
             nombre: 'Search',
             logo: '/images/logo_google_search.png',
@@ -143,8 +177,8 @@ const PlataformaMasImpresiones = ({datosLocales, resumenCliente= null, loading =
                         <div className="pt-0 pb-0 w-100">
                             <div className='d-flex justify-content-between px-3 pt-0 mb-4'>
                                 <div className='d-flex align-items-center justify-content-center gap-2'>
-                                    <img src={plataforma.logo} alt={`Icono ${plataforma.nombre}`} className='imagenWidwet' />
-                                    <strong className='mt-1' style={{ color: '#052C65' }}>
+                                    <img src={plataforma.logo} alt={`Icono ${plataforma.nombre}`} className='imagenWidwet p-0 mt-3 rounded' />
+                                    <strong className='mt-3' style={{ color: '#052C65' }}>
                                         {plataforma.nombre}
                                     </strong>
                                 </div>
@@ -156,7 +190,16 @@ const PlataformaMasImpresiones = ({datosLocales, resumenCliente= null, loading =
                         <div className={`accordion-collapse collapse show`}>
                             <div className="accordion-body pt-0">
                                 <div className='row row-cols-md-3 row-cols-lg-5 pt-0 ps-4 gy-3'>
-                                    {plataforma.meGusta != 0 &&
+                                    {plataforma.interacciones > 0 &&
+                                    <div className='col d-flex align-items-center'>
+                                        <img src="/images/barchar_icon.png" alt="Me gusta" className='img-fluid icono-ctr me-2' />
+                                        <div className='comentarios'>
+                                            <span className='d-block'>Interacciones</span>
+                                            <span className='d-block'>{formatNumberMiles(plataforma.interacciones)}</span>
+                                        </div>
+                                    </div>
+                                    }
+                                    {plataforma.meGusta > 0 &&
                                     <div className='col d-flex align-items-center'>
                                         <img src="/images/logoMeGusta.png" alt="Me gusta" className='img-fluid me-2' />
                                         <div className='comentarios'>
@@ -165,7 +208,7 @@ const PlataformaMasImpresiones = ({datosLocales, resumenCliente= null, loading =
                                         </div>
                                     </div>
                                     }
-                                    {plataforma.clicks != 0 &&
+                                    {plataforma.clicks > 0 &&
                                     <div className='col d-flex align-items-center'>
                                         <img src="/images/logoClicks.png" alt="Clicks" className='img-fluid me-2' />
                                         <div className='comentarios'>
@@ -174,7 +217,16 @@ const PlataformaMasImpresiones = ({datosLocales, resumenCliente= null, loading =
                                         </div>
                                     </div>
                                     }
-                                    {plataforma.clicks != 0 &&
+                                    {plataforma.link_clicks > 0 &&
+                                    <div className='col d-flex align-items-center'>
+                                        <img src="/images/logoClicks.png" alt="Link Clicks" className='img-fluid me-2' />
+                                        <div className='comentarios'>
+                                            <span className='d-block'>Link Clicks</span>
+                                            <span className='d-block'>{formatNumberMiles(plataforma.link_clicks)}</span>
+                                        </div>
+                                    </div>
+                                    }
+                                    {plataforma.clicks > 0 &&
                                     <div className='col d-flex align-items-center'>
                                         <img 
                                             src="/images/barchar_icon.png" 
@@ -187,7 +239,7 @@ const PlataformaMasImpresiones = ({datosLocales, resumenCliente= null, loading =
                                         </div>
                                     </div>
                                     }
-                                    {plataforma.comentarios != 0 &&
+                                    {plataforma.comentarios > 0 &&
                                     <div className='col d-flex align-items-center'>
                                         <img src="/images/logoComentarios.png" alt="Comentarios" className='img-fluid me-2' />
                                         <div className='comentarios'>
@@ -196,7 +248,7 @@ const PlataformaMasImpresiones = ({datosLocales, resumenCliente= null, loading =
                                         </div>
                                     </div>
                                     }
-                                    {plataforma.compartido != 0 &&
+                                    {plataforma.compartido > 0 &&
                                     <div className='col d-flex align-items-center'>
                                         <img src="/images/logoCompartir.png" alt="Compartido" className='img-fluid me-2' />
                                         <div className='comentarios'>
@@ -205,9 +257,18 @@ const PlataformaMasImpresiones = ({datosLocales, resumenCliente= null, loading =
                                         </div>
                                     </div>
                                     }
+                                    {plataforma.seguidores > 0 &&
+                                    <div className='col d-flex align-items-center'>
+                                        <img src="/images/person-add.svg" alt="Seguidores" className='img-fluid icono-ctr me-2' />
+                                        <div className='comentarios'>
+                                            <span className='d-block'>Seguidores</span>
+                                            <span className='d-block'>{formatNumberMiles(plataforma.seguidores)}</span>
+                                        </div>
+                                    </div>
+                                    }
                                     {plataforma.usuariosUnicos > 0 &&
                                     <div className='col d-flex align-items-center'>
-                                        <img src="/images/logo-personas.png" alt="haha" className='icono-ctr img-fluid me-2' />
+                                        <img src="/images/logo-personas.png" alt="Usuarios" className='icono-ctr img-fluid me-2' />
                                         <div className='play'>
                                             <span className='d-block'>Usuarios</span>
                                             <span className='d-block'>{formatNumberMiles(plataforma.usuariosUnicos)}</span>
@@ -263,8 +324,17 @@ const PlataformaMasImpresiones = ({datosLocales, resumenCliente= null, loading =
                                     <div className='col d-flex align-items-center'>
                                         <img src="/images/play_arrow.png" alt="Play" className='icono-ctr img-fluid me-2' />
                                         <div className='play'>
-                                            <span className='d-block'>Visitas</span>
+                                            <span className='d-block'>Plays</span>
                                             <span className='d-block'>{formatNumberMiles(plataforma.play)}</span>
+                                        </div>
+                                    </div>    
+                                    }
+                                    {plataforma.vistas > 0 &&
+                                    <div className='col d-flex align-items-center'>
+                                        <img src="/images/eye.svg" alt="Vistas" className='icono-ctr img-fluid me-2' />
+                                        <div className='play'>
+                                            <span className='d-block'>Vistas</span>
+                                            <span className='d-block'>{formatNumberMiles(plataforma.vistas)}</span>
                                         </div>
                                     </div>    
                                     }

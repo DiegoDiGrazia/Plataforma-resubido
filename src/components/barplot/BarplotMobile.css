@@ -84,6 +84,9 @@
         background-color: rgb(226, 218, 218);  
     }
 
+    #contenedor-barplot {
+        width: 100% !important;
+    }
 }
 
 }

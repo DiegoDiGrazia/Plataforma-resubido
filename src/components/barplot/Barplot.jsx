@@ -5,22 +5,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 import { useDispatch, useSelector } from 'react-redux';
 import "./Barplot.css";
 import "./BarplotMobile.css";
-import { setImpresionesTotalesInstagram, setImpresionesTotalesGoogle, setImpresionesTotalesFacebook, 
-    setUsuariosTotales, setUsuariosTotalesGoogle, setUsuariosTotalesMeta, setFechas, 
-    setultimaFechaCargadaBarplot,
-    setUltimoClienteCargadoBarplot,
-    setComentariosFacebook,
-    setComentariosInstagram,
-    setLikesFacebook,
-    setLikesInstagram,
-    setCompartidosFacebook,
-    setCompartidosInstagram,
-    setBusquedaClicks,
-    setReaccionesFacebook, setReaccionesInstagram, 
-    resetBarplot} from '../../redux/barplotSlice.js';
-import axios from 'axios';
 import { formatNumberMiles } from '../Dashboard/Dashboard.jsx';
-import { useNavigate } from 'react-router-dom';
 import Barplot_Carga from './Barplot_mejorado_carga.jsx';
 
 ///Recibe una fecha del tipo "2024-08" y te devuelve  "jun 24"
@@ -95,23 +80,34 @@ const Barplot = ({datosLocales, resumenCliente = null, loading = false, paisFilt
                 (acumulador.usuariosTotalesRRSS || 0) +
                 Number(mes.i_instagram_users || 0) +
                 Number(mes.i_facebook_users || 0) +
-                Number(mes.i_youtube_users  || 0);
+                Number(mes.i_x_users || 0);
+
                 ///totalGOOGLE
                 acumulador.usuariosTotalesGoogle =
                 (acumulador.usuariosTotalesGoogle || 0) +
                 Number(mes.i_dv360_users || 0);
-                ///totalMetaPorMes
+                
+                ///totalVIDEOS
+                acumulador.usuariosTotalesVideos =
+                (acumulador.usuariosTotalesVideos || 0) +
+                Number(mes.i_youtube_users || 0);
 
+                ///totalMetaPorMes
                 acumulador.usuariosMetaPorMes = [
                 ...(acumulador.usuariosMetaPorMes || []),
                 Number(mes.i_instagram_users || 0) +
-                Number(mes.i_youtube_users || 0) +
+                Number(mes.i_x_users || 0) +
                 Number(mes.i_facebook_users || 0)
                 ];
                 ///totalMetaPorGoogle
                 acumulador.usuariosGooglePorMes = [
                 ...(acumulador.usuariosGooglePorMes || []),
                 Number(mes.i_dv360_users || 0)
+                ];
+                ///totalVideosPorMes
+                acumulador.usuariosVideosPorMes = [
+                ...(acumulador.usuariosVideosPorMes || []),
+                Number(mes.i_youtube_users || 0)
                 ];
                 ///meses
                 acumulador.meses = [
@@ -144,6 +140,13 @@ const Barplot = ({datosLocales, resumenCliente = null, loading = false, paisFilt
                 label: `Impresiones totales`,
                 data: totales.usuariosGooglePorMes,
                 backgroundColor: '#34A853',
+                barPercentage: 1.0,
+                categoryPercentage: 0.7,
+            },
+            {
+                label: `Videos totales`,
+                data: totales.usuariosVideosPorMes,
+                backgroundColor: '#dc3545',
                 barPercentage: 1.0,
                 categoryPercentage: 0.7,
             },
@@ -200,7 +203,7 @@ const Barplot = ({datosLocales, resumenCliente = null, loading = false, paisFilt
     return (
         <div id='pantalla-barplot'>
         <div className="container-fluid sinPadding" ref={captureRef}>
-            <div className="row cantidades mt-3 back-white">
+            <div id='contenedor-barplot' className="row cantidades mt-3 back-white w-75">
                 {!totales.usuariosTotalesRRSS  && !totales.usuariosTotalesGoogle && (
                     <h2 style={{ color: '#333', margin: '20px' }}>No se encontraron usuarios para la fecha seleccionada del pais: {paisFiltro?.nombre || 'Desconocido'}</h2>
                 )}
@@ -214,12 +217,19 @@ const Barplot = ({datosLocales, resumenCliente = null, loading = false, paisFilt
                         </p>
                         <p className='totales'>{formatNumberMiles(totales.usuariosTotalesRRSS)}</p>
                     </div>
-                    <div className='col' style={{ paddingLeft: '20px' }}>
+                    <div className='col barra_lateral' style={{ paddingLeft: '20px' }}>
                         <p className='leyenda_barplot'>
                             <span className="blue-dot-user"></span>Usuarios Medios
                             <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "Son las personas que llegaron a tus notas desde nuestra difusión en otros medios de noticias."/>  
                         </p>
                         <p className='totales'>{formatNumberMiles(totales.usuariosTotalesGoogle)}</p>
+                    </div>
+                    <div className='col' style={{ paddingLeft: '20px' }}>
+                        <p className='leyenda_barplot'>
+                            <span className="blue-dot-user bg-danger"></span>Usuarios Videos
+                            <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "Son las personas que llegaron a tus notas desde nuestra difusión por medio de Videos."/>  
+                        </p>
+                        <p className='totales'>{formatNumberMiles(totales.usuariosTotalesVideos)}</p>
                     </div>
   
                     </>

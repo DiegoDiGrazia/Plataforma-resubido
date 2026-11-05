@@ -163,7 +163,7 @@ const Dashboard = () => {
                         <div className="subtitulo no-print">
                             <h5 id="subtitulo_performance">Performance de la cuenta</h5>
                             <span className='botones_subtitulo'>
-                                <SelectorConBuscador title="Filtro pais: " options={paises} selectedOption={paisFiltro} onSelect={setPaisFiltro} onClear={() => setPaisFiltro(null)} />
+                                <SelectorConBuscador title="Filtro pais:" options={paises} selectedOption={paisFiltro} onSelect={setPaisFiltro} onClear={() => setPaisFiltro(null)} />
                                 <div className="dropdown">
                                     <button className="btn custom-dropdown-button dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                         <img src="/images/calendarIcon.png" alt="Icono 1" className="icon me-2" /> {FiltroActual}
