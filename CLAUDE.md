@@ -21,5 +21,10 @@ Reglas mínimas (el detalle está en la skill):
 - Chart.js / react-pdf no entienden `var()`: usar `color`, `palette`, `seriesColors` de `src/styles/tokens.js`.
 - Sin `!important` y sin `style={{}}` con valores visuales.
 - Breakpoints solo `380 / 576 / 768 / 1366px` (`max-width`).
-- Al terminar, auditar lo tocado:
-  `node .claude/skills/noticiasd-design-system/scripts/audit.mjs <ruta> --detail`
+- **Regla del boy scout:** todo archivo `.css`/`.jsx` que se modifique por cualquier motivo
+  (aunque el pedido no sea de estilos) queda normalizado completo, no solo las líneas cambiadas:
+  1. `node .claude/skills/noticiasd-design-system/scripts/migrate.mjs <archivo>` (revisar dry-run) y luego `--write`.
+  2. Font-size, font-weight, spacing, `!important` e inline styles visuales del archivo → tokens
+     a mano, según `references/migracion.md`.
+  3. `node .claude/skills/noticiasd-design-system/scripts/audit.mjs <archivo> --detail` debe dar
+     0 en hex, fontSize, radius y shadow. Informar al usuario qué cambió visualmente.

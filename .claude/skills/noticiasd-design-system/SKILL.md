@@ -100,6 +100,13 @@ Tabla completa con hex, contraste y uso de cada color: [references/tokens.md](re
    y documentarlo en `references/componentes.md`.
 4. Correr la auditoría sobre los archivos tocados (debe dar 0 en hex/fontSize/radius/shadow).
 
+### A2. Modificar un archivo existente (por cualquier motivo)
+Si tocás un `.css` o `.jsx` aunque sea por un bug o una feature, ese archivo queda normalizado
+completo antes de terminar: `migrate.mjs <archivo> --write` (después de revisar el dry-run),
+font-size / weight / spacing / `!important` / inline styles a mano, y `audit.mjs <archivo>` en 0
+para hex, fontSize, radius y shadow. Si el CSS de una pantalla está repartido (`X.css` + `XMobile.css`),
+normalizar ambos. Avisar al usuario los cambios visuales que resulten.
+
 ### B. Migrar una pantalla existente
 Seguir [references/migracion.md](references/migracion.md). Resumen:
 1. `node .claude/skills/noticiasd-design-system/scripts/audit.mjs <ruta> --detail`
