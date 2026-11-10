@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { validarToken } from '../components/administrador/gestores/apisUsuarios';
+import { verificarToken } from '../components/Apis/tokenApi.js';
 import { obtenerPaginas } from '../components/Apis/paginasApi.js';
 
 import {  
@@ -35,11 +35,17 @@ export const useSessionManager = () => {
     const intervalo = setInterval( async () => {
       if (!tokenActual) return; 
 
-      const sesionActiva = await validarToken(tokenActual); 
+      let respuesta;
+      try {
+        respuesta = await verificarToken(tokenActual);
+      } catch (error) {
+        console.error('Error al verificar el token:', error);
+        return;
+      }
 
-      if (!isMounted) return; 
+      if (!isMounted) return;
 
-      if (!sesionActiva) {
+      if (!respuesta?.active) {
         setMostrarModal(true);
         channel.postMessage({ type: 'SESION_EXPIRADA' }); 
       }

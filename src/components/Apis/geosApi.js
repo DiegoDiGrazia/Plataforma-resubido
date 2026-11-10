@@ -16,3 +16,17 @@ export const obtenerPaises = async () => {
   if (!res.ok) return null;
   return res.json();
 };
+
+export const obtenerProvincias = async (pais_id) => {
+  const res = await fetch(`${BASE_URL}/geo/provincias?pais_id=${pais_id}`);
+
+  if (!res.ok) return null;
+  return res.json();
+};
+
+export const obtenerMunicipios = async (provincia_id) => {
+  const res = await fetch(`${BASE_URL}/geo/municipios?provincia_id=${provincia_id}`);
+
+  if (!res.ok) return null;
+  return res.json();
+};

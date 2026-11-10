@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import axios from 'axios';
-import SelectorConBuscador from '../nota/Editorial/SelectorConBuscador';
 import { useSelector } from 'react-redux';
 import SelectorConBuscadorMult from './SelectorConBuscadorMult';
+import { obtenerMunicipios } from '../Apis/geosApi';
 
 const ArbolConSelectorMultiple = ({
   TOKEN,
@@ -65,16 +65,12 @@ const ArbolConSelectorMultiple = ({
       try {
         const responses = await Promise.all(
           provinciasSeleccionadas.map((prov) =>
-            axios.post(
-              "https://panel.serviciosd.com/app_obtener_municipios",
-              { token: TOKEN, provincia_id: prov.provincia_id },
-              { headers: { 'Content-Type': 'multipart/form-data' } }
-            )
+            obtenerMunicipios(prov.provincia_id)
           )
         );
 
         const todos = responses.flatMap(res =>
-          res.data.status === "true" ? res.data.item : []
+          Array.isArray(res) ? res : []
         );
 
         setMunicipios(todos);
