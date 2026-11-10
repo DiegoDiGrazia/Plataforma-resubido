@@ -192,6 +192,13 @@ const Sidebar = ({ estadoActual }) => {
               'Administración',
               'bi bi-gear-fill'
             )}
+            {permisoAdmin && renderSidebarButton(
+              'gestion-reportes',
+              'gestion-reportes',
+              '/images/auto_entrevistas_icon.png',
+              'Gestión reportes',
+              'bi bi-file-earmark-bar-graph-fill'
+            )}
             {(permisoAdmin || permisoFeed) && renderSidebarButton(
               'Feed',
               'feed',

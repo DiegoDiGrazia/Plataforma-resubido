@@ -21,6 +21,7 @@ import Facturas from './components/comercial/Facturas';
 import AbmSitiosRelevantes from './components/administrador/gestores/AbmSitiosRelevantes';
 import MonitorEditorial from './components/monitor/MonitorEditorial';
 import GestionPresupuestos from './components/comercial/calculadora/GestionPresupuestos';
+import GestionReportes from './components/administrador/gestores/GestionReportes';
 
 // 👇 Acá van tus componentes con lazy
 const Formulario = lazy(() => import('./components/login/Formulario'));
@@ -70,6 +71,7 @@ function App() {
               <Route path="/notasEditorial" element={<NotasParaEditorial />} />
               <Route path="/feed" element={<Feed />} />
               <Route path="/monitorEditorial" element={<MonitorEditorial />} />
+              <Route path="/gestion-reportes" element={<GestionReportes />} />
 
               
 
