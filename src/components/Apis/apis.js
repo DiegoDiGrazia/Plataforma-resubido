@@ -12,14 +12,6 @@ const jsonHeaders = (token) => ({
   "Content-Type": "application/json",
 });
 
-// Token
-
-export const verificarToken = (token) =>
-  fetch(`${BASE_URL}/token/active`, {
-    headers: headers(token),
-
-  }).then((r) => r.json());
-
 // Feed
 
 export const crearFeed = (token, clientId, name) =>

@@ -16,9 +16,8 @@ import InputNumerico from '../nota/Editorial/InputNumerico';
 import Checkbox from '../nota/Editorial/checkbox';
 import FileInput from '../nota/Editorial/FileInput';
 import ModalConListado from '../administrador/gestores/ModalConListado';
-import { obtenerArchivosDeContrato, obtenerComentariosDeContrato } from '../administrador/gestores/apisUsuarios';
+import { obtenerArchivosDeContrato, obtenerComentariosDeContrato, agregarComentario } from '../Apis/facturasApi.js';
 import ModalConInputTexto from '../administrador/gestores/ModalConInputTexto';
-import { agregarComentario } from '../administrador/gestores/apisUsuarios';
 import ModalConInputFile from '../administrador/gestores/ModalConInputFile';
 import { descargarExcel } from '../funciones/creacionCSV';
 
@@ -544,7 +543,7 @@ const handleSave = () => {
   const verComentariosDelContrato = async (contrato) => {
     setShowModalComentariosDelContrato(true);
     const comentarios = await obtenerComentariosDeContrato(TOKEN, contrato.id);
-    setComentariosDelContrato(comentarios);
+    setComentariosDelContrato(comentarios || []);
   }
   const cargarComentario = (contrato) => {
     setShowModalInputTexto(true);
@@ -563,15 +562,19 @@ const handleSave = () => {
 
   const clickearGuardarComentarioContrato = async (contrato, comentario) => {
     setShowModalInputTexto(false);
-    await agregarComentario(TOKEN, id_usuario, comentario, contratoSeleccionado.id);
-    setMensajeModalExito('El comentario se guardó correctamente.');
-    setShowModal(true);
+    try {
+      await agregarComentario(TOKEN, id_usuario, comentario, contratoSeleccionado.id);
+      setMensajeModalExito('El comentario se guardó correctamente.');
+      setShowModal(true);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   const verArchivosDelContrato = async (contrato) => {
     setShowModalArchivosDelContrato(true);
     const archivos = await obtenerArchivosDeContrato(TOKEN, contrato.id);
-    setArchivosDelContrato(archivos);
+    setArchivosDelContrato(archivos || []);
   }
 
   return (

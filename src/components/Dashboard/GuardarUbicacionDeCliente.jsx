@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
-import axios from 'axios';
+import { useSelector, useDispatch } from 'react-redux';
 import {updateProvinciaUsuario, updateMunicipioUsuario } from '../../redux/formularioSlice';
+import { obtenerProvincias, obtenerMunicipios } from '../Apis/geosApi';
+import { obtenerClientes } from '../Apis/apis';
 
 const GuardarUbicacionDeCliente= ({id_cliente}) => {
     if (!id_cliente) {
@@ -16,19 +16,7 @@ const GuardarUbicacionDeCliente= ({id_cliente}) => {
     const [provincia, setProvinciaLocal] = useState("");
     const [municipios, setMunicipiosLocal] = useState("");
     useEffect(() => {
-        axios.post(
-            "https://panel.serviciosd.com/app_obtener_clientes",
-            {
-                token: TOKEN,
-                cliente: "",
-            },
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                }
-            }
-        )
-        .then((response) => {
+        obtenerClientes(TOKEN).then((response) => {
             if (response.data.status === "true") {
                 console.log(response.data);
                 let clientes = response.data.item;
@@ -45,24 +33,13 @@ const GuardarUbicacionDeCliente= ({id_cliente}) => {
     }, [TOKEN, dispatch]); 
 
     useEffect(() => {
-        axios.post(
-            "https://panel.serviciosd.com/app_obtener_provincias",
-            { token: TOKEN },
-            { headers: {'Content-Type': 'multipart/form-data'}}
-        )
-        .then((response) => {
-            if (response.data.status === "true") {
-                let provincias = response.data.item;
-                console.log("provincias", provincias)
-                let provinciaDelCliente = provincias.find((provincia) => provincia.provincia_id == clienteDelUsuario.provincia_id)
-                console.log("provinciaDelCliente", provinciaDelCliente)
-                if(provinciaDelCliente){
-                    setProvinciaLocal(provinciaDelCliente)
-                    dispatch(updateProvinciaUsuario(provinciaDelCliente));
-                }
-            } else {
-                console.error('Error en la respuesta de la API:', response.data.message);
-            }   
+        obtenerProvincias("1").then((response) => {
+            let provincias = Array.isArray(response) ? response : [];
+            let provinciaDelCliente = provincias.find((provincia) => String(provincia.provincia_id) === String(clienteDelUsuario?.provincia_id))
+            if(provinciaDelCliente){
+                setProvinciaLocal(provinciaDelCliente)
+                dispatch(updateProvinciaUsuario(provinciaDelCliente));
+            }
         })
         .catch((error) => console.error('Error al obtener provincias:', error));
     }, [TOKEN, clienteDelUsuario]);
@@ -71,22 +48,12 @@ const GuardarUbicacionDeCliente= ({id_cliente}) => {
     useEffect(() => {
         if (!provincia?.provincia_id) return;
 
-        axios.post(
-            "https://panel.serviciosd.com/app_obtener_municipios",
-            { token: TOKEN, provincia_id: provincia.provincia_id },
-            { headers: { 'Content-Type': 'multipart/form-data' } }
-        )
-        .then((response) => {
-            if (response.data.status === "true") {
-                let municipiosDeLaProvincia = response.data.item;
-                let municipioDelCliente = municipiosDeLaProvincia.find((municipio) => municipio.municipio_id == clienteDelUsuario.municipio_id)
-                if(municipioDelCliente){
+        obtenerMunicipios(provincia.provincia_id).then((response) => {
+            let municipiosDeLaProvincia = Array.isArray(response) ? response : [];
+            let municipioDelCliente = municipiosDeLaProvincia.find((municipio) => String(municipio.municipio_id) === String(clienteDelUsuario?.municipio_id))
+            if(municipioDelCliente){
                 setMunicipiosLocal(municipioDelCliente);
                 dispatch(updateMunicipioUsuario(municipioDelCliente));
-            }
-                
-            } else {
-                console.error('Error en la respuesta de la API:', response.data.message);
             }
         })
         .catch((error) => console.error('Error al obtener municipios:', error));

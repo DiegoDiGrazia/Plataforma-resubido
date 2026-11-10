@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import axios from 'axios';
 import SelectorConBuscador from './SelectorConBuscador';
 import { useSelector } from 'react-redux';
+import { obtenerMunicipios } from '../../Apis/geosApi';
 
 const ArbolDistribucion = ({
   TOKEN,
@@ -38,20 +38,8 @@ const ArbolDistribucion = ({
   useEffect(() => {
     if (!provincia?.provincia_id) return;
 
-    axios.post(
-      "https://panel.serviciosd.com/app_obtener_municipios",
-      { token: TOKEN, provincia_id: provincia.provincia_id },
-      { headers: { 'Content-Type': 'multipart/form-data' } }
-    )
-    .then((response) => {
-      if (response.data.status === "true") {
-        setMunicipios(response.data.item);
-        // if (!municipio || !municipio.municipio_id) {
-        //   onSetMunicipio(response.data.item[0] || {});
-        // }
-      } else {
-        console.error('Error en la respuesta de la API:', response.data.message);
-      }
+    obtenerMunicipios(provincia.provincia_id).then((response) => {
+      setMunicipios(Array.isArray(response) ? response : []);
     })
     .catch((error) => console.error('Error al obtener municipios:', error));
   }, [TOKEN, provincia]);

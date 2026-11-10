@@ -5,13 +5,17 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { obtenerMesActual } from '../administrador/gestores/Distribucion.jsx';
 import DropdownFiltro from './DropdownFiltro.jsx';
 import './Facturas.css'
+import { obtenerContratos, cargarArchivo } from '../administrador/gestores/apisUsuarios.jsx';
 import { obtenerFacturas, editarFactura, unificarFacturas, dividirFactura,
-         cargarFacturaAbierta, obtenerContratos, obtenerFacturasDeContrato,
-         obtenerArchivosDeContrato, obtenerComentariosDeContrato, eliminarFacturaAbierta,
-         eliminarArchivo, cargarArchivo, agregarComentario } from '../administrador/gestores/apisUsuarios.jsx';
+         cargarFacturaAbierta, obtenerFacturasDeContrato, eliminarFacturaAbierta,
+         obtenerArchivosDeContrato, eliminarArchivo,
+         obtenerComentariosDeContrato, agregarComentario } from '../Apis/facturasApi.js';
 import { obtenerClientes } from '../Apis/apis';
 import { descargarExcel } from '../funciones/creacionCSV';
 import { borrarTildes } from '../../utils/funcionesVarias.js'
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { toastExito, toastError } from '../../utils/toastify/toastify.jsx';
 
 const SpinnerCarga = ({ texto = "Cargando..." }) => (
     <div className="text-center p-4 border rounded fw-bold w-100">
@@ -19,8 +23,6 @@ const SpinnerCarga = ({ texto = "Cargando..." }) => (
         {texto}
     </div>
 );
-
-
 
 const Facturas = () =>  {
     
@@ -45,8 +47,6 @@ const Facturas = () =>  {
     const [numeroSeleccionado, setNumeroSeleccionado] = useState("");    
     const [mesSeleccionado, setMesSeleccionado] = useState("");    
     const [fechaPagoSeleccionada, setFechaPagoSeleccionada] = useState("");    
-    const [mensajeExito, setMensajeExito] = useState("");
-    const [animarAlerta, setAnimarAlerta] = useState(false);
     const [contratosAbiertos, setContratosAbiertos] = useState([]);
     const [contratoSeleccionado, setContratoSeleccionado] = useState("");
     const [montoSeleccionado, setMontoSeleccionado] = useState(0);
@@ -69,7 +69,7 @@ const Facturas = () =>  {
     useEffect(() => {
         if (token && fechaDesde && fechaHasta) {
             obtenerFacturas(token, (fechaDesde + "-01"), (fechaHasta + "-01")).then((facturasRecibidos) => {
-                setFacturas(facturasRecibidos);
+                setFacturas(facturasRecibidos || []);
             });
         }
     }, [token, fechaDesde, fechaHasta]);
@@ -155,7 +155,7 @@ const Facturas = () =>  {
             setCargandoFacturasEnContrato(true);
 
             obtenerFacturasDeContrato(token, f.id_contrato).then((facturas) => {
-                const facturasDeContrato = facturas.filter(factura => factura.id !== f.id);
+                const facturasDeContrato = (facturas || []).filter(factura => factura.id !== f.id);
                 setFacturasContrato(facturasDeContrato);
             })
             .finally(() => setCargandoFacturasEnContrato(false));
@@ -237,9 +237,13 @@ const Facturas = () =>  {
                         { ...f, numero: numeroSeleccionado, estado: estadoSeleccionado, mes: mesApi, fecha_pago: fechaApi } : f
                 )
             );
-            mostrarAlertaExito("La factura fue editada exitosamente!");
+            toastExito("La factura fue editada exitosamente!");
             document.querySelector('#modalEditarFactura .btn-close').click();
         })
+        .catch((error) => {
+            console.error(error);
+            toastError("Ocurrió un error al editar la factura");
+        });
     };
 
     {/* FUNCIONES CARGAR FACTURA ABIERTA */}
@@ -260,11 +264,15 @@ const Facturas = () =>  {
 
         cargarFacturaAbierta(token, numeroSeleccionado, estadoSeleccionado, mesApi, contratoSeleccionado, montoSeleccionado, fechaApi).then(() => {
             obtenerFacturas(token, (fechaDesde + "-01"), (fechaHasta + "-01")).then((facturasRecibidos) => {
-                setFacturas(facturasRecibidos);
+                setFacturas(facturasRecibidos || []);
             });
-            mostrarAlertaExito("La factura abierta fue cargada exitosamente!");
+            toastExito("La factura abierta fue cargada exitosamente!");
             document.querySelector('#modalCargarFactura .btn-close').click();
         })
+        .catch((error) => {
+            console.error(error);
+            toastError("Ocurrió un error al cargar la factura abierta");
+        });
     };
 
     {/* FUNCIONES UNIFICAR FACTURA */}
@@ -284,10 +292,14 @@ const Facturas = () =>  {
 
         unificarFacturas(token, facturasAUnificar, facturaActual.id).then(() => {
             obtenerFacturas(token, (fechaDesde + "-01"), (fechaHasta + "-01")).then((facturasActualizadas) => {
-                setFacturas(facturasActualizadas);
+                setFacturas(facturasActualizadas || []);
             });
-            mostrarAlertaExito(`¡Se unificaron ${facturasAUnificar.length + 1} facturas exitosamente!`);
-            document.querySelector('#modalUnificarFacturas .btn-close').click(); 
+            toastExito(`¡Se unificaron ${facturasAUnificar.length + 1} facturas exitosamente!`);
+            document.querySelector('#modalUnificarFacturas .btn-close').click();
+        })
+        .catch((error) => {
+            console.error(error);
+            toastError("Ocurrió un error al unificar las facturas");
         })
         .finally(() => {
             setProcesandoUnificacion(false);
@@ -305,11 +317,16 @@ const Facturas = () =>  {
 
         dividirFactura(token, facturaActual.id, numeroSeleccionado, mesApi).then(() => {
             obtenerFacturas(token, (fechaDesde + "-01"), (fechaHasta + "-01")).then((facturasActualizadas) => {
-                setFacturas(facturasActualizadas);
+                setFacturas(facturasActualizadas || []);
             });
-            mostrarAlertaExito(`¡La factura se dividió en ${numeroSeleccionado} partes exitosamente!`);
-            document.querySelector('#modalDividirFactura .btn-close').click(); 
-        }).finally(() => {
+            toastExito(`¡La factura se dividió en ${numeroSeleccionado} exitosamente!`);
+            document.querySelector('#modalDividirFactura .btn-close').click();
+        })
+        .catch((error) => {
+            console.error(error);
+            toastError("Ocurrió un error al dividir la factura");
+        })
+        .finally(() => {
             setProcesandoDivision(false);
         });
     };
@@ -318,11 +335,15 @@ const Facturas = () =>  {
     const handleEliminarFactura = () => {
         eliminarFacturaAbierta(token, facturaActual.id).then(() => {
             obtenerFacturas(token, (fechaDesde + "-01"), (fechaHasta + "-01")).then((facturasActualizadas) => {
-                setFacturas(facturasActualizadas);
+                setFacturas(facturasActualizadas || []);
             });
-            mostrarAlertaExito("¡La factura fue eliminada exitosamente!");
-            document.querySelector('#modalEliminarFactura .btn-close').click(); 
+            toastExito("¡La factura fue eliminada exitosamente!");
+            document.querySelector('#modalEliminarFactura .btn-close').click();
         })
+        .catch((error) => {
+            console.error(error);
+            toastError("Ocurrió un error al eliminar la factura");
+        });
     };
 
     {/* FUNCION ELIMINAR ARCHIVO */}
@@ -334,8 +355,12 @@ const Facturas = () =>  {
                     setArchivosContrato(archivosActualizados || []);
                 });
                 
-                mostrarAlertaExito("¡Archivo eliminado exitosamente!");
+                toastExito("¡Archivo eliminado exitosamente!");
             })
+            .catch((error) => {
+                console.error(error);
+                toastError("Ocurrió un error al eliminar el archivo");
+            });
         }
     };
 
@@ -351,7 +376,7 @@ const Facturas = () =>  {
             obtenerArchivosDeContrato(token, facturaActual.id_contrato).then((archivosActualizados) => {
                 setArchivosContrato(archivosActualizados || []);
             });
-            mostrarAlertaExito("¡Archivo cargado exitosamente!");
+            toastExito("¡Archivo cargado exitosamente!");
         }).finally(() => {
             setSubiendoArchivo(false);
             inputTarget.value = null; 
@@ -369,26 +394,17 @@ const Facturas = () =>  {
             obtenerComentariosDeContrato(token, facturaActual.id_contrato).then((comentariosActualizados) => {
                 setComentariosContrato(comentariosActualizados || []);
             });
-            mostrarAlertaExito("Comentario guardado exitosamente!");
-            setNuevoComentario(""); 
-            
-        }).finally(() => {
+            toastExito("Comentario guardado exitosamente!");
+            setNuevoComentario("");
+
+        })
+        .catch((error) => {
+            console.error(error);
+            toastError("Ocurrió un error al guardar el comentario");
+        })
+        .finally(() => {
             setGuardandoComentario(false);
         });
-    };
-
-    {/* FUNCION ALERTA DE EXITO */}
-    const mostrarAlertaExito = (mensaje = "Cambios realizados exitosamente") => {
-        setMensajeExito(mensaje);
-        setAnimarAlerta(true);
-
-        setTimeout(() => {
-            setAnimarAlerta(false);
-        }, 3500);
-
-        setTimeout(() => {
-            setMensajeExito("");
-        }, 5000);
     };
 
 
@@ -1142,17 +1158,11 @@ const Facturas = () =>  {
                     </div>
                 </div>
             </div>
-            {/* Alerta de Éxito */}
-            {mensajeExito && (
-                <div 
-                    className={`alert alert-success position-fixed bottom-0 start-50 translate-middle-x mb-4 shadow fade ${animarAlerta ? 'show' : ''}`} 
-                    style={{ zIndex: 1050, transition: "opacity 0.4s ease-out" }}
-                    role="alert"
-                >
-                    <i className="bi bi-check-circle-fill me-2 mb-4"></i>
-                    {mensajeExito}
-                </div>
-            )}
+            <ToastContainer 
+                position="top-right" 
+                autoClose={3000} 
+                hideProgressBar={false} 
+            />
             
         </div>
     )
