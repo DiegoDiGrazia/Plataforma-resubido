@@ -1,7 +1,7 @@
 .contenedor-monitorEditorial {
 
     .icono_tusNotas {
-        color: #3e4658ff;
+        color: var(--nd-color-text);
         margin-right: 5px;
         font-size: 24px;
     }
@@ -18,7 +18,7 @@
         font-size: 13px;
         border: none;
         outline: none;
-        border-radius: 6px;
+        border-radius: var(--nd-radius-md);
         padding-inline: 5px;
         width: 105px;
     }
@@ -28,28 +28,28 @@
     }
 
     .text-brand {
-        color: #FF653B !important;
+        color: var(--nd-color-primary-text) !important;
     }
 
     .bg-brand {
-        background-color: #FF653B !important;
-        color: white;
+        background-color: var(--nd-color-primary) !important;
+        color: var(--nd-color-text-inverse);
     }
 
     .btn-brand {
-        background-color: #FF653B;
-        color: white;
+        background-color: var(--nd-color-primary);
+        color: var(--nd-color-text-inverse);
         border: none;
     }
 
     .btn-brand:hover {
-        background-color: #e55a35;
-        color: white;
+        background-color: var(--nd-color-primary-hover);
+        color: var(--nd-color-text-inverse);
     }
 
     .nav-tabs .nav-link.active-brand-tab {
-        border-bottom: 2px solid #FF653B;
-        color: black;
+        border-bottom: 2px solid var(--nd-color-primary);
+        color: var(--nd-color-text);
         font-weight: bold;
         background-color: transparent;
         border-top: none;
@@ -58,19 +58,19 @@
     }
 
     .nav-tabs .nav-link {
-        color: #6c757d;
+        color: var(--nd-color-text-secondary);
         border: none;
         cursor: pointer;
     }
 
     .list-group-item.active-brand {
-        border-left: 4px solid #FF653B !important;
+        border-left: 4px solid var(--nd-color-primary) !important;
         font-weight: bold;
-        background-color: #f8f9fa;
-        color: black;
-        border-top: 1px solid #ddd;
-        border-bottom: 1px solid #ddd;
-        border-right: 1px solid #ddd;
+        background-color: var(--nd-color-bg-page);
+        color: var(--nd-color-text);
+        border-top: 1px solid var(--nd-color-border);
+        border-bottom: 1px solid var(--nd-color-border);
+        border-right: 1px solid var(--nd-color-border);
     }
 
     .list-group-item {
@@ -78,8 +78,8 @@
     }
 
     .form-check-input:checked {
-        background-color: #FF653B;
-        border-color: #FF653B;
+        background-color: var(--nd-color-primary);
+        border-color: var(--nd-color-primary);
     }
 
     .lista-izquierda-abm {
@@ -148,7 +148,7 @@
         font-size: 0.75rem;
         text-transform: uppercase;
         font-weight: bold;
-        color: #6c757d; 
+        color: var(--nd-color-text-secondary); 
     }
 
     .dato-nota .valor {
@@ -168,13 +168,13 @@
     }
 
     #switchGeo:checked {
-        background-color: #FF653B;
-        border-color: #FF653B;
+        background-color: var(--nd-color-primary);
+        border-color: var(--nd-color-primary);
         background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
     }
 
     #switchGeo {
-        border-color: #CCCCCC;
+        border-color: var(--nd-color-border-strong);
         box-shadow: none;
         outline: none;
         background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23FF653B'/%3e%3c/svg%3e");
@@ -185,8 +185,8 @@
         justify-content: space-between;
         gap: 1.5rem;
         flex-wrap: wrap;
-        background-color: #f8f9fa;
-        border-radius: 8px;
+        background-color: var(--nd-color-bg-page);
+        border-radius: var(--nd-radius-md);
         padding: 1rem 1.5rem;
     }
 
@@ -200,13 +200,13 @@
         font-size: 0.75rem;
         text-transform: uppercase;
         font-weight: bold;
-        color: #6c757d;
+        color: var(--nd-color-text-secondary);
     }
 
     .dato-resumen .valor {
         font-size: 1.1rem;
         font-weight: bold;
-        color: #3e4658ff;
+        color: var(--nd-color-text);
     }
 
     @media (max-width: 1366px) {

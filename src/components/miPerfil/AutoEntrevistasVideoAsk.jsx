@@ -54,9 +54,9 @@ const AutoEntrevistasVideoAsk = () => {
                     top: "20px",
                     right: "20px",
                     padding: "10px 15px",
-                    backgroundColor: "green",
-                    color: "white",
-                    borderRadius: "5px",
+                    backgroundColor: "var(--nd-color-success)",
+                    color: "var(--nd-color-text-inverse)",
+                    borderRadius: 'var(--nd-radius-sm)',
                     zIndex: 9999,
                 }}>
                     ¡Enlace copiado al portapapeles!

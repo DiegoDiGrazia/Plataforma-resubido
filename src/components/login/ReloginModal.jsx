@@ -31,7 +31,7 @@ const ReloginModal = ({ onLoginExitoso }) => {
   };
 
   return (
-    <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}>
+    <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'var(--nd-color-overlay)' }}>
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content shadow">
           
@@ -75,7 +75,7 @@ const ReloginModal = ({ onLoginExitoso }) => {
                 />
               </div>
               
-              <button type="submit" className="btn w-100 py-2 fw-semibold text-light" style={{backgroundColor: '#FF653B'}}>
+              <button type="submit" className="btn btn-primary w-100 py-2">
                 Volver a la sesión
               </button>
             </form>

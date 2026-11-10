@@ -43,7 +43,7 @@ const BotonEliminarNota = ({ id, token }) => {
         <div
           className="modal fade show"
           tabIndex="-1"
-          style={{ display: "block", backgroundColor: "rgba(0,0,0,0.5)" }}
+          style={{ display: "block", backgroundColor: "var(--nd-color-overlay)" }}
         >
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content rounded-3">

@@ -2,7 +2,7 @@
 @media (max-width: 768px) {
 
         .content.flex-grow-1 {
-            background-color: white;
+            background-color: var(--nd-color-bg-surface);
         }
 
         .head_dash.no-print {

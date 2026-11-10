@@ -4,6 +4,7 @@ import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { useDispatch, useSelector } from 'react-redux';
 import "./Barplot.css";
+import { color, palette, seriesColors } from '../../styles/tokens';
 import "./BarplotMobile.css";
 import { formatNumberMiles } from '../Dashboard/Dashboard.jsx';
 import Barplot_Carga from './Barplot_mejorado_carga.jsx';
@@ -132,21 +133,21 @@ const Barplot = ({datosLocales, resumenCliente = null, loading = false, paisFilt
             {
                 label: `Usuarios totales`,
                 data: totales.usuariosMetaPorMes,
-                backgroundColor: '#2029FF',
+                backgroundColor: seriesColors.redes,
                 barPercentage: 1.0,
                 categoryPercentage: 0.7,
             },
             {
                 label: `Impresiones totales`,
                 data: totales.usuariosGooglePorMes,
-                backgroundColor: '#34A853',
+                backgroundColor: seriesColors.medios,
                 barPercentage: 1.0,
                 categoryPercentage: 0.7,
             },
             {
                 label: `Videos totales`,
                 data: totales.usuariosVideosPorMes,
-                backgroundColor: '#dc3545',
+                backgroundColor: seriesColors.videos,
                 barPercentage: 1.0,
                 categoryPercentage: 0.7,
             },
@@ -172,9 +173,9 @@ const Barplot = ({datosLocales, resumenCliente = null, loading = false, paisFilt
                         return '';
                     }
                 },
-                backgroundColor: '#f5f5f5', // Cambia el color de fondo del tooltip
-                bodyColor: '#333', // Cambia el color del texto del valor
-                borderColor: '#999', // Opcional, para agregar un borde
+                backgroundColor: palette.gray0,
+                bodyColor: color.text,
+                borderColor: color.border,
                 borderWidth: 1, // Establece el grosor del borde (opcional)
             },
         },
@@ -183,13 +184,13 @@ const Barplot = ({datosLocales, resumenCliente = null, loading = false, paisFilt
                 offset: true,
                 grid: {
                     offset: false,
-                    color: 'rgba(128, 128, 128, 0.1)',
+                    color: color.border,
                 },
             },
             y: {
                 beginAtZero: true,
                 grid: {
-                    color: 'rgba(128, 128, 128, 0.1)',
+                    color: color.border,
                 },
             },
         },
@@ -205,7 +206,7 @@ const Barplot = ({datosLocales, resumenCliente = null, loading = false, paisFilt
         <div className="container-fluid sinPadding" ref={captureRef}>
             <div id='contenedor-barplot' className="row cantidades mt-3 back-white w-75">
                 {!totales.usuariosTotalesRRSS  && !totales.usuariosTotalesGoogle && (
-                    <h2 style={{ color: '#333', margin: '20px' }}>No se encontraron usuarios para la fecha seleccionada del pais: {paisFiltro?.nombre || 'Desconocido'}</h2>
+                    <h2 style={{ color: 'var(--nd-color-text)', margin: '20px' }}>No se encontraron usuarios para la fecha seleccionada del pais: {paisFiltro?.nombre || 'Desconocido'}</h2>
                 )}
                 {totales.usuariosTotalesRRSS > 0 && totales.usuariosTotalesGoogle > 0 && (
                 <>
@@ -226,7 +227,7 @@ const Barplot = ({datosLocales, resumenCliente = null, loading = false, paisFilt
                     </div>
                     <div className='col' style={{ paddingLeft: '20px' }}>
                         <p className='leyenda_barplot'>
-                            <span className="blue-dot-user bg-danger"></span>Usuarios Videos
+                            <span className="blue-dot-user blue-dot-videos"></span>Usuarios Videos
                             <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "Son las personas que llegaron a tus notas desde nuestra difusión por medio de Videos."/>  
                         </p>
                         <p className='totales'>{formatNumberMiles(totales.usuariosTotalesVideos)}</p>

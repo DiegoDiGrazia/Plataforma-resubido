@@ -322,10 +322,10 @@ const AutoEntrevistas = () => {
                                     backgroundPosition: "center",  // Centra la imagen
                                 }}>
                                     <div className="card-body">
-                                        <h5 className="card-title" style={{ fontSize: "20px", borderBottom: "1px solid #667085", height: "25px", paddingBottom: "5px" }}>{categoriaKey}</h5>
+                                        <h5 className="card-title" style={{ fontSize: "20px", borderBottom: "1px solid var(--nd-color-border-strong)", height: "25px", paddingBottom: "5px" }}>{categoriaKey}</h5>
 
                                         <div id={categoriaKey} className="carousel slide" style={{ height: "350px", padding: "5px 30px" }} data-bs-ride="carousel">
-                                            <ol className="carousel-indicators" style={{ backgroundColor: "gray" }}>
+                                            <ol className="carousel-indicators" style={{ backgroundColor: "var(--nd-gray-600)" }}>
                                                 {Object.keys(DEF[categoriaKey]).map((item, index) => (
                                                     <li
                                                         key={index}
@@ -341,13 +341,13 @@ const AutoEntrevistas = () => {
                                                         key={index}
                                                         className={`carousel-item ${index === 0 ? "active" : ""}`}
                                                     >
-                                                        <h5 className="card-title" style={{ color: "#212529", fontSize: "20px" }}>{item}</h5>
-                                                        <p className="abajoDeTusNotas" style={{ color: "#212529", height: "120px", fontWeight: "bold" }}>{DEF[categoriaKey][item].desc}</p>
+                                                        <h5 className="card-title" style={{ color: "var(--nd-color-text)", fontSize: "20px" }}>{item}</h5>
+                                                        <p className="abajoDeTusNotas" style={{ color: "var(--nd-color-text)", height: "120px", fontWeight: "bold" }}>{DEF[categoriaKey][item].desc}</p>
                                                         <Button
                                                             onClick={() => window.open(`https://entrevista.serviciosd.com/${categoriaKey}/${item}`, '_blank')}
                                                             variant="none"
                                                             className='botonCerrarSesion'
-                                                            style={{ backgroundColor: "white", margin: "0px 0px 0px 10px", borderColor: "black" }}
+                                                            style={{ backgroundColor: "var(--nd-color-bg-surface)", margin: "0px 0px 0px 10px", borderColor: "var(--nd-color-text)" }}
                                                         >
                                                             {"Autoentrevistarse"}
                                                         </Button>
@@ -364,7 +364,7 @@ const AutoEntrevistas = () => {
                                                             }}
                                                             variant="none"
                                                             className='botonCerrarSesion'
-                                                            style={{ backgroundColor: "white", margin: "10px", borderColor: "black" }}
+                                                            style={{ backgroundColor: "var(--nd-color-bg-surface)", margin: "10px", borderColor: "var(--nd-color-text)" }}
                                                         >
                                                             {"Copiar URL"}
                                                         </Button>
@@ -378,7 +378,7 @@ const AutoEntrevistas = () => {
                                                 data-bs-slide="prev"
                                                 style={{ width: "15px" }}
                                             >
-                                                <i className="bi bi-caret-left-fill" style={{ color: "black" }}></i>
+                                                <i className="bi bi-caret-left-fill" style={{ color: "var(--nd-color-text)" }}></i>
                                                 <span className="visually-hidden">Previous</span>
                                             </button>
                                             <button
@@ -388,7 +388,7 @@ const AutoEntrevistas = () => {
                                                 data-bs-slide="next"
                                                 style={{ width: "15px" }}
                                             >
-                                                <i className="bi bi-caret-right-fill" style={{ color: "black" }}></i>
+                                                <i className="bi bi-caret-right-fill" style={{ color: "var(--nd-color-text)" }}></i>
                                                 <span className="visually-hidden">Next</span>
                                             </button>
                                         </div>

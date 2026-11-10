@@ -4,7 +4,7 @@ import './toastify.css';
 
 export const toastExito = (mensaje) => {
     toast.success(mensaje, {
-        icon: <img src='/images/fabicon2.png' className="logo-nd-toastify" style={{ color: '#FF653B', fontSize: '0.9rem' }}></img>,
+        icon: <img src='/images/fabicon2.png' className="logo-nd-toastify" style={{ color: 'var(--nd-color-primary-text)', fontSize: '0.9rem' }}></img>,
         className: 'toast-custom-exito',
         progressClassName: 'toast-progress-brand',
     });

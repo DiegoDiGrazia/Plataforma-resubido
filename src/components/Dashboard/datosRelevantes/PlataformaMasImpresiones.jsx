@@ -178,7 +178,7 @@ const PlataformaMasImpresiones = ({datosLocales, resumenCliente= null, loading =
                             <div className='d-flex justify-content-between px-3 pt-0 mb-4'>
                                 <div className='d-flex align-items-center justify-content-center gap-2'>
                                     <img src={plataforma.logo} alt={`Icono ${plataforma.nombre}`} className='imagenWidwet p-0 mt-3 rounded' />
-                                    <strong className='mt-3' style={{ color: '#052C65' }}>
+                                    <strong className='mt-3' style={{ color: 'var(--nd-color-secondary)' }}>
                                         {plataforma.nombre}
                                     </strong>
                                 </div>
@@ -349,7 +349,7 @@ const PlataformaMasImpresiones = ({datosLocales, resumenCliente= null, loading =
                                     }
                                     {plataforma.cincuenta > 0 &&
                                     <div className='col d-flex align-items-center'>
-                                        <span className='icono-ctr bi bi-circle-half d-flex align-items-center justify-content-center img-fluid me-2' style={{ color: '#36383b', fontSize: '18px' }}/>
+                                        <span className='icono-ctr bi bi-circle-half d-flex align-items-center justify-content-center img-fluid me-2' style={{ color: 'var(--nd-color-text)', fontSize: '18px' }}/>
                                         <div className='cincuenta'>
                                             <span className='d-block'>50% visto</span>
                                             <span className='d-block'>{formatNumberMiles(plataforma.cincuenta)}</span>

@@ -11,7 +11,7 @@
     }
 
     body {
-        background-color: white !important;
+        background-color: var(--nd-color-bg-surface) !important;
     }
 
     .no_print, 

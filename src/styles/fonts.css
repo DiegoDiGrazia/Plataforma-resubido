@@ -1,0 +1,51 @@
+/* Aeonik — tipografía de marca.
+   OJO: los archivos actuales son la versión TRIAL (public/New Aeonik Trials).
+   Antes de producción hay que reemplazarlos por la licencia comprada
+   (idealmente en .woff2) y actualizar solo las rutas de abajo.
+
+   Aeonik trial trae solo Light / Regular / Bold. Mapeamos rangos de peso
+   para que el navegador no "sintetice" negritas falsas:
+     100–300 → Light · 400–500 → Regular · 600–900 → Bold                  */
+
+@font-face {
+  font-family: 'Aeonik';
+  src: url('/New Aeonik Trials/AeonikTRIAL-Light.otf') format('opentype');
+  font-weight: 100 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Aeonik';
+  src: url('/New Aeonik Trials/AeonikTRIAL-LightItalic.otf') format('opentype');
+  font-weight: 100 300;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Aeonik';
+  src: url('/New Aeonik Trials/AeonikTRIAL-Regular.otf') format('opentype');
+  font-weight: 400 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Aeonik';
+  src: url('/New Aeonik Trials/AeonikTRIAL-RegularItalic.otf') format('opentype');
+  font-weight: 400 500;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Aeonik';
+  src: url('/New Aeonik Trials/AeonikTRIAL-Bold.otf') format('opentype');
+  font-weight: 600 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Aeonik';
+  src: url('/New Aeonik Trials/AeonikTRIAL-BoldItalic.otf') format('opentype');
+  font-weight: 600 900;
+  font-style: italic;
+  font-display: swap;
+}

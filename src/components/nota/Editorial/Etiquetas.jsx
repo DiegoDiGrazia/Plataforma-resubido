@@ -55,17 +55,17 @@ const Etiquetas = () => {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
-                background: "#f0f0f0",
+                background: "var(--nd-color-bg-muted)",
                 padding: "2px",
                 marginBottom: "5px",
-                borderRadius: "5px",
+                borderRadius: 'var(--nd-radius-sm)',
               }}
             >
               <span>{item}</span>
               <button
                 onClick={() => handleDelete(index)}
                 style={{
-                  color: "black",
+                  color: "var(--nd-color-text)",
                   border: "none",
                   borderRadius: "0px",
                   padding: "2px 2px",

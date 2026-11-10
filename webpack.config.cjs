@@ -21,7 +21,14 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader'],
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            // Las url('/...') apuntan a /public (ej. fuentes Aeonik): se sirven tal cual
+            options: { url: { filter: (url) => !url.startsWith('/') } },
+          },
+        ],
       },
       {
         test: /\.(png|jpg|jpeg|gif|svg)$/, // Soporte para imágenes

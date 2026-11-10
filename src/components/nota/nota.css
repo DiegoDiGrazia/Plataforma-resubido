@@ -7,7 +7,7 @@
 }
 
 .notaNoEditable{
-    background-color: #eee;
+    background-color: var(--nd-color-bg-muted);
 }
 
 
@@ -29,7 +29,7 @@
 }
 .abajoDeTusNotas{
     font-size: 16px;
-    color: #667085 ;
+    color: var(--nd-color-text-secondary) ;
     padding-left: 20px;
 }
 .icono_tusNotas{
@@ -39,9 +39,9 @@
 
 .boton_filtro_notas {
     border: none;
-    background-color:#fbfcfc;
+    background-color:var(--nd-color-bg-page);
     font-size: 16px;
-    color: #667085 !important;
+    color: var(--nd-color-text-secondary) !important;
     font-weight: 700;
     padding: 0px; /* Ajustar el padding */
     padding-left: 0px;
@@ -52,17 +52,17 @@
     padding-bottom: 15px;
 } 
 .boton_filtro_notas:active {
-    color: #303238 !important; /* Color más oscuro mientras se presiona */
+    color: var(--nd-color-text) !important; /* Color más oscuro mientras se presiona */
 }
 
 .active{
-    color: #FB6514 !important;
-    border-bottom: 3px solid #FB6514;
+    color: var(--nd-color-primary-text) !important;
+    border-bottom: 3px solid var(--nd-color-primary);
 }
 .todasLasNotas{
  font-size: 18px;
  font-weight: bold; 
- color: #101828;
+ color: var(--nd-color-text);
  align-items: center;
 }
 
@@ -78,10 +78,10 @@
     width: 100%; /* Asegura que el input use todo el ancho del contenedor */
     padding: 10px; /* Mantiene el padding */
     font-size: 16px;
-    border: 1px solid #EAECF0;
-    border-radius: 10px;
+    border: 1px solid var(--nd-color-border);
+    border-radius: var(--nd-radius-lg);
     outline: none;
-    color: #050505;
+    color: var(--nd-color-text);
     background-image: url('../../../public/images/search.png'); 
     background-repeat: no-repeat;
     background-position: 10px center; /* Posiciona la imagen dentro del input */
@@ -103,7 +103,7 @@
 
 .categoriasNotas{
     font-size: 12px ;
-    color: #667085 ;
+    color: var(--nd-color-text-secondary) ;
     font-weight: 600;
     margin-top: 10px;
 
@@ -119,8 +119,8 @@
     flex: 1;
     margin-left: 70px;
     margin-right: 50px;
-    border: 1px solid #EAECF0 ;
-    border-radius: 10px;
+    border: 1px solid var(--nd-color-border) ;
+    border-radius: var(--nd-radius-lg);
 }
 
 .sin-margin {
@@ -128,13 +128,13 @@
 }
 
 .borderNotas{
-    border-top: 1px solid #EAECF0 ;
-    border-bottom: 1px solid #EAECF0 ;
-    color: #101828;
+    border-top: 1px solid var(--nd-color-border) ;
+    border-bottom: 1px solid var(--nd-color-border) ;
+    color: var(--nd-color-text);
 }
 .FechaPubNota{
     font-size: 14px;
-    color: #667085;
+    color: var(--nd-color-text-secondary);
     padding-left: 0px;
 }
 
@@ -156,7 +156,7 @@
 
 .vn_fecha{
     font-size: 14px;
-    color:#667085;
+    color:var(--nd-color-text-secondary);
     text-align: left;
     position: relative;
     top: 0;
@@ -185,7 +185,7 @@
 .imagen_nota{
     width: 300px;
     height: 200px;
-    border-radius: 10px;
+    border-radius: var(--nd-radius-lg);
     object-fit: cover;
 }
 .boton_nota{
@@ -198,10 +198,10 @@
 }
 .boton_compartir{
     border: none;
-    background-color: #fbfcfc !important;
+    background-color: var(--nd-color-bg-page) !important;
     font-size: 16px;
     font-weight: 600;
-    color: #667085;
+    color: var(--nd-color-text-secondary);
     margin-top: 5px;
 }
 .ver_nota_boton{
@@ -217,29 +217,35 @@
     cursor: pointer;       /* Muestra el cursor de pointer para indicar que es clickeable */
 }
 
+#botonPublicar:hover{
+    background-color: var(--nd-color-primary-hover);
+    border-color: var(--nd-color-primary-hover);
+    color: var(--nd-color-on-primary);
+}
 #botonPublicar{
-    background-color: #FF653B;
-    color: #EAECF0;
+    background-color: var(--nd-color-primary);
+    border: 1px solid var(--nd-color-primary);
+    color: var(--nd-color-on-primary);
     font-size: 16px;
     float: right;
     margin-right: 30px;
     width: auto;
     height: 48px;
     font-weight: 600;
-    border-radius: 10px;
+    border-radius: var(--nd-radius-lg);
     margin-top: 10px;
 }
 
 .icono_vistaPrevia{
     background-color:none;
-    color: #323232;
+    color: var(--nd-color-text);
     font-size: 16px;
     float: right;
     margin-right: 30px;
     width: auto;
     height: 48px;
     font-weight: 600;
-    border-radius: 10px;
+    border-radius: var(--nd-radius-lg);
     margin-top: 10px;
 }
 
@@ -263,18 +269,18 @@
 .upload-block {
     width: 613px;
     height: 182px;
-    border: 2px dashed black;
-    border-radius: 8px;
+    border: 2px dashed var(--nd-color-text);
+    border-radius: var(--nd-radius-md);
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    background-color: #fcfffc    ;
+    background-color: var(--nd-color-bg-page)    ;
     margin-left: 50px;
     
 }
 .crearNotaGlobal{
-    background-color: white !important;
+    background-color: var(--nd-color-bg-surface) !important;
     padding: 10px;
 }
 
@@ -283,19 +289,19 @@ padding-top: 0px !important;
 }
 
 .upload-block {
-    border: 2px dashed black;
+    border: 2px dashed var(--nd-color-text);
     padding: 20px;
     text-align: center;
     transition: background-color 0.3s ease;
 }
 
 .upload-block.dragover {
-    background-color: #f0f0f0;
+    background-color: var(--nd-color-bg-muted);
 }
 
 .custom-file-upload {
     color: orangered;
-    border-radius: 5px;
+    border-radius: var(--nd-radius-sm);
     cursor: pointer;
     font-size: 14px;
     background-color: none;
@@ -315,28 +321,28 @@ padding-top: 0px !important;
 }
 .fontGrisImagen{
     font-size: 14px;
-    color: #667085;
+    color: var(--nd-color-text-secondary);
 }
 
 .custom-modal{
     width: auto;
     height: 485px;
-    color: #667085;
+    color: var(--nd-color-text-secondary);
 
 }
 .custom_image_modal{
     width: 463px !important;
     height: 265px !important;
-    border-radius: 10px !important;
+    border-radius: var(--nd-radius-lg) !important;
     contain: content !important;
 }
 
 .subtitulo-modal{
-    color: #667085;
+    color: var(--nd-color-text-secondary);
     font-size: 16px;
 }
 .tituloModal{
-    color: #101828;
+    color: var(--nd-color-text);
     font-size: 24px;
     font-weight: 600;
 }
@@ -351,7 +357,7 @@ padding-top: 0px !important;
 
 .botonModalVolver{
     text-align: center;
-    border: 1px solid #c1c3c7;
+    border: 1px solid var(--nd-color-border-strong);
     width: 100%;
     display: block;
     margin: 0 auto;
@@ -359,21 +365,18 @@ padding-top: 0px !important;
 }   
 .botonModalContinuar{
     text-align: center;
-    border: 1px solid #c1c3c7;
+    border: 1px solid var(--nd-color-primary);
     width: 100%;
     display: block;
     margin: 0 auto;
-    background-color: #FF653B;
+    background-color: var(--nd-color-primary);
+    color: var(--nd-color-on-primary);
     font-weight: 600;
 }
 .botonModalContinuar:hover{
-    text-align: center;
-    border: 1px solid #c1c3c7;
-    width: 100%;
-    display: block;
-    margin: 0 auto;
-    background-color: #ff6236;
-    font-weight: 600;
+    border-color: var(--nd-color-primary-hover);
+    background-color: var(--nd-color-primary-hover);
+    color: var(--nd-color-on-primary);
 }
 .modalFooter{
     border: none !important;
@@ -389,14 +392,14 @@ padding-top: 0px !important;
     display: inline-block; /* Para ajustar el tamaño al de la imagen */
     width: 800px;
     height: auto;
-    border-radius: 15px !important;
+    border-radius: var(--nd-radius-xl) !important;
     margin-left: 30px;
 }
 
 .imagenRecortada {
     width: 100%; /* Asegura que la imagen ocupe todo el espacio del contenedor */
     height: auto; /* Mantiene la relación de aspecto de la imagen */
-    border-radius: 15px !important;
+    border-radius: var(--nd-radius-xl) !important;
 
 }
 
@@ -416,7 +419,7 @@ padding-top: 0px !important;
     border: none;
     display: block;
     width: 90%;
-    color: black;
+    color: var(--nd-color-text);
     font-size: 28px;
     font-weight: 600;
     resize: none;
@@ -435,7 +438,7 @@ textarea.inputTituloNota {
     border: none;
     display: block;
     width: 100%;
-    color: #D0D5DD;
+    color: var(--nd-color-text-muted);
     font-size: 28px;
     font-weight: 600;
     margin-left: 38px; 
@@ -455,7 +458,7 @@ textarea.inputTituloNota {
     margin: 5px;
     border: none;
     cursor: pointer;
-    background-color: white;
+    background-color: var(--nd-color-bg-surface);
   }
 
   .boton-plus{
@@ -476,9 +479,9 @@ textarea.inputTituloNota {
 
 .categoria_notas{
     display:inline-block;
-    background-color: #c4d4f4;  
-    color: #2164d5;
-    border-radius: 15px;
+    background-color: var(--nd-color-info-subtle);  
+    color: var(--nd-color-secondary);
+    border-radius: var(--nd-radius-xl);
     justify-content: center;
     margin-top: 10px;
     font-size: 16px !important;
@@ -505,11 +508,11 @@ textarea.inputTituloNota {
     vertical-align: bottom;
 }
 .vn_categoria {
-    background-color: #FFF6ED;
-    color: #FB6514;
+    background-color: var(--nd-color-primary-subtle);
+    color: var(--nd-color-primary-text);
     padding: 5px 10px; /* Ajusta el padding a tu gusto */
     display: inline-block; /* Cambiar a inline-block */
-    border-radius: 5px; /* Opcional: para bordes redondeados */
+    border-radius: var(--nd-radius-sm); /* Opcional: para bordes redondeados */
     height: 40px;
     vertical-align: bottom;
 
@@ -553,13 +556,13 @@ textarea.inputTituloNota {
 }
 
 .breadcrumb-item{
-    color: #344054;
+    color: var(--nd-color-text);
     border:none;
     text-decoration: none;
 }
 
 .blackActive{
-    color: #050505;
+    color: var(--nd-color-text);
 }
 
 .botonEliminarContenido{
@@ -575,51 +578,51 @@ textarea.inputTituloNota {
 .imagenNotaContenido{
     margin-top: 20px;
     margin-bottom: 20px;
-    border-radius: 15px !important;
+    border-radius: var(--nd-radius-xl) !important;
     height: auto !important;
     max-height: 600px !important;
 
 }
 .abajoDeAgregarCategoria{
     font-size: 16px;
-    color:#667085;
+    color:var(--nd-color-text-secondary);
     margin-top: 10px;
     opacity: 0.8;
 
 }
 .headerPublicarNota{
     font-size: 24px;
-    color: #101828;
+    color: var(--nd-color-text);
     font-weight: 500;
 }
 .categorias {
-    background-color: #F2F4F7;
+    background-color: var(--nd-color-bg-muted);
     margin:10px 5px;
     font-size: 16px;
-    color: #344054;
+    color: var(--nd-color-text);
     padding: 10px;
-    border-radius: 27px;
+    border-radius: var(--nd-radius-pill);
     display: inline-block ;
     border: none;
     font-weight: bold;
 }
 .categorias:hover {
-    background-color: #153f7d62;
+    background-color: var(--nd-color-info-subtle);
     margin:10px 5px;
     font-size: 16px;
-    color: #344054;
+    color: var(--nd-color-text);
     padding: 10px;
-    border-radius: 27px;
+    border-radius: var(--nd-radius-pill);
     display: inline-block ;
     border: none;
 }
 .categoriaActiva{
-    background-color: #FFF6ED;
+    background-color: var(--nd-color-primary-subtle);
     margin:10px 5px;
     font-size: 16px;
-    color: #FB6514;
+    color: var(--nd-color-primary-text);
     padding: 10px;
-    border-radius: 27px;
+    border-radius: var(--nd-radius-pill);
     display: inline-block ;
     border: none;
     font-weight: bold;
@@ -627,7 +630,7 @@ textarea.inputTituloNota {
 }
 
 .categoriaActiva:hover{
-    background-color: #fed3a7;
+    background-color: var(--nd-color-primary-subtle);
 
 }
   
@@ -651,15 +654,15 @@ textarea.inputTituloNota {
     height: auto !important;
     aspect-ratio: 1 / 1;
     object-fit: contain !important;
-    background-color: #f5f5f5;
-    border-radius: 10px !important;
+    background-color: var(--nd-color-bg-muted);
+    border-radius: var(--nd-radius-lg) !important;
     margin-top: 10px;
   }
   .cropper-hidden {
     width: 100% !important; /* Ocupa todo el ancho del contenedor */
     height: auto !important; /* Ajusta la altura automáticamente */
     object-fit: contain !important; /* Asegura que toda la imagen sea visible */
-    border-radius: 10px !important;
+    border-radius: var(--nd-radius-lg) !important;
 
 }
 .cropper-modal {
@@ -672,7 +675,7 @@ textarea.inputTituloNota {
   
 
 .cropper-wrap-box{
-    border-radius: 10px !important;
+    border-radius: var(--nd-radius-lg) !important;
 
 }
 .hDistribucionContenido{
@@ -681,17 +684,17 @@ textarea.inputTituloNota {
     font-size: 20px;
 }
 .containerFormCheck{
-    border: 1px solid #EAECF0;
-    border-radius: 10px;
+    border: 1px solid var(--nd-color-border);
+    border-radius: var(--nd-radius-lg);
     padding: 5px;
     margin: 10px 0px;
     height: 82px;
     
 }
 .containerFormCheckActive{
-    border: 1px solid #FFE0D8;
-    background-color: #FFF6ED;
-    border-radius: 10px;
+    border: 1px solid var(--nd-orange-200);
+    background-color: var(--nd-color-primary-subtle);
+    border-radius: var(--nd-radius-lg);
     padding: 5px;
     margin: 10px 0px;
     height: 82px;
@@ -705,7 +708,7 @@ textarea.inputTituloNota {
 }
 
 .form-check-input {
-    accent-color: #FF653B; /* Cambia a tu color deseado */
+    accent-color: var(--nd-color-primary); /* Cambia a tu color deseado */
     margin-top: 10px;
     padding: 10px;
     margin-left: -15px !important;
@@ -715,8 +718,8 @@ textarea.inputTituloNota {
   }
 
 .form-check-input:checked {
-    background-color: #FF653B; /* Color de fondo al estar seleccionado */
-    border-color: #FF653B ;
+    background-color: var(--nd-color-primary); /* Color de fondo al estar seleccionado */
+    border-color: var(--nd-color-primary) ;
     box-shadow: none; /* Eliminar la sombra */
 }
 .textAreaComentarios {
@@ -725,18 +728,18 @@ textarea.inputTituloNota {
     resize: none;        /* Elimina las "rayitas" de redimensionamiento */
     padding: 10px;       /* Añade espacio interno para mejor apariencia */
     font-size: 16px;     /* Tamaño de fuente */
-    border: 1px solid #ccc; /* Personaliza el borde */
-    border-radius: 5px;  /* Bordes redondeados */
+    border: 1px solid var(--nd-color-border-strong); /* Personaliza el borde */
+    border-radius: var(--nd-radius-sm);  /* Bordes redondeados */
     box-sizing: border-box; /* Incluye padding y border en el tamaño total */
-    border-radius: 10px;
+    border-radius: var(--nd-radius-lg);
     outline: none; 
   }
   .textAreaComentarios:focus {
-    border: 1px solid #ccc; /* Personaliza el borde */
+    border: 1px solid var(--nd-color-border-strong); /* Personaliza el borde */
   }
   .textAreaComentarios::placeholder {
     font-size: 16px;
-    color:#667085;
+    color:var(--nd-color-text-secondary);
     margin-top: 10px;
     opacity: 0.8;    /* Asegura que el color se vea bien */
   }
@@ -754,12 +757,12 @@ textarea.inputTituloNota {
 }
 
 .col-2 .publicada{
-    background-color: #ECFDF3;
+    background-color: var(--nd-color-success-subtle);
     height: 30px;
-    color: #027A48;
+    color: var(--nd-color-success);
     padding: 0px;
     margin-top: 0px;
-    border-radius: 15px;
+    border-radius: var(--nd-radius-xl);
     padding-top: 3px;
     padding-left: 13px;
 }
@@ -781,7 +784,7 @@ textarea.inputTituloNota {
 }
 
 .datoFaltante{
-    color: red;
+    color: var(--nd-color-danger);
 
 }
 .centradoContenido{
@@ -790,7 +793,7 @@ textarea.inputTituloNota {
     align-items: center;    /* Centra verticalmente */
     text-align: center;     /* Centra texto (si aplica) */
     width: 100% !important;
-    border-radius: 15px;
+    border-radius: var(--nd-radius-xl);
     padding-bottom: 20px;
     height: 100% !important;
   
@@ -828,8 +831,8 @@ textarea.inputTituloNota {
   
   .quill-editor .ql-toolbar {
     margin-top: 0px; /* Espaciado opcional entre el editor y la barra */
-    border: 1px solid #ccc;
-    border-radius: 10px;
+    border: 1px solid var(--nd-color-border-strong);
+    border-radius: var(--nd-radius-lg);
     width:auto !important;
     justify-content: center;
     text-align: center;
@@ -852,9 +855,9 @@ textarea.inputTituloNota {
     top: 20px; /* Posiciona la barra en la parte inferior */
     left: 45%; /* Asegura que esté alineada al borde izquierdo */
     width: 100%; /* Asegura que ocupe todo el ancho de la pantalla */
-    background-color: #fff; /* Fondo blanco para que sea visible */
+    background-color: var(--nd-color-bg-surface); /* Fondo blanco para que sea visible */
     z-index: 1000; /* Asegura que esté por encima de otros elementos */
-    border-top: 1px solid #ccc; /* Línea superior para separar del contenido */
+    border-top: 1px solid var(--nd-color-border-strong); /* Línea superior para separar del contenido */
     padding: 10px; /* Espaciado interno opcional */
     transform: translateX(-50%)
 }
@@ -884,7 +887,7 @@ textarea.inputTituloNota {
   }
 
   .ql-editor img{
-    border-radius: 15px;
+    border-radius: var(--nd-radius-xl);
 
   }
 
@@ -894,7 +897,7 @@ textarea.inputTituloNota {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: var(--nd-color-overlay);
     display: flex;
     justify-content: center;
     align-items: center;

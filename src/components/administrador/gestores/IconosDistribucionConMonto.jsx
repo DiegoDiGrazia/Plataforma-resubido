@@ -133,7 +133,7 @@ const IconosDistribucionConMonto = ({ nota, token, geo, contratos }) => {
     return (
         <>
         {showConfirmacion && (
-            <div className="modal fade show d-block" tabIndex="-1" style={{ background: 'rgba(0,0,0,0.5)' }}>
+            <div className="modal fade show d-block" tabIndex="-1" style={{ background: 'var(--nd-color-overlay)' }}>
                 <div className="modal-dialog modal-dialog-centered">
                     <div className="modal-content">
                         <div className="modal-header">
@@ -145,7 +145,7 @@ const IconosDistribucionConMonto = ({ nota, token, geo, contratos }) => {
                         </div>
                         <div className="modal-footer">
                             <button className="btn btn-secondary" onClick={cancelarAccion}>Cancelar</button>
-                            <button className="btn btn-warning" onClick={confirmarAccion}>Confirmar</button>
+                            <button className="btn btn-primary" onClick={confirmarAccion}>Confirmar</button>
                         </div>
                     </div>
                 </div>

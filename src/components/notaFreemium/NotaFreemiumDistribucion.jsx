@@ -57,24 +57,24 @@ const BarraProgreso = ({ nota }) => {
           <React.Fragment key={paso.label}>
             <div className="d-flex flex-column align-items-center" style={{ minWidth: 90 }}>
               <div style={{
-                width: 40, height: 40, borderRadius: '50%',
-                background: activo ? '#1a73e8' : '#e0e0e0',
+                width: 40, height: 40, borderRadius: 'var(--nd-radius-full)',
+                background: activo ? 'var(--nd-color-secondary)' : 'var(--nd-color-bg-muted)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 boxShadow: esCurrent ? '0 0 0 4px rgba(26,115,232,0.2)' : 'none',
                 transition: 'all .3s',
               }}>
-                <i className={`bi ${paso.icon}`} style={{ color: activo ? '#fff' : '#9e9e9e', fontSize: 16, margin: '0px' }} />
+                <i className={`bi ${paso.icon}`} style={{ color: activo ? 'var(--nd-color-text-inverse)' : 'var(--nd-color-text-muted)', fontSize: 16, margin: '0px' }} />
               </div>
               <span style={{
                 marginTop: 6, fontSize: 12, fontWeight: esCurrent ? 700 : 400,
-                color: activo ? '#1a73e8' : '#9e9e9e',
+                color: activo ? 'var(--nd-color-secondary)' : 'var(--nd-color-text-muted)',
               }}>
                 {paso.label}
               </span>
             </div>
             {idx < pasos.length - 1 && (
               <div style={{
-                flex: 1, height: 3, background: idx < pasoActual ? '#1a73e8' : '#e0e0e0',
+                flex: 1, height: 3, background: idx < pasoActual ? 'var(--nd-color-secondary)' : 'var(--nd-color-bg-muted)',
                 margin: '0 4px', marginBottom: 20, transition: 'all .3s',
               }} />
             )}
@@ -289,16 +289,16 @@ const NotaFreemiumDistribucion = () => {
         </div>
         <div className="col-auto">
           <div style={{
-            background: '#fff', padding: '10px 18px', borderRadius: 12,
-            boxShadow: '0 2px 8px rgba(0,0,0,.07)', textAlign: 'center', minWidth: 220,
+            background: 'var(--nd-color-bg-surface)', padding: '10px 18px', borderRadius: 'var(--nd-radius-lg)',
+            boxShadow: 'var(--nd-shadow-md)', textAlign: 'center', minWidth: 220,
           }}>
-            <div style={{ fontSize: 12, color: '#5F6368' }}>Crédito disponible</div>
-            <div style={{ fontWeight: 700, fontSize: 20, color: '#202124', margin: '2px 0' }}>
+            <div style={{ fontSize: 12, color: 'var(--nd-color-text-secondary)' }}>Crédito disponible</div>
+            <div style={{ fontWeight: 700, fontSize: 20, color: 'var(--nd-color-text)', margin: '2px 0' }}>
               {formatearARS(creditoCliente)}
             </div>
             <a href={`https://noticiasd.mitiendanube.com/autogestion/?cliente_id=${id_cliente}`}
               target="_blank" rel="noreferrer"
-              style={{ fontSize: 13, color: '#34A853', textDecoration: 'none', fontWeight: 500 }}>
+              style={{ fontSize: 13, color: 'var(--nd-color-success)', textDecoration: 'none', fontWeight: 500 }}>
               Recargar crédito →
             </a>
           </div>
@@ -306,12 +306,12 @@ const NotaFreemiumDistribucion = () => {
       </div>
 
       {/* Nota */}
-      <div className="card border-0 shadow-sm mb-3" style={{ borderRadius: 12 }}>
+      <div className="card border-0 shadow-sm mb-3" style={{ borderRadius: 'var(--nd-radius-lg)' }}>
         <div className="card-body d-flex gap-3 align-items-start p-3">
           <img
             src={'https://panel.serviciosd.com/img' + notaFreemium?.imagen_principal}
             alt=""
-            style={{ width: 100, height: 70, objectFit: 'cover', borderRadius: 8, flexShrink: 0 }}
+            style={{ width: 100, height: 70, objectFit: 'cover', borderRadius: 'var(--nd-radius-md)', flexShrink: 0 }}
           />
           <div>
             <div className="fw-bold mb-1">{notaFreemium?.titulo}</div>
@@ -321,14 +321,14 @@ const NotaFreemiumDistribucion = () => {
       </div>
 
       {/* Barra de progreso */}
-      <div className="card border-0 shadow-sm mb-3" style={{ borderRadius: 12 }}>
+      <div className="card border-0 shadow-sm mb-3" style={{ borderRadius: 'var(--nd-radius-lg)' }}>
         <div className="card-body p-2">
           <BarraProgreso nota={notaFreemium} />
         </div>
       </div>
 
       {/* Localidades */}
-      <div className="card border-0 shadow-sm mb-3" style={{ borderRadius: 12 }}>
+      <div className="card border-0 shadow-sm mb-3" style={{ borderRadius: 'var(--nd-radius-lg)' }}>
         <div className="card-body p-3">
           <h6 className="fw-bold mb-3">
             <i className="bi bi-geo-alt me-2 text-primary" />
@@ -341,7 +341,7 @@ const NotaFreemiumDistribucion = () => {
               {localidades.map((loc) => (
                 <div key={loc.id}
                   className="d-flex align-items-center gap-3 p-2 rounded"
-                  style={{ background: '#f8f9fa', border: '1px solid #e9ecef' }}
+                  style={{ background: 'var(--nd-color-bg-page)', border: '1px solid var(--nd-color-border)' }}
                 >
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div className="fw-semibold small text-truncate">{loc.nombre}</div>
@@ -417,7 +417,7 @@ const NotaFreemiumDistribucion = () => {
         const historial = parsearComentarioDistribucion(notaFreemium?.comentarios);
         if (!historial.length) return null;
         return (
-          <div className="card border-0 shadow-sm mb-3" style={{ borderRadius: 12 }}>
+          <div className="card border-0 shadow-sm mb-3" style={{ borderRadius: 'var(--nd-radius-lg)' }}>
             <div className="card-body p-3">
               <h6 className="fw-bold mb-3">
                 <i className="bi bi-clock-history me-2 text-primary" />
@@ -439,7 +439,7 @@ const NotaFreemiumDistribucion = () => {
                       <div className="d-flex gap-2 flex-wrap">
                         {dist.totales['Meta'] && (
                           <span className="small d-flex align-items-center gap-1"
-                            style={{ background: '#f8f9fa', border: '1px solid #e9ecef', borderRadius: 6, padding: '2px 8px' }}>
+                            style={{ background: 'var(--nd-color-bg-page)', border: '1px solid var(--nd-color-border)', borderRadius: 'var(--nd-radius-md)', padding: '2px 8px' }}>
                             <img src='./images/logoFB.png' style={{ width: 13 }} alt="" />
                             <span className="text-muted">Meta</span>
                             <strong>$ {dist.totales['Meta']}</strong>
@@ -447,7 +447,7 @@ const NotaFreemiumDistribucion = () => {
                         )}
                         {dist.totales['DV360'] && (
                           <span className="small d-flex align-items-center gap-1"
-                            style={{ background: '#f8f9fa', border: '1px solid #e9ecef', borderRadius: 6, padding: '2px 8px' }}>
+                            style={{ background: 'var(--nd-color-bg-page)', border: '1px solid var(--nd-color-border)', borderRadius: 'var(--nd-radius-md)', padding: '2px 8px' }}>
                             <img src='./images/dv360.png' style={{ width: 13 }} alt="" />
                             <span className="text-muted">DV360</span>
                             <strong>$ {dist.totales['DV360']}</strong>
@@ -455,7 +455,7 @@ const NotaFreemiumDistribucion = () => {
                         )}
                         {dist.totales['TOTAL'] && (
                           <span className="small d-flex align-items-center gap-1 fw-bold"
-                            style={{ background: '#e8f0fe', border: '1px solid #c5d4f5', borderRadius: 6, padding: '2px 8px', color: '#1a73e8' }}>
+                            style={{ background: 'var(--nd-color-info-subtle)', border: '1px solid var(--nd-sky-100)', borderRadius: 'var(--nd-radius-md)', padding: '2px 8px', color: 'var(--nd-color-secondary)' }}>
                             Total: $ {dist.totales['TOTAL']}
                           </span>
                         )}
@@ -464,7 +464,7 @@ const NotaFreemiumDistribucion = () => {
                     <div className="d-flex flex-column gap-1">
                       {dist.localidades.map((e, i) => (
                         <div key={i} className="d-flex align-items-center gap-3 px-3 py-2 rounded"
-                          style={{ background: '#f8f9fa', border: '1px solid #e9ecef' }}>
+                          style={{ background: 'var(--nd-color-bg-page)', border: '1px solid var(--nd-color-border)' }}>
                           <i className="bi bi-geo-alt text-muted" style={{ fontSize: 13 }} />
                           <div style={{ flex: 1, minWidth: 0 }}>
                             <div className="fw-semibold small text-truncate">{e.nombre}</div>
@@ -495,7 +495,7 @@ const NotaFreemiumDistribucion = () => {
       })()}
 
       {/* Configuración y totales */}
-      <div className="card border-0 shadow-sm mb-3" style={{ borderRadius: 12 }}>
+      <div className="card border-0 shadow-sm mb-3" style={{ borderRadius: 'var(--nd-radius-lg)' }}>
         <div className="card-body p-3">
           <h6 className="fw-bold mb-3">
             <i className="bi bi-sliders me-2 text-primary" />
@@ -518,7 +518,7 @@ const NotaFreemiumDistribucion = () => {
                 const pocosDias = diff !== null && diff < 5;
                 return (
                   <small className={`mt-1 d-block ${pocosDias ? 'fw-semibold' : 'text-muted'}`}
-                    style={pocosDias ? { color: '#e67e00' } : {}}>
+                    style={pocosDias ? { color: 'var(--nd-color-primary-text)' } : {}}>
                     Se recomienda al menos 5 días de diferencia entre las fechas
                     {pocosDias && diff >= 0 && ` (actualmente ${Math.round(diff)} día${diff !== 1 ? 's' : ''})`}
                   </small>
@@ -527,25 +527,25 @@ const NotaFreemiumDistribucion = () => {
             </div>
             <div className="col-md-6 d-flex flex-column gap-2">
               <div className="d-flex justify-content-between align-items-center p-2 rounded"
-                style={{ background: '#f8f9fa' }}>
+                style={{ background: 'var(--nd-color-bg-page)' }}>
                 <span className="small d-flex align-items-center gap-2">
                   <img src='./images/logoFB.png' style={{ width: 18 }} alt="" /> Meta
                 </span>
                 <strong>{formatearARS(totalMeta, 0)}</strong>
               </div>
               <div className="d-flex justify-content-between align-items-center p-2 rounded"
-                style={{ background: '#f8f9fa' }}>
+                style={{ background: 'var(--nd-color-bg-page)' }}>
                 <span className="small d-flex align-items-center gap-2">
                   <img src='./images/dv360.png' style={{ width: 18 }} alt="" /> DV360
                 </span>
                 <strong>{formatearARS(totalDv, 0)}</strong>
               </div>
               <div className="d-flex justify-content-between align-items-center p-2 rounded"
-                style={{ background: '#e8f0fe', border: '1px solid #c5d4f5' }}>
+                style={{ background: 'var(--nd-color-info-subtle)', border: '1px solid var(--nd-sky-100)' }}>
                 <span className="small fw-bold d-flex align-items-center gap-2">
                   <img src='./images/exitoIcon.png' style={{ width: 18 }} alt="" /> Total
                 </span>
-                <strong style={{ color: '#1a73e8' }}>{formatearARS(total, 0)}</strong>
+                <strong style={{ color: 'var(--nd-color-secondary)' }}>{formatearARS(total, 0)}</strong>
               </div>
               <div className="d-flex justify-content-end mt-1">
                 <BotonDistribuirNota onClick={handleDistribuirClick} />

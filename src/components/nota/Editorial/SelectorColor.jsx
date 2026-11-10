@@ -16,9 +16,9 @@ const SelectorColor = ({ title, selectedValue, onSelect }) => (
                         style={{
                             width: 28,
                             height: 28,
-                            borderRadius: '50%',
+                            borderRadius: 'var(--nd-radius-full)',
                             backgroundColor: `#${c}`,
-                            border: selectedValue === c ? '3px solid #000' : '1px solid #ccc',
+                            border: selectedValue === c ? '3px solid var(--nd-color-text)' : '1px solid var(--nd-color-border-strong)',
                             cursor: 'pointer',
                             padding: 0,
                         }}

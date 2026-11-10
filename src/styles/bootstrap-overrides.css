@@ -1,0 +1,366 @@
+/* ==========================================================================
+   Bootstrap 5.3 → tokens Noticias (d)
+   --------------------------------------------------------------------------
+   La app usa react-bootstrap en casi todas las pantallas (Button, Modal,
+   Accordion, Form, Table…). En vez de pisar cada pantalla, re-mapeamos las
+   variables CSS de Bootstrap a nuestros tokens: así <Button variant="primary">
+   o className="btn btn-primary" ya salen con la marca.
+
+   Este archivo debe cargarse DESPUÉS de bootstrap.min.css (ver styles/index.css).
+   ========================================================================== */
+
+:root,
+[data-bs-theme="light"] {
+  --bs-font-sans-serif: var(--nd-font-family);
+  --bs-body-font-family: var(--nd-font-family);
+  --bs-body-font-size: var(--nd-font-size-base);
+  --bs-body-font-weight: var(--nd-font-weight-regular);
+  --bs-body-line-height: var(--nd-line-height-normal);
+  --bs-body-color: var(--nd-color-text);
+  --bs-body-color-rgb: 15, 15, 15;
+  --bs-body-bg: var(--nd-color-bg-page);
+  --bs-emphasis-color: var(--nd-color-text);
+  --bs-heading-color: var(--nd-color-text);
+  --bs-secondary-color: var(--nd-color-text-secondary);
+  --bs-tertiary-color: var(--nd-color-text-muted);
+  --bs-secondary-bg: var(--nd-color-bg-muted);
+  --bs-tertiary-bg: var(--nd-gray-50);
+
+  /* Colores de tema → utilidades text-*, bg-*, border-* */
+  --bs-primary: var(--nd-color-primary);
+  --bs-primary-rgb: 238, 76, 1;
+  --bs-primary-text-emphasis: var(--nd-orange-700);
+  --bs-primary-bg-subtle: var(--nd-orange-50);
+  --bs-primary-border-subtle: var(--nd-orange-200);
+  --bs-secondary: var(--nd-gray-600);
+  --bs-secondary-rgb: 99, 99, 110;
+  --bs-success: var(--nd-color-success);
+  --bs-success-rgb: 23, 122, 63;
+  --bs-danger: var(--nd-color-danger);
+  --bs-danger-rgb: 217, 45, 32;
+  --bs-warning: var(--nd-yellow-500);
+  --bs-warning-rgb: 239, 239, 67;
+  --bs-info: var(--nd-sky-500);
+  --bs-info-rgb: 109, 119, 234;
+  --bs-dark: var(--nd-gray-900);
+  --bs-dark-rgb: 15, 15, 15;
+  --bs-light: var(--nd-gray-100);
+  --bs-light-rgb: 241, 242, 242;
+
+  --bs-link-color: var(--nd-color-link);
+  --bs-link-color-rgb: 209, 67, 1;
+  --bs-link-hover-color: var(--nd-color-link-hover);
+  --bs-link-hover-color-rgb: 179, 58, 1;
+
+  --bs-border-color: var(--nd-color-border);
+  --bs-border-color-translucent: var(--nd-color-border);
+  --bs-border-radius: var(--nd-radius-md);
+  --bs-border-radius-sm: var(--nd-radius-sm);
+  --bs-border-radius-lg: var(--nd-radius-lg);
+  --bs-border-radius-xl: var(--nd-radius-xl);
+  --bs-border-radius-pill: var(--nd-radius-pill);
+
+  --bs-box-shadow-sm: var(--nd-shadow-sm);
+  --bs-box-shadow: var(--nd-shadow-md);
+  --bs-box-shadow-lg: var(--nd-shadow-lg);
+
+  --bs-focus-ring-color: rgba(238, 76, 1, 0.20);
+}
+
+/* ---------- Botones ---------- */
+.btn {
+  --bs-btn-font-family: var(--nd-font-family);
+  --bs-btn-font-size: var(--nd-font-size-base);
+  --bs-btn-font-weight: var(--nd-font-weight-semibold);
+  --bs-btn-line-height: var(--nd-line-height-snug);
+  --bs-btn-padding-x: var(--nd-space-4);
+  --bs-btn-padding-y: var(--nd-space-2);
+  --bs-btn-border-radius: var(--nd-radius-md);
+  --bs-btn-focus-box-shadow: var(--nd-shadow-focus);
+}
+/* Icono + texto dentro de un botón: alineados sin cambiar el display del .btn
+   (cambiarlo a flex rompe los botones legacy con layout propio) */
+.btn > .bi:not(:only-child),
+.btn > i:not(:only-child) {
+  margin-right: var(--nd-space-2);
+  vertical-align: -0.125em;
+}
+
+/* variant="none": botones legacy con estilos propios (sidebar, toggles…).
+   Se dejan con los valores default de Bootstrap para no romper su layout.
+   En código nuevo NO usar variant="none". */
+.btn-none {
+  --bs-btn-font-size: 1rem;
+  --bs-btn-font-weight: var(--nd-font-weight-regular);
+  --bs-btn-line-height: 1.5;
+  --bs-btn-padding-x: 0.75rem;
+  --bs-btn-padding-y: 0.375rem;
+}
+.btn-sm {
+  --bs-btn-font-size: var(--nd-font-size-sm);
+  --bs-btn-padding-x: var(--nd-space-3);
+  --bs-btn-padding-y: var(--nd-space-1);
+  --bs-btn-border-radius: var(--nd-radius-md);
+}
+.btn-lg {
+  --bs-btn-font-size: var(--nd-font-size-md);
+  --bs-btn-padding-x: var(--nd-space-6);
+  --bs-btn-padding-y: var(--nd-space-3);
+  --bs-btn-border-radius: var(--nd-radius-md);
+}
+
+/* Primario = naranja de marca con letra blanca. ÚNICO botón naranja.
+   .btn-warning se iguala para que no aparezca el amarillo-naranja de Bootstrap. */
+.btn-primary,
+.btn-warning {
+  --bs-btn-color: var(--nd-color-on-primary);
+  --bs-btn-bg: var(--nd-color-primary);
+  --bs-btn-border-color: var(--nd-color-primary);
+  --bs-btn-hover-color: var(--nd-color-on-primary);
+  --bs-btn-hover-bg: var(--nd-color-primary-hover);
+  --bs-btn-hover-border-color: var(--nd-color-primary-hover);
+  --bs-btn-active-color: var(--nd-color-on-primary);
+  --bs-btn-active-bg: var(--nd-color-primary-active);
+  --bs-btn-active-border-color: var(--nd-color-primary-active);
+  --bs-btn-disabled-color: var(--nd-color-on-primary);
+  --bs-btn-disabled-bg: var(--nd-orange-200);
+  --bs-btn-disabled-border-color: var(--nd-orange-200);
+}
+
+/* Secundario = neutro (Cancelar, Volver, acciones de menor peso) */
+.btn-secondary {
+  --bs-btn-color: var(--nd-gray-800);
+  --bs-btn-bg: var(--nd-color-bg-surface);
+  --bs-btn-border-color: var(--nd-color-border-strong);
+  --bs-btn-hover-color: var(--nd-color-text);
+  --bs-btn-hover-bg: var(--nd-color-bg-muted);
+  --bs-btn-hover-border-color: var(--nd-color-border-strong);
+  --bs-btn-active-color: var(--nd-color-text);
+  --bs-btn-active-bg: var(--nd-gray-200);
+  --bs-btn-active-border-color: var(--nd-gray-400);
+  --bs-btn-disabled-color: var(--nd-color-text-muted);
+  --bs-btn-disabled-bg: var(--nd-color-bg-muted);
+  --bs-btn-disabled-border-color: var(--nd-color-border);
+}
+
+.btn-outline-primary {
+  --bs-btn-color: var(--nd-color-primary-text);
+  --bs-btn-border-color: var(--nd-color-primary);
+  --bs-btn-hover-color: var(--nd-color-on-primary);
+  --bs-btn-hover-bg: var(--nd-color-primary);
+  --bs-btn-hover-border-color: var(--nd-color-primary);
+  --bs-btn-active-color: var(--nd-color-on-primary);
+  --bs-btn-active-bg: var(--nd-color-primary-active);
+  --bs-btn-active-border-color: var(--nd-color-primary-active);
+  --bs-btn-disabled-color: var(--nd-orange-200);
+  --bs-btn-disabled-border-color: var(--nd-orange-200);
+}
+
+.btn-outline-secondary,
+.btn-outline-dark {
+  --bs-btn-color: var(--nd-gray-800);
+  --bs-btn-border-color: var(--nd-color-border-strong);
+  --bs-btn-hover-color: var(--nd-color-text);
+  --bs-btn-hover-bg: var(--nd-color-bg-muted);
+  --bs-btn-hover-border-color: var(--nd-gray-400);
+  --bs-btn-active-color: var(--nd-color-text);
+  --bs-btn-active-bg: var(--nd-gray-200);
+  --bs-btn-active-border-color: var(--nd-gray-400);
+}
+
+.btn-dark {
+  --bs-btn-bg: var(--nd-gray-900);
+  --bs-btn-border-color: var(--nd-gray-900);
+  --bs-btn-hover-bg: var(--nd-gray-800);
+  --bs-btn-hover-border-color: var(--nd-gray-800);
+  --bs-btn-active-bg: var(--nd-gray-700);
+  --bs-btn-active-border-color: var(--nd-gray-700);
+}
+
+.btn-danger {
+  --bs-btn-bg: var(--nd-color-danger);
+  --bs-btn-border-color: var(--nd-color-danger);
+  --bs-btn-hover-bg: var(--nd-color-danger-hover);
+  --bs-btn-hover-border-color: var(--nd-color-danger-hover);
+  --bs-btn-active-bg: var(--nd-color-danger-hover);
+  --bs-btn-active-border-color: var(--nd-color-danger-hover);
+}
+
+.btn-outline-danger {
+  --bs-btn-color: var(--nd-color-danger);
+  --bs-btn-border-color: var(--nd-color-danger);
+  --bs-btn-hover-bg: var(--nd-color-danger);
+  --bs-btn-hover-border-color: var(--nd-color-danger);
+  --bs-btn-active-bg: var(--nd-color-danger-hover);
+  --bs-btn-active-border-color: var(--nd-color-danger-hover);
+}
+
+.btn-success {
+  --bs-btn-bg: var(--nd-color-success);
+  --bs-btn-border-color: var(--nd-color-success);
+  --bs-btn-hover-bg: #12632F;
+  --bs-btn-hover-border-color: #12632F;
+}
+
+.btn-link {
+  --bs-btn-color: var(--nd-color-link);
+  --bs-btn-hover-color: var(--nd-color-link-hover);
+  --bs-btn-active-color: var(--nd-color-link-hover);
+  --bs-btn-font-weight: var(--nd-font-weight-medium);
+}
+
+/* ---------- Formularios ---------- */
+.form-control,
+.form-select {
+  font-size: var(--nd-font-size-base);
+  color: var(--nd-color-text);
+  border-color: var(--nd-color-border-strong);
+  border-radius: var(--nd-radius-md);
+  padding: var(--nd-space-2) var(--nd-space-3);
+}
+.form-control-sm,
+.form-select-sm {
+  font-size: var(--nd-font-size-sm);
+  padding: var(--nd-space-1) var(--nd-space-2);
+}
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+  border-color: var(--nd-color-border-focus);
+  box-shadow: var(--nd-shadow-focus);
+}
+.form-control:disabled,
+.form-select:disabled {
+  background-color: var(--nd-color-bg-muted);
+  color: var(--nd-color-text-muted);
+}
+.form-label {
+  font-size: var(--nd-font-size-sm);
+  font-weight: var(--nd-font-weight-medium);
+  color: var(--nd-color-text-secondary);
+  margin-bottom: var(--nd-space-1);
+}
+.form-text {
+  font-size: var(--nd-font-size-xs);
+  color: var(--nd-color-text-muted);
+}
+.form-check-input {
+  border-color: var(--nd-color-border-strong);
+}
+.form-check-input:checked {
+  background-color: var(--nd-color-primary);
+  border-color: var(--nd-color-primary);
+}
+.invalid-feedback { color: var(--nd-color-danger); font-size: var(--nd-font-size-xs); }
+.form-control.is-invalid, .form-select.is-invalid { border-color: var(--nd-color-danger); }
+
+/* ---------- Modales ---------- */
+.modal {
+  --bs-modal-border-radius: var(--nd-radius-xl);
+  --bs-modal-inner-border-radius: var(--nd-radius-xl);
+  --bs-modal-border-color: transparent;
+  --bs-modal-box-shadow: var(--nd-shadow-lg);
+  --bs-modal-header-border-color: var(--nd-color-border);
+  --bs-modal-footer-border-color: var(--nd-color-border);
+  --bs-modal-header-padding: var(--nd-space-5) var(--nd-space-6);
+  --bs-modal-padding: var(--nd-space-6);
+  --bs-modal-footer-gap: var(--nd-space-2);
+}
+.modal-title {
+  font-size: var(--nd-font-size-xl);
+  font-weight: var(--nd-font-weight-bold);
+  color: var(--nd-color-text);
+}
+.modal-backdrop { --bs-backdrop-bg: var(--nd-gray-900); --bs-backdrop-opacity: 0.5; }
+
+/* ---------- Tabs / Nav ---------- */
+.nav-tabs {
+  --bs-nav-tabs-border-color: var(--nd-color-border);
+  --bs-nav-tabs-link-active-color: var(--nd-color-text);
+  --bs-nav-tabs-link-active-bg: transparent;
+  --bs-nav-tabs-link-active-border-color: transparent transparent var(--nd-color-primary);
+  --bs-nav-tabs-link-hover-border-color: transparent;
+}
+.nav-tabs .nav-link {
+  color: var(--nd-color-text-secondary);
+  font-weight: var(--nd-font-weight-medium);
+  border-width: 0 0 var(--nd-border-width-thick) 0;
+}
+.nav-tabs .nav-link.active {
+  font-weight: var(--nd-font-weight-semibold);
+}
+.nav-pills {
+  --bs-nav-pills-link-active-bg: var(--nd-color-primary);
+  --bs-nav-pills-border-radius: var(--nd-radius-pill);
+}
+.nav { --bs-nav-link-color: var(--nd-color-text-secondary); --bs-nav-link-hover-color: var(--nd-color-text); }
+
+/* ---------- Accordion ---------- */
+.accordion {
+  --bs-accordion-border-color: var(--nd-color-border);
+  --bs-accordion-border-radius: var(--nd-radius-lg);
+  --bs-accordion-inner-border-radius: var(--nd-radius-lg);
+  --bs-accordion-btn-color: var(--nd-color-text);
+  --bs-accordion-active-color: var(--nd-color-text);
+  --bs-accordion-active-bg: var(--nd-color-bg-muted);
+  --bs-accordion-btn-focus-box-shadow: var(--nd-shadow-focus);
+}
+
+/* ---------- Tablas ---------- */
+.table {
+  --bs-table-color: var(--nd-color-text);
+  --bs-table-border-color: var(--nd-color-border);
+  --bs-table-striped-bg: var(--nd-gray-50);
+  --bs-table-hover-bg: var(--nd-color-bg-muted);
+  font-size: var(--nd-font-size-sm);
+}
+.table > thead th {
+  font-size: var(--nd-font-size-xs);
+  font-weight: var(--nd-font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--nd-letter-spacing-caps);
+  color: var(--nd-color-text-secondary);
+  background-color: var(--nd-color-bg-muted);
+}
+
+/* ---------- Otros componentes ---------- */
+.dropdown-menu {
+  --bs-dropdown-border-color: var(--nd-color-border);
+  --bs-dropdown-border-radius: var(--nd-radius-md);
+  --bs-dropdown-box-shadow: var(--nd-shadow-md);
+  --bs-dropdown-font-size: var(--nd-font-size-base);
+  --bs-dropdown-link-active-bg: var(--nd-color-primary-subtle);
+  --bs-dropdown-link-active-color: var(--nd-color-text);
+  --bs-dropdown-link-hover-bg: var(--nd-color-bg-muted);
+  box-shadow: var(--bs-dropdown-box-shadow);
+}
+.pagination {
+  --bs-pagination-color: var(--nd-color-text-secondary);
+  --bs-pagination-hover-color: var(--nd-color-text);
+  --bs-pagination-active-bg: var(--nd-color-primary);
+  --bs-pagination-active-border-color: var(--nd-color-primary);
+  --bs-pagination-focus-box-shadow: var(--nd-shadow-focus);
+  --bs-pagination-border-radius: var(--nd-radius-md);
+}
+.list-group {
+  --bs-list-group-active-bg: var(--nd-color-primary-subtle);
+  --bs-list-group-active-color: var(--nd-color-text);
+  --bs-list-group-active-border-color: var(--nd-color-border);
+  --bs-list-group-action-hover-bg: var(--nd-color-bg-muted);
+}
+.progress { --bs-progress-bar-bg: var(--nd-color-primary); --bs-progress-border-radius: var(--nd-radius-pill); }
+.badge {
+  --bs-badge-font-size: var(--nd-font-size-xs);
+  --bs-badge-font-weight: var(--nd-font-weight-semibold);
+  --bs-badge-border-radius: var(--nd-radius-sm);
+  --bs-badge-padding-x: var(--nd-space-2);
+  --bs-badge-padding-y: var(--nd-space-1);
+}
+.card {
+  --bs-card-border-color: var(--nd-color-border);
+  --bs-card-border-radius: var(--nd-radius-lg);
+  --bs-card-inner-border-radius: var(--nd-radius-lg);
+  --bs-card-bg: var(--nd-color-bg-surface);
+}
+.tooltip { --bs-tooltip-bg: var(--nd-gray-900); --bs-tooltip-font-size: var(--nd-font-size-xs); --bs-tooltip-border-radius: var(--nd-radius-sm); }
+.spinner-border, .spinner-grow { color: var(--nd-color-primary); }

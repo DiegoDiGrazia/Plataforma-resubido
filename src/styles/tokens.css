@@ -1,0 +1,240 @@
+/* ==========================================================================
+   Noticias (d) — Design tokens
+   --------------------------------------------------------------------------
+   ÚNICA fuente de verdad de valores visuales. Ningún otro archivo debería
+   tener colores hex, tamaños de fuente, radios o sombras escritos a mano.
+   Si necesitás un valor que no existe acá: agregalo acá (y en tokens.js).
+
+   Capas:
+     1. Primitivos  (--nd-orange-500, --nd-gray-300 …)  → paleta cruda
+     2. Semánticos  (--nd-color-text, --nd-color-border …) → lo que usan los
+        componentes. Usá SIEMPRE semánticos en componentes; los primitivos
+        solo dentro de este archivo o para data-viz/etiquetas.
+   ========================================================================== */
+
+:root {
+  /* ------------------------------------------------------------------ */
+  /* 1. PRIMITIVOS — Paleta de marca (Manual de marca, lámina 21)        */
+  /* ------------------------------------------------------------------ */
+
+  /* Naranja (d) — color principal. #EE4C01 */
+  --nd-orange-50:  #FFF3ED;
+  --nd-orange-100: #FFE2D3;
+  --nd-orange-200: #FCC3A5;
+  --nd-orange-500: #EE4C01; /* marca */
+  --nd-orange-600: #D14301; /* hover · texto naranja sobre blanco (AA 4.6:1) */
+  --nd-orange-700: #B33A01; /* active */
+
+  /* Azul (d) — secundario de marca. #1D1A9B */
+  --nd-blue-50:  #EEEEFB;
+  --nd-blue-100: #D6D5F5;
+  --nd-blue-500: #1D1A9B; /* marca */
+  --nd-blue-600: #17157D;
+
+  /* Celeste #6D77EA */
+  --nd-sky-50:  #F0F1FD;
+  --nd-sky-100: #DADDFA;
+  --nd-sky-500: #6D77EA; /* marca */
+  --nd-sky-600: #5560D9; /* texto celeste sobre blanco (AA 5.2:1) */
+
+  /* Magenta #F238A7 */
+  --nd-magenta-50:  #FEEDF6;
+  --nd-magenta-100: #FCD3EA;
+  --nd-magenta-500: #F238A7; /* marca */
+  --nd-magenta-600: #C21E80; /* texto magenta sobre blanco */
+
+  /* Amarillo #EFEF43 — NUNCA como texto ni sobre blanco sin borde (1.2:1) */
+  --nd-yellow-50:  #FDFDE3;
+  --nd-yellow-100: #FAFAC0;
+  --nd-yellow-500: #EFEF43; /* marca */
+  --nd-yellow-700: #8A6A00; /* texto "warning" legible */
+
+  /* Neutros — anclados en Blanco perlado #F1F2F2, Gris #B9B9C3, Negro #0F0F0F */
+  --nd-gray-0:   #FFFFFF;
+  --nd-gray-50:  #F7F8F8;
+  --nd-gray-100: #F1F2F2; /* Blanco perlado (marca) */
+  --nd-gray-200: #E4E5E8;
+  --nd-gray-300: #CFD0D7;
+  --nd-gray-400: #B9B9C3; /* Gris (marca) */
+  --nd-gray-500: #8A8A96;
+  --nd-gray-600: #63636E;
+  --nd-gray-700: #45454F;
+  --nd-gray-800: #2A2A30;
+  --nd-gray-900: #0F0F0F; /* Negro (marca) */
+
+  /* Estados (no son de marca, pero se necesitan para feedback) */
+  --nd-green-50:  #ECF7F0;
+  --nd-green-500: #177A3F;
+  --nd-red-50:    #FEF0EF;
+  --nd-red-500:   #D92D20;
+  --nd-red-600:   #B42318;
+
+  /* ------------------------------------------------------------------ */
+  /* 2. SEMÁNTICOS — usar estos en componentes                           */
+  /* ------------------------------------------------------------------ */
+
+  /* Marca / acción principal */
+  --nd-color-primary:          var(--nd-orange-500);
+  --nd-color-primary-hover:    var(--nd-orange-600);
+  --nd-color-primary-active:   var(--nd-orange-700);
+  --nd-color-primary-subtle:   var(--nd-orange-50);  /* fondos de icono, filas activas */
+  --nd-color-primary-text:     var(--nd-orange-600); /* texto/links naranja */
+  --nd-color-on-primary:       var(--nd-gray-0);
+
+  --nd-color-secondary:        var(--nd-blue-500);
+  --nd-color-secondary-hover:  var(--nd-blue-600);
+  --nd-color-secondary-subtle: var(--nd-blue-50);
+  --nd-color-on-secondary:     var(--nd-gray-0);
+
+  /* Superficies */
+  --nd-color-bg-page:     var(--nd-gray-50);  /* fondo de la app */
+  --nd-color-bg-surface:  var(--nd-gray-0);   /* cards, modales, tablas */
+  --nd-color-bg-muted:    var(--nd-gray-100); /* headers de tabla, hover, inputs disabled */
+  --nd-color-bg-inverse:  var(--nd-gray-900);
+  --nd-color-overlay:     rgba(15, 15, 15, 0.5); /* backdrop de modales/loaders */
+
+  /* Texto */
+  --nd-color-text:           var(--nd-gray-900); /* títulos y cuerpo */
+  --nd-color-text-secondary: var(--nd-gray-600); /* labels, metadatos, subtítulos */
+  --nd-color-text-muted:     var(--nd-gray-500); /* placeholders, deshabilitado */
+  --nd-color-text-inverse:   var(--nd-gray-0);
+  --nd-color-link:           var(--nd-color-primary-text);
+  --nd-color-link-hover:     var(--nd-orange-700);
+
+  /* Bordes */
+  --nd-color-border:        var(--nd-gray-200); /* divisores, cards */
+  --nd-color-border-strong: var(--nd-gray-300); /* inputs, botones outline */
+  --nd-color-border-focus:  var(--nd-color-primary);
+
+  /* Feedback */
+  --nd-color-success:        var(--nd-green-500);
+  --nd-color-success-subtle: var(--nd-green-50);
+  --nd-color-danger:         var(--nd-red-500);
+  --nd-color-danger-hover:   var(--nd-red-600);
+  --nd-color-danger-subtle:  var(--nd-red-50);
+  --nd-color-warning:        var(--nd-yellow-700);
+  --nd-color-warning-subtle: var(--nd-yellow-50);
+  --nd-color-info:           var(--nd-sky-600);
+  --nd-color-info-subtle:    var(--nd-sky-50);
+
+  /* Data-viz (Chart.js, barplots). Orden fijo: no reordenar entre pantallas */
+  --nd-chart-1: var(--nd-orange-500);
+  --nd-chart-2: var(--nd-blue-500);
+  --nd-chart-3: var(--nd-sky-500);
+  --nd-chart-4: var(--nd-magenta-500);
+  --nd-chart-5: var(--nd-gray-400);
+  --nd-chart-6: var(--nd-yellow-500); /* solo áreas/barras con borde, nunca líneas finas */
+
+  /* ------------------------------------------------------------------ */
+  /* TIPOGRAFÍA                                                          */
+  /* ------------------------------------------------------------------ */
+  --nd-font-family: 'Aeonik', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --nd-font-family-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Escala (px fijos: la app es un panel, no hay escalado fluido) */
+  --nd-font-size-xs:   12px; /* mínimo absoluto. Reemplaza 9/10/11px */
+  --nd-font-size-sm:   13px; /* labels, metadatos, celdas densas */
+  --nd-font-size-base: 14px; /* cuerpo, inputs, botones */
+  --nd-font-size-md:   16px; /* cuerpo destacado, títulos de card */
+  --nd-font-size-lg:   18px; /* títulos de sección chicos */
+  --nd-font-size-xl:   20px; /* títulos de modal */
+  --nd-font-size-2xl:  24px; /* títulos de sección */
+  --nd-font-size-3xl:  28px; /* título de página */
+  --nd-font-size-4xl:  32px; /* números KPI grandes */
+
+  --nd-font-weight-light:    300;
+  --nd-font-weight-regular:  400;
+  --nd-font-weight-medium:   500;
+  --nd-font-weight-semibold: 600;
+  --nd-font-weight-bold:     700;
+
+  --nd-line-height-tight:  1.2;  /* títulos */
+  --nd-line-height-snug:   1.35; /* UI densa: botones, celdas */
+  --nd-line-height-normal: 1.5;  /* párrafos */
+
+  --nd-letter-spacing-tight: -0.01em; /* títulos grandes */
+  --nd-letter-spacing-caps:  0.04em;  /* labels en mayúsculas */
+
+  /* ------------------------------------------------------------------ */
+  /* ESPACIADO — base 4px                                                */
+  /* ------------------------------------------------------------------ */
+  --nd-space-0:  0;
+  --nd-space-1:  4px;
+  --nd-space-2:  8px;
+  --nd-space-3:  12px;
+  --nd-space-4:  16px;
+  --nd-space-5:  20px;
+  --nd-space-6:  24px;
+  --nd-space-8:  32px;
+  --nd-space-10: 40px;
+  --nd-space-12: 48px;
+  --nd-space-16: 64px;
+
+  /* ------------------------------------------------------------------ */
+  /* BORDES Y RADIOS                                                     */
+  /* ------------------------------------------------------------------ */
+  --nd-border-width:       1px;
+  --nd-border-width-thick: 2px; /* tab activo, acento lateral */
+  --nd-border-width-accent: 4px; /* borde izquierdo de toasts/items activos */
+
+  --nd-radius-sm:   4px;   /* badges, checkboxes, chips chicos */
+  --nd-radius-md:   8px;   /* botones, inputs, dropdowns */
+  --nd-radius-lg:   12px;  /* cards, tiles, paneles */
+  --nd-radius-xl:   16px;  /* modales */
+  --nd-radius-pill: 999px; /* pills, toggles */
+  --nd-radius-full: 50%;   /* avatares */
+
+  /* ------------------------------------------------------------------ */
+  /* SOMBRAS                                                             */
+  /* ------------------------------------------------------------------ */
+  --nd-shadow-none: none;
+  --nd-shadow-sm:   0 1px 3px rgba(15, 15, 15, 0.08);   /* cards en reposo */
+  --nd-shadow-md:   0 4px 14px rgba(15, 15, 15, 0.10);  /* hover de card, dropdowns */
+  --nd-shadow-lg:   0 10px 40px rgba(15, 15, 15, 0.12); /* modales, popovers */
+  --nd-shadow-focus: 0 0 0 3px rgba(238, 76, 1, 0.20);  /* anillo de foco */
+
+  /* ------------------------------------------------------------------ */
+  /* MOVIMIENTO                                                          */
+  /* ------------------------------------------------------------------ */
+  --nd-duration-fast: 150ms;
+  --nd-duration-base: 250ms;
+  --nd-duration-slow: 350ms; /* sidebar, colapsables */
+  --nd-easing:        ease-in-out;
+
+  /* ------------------------------------------------------------------ */
+  /* CAPAS (z-index) — alineadas con Bootstrap 5.3                       */
+  /* ------------------------------------------------------------------ */
+  --nd-z-base:     1;
+  --nd-z-dropdown: 1000;
+  --nd-z-sticky:   1020;
+  --nd-z-sidebar:  1030;
+  --nd-z-overlay:  1040; /* loaders a pantalla completa */
+  --nd-z-modal:    1055;
+  --nd-z-popover:  1070;
+  --nd-z-toast:    1090;
+
+  /* ------------------------------------------------------------------ */
+  /* LAYOUT                                                              */
+  /* ------------------------------------------------------------------ */
+  --nd-sidebar-width:           250px;
+  --nd-sidebar-width-collapsed: 55px;
+  --nd-content-max-width:       1440px;
+  --nd-page-padding:            var(--nd-space-6);
+  --nd-control-height:          38px; /* botones e inputs default */
+  --nd-control-height-sm:       32px;
+
+  /* Breakpoints (referencia: las custom properties NO funcionan dentro de
+     @media; copiá el valor literal y usá SOLO estos):
+       xs  max-width: 380px   teléfonos chicos
+       sm  max-width: 576px   teléfonos
+       md  max-width: 768px   tablet / mobile layout  ← el principal
+       xl  max-width: 1366px  notebooks                                    */
+}
+
+@media (max-width: 768px) {
+  :root {
+    --nd-page-padding:   var(--nd-space-4);
+    --nd-font-size-3xl:  24px;
+    --nd-font-size-2xl:  20px;
+  }
+}

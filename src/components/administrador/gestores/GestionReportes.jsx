@@ -62,6 +62,11 @@ const CAMPOS_NUMERICOS = {
 
 const formatearNumero = (n) => (n === null || n === undefined ? '-' : Number(n).toLocaleString('es-AR'));
 
+// URL del reporte publicado. Formato: /reporte-mensual/{id_cliente}/{mes}-{anio}
+const URL_REPORTES = 'https://reportes-creativos.noticiasd.com/reporte-mensual';
+const urlReportePublico = (periodo) =>
+  periodo ? `${URL_REPORTES}/${periodo.idCliente}/${periodo.mes}-${periodo.anio}` : undefined;
+
 const aTexto = (v) => (v === null || v === undefined ? '' : String(v));
 
 // Valores de referencia (lo que muestra hoy el reporte) para cada nivel
@@ -477,7 +482,7 @@ const GestionReportes = () => {
       <div className='row miPerfilContainer soporteContainer'>
         <div className='col p-0'>
           <h3 id="saludo" className='headerTusNotas ml-0'>
-            <i className="icon me-2 icono_tusNotas bi bi-file-earmark-bar-graph-fill" style={{ color: '#3e4658ff' }} /> Gestión de reportes
+            <i className="icon me-2 icono_tusNotas bi bi-file-earmark-bar-graph-fill" style={{ color: 'var(--nd-color-text)' }} /> Gestión de reportes
           </h3>
           <h4 className='infoCuenta'>Personalización del reporte mensual integrado</h4>
           <div className='abajoDeTusNotas'>
@@ -543,6 +548,15 @@ const GestionReportes = () => {
                   Resumen del cliente — {reporte.cliente?.nombre} ({MESES[(reporte.periodo?.mes || 1) - 1]} {reporte.periodo?.anio})
                   {badgePersonalizado(!!persCliente)}
                 </strong>
+                <Button
+                  size="sm"
+                  variant="dark"
+                  href={urlReportePublico(periodoCargado)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <i className="bi bi-box-arrow-up-right me-1" />Ver reporte
+                </Button>
                 <Button size="sm" variant="outline-dark" onClick={() => abrirEditor({ nivel: 'cliente' })}>
                   <i className="bi bi-pencil-fill me-1" />Editar
                 </Button>

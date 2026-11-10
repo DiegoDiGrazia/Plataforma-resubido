@@ -9,6 +9,7 @@ import {
   Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
+import { seriesColors } from "../../styles/tokens";
 
 // Registrar
 ChartJS.register(
@@ -29,14 +30,16 @@ const LineChartTwoLines = ({ data }) => {
         data: data.line1.values,
         tension: 0.3,
         borderWidth: 2,
-        borderColor: "#34A853", // Instagram
+        borderColor: seriesColors.medios,
+        backgroundColor: seriesColors.medios,
       },
       {
         label: data.line2.label,
         data: data.line2.values,
         tension: 0.3,
         borderWidth: 2,
-        borderColor: "#1877F2", // Facebook
+        borderColor: seriesColors.redes,
+        backgroundColor: seriesColors.redes,
 
       },
       {
@@ -44,7 +47,8 @@ const LineChartTwoLines = ({ data }) => {
         data: data.line3.values,
         tension: 0.3,
         borderWidth: 2,
-        borderColor: "#dc3545", // YouTube
+        borderColor: seriesColors.videos,
+        backgroundColor: seriesColors.videos,
 
       },
 

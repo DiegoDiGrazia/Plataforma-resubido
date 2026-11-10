@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from 'react-bootstrap';
 import './Sidebar.css';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -8,7 +7,6 @@ import { obtenerConsolidacionCliente, obtenerContratos } from '../administrador/
 import { obtenerPaginas } from '../Apis/paginasApi.js';
 import { updateContratoConFacturacionAbierta, updatePaginasDelUsuario } from '../../redux/formularioSlice';
 import { useDispatch } from 'react-redux';
-import './SidebarMobile.css';
 
 const Sidebar = ({ estadoActual }) => {
   const esEditor = useSelector((state) => state.formulario.es_editor);
@@ -68,30 +66,46 @@ const Sidebar = ({ estadoActual }) => {
   const location = useLocation();
 
   estadoActual = location.pathname.split('/')[1] || 'dashboard'; // Obtiene el estado actual desde la URL
-  const [isOpen, setIsOpen] = useState(true);
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
-  };
+
+  // Solo mobile: el menú se abre a pantalla completa desde la hamburguesa.
+  // En desktop el sidebar está siempre visible y este estado no tiene efecto.
+  const [menuMobileVisible, setMenuMobileVisible] = useState(false);
+  const cerrarMenuMobile = () => setMenuMobileVisible(false);
+
+  useEffect(() => {
+    if (!menuMobileVisible) return;
+    const cerrarConEscape = (e) => e.key === 'Escape' && cerrarMenuMobile();
+    document.addEventListener('keydown', cerrarConEscape);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', cerrarConEscape);
+      document.body.style.overflow = '';
+    };
+  }, [menuMobileVisible]);
 
   const navigate = useNavigate();
 
   const handleClickBotonSidebar = (url) => {
     navigate(`/${url}`);
-    isOpen && toggleSidebar();
+    cerrarMenuMobile();
   };
 
-  const renderSidebarButton = (estado, url, icono, texto, iconoBootstrap) => (
-    <li
-      className={`${
-        estadoActual === estado ? 'boton_sidebar_clickeado' : 'boton_sidebar_Noclickeado'
-      } ${isOpen ? 'openBoton' : 'closedBoton'}`}
-    >
-      <Button className="botonSidebar" variant="none" onClick={() => handleClickBotonSidebar(url)}>
-        <i class={`fs-4 mb-4 ${iconoBootstrap}`} style={{color: '#3e4658ff', marginRight: '5px', bottom: '10px'}}></i>
-        <span className={`descripcion_boton ${isOpen ? 'open' : 'closed'}`}>{texto}</span>
-      </Button>
-    </li>
-  );
+  const renderSidebarButton = (estado, url, icono, texto, iconoBootstrap) => {
+    const activo = estadoActual === estado;
+    return (
+      <li className={`sidebar__item ${activo ? 'sidebar__item--activo' : ''}`}>
+        <button
+          type="button"
+          className="sidebar__link"
+          aria-current={activo ? 'page' : undefined}
+          onClick={() => handleClickBotonSidebar(url)}
+        >
+          <i className={`sidebar__icono ${iconoBootstrap}`} aria-hidden="true"></i>
+          <span className="sidebar__texto">{texto}</span>
+        </button>
+      </li>
+    );
+  };
 
   const obtenerCreditoDisponible = (respuestaCreditos) => {
     const creditoTotal = respuestaCreditos?.credito?.reduce(
@@ -114,46 +128,40 @@ const Sidebar = ({ estadoActual }) => {
 
   return (
     <>
-      <div className={`sidebar no-print ${isOpen ? 'open' : 'closed'}`}>
-        <div className="flex-grow-1">
-          {isOpen ? (
-            <img
-              src="/images/logoNdNegroNaranja.png"
-              alt="Logo grande"
-              className="img-fluid"
-              id="logo-nd-sidebar"
-            />
-          ) : (
-            <img
-              src="/images/logoNdNegroNaranjaMini.png"
-              alt="Logo miniatura"
-              className="img-fluid"
-              id="logo-nd-miniatura"
-              style={{ width: '50px !important' }}
-            />
-          )}
+      {/* Barra superior mobile: hamburguesa + logo (oculta en desktop) */}
+      <header className="sidebar-topbar no-print">
+        <button
+          type="button"
+          className="sidebar-topbar__boton"
+          aria-label="Abrir menú"
+          aria-expanded={menuMobileVisible}
+          aria-controls="sidebar-navegacion"
+          onClick={() => setMenuMobileVisible(true)}
+        >
+          <i className="bi bi-list" aria-hidden="true"></i>
+        </button>
+        <img src="/images/logoNdNegroNaranja.png" alt="Noticias (d)" className="sidebar-topbar__logo" />
+      </header>
 
-          {!isOpen && (
-            <div className='logo-nd-mobile'>
-              <img src="/images/logoNdNegroNaranja.png" alt="Logo Noticias" className="img-fluid d-block d-md-none logo-nd" />
-            </div>
-          )}
+      <aside
+        id="sidebar-navegacion"
+        className={`sidebar no-print ${menuMobileVisible ? 'sidebar--mobile-visible' : ''}`}
+        aria-label="Navegación principal"
+      >
+        <div className="sidebar__header">
+          <img src="/images/logoNdNegroNaranja.png" alt="Noticias (d)" className="sidebar__logo" />
+          <button
+            type="button"
+            className="sidebar__cerrar"
+            aria-label="Cerrar menú"
+            onClick={cerrarMenuMobile}
+          >
+            <i className="bi bi-x-lg" aria-hidden="true"></i>
+          </button>
+        </div>
 
-          <Button className="sidebar-toggle" variant="none" onClick={toggleSidebar}>
-            {isOpen ? (
-              <div className='logo-sidebar-mobile'>
-                <img src="/images/sidebar_left_bot.png" alt="Cerrar sidebar" className="img-fluid d-none d-md-block" />
-                <img src="/images/logo-menu-sidebar.png" alt="Cerrar sidebar mobile" className="img-fluid d-block d-md-none" />
-              </div>
-            ) : (
-              <div className='logo-sidebar-mobile'>
-                <img src="/images/sidebar_right_bot.png" alt="Abrir sidebar" className="img-fluid d-none d-md-block" />
-                <img src="/images/logo-menu-sidebar.png" alt="Abrir sidebar mobile" className="img-fluid d-block d-md-none" />
-              </div>
-            )}
-          </Button>
-
-          <ul className="list-group list-group-flush no-border list-unstyled">
+        <nav className="sidebar__nav">
+          <ul className="sidebar__lista">
             {cliente && permisoDashboard &&
               renderSidebarButton(
                 'dashboard',
@@ -221,19 +229,25 @@ const Sidebar = ({ estadoActual }) => {
               'Comercial',
               'bi bi-bag-fill'
             )}
-            <ul className="list-group list-unstyled botones_inferiories">
-              {(respuestaCreditos && isOpen && esContratoConFacturacionAbierta) && (
-                <>
-                <h3 style={{marginTop: '0px'}}>credito:</h3>
-                <h3 style={{ marginTop: '0px' }}>
-                  ${' '}
-                  {obtenerCreditoDisponible(respuestaCreditos)}
-                </h3>
-                <h3 style={{marginTop: '0px'}}><a target="_blank" href={`https://noticiasd.mitiendanube.com/autogestion/?clid=${id_cliente}`} style={{textDecoration: 'none'}}> 
-                recargar credito </a>
-                </h3>
-                </>
-              )}
+          </ul>
+        </nav>
+
+        <div className="sidebar__footer">
+          {(respuestaCreditos && esContratoConFacturacionAbierta) && (
+            <div className="sidebar__credito">
+              <span className="sidebar__credito-label">Crédito disponible</span>
+              <span className="sidebar__credito-valor">$ {obtenerCreditoDisponible(respuestaCreditos)}</span>
+              <a
+                className="sidebar__credito-link"
+                target="_blank"
+                rel="noopener noreferrer"
+                href={`https://noticiasd.mitiendanube.com/autogestion/?clid=${id_cliente}`}
+              >
+                Recargar crédito
+              </a>
+            </div>
+          )}
+          <ul className="sidebar__lista">
               {renderSidebarButton(
                 'soporte-y-ayuda',
                 'soporte-y-ayuda',
@@ -248,10 +262,9 @@ const Sidebar = ({ estadoActual }) => {
                 'Mi perfil',
                 'bi bi-person-fill'
               )}
-            </ul>
           </ul>
         </div>
-      </div>
+      </aside>
     </>
   );
 };

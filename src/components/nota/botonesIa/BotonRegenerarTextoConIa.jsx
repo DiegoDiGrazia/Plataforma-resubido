@@ -30,7 +30,7 @@ const BotonRegenerarDataConIa = ({
     <Button
         onClick={handleClick}
         disabled={loading}
-        variant="warning"
+        variant="primary"
     >
         {loading ? 'Regenerando...' : nombreBoton}
     </Button>

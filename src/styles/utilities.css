@@ -1,0 +1,64 @@
+/* Utilidades de marca que Bootstrap no trae.
+   Para spacing/flex/display seguir usando las utilidades de Bootstrap
+   (p-3, gap-2, d-flex…): su escala 0–5 ya coincide con nuestros tokens
+   (1=4px, 2=8px, 3=16px, 4=24px, 5=48px). */
+
+/* Texto */
+.nd-text-primary   { color: var(--nd-color-primary-text) !important; }
+.nd-text-secondary { color: var(--nd-color-text-secondary) !important; }
+.nd-text-muted     { color: var(--nd-color-text-muted) !important; }
+.nd-text-blue      { color: var(--nd-blue-500) !important; }
+.nd-text-success   { color: var(--nd-color-success) !important; }
+.nd-text-danger    { color: var(--nd-color-danger) !important; }
+
+.nd-text-xs   { font-size: var(--nd-font-size-xs) !important; }
+.nd-text-sm   { font-size: var(--nd-font-size-sm) !important; }
+.nd-text-base { font-size: var(--nd-font-size-base) !important; }
+.nd-text-md   { font-size: var(--nd-font-size-md) !important; }
+.nd-text-lg   { font-size: var(--nd-font-size-lg) !important; }
+.nd-text-xl   { font-size: var(--nd-font-size-xl) !important; }
+.nd-text-2xl  { font-size: var(--nd-font-size-2xl) !important; }
+
+.nd-fw-regular  { font-weight: var(--nd-font-weight-regular) !important; }
+.nd-fw-medium   { font-weight: var(--nd-font-weight-medium) !important; }
+.nd-fw-semibold { font-weight: var(--nd-font-weight-semibold) !important; }
+.nd-fw-bold     { font-weight: var(--nd-font-weight-bold) !important; }
+
+.nd-caps {
+  text-transform: uppercase;
+  letter-spacing: var(--nd-letter-spacing-caps);
+}
+
+/* Fondos */
+.nd-bg-primary        { background-color: var(--nd-color-primary) !important; color: var(--nd-color-on-primary); }
+.nd-bg-primary-subtle { background-color: var(--nd-color-primary-subtle) !important; }
+.nd-bg-secondary      { background-color: var(--nd-color-secondary) !important; color: var(--nd-color-on-secondary); }
+.nd-bg-surface        { background-color: var(--nd-color-bg-surface) !important; }
+.nd-bg-muted          { background-color: var(--nd-color-bg-muted) !important; }
+.nd-bg-page           { background-color: var(--nd-color-bg-page) !important; }
+
+/* Bordes / radios / sombras */
+.nd-border        { border: var(--nd-border-width) solid var(--nd-color-border) !important; }
+.nd-rounded-sm    { border-radius: var(--nd-radius-sm) !important; }
+.nd-rounded-md    { border-radius: var(--nd-radius-md) !important; }
+.nd-rounded-lg    { border-radius: var(--nd-radius-lg) !important; }
+.nd-rounded-pill  { border-radius: var(--nd-radius-pill) !important; }
+.nd-shadow-sm     { box-shadow: var(--nd-shadow-sm) !important; }
+.nd-shadow-md     { box-shadow: var(--nd-shadow-md) !important; }
+
+/* Alias legacy: estas clases ya existen en varias pantallas.
+   Ahora apuntan a tokens; no crear nuevas, usar .btn-primary / .nd-*. */
+.text-brand { color: var(--nd-color-primary-text) !important; }
+.bg-brand   { background-color: var(--nd-color-primary) !important; color: var(--nd-color-on-primary); }
+.btn-brand,
+.btn-orange {
+  background-color: var(--nd-color-primary);
+  border-color: var(--nd-color-primary);
+  color: var(--nd-color-on-primary);
+}
+.btn-brand:hover,
+.btn-orange:hover {
+  background-color: var(--nd-color-primary-hover);
+  border-color: var(--nd-color-primary-hover);
+  color: var(--nd-color-on-primary);
+}

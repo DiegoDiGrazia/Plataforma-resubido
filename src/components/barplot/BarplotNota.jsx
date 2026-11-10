@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import "./Barplot.css";
+import { color, palette, seriesColors } from '../../styles/tokens';
 import { formatNumberMiles } from '../Dashboard/Dashboard.jsx';
 import Barplot_Carga from './Barplot_mejorado_carga.jsx';
 import './BarplotMobile.css'
@@ -161,7 +162,7 @@ const BarplotNota = ({id_noti, TOKEN, cliente, fpub, dataLocalNota, resumenNota 
             {
                 label: `impresiones google \n  ${totales.usuariosTotalesGoogle}`,
                 data: totales.impresionesGooglePorMes,
-                backgroundColor: '#34A853',
+                backgroundColor: seriesColors.medios,
 
 
                 barPercentage: 1.0,
@@ -170,14 +171,14 @@ const BarplotNota = ({id_noti, TOKEN, cliente, fpub, dataLocalNota, resumenNota 
             {
                 label: `impresiones RRSS \n ${totales.usuariosTotalesRRSS}`,
                 data: totales.impresionesRRSSPorMes,
-                backgroundColor: '#1877F2',
+                backgroundColor: seriesColors.redes,
                 barPercentage: 1.0,
                 categoryPercentage: 0.7,
             },
             {
                 label: `impresiones Videos \n ${totales.usuariosTotalesVideos}`,
                 data: totales.impresionesVideosPorMes,
-                backgroundColor: '#dc3545',
+                backgroundColor: seriesColors.videos,
                 barPercentage: 1.0,
                 categoryPercentage: 0.7,
             }
@@ -203,9 +204,9 @@ const BarplotNota = ({id_noti, TOKEN, cliente, fpub, dataLocalNota, resumenNota 
                         return '';
                     }
                 },
-                backgroundColor: '#f5f5f5', // Cambia el color de fondo del tooltip
-                bodyColor: '#333', // Cambia el color del texto del valor
-                borderColor: '#999', // Opcional, para agregar un borde
+                backgroundColor: palette.gray0,
+                bodyColor: color.text,
+                borderColor: color.border,
                 borderWidth: 1, // Establece el grosor del borde (opcional)
             },
         },
@@ -214,13 +215,13 @@ const BarplotNota = ({id_noti, TOKEN, cliente, fpub, dataLocalNota, resumenNota 
                 offset: true,
                 grid: {
                     offset: false,
-                    color: 'rgba(128, 128, 128, 0.1)',
+                    color: color.border,
                 },
             },
             y: {
                 beginAtZero: true,
                 grid: {
-                    color: 'rgba(128, 128, 128, 0.1)',
+                    color: color.border,
                 },
             },
         },
@@ -254,7 +255,7 @@ const BarplotNota = ({id_noti, TOKEN, cliente, fpub, dataLocalNota, resumenNota 
                     </div>
                     <div className='col' style={{ paddingLeft: '20px' }}>
                         <p className='leyenda_barplot'>
-                            <span className="blue-dot-impresiones bg-danger"></span>Impresiones Videos
+                            <span className="blue-dot-impresiones blue-dot-videos"></span>Impresiones Videos
                             <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "Youtube + Videos de X"/>  
                         </p>
                         <p className='totales'>{formatNumberMiles(totales.impresionesTotalesVideos)}</p>

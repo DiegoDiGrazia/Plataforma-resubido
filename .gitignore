@@ -12,3 +12,5 @@ build
 # Archivos del sistema
 .DS_Store
 Thumbs.dbt
+# Configuración personal de Claude Code (la carpeta .claude/skills sí se versiona)
+.claude/settings.local.json

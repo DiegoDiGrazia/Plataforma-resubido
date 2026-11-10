@@ -1,226 +1,246 @@
-
 html, body {
     height: 100%;
     margin: 0;
     overflow: auto; /* Permite el scroll solo en el contenido principal */
-  }
-.container-with-sidebar {
-    position: relative; /* Asegura que los elementos posicionados absolutamente se alineen con este contenedor */
 }
-/* Estilos básicos para el Sidebar */
+
+/* ==========================================================================
+   Sidebar
+   Desktop: siempre visible, fijo a la izquierda.
+   Mobile (≤768px): oculto; la hamburguesa de .sidebar-topbar lo abre a
+   pantalla completa (.sidebar--mobile-visible) y se cierra con la X.
+   ========================================================================== */
+
 .sidebar {
     position: sticky;
     top: 0;
-    left: 0; /* Barra a la izquierda */
-    width: 250px;
+    z-index: var(--nd-z-sidebar);
+    width: var(--nd-sidebar-width);
     height: 100vh;
-    background-color: #ffffff;
-    transition: width 0.3s ease-in-out, transform 0.3s ease-in-out;
-    z-index: 1000; /* Para que siempre esté encima del contenido */
-    overflow-y: auto;
-    overflow: visible;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     flex-shrink: 0;
-    
+    display: flex;
+    flex-direction: column;
+    background-color: var(--nd-color-bg-surface);
+    border-right: var(--nd-border-width) solid var(--nd-color-border);
 }
 
-/* Estado cerrado de la barra lateral (solo iconos visibles) */
-.sidebar.closed {
-    width: 55px; /* Solo mostrar los iconos */
-}
-
-.descripcion_boton.closed{
-    display: none;
-    padding-top: 5px !important;
-}
-.descripcion_boton{
-    padding-top: 5px !important;
-}
-
-/* Botón cuadrado con forma de flecha */
-/* Botón cuadrado con forma de flecha */
-.sidebar-toggle {
-    position: absolute; /* Cambia a absolute para que se mueva respecto al contenedor del sidebar */
-    top: 5px;
-    left: 220px; /* Inicialmente alineado con el borde del sidebar abierto */
-    width: 70px;
-    height: auto;
-    background-color: none;
-    border: none;
-    cursor: pointer;
-    z-index: 1100;
-    transition: transform 0.3s ease-in-out, background-color 0.3s ease, left 0.3s ease-in-out;
-}
-
-
-/* Flecha derecha cuando la barra está cerrada */
-.sidebar-toggle::before {
-    content: "";
-    position: relative;
-    display:  inline-block;
-    top: 5px;
-    left: 0px;
-    width: 70px;
-    height: auto;
-    /* border-top: 5px solid transparent;
-    border-bottom: 5px solid transparent; */
-    /* border-left: 10px solid rgb(41, 11, 11); */
-    background-color: black;
-    
-}
-
-/* Flecha izquierda cuando la barra está abierta */
-.sidebar.open .sidebar-toggle::before {
-    border-left: none;
-    border-right: 10px solid rgb(109, 43, 43);
-}
-
-.sidebar.closed .sidebar-toggle {
-    left: 25px; /* Ajusta la posición del botón según el ancho de la barra cerrada */
-}
-
-/* Botón cambia de color al pasar el ratón */
-.sidebar-toggle:hover {
-    background-color: none;
-}
-
-/* Estilo para los elementos dentro del Sidebar */
-.sidebar ul {
-    padding-left: 0;
-    margin-top: 20px;
-}
-
-.sidebar .list-group-item {
-    border: none;
-    padding: 10px 15px;
+.sidebar__header {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    transition: padding 0.3s ease-in-out;
+    justify-content: space-between;
+    padding: var(--nd-space-6) var(--nd-space-5) var(--nd-space-4);
 }
 
-.sidebar.closed .list-group-item {
-    padding: 10px 10px; /* Reducir el espacio para los íconos al cerrarse */
-    justify-content: center;
-}
-
-/* Estilos para el texto de los botones del Sidebar */
-.sidebar .list-group-item span {
-    margin-left: 10px;
-    font-size: 16px;
-    transition: opacity 0.3s ease-in-out;
-}
-
-/* Ocultar el texto cuando la barra está cerrada */
-.sidebar.closed .list-group-item span {
-    opacity: 0; /* Ocultar texto */
-    visibility: hidden;
-}
-
-/* Estilos para los iconos */
-.sidebar .list-group-item .icon {
-    width: 24px;
-    height: 24px;
-    transition: width 0.3s ease-in-out, height 0.3s ease-in-out;
-}
-
-/* Imagen del logo */
-#logo-nd-sidebar {
-    position: relative;
+.sidebar__logo {
     height: 26px;
-    width: 150px;
-    transition: width 0.3s ease-in-out;
-    margin: 20px 20px 10px 30px !important;
+    width: auto;
+    max-width: 150px;
     object-fit: contain;
 }
 
-.sidebar.closed #logo-nd {
-    width: auto; /* Achicar logo al cerrar */
+/* La X solo existe en mobile */
+.sidebar__cerrar {
+    display: none;
 }
 
-/* Estilos para los botones dentro de la barra */
-.sidebar .list-group-item button {
-    background: none;
-    border: none;
-    color: #333;
-    text-align: left;
-    width: 100%;
-    font-size: 16px;
+.sidebar__nav {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: var(--nd-space-2) var(--nd-space-3);
+}
+
+.sidebar__footer {
+    padding: var(--nd-space-3);
+    border-top: var(--nd-border-width) solid var(--nd-color-border);
+}
+
+.sidebar__lista {
+    list-style: none;
+    margin: 0;
     padding: 0;
-}
-
-.sidebar .list-group-item button:hover {
-    color: #007bff;
-}
-
-#logo-nd-miniatura{
-    width: 75%;
-    margin: 10px;
-    margin-top: 25px;
-}
-
-.boton_sidebar_clickeado{
-    background-color: #EAECF5;
-    border-radius: 10px;
-    height: 40px;
-    width: 214px;
-    text-align: center;
-    margin: 0px auto;
-    
-}
-.boton_sidebar_clickeado:hover{
-    background-color: #eaecf5de;
-    
-}
-.boton_sidebar_Noclickeado{
-    background-color: none;
-    border-radius: 10px;
-    height: 40px;
-    width: 214px;
-    text-align: center;
-    margin: 0px auto;
-}
-
-.boton_sidebar_Noclickeado:hover{
-    background-color: #edeef3;
-}
-
-.botones_inferiories{
-    position: absolute !important;
-    bottom: 0 !important;
-    width: 100% !important; /* Asegúrate de que la lista abarque todo el ancho del contenedor */
-
-}
-
-.closedBoton{
-    width: 40px; 
-    background-color: none !important;
-}
-.botonSidebar{
     display: flex;
-    text-align: start;
-    justify-content: flex-start;
-    padding-left: 8px;
-    max-width: 100%;
-    width: 100%;
-    height: 100%;
-    padding-top: 3px;
+    flex-direction: column;
+    gap: var(--nd-space-1);
 }
 
-@media(max-width: 1366px) {
-    .sidebar.open {
+/* ---------- Ítem de navegación ---------- */
+.sidebar__link {
+    display: flex;
+    align-items: center;
+    gap: var(--nd-space-3);
+    width: 100%;
+    height: 40px;
+    padding: 0 var(--nd-space-3);
+    border: none;
+    border-radius: var(--nd-radius-md);
+    background: transparent;
+    font-family: inherit;
+    font-size: var(--nd-font-size-base);
+    font-weight: var(--nd-font-weight-medium);
+    line-height: var(--nd-line-height-snug);
+    color: var(--nd-color-text);
+    text-align: start;
+    cursor: pointer;
+    transition: background-color var(--nd-duration-fast) var(--nd-easing);
+}
+.sidebar__link:hover {
+    background-color: var(--nd-color-bg-muted);
+}
+.sidebar__link:focus-visible {
+    outline: none;
+    box-shadow: var(--nd-shadow-focus);
+}
+
+.sidebar__icono {
+    flex-shrink: 0;
+    width: 24px;
+    font-size: var(--nd-font-size-xl);
+    line-height: 1;
+    text-align: center;
+    color: var(--nd-gray-700);
+}
+
+.sidebar__texto {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sidebar__item--activo .sidebar__link {
+    background-color: var(--nd-color-primary-subtle);
+    font-weight: var(--nd-font-weight-semibold);
+}
+.sidebar__item--activo .sidebar__icono {
+    color: var(--nd-color-primary);
+}
+
+/* ---------- Crédito ---------- */
+.sidebar__credito {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--nd-space-3);
+    margin-bottom: var(--nd-space-2);
+    border-radius: var(--nd-radius-md);
+    background-color: var(--nd-color-bg-muted);
+}
+.sidebar__credito-label {
+    font-size: var(--nd-font-size-xs);
+    font-weight: var(--nd-font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: var(--nd-letter-spacing-caps);
+    color: var(--nd-color-text-secondary);
+}
+.sidebar__credito-valor {
+    font-size: var(--nd-font-size-lg);
+    font-weight: var(--nd-font-weight-bold);
+    color: var(--nd-color-text);
+}
+.sidebar__credito-link {
+    font-size: var(--nd-font-size-sm);
+    font-weight: var(--nd-font-weight-medium);
+}
+
+/* ---------- Barra superior mobile (oculta en desktop) ---------- */
+.sidebar-topbar {
+    display: none;
+}
+
+/* ---------- Notebooks ---------- */
+@media (max-width: 1366px) {
+    .sidebar {
         width: 210px;
     }
-
-    .sidebar.open .boton_sidebar_clickeado, .sidebar.open .boton_sidebar_Noclickeado  {
-        width: 190px;
-        margin-left: 10px;
-    }
-
-    .sidebar-toggle {
-        left: 180px;
-        top: 15px;
+    .sidebar__header {
+        padding-left: var(--nd-space-4);
+        padding-right: var(--nd-space-4);
     }
 }
 
+/* ---------- Mobile ---------- */
+@media (max-width: 768px) {
+    .sidebar-topbar {
+        position: fixed;
+        top: var(--nd-space-2);
+        left: var(--nd-space-2);
+        right: var(--nd-space-2);
+        z-index: var(--nd-z-sticky);
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 var(--nd-space-2);
+        background-color: var(--nd-color-bg-surface);
+        border-radius: var(--nd-radius-lg);
+        box-shadow: var(--nd-shadow-sm);
+    }
 
+    .sidebar-topbar__boton,
+    .sidebar__cerrar {
+        width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        border: none;
+        border-radius: var(--nd-radius-md);
+        background: transparent;
+        color: var(--nd-color-text);
+        font-size: var(--nd-font-size-2xl);
+        cursor: pointer;
+    }
+    .sidebar-topbar__boton:hover,
+    .sidebar__cerrar:hover {
+        background-color: var(--nd-color-bg-muted);
+    }
+
+    .sidebar-topbar__boton {
+        position: absolute;
+        left: var(--nd-space-1);
+    }
+
+    .sidebar-topbar__logo {
+        height: 24px;
+        width: auto;
+    }
+
+    /* Oculto hasta que se toca la hamburguesa */
+    .sidebar {
+        display: none;
+    }
+
+    .sidebar.sidebar--mobile-visible {
+        display: flex;
+        position: fixed;
+        inset: 0;
+        z-index: var(--nd-z-modal);
+        width: 100%;
+        height: 100%;
+        border-right: none;
+    }
+
+    .sidebar__header {
+        padding: var(--nd-space-4) var(--nd-space-4) var(--nd-space-2);
+    }
+
+    .sidebar__cerrar {
+        display: inline-flex;
+    }
+
+    .sidebar__nav,
+    .sidebar__footer {
+        padding-left: var(--nd-space-4);
+        padding-right: var(--nd-space-4);
+    }
+
+    .sidebar__link {
+        height: 52px;
+        font-size: var(--nd-font-size-md);
+    }
+
+    .sidebar__icono {
+        width: 28px;
+        font-size: var(--nd-font-size-2xl);
+    }
+}

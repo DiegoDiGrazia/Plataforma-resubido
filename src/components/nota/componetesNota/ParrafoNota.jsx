@@ -88,7 +88,7 @@ useEffect(() => {
           style={{
             flex: 1,
             border: 'none',
-            borderRadius: '15px',
+            borderRadius: 'var(--nd-radius-xl)',
             padding: '5px',
           }}
         ></div>

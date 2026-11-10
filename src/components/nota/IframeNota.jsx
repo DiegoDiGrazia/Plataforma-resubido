@@ -4,7 +4,7 @@ const IframeNota = ({ url, width = 300, height = 250, title= ""}) => {
   return (
     <>
     <h3 style={{ textAlign: 'start', fontSize: '14px', margin: '5px 0' }}>{title}</h3>
-    <div style={{ width: width, height: height, overflow: "hidden", border: "1px solid #000" }}>
+    <div style={{ width: width, height: height, overflow: "hidden", border: "1px solid var(--nd-color-text)" }}>
       <iframe
         src={url}
         width={width}

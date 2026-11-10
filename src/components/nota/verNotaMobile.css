@@ -1,6 +1,6 @@
 #pantalla-verNota {
     .content.flex-grow-1 {
-        background-color: white !important;
+        background-color: var(--nd-color-bg-surface) !important;
     }
     
     @media (max-width: 768px) {

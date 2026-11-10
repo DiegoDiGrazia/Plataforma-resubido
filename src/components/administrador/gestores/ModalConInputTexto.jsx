@@ -7,7 +7,7 @@ export default function ModalConInputTexto({ show, titulo, actualTexto, setTexto
     <div
       className="modal fade show d-block"
       tabIndex="-1"
-      style={{ background: "rgba(0,0,0,0.5)" }}
+      style={{ background: "var(--nd-color-overlay)" }}
     >
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">

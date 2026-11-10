@@ -2,15 +2,15 @@
 
 
 #descargar-excel{
-    background-color: #2ea054;
-    border-color: #868e96;
+    background-color: var(--nd-color-success);
+    border-color: var(--nd-color-border-strong);
 }
 .buscadorNotasForm {
     width: 275px !important;
 }
 
 i {
-    color: #3e4658ff;
+    color: var(--nd-color-text);
     margin-right: 5px;
     font-size: 24px;
 }
@@ -18,8 +18,8 @@ i {
 .input-fechas {
     width: 150px;
     font-size: 13px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    border: 1px solid var(--nd-color-border-strong);
+    border-radius: var(--nd-radius-sm);
     padding: 2px 5px;
 }
 

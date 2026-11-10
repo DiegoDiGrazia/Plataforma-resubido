@@ -101,7 +101,7 @@ export default function GoogleStyleSlider({
               transform: 'translateX(-50%)',
             }}
           >
-            <div className="w-5 h-5 rounded-full border-2 border-white shadow-md" style={{ background: 'linear-gradient(180deg,#3b82f6,#4f46e5)' }} />
+            <div className="w-5 h-5 rounded-full border-2 border-white shadow-md" style={{ background: 'linear-gradient(180deg,var(--nd-color-secondary),var(--nd-color-secondary))' }} />
           </div>
         </div>
 

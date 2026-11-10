@@ -650,7 +650,7 @@ const handleSave = () => {
               </div>
             </div>
             <div className="statTile" style={{ justifyContent: 'center' }}>
-              <button className="btn btn-secondary w-100" style={{ borderRadius: '8px' }} onClick={() => {
+              <button className="btn btn-secondary w-100" style={{ borderRadius: 'var(--nd-radius-md)' }} onClick={() => {
                 descargarExcel(contratosFiltrados, "Contratos");
               }}>
                 <i className="bi bi-download me-2" />Descargar Excel
@@ -1043,7 +1043,7 @@ const handleSave = () => {
                                 border: 'none',
                                 background: 'transparent',
                                 cursor: 'pointer',
-                                color: 'red',
+                                color: 'var(--nd-color-danger)',
                                 fontWeight: 'bold',
                                 marginTop: '8px',
                               }}
@@ -1134,7 +1134,7 @@ const handleSave = () => {
                                 border: 'none',
                                 background: 'transparent',
                                 cursor: 'pointer',
-                                color: 'red',
+                                color: 'var(--nd-color-danger)',
                                 fontWeight: 'bold',
                                 marginTop: '8px',
                               }}

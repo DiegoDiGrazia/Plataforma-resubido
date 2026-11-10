@@ -14,9 +14,9 @@
     display: inline-block;
     width: 10px;
     height: 10px;
-    background-color: #34A853;
+    background-color: var(--nd-chart-1); /* Medios */
 
-    border-radius: 50%;
+    border-radius: var(--nd-radius-full);
     margin-right: 5px;
     vertical-align: middle;
 }
@@ -25,11 +25,16 @@
     display: inline-block;
     width: 10px;
     height: 10px;
-    background-color: #1877F2;
+    background-color: var(--nd-chart-2); /* Redes */
 
-    border-radius: 50%;
+    border-radius: var(--nd-radius-full);
     margin-right: 5px;
     vertical-align: middle;
+}
+
+.blue-dot-user.blue-dot-videos,
+.blue-dot-impresiones.blue-dot-videos {
+    background-color: var(--nd-chart-3); /* Videos */
 }
 
 .barplot{
@@ -41,7 +46,7 @@
     padding-top: 20px;
 }
 .barra_lateral{
-    border-right: 1px solid #e7dfdf; 
+    border-right: 1px solid var(--nd-color-border); 
     margin-right: 30px;
     padding-left: 30px;
 }
@@ -57,7 +62,7 @@
     align-items: center; /* Centrar verticalmente */
     font-size: 20px;
     font-weight: 600;
-    color: #292929
+    color: var(--nd-color-text)
 }
 
 .info-icon{

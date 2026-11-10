@@ -96,7 +96,7 @@ const Barplot_Carga = () => {
                     </div>
                     <div className='col' style={{ paddingLeft: '20px' }}>
                         <p className='leyenda_barplot'>
-                            <span className="blue-dot-impresiones bg-danger"></span> Cargando usuarios
+                            <span className="blue-dot-impresiones blue-dot-videos"></span> Cargando usuarios
                             <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "aca va el texto"/>  
                         </p>
                         <div className='totales'><Spinner color='primary'/></div> {/* Cambiado a div */}

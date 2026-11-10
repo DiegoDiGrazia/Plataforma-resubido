@@ -11,7 +11,7 @@ const IframeNotaEscalable = ({ url, width = 360, baseWidth = 720, baseHeight = 1
         width: width,
         height: height,
         overflow: "hidden",
-        border: "1px solid #000",
+        border: "1px solid var(--nd-color-text)",
         position: "relative",
       }}
     >

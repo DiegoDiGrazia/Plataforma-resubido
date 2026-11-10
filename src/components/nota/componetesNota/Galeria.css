@@ -14,7 +14,7 @@
 .blocks-gallery-item {
   position: relative;
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: var(--nd-radius-md);
   aspect-ratio: 1 / 1;
 }
 
@@ -23,7 +23,7 @@
   height: 100%;
   object-fit: cover;
   display: block;
-  border-radius: 8px;
+  border-radius: var(--nd-radius-md);
 }
 
 /* Tamaños dinámicos */
@@ -44,17 +44,17 @@
 }
 
 .controles button {
-  background: rgba(0, 0, 0, 0.6);
-  color: white;
+  background: var(--nd-color-overlay);
+  color: var(--nd-color-text-inverse);
   border: none;
   padding: 3px 6px;
   font-size: 0.75rem;
-  border-radius: 4px;
+  border-radius: var(--nd-radius-sm);
   cursor: pointer;
 }
 
 .controles button:hover {
-  background: rgba(0, 0, 0, 0.8);
+  background: var(--nd-color-overlay);
 }
 
 .wp-block-gallery-grid {
@@ -68,7 +68,7 @@
 .blocks-gallery-item {
   position: relative;
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: var(--nd-radius-md);
   aspect-ratio: 1 / 1;
 }
 
@@ -87,10 +87,10 @@
 
 .carousel-item{
   height: auto !important;
-  border-radius: 5px;
+  border-radius: var(--nd-radius-sm);
 }
 .carousel-inner{
   margin: 0px;
-    border-radius: 10px;
+    border-radius: var(--nd-radius-lg);
 
 }

@@ -66,7 +66,7 @@ const Administrador = () => {
             <div className='row miPerfilContainer soporteContainer'>
                 <div className='col p-0'>
                     <h3 id="saludo" className='headerTusNotas ml-0'>
-                        <i className="icon me-2 icono_tusNotas bi bi-gear-fill" alt="Icono 1" style={{color: '#3e4658ff', marginRight: '5px', bottom: '10px', fontSize: '24px'}} /> Administración 
+                        <i className="icon me-2 icono_tusNotas bi bi-gear-fill" alt="Icono 1" style={{color: 'var(--nd-color-text)', marginRight: '5px', bottom: '10px', fontSize: '24px'}} /> Administración 
                     </h3>
                     <h4 className='infoCuenta'>Configuración</h4>
                     <div className='abajoDeTusNotas'>

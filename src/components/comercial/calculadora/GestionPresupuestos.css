@@ -1,5 +1,5 @@
 .tabs-container {
-  border-bottom: 1px solid #dee2e6;
+  border-bottom: 1px solid var(--nd-color-border);
   margin-bottom: 1rem;
 }
 
@@ -7,21 +7,21 @@
   background-color: transparent;
   border: none;
   border-bottom: 3px solid transparent;
-  color: #000;
+  color: var(--nd-color-text);
   padding: 0.75rem 1.5rem;
   font-weight: normal;
   transition: border-color 0.2s ease-in-out;
 }
 
 .tab-button:hover {
-  color: #000;
-  border-bottom: 3px solid #e0e0e0; 
+  color: var(--nd-color-text);
+  border-bottom: 3px solid var(--nd-color-border); 
 }
 
 .tab-button.active {
   font-weight: bold;
-  border-bottom: 3px solid #FB6514 !important; 
-  color: #000 !important; 
+  border-bottom: 3px solid var(--nd-color-primary) !important; 
+  color: var(--nd-color-text) !important; 
 }
 
 @media (max-width: 576px) {

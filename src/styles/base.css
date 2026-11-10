@@ -1,0 +1,85 @@
+/* Estilos base por etiqueta. Define cómo se ve cada elemento HTML "pelado".
+   No poner acá estilos de pantallas puntuales. */
+
+body {
+  font-family: var(--nd-font-family);
+  font-size: var(--nd-font-size-base);
+  font-weight: var(--nd-font-weight-regular);
+  line-height: var(--nd-line-height-normal);
+  color: var(--nd-color-text);
+  background-color: var(--nd-color-bg-page);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Jerarquía de títulos — un h1 por pantalla (título de página) */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--nd-font-family);
+  color: var(--nd-color-text);
+  line-height: var(--nd-line-height-tight);
+  margin-top: 0;
+  margin-bottom: var(--nd-space-3);
+}
+h1 { font-size: var(--nd-font-size-3xl); font-weight: var(--nd-font-weight-bold); letter-spacing: var(--nd-letter-spacing-tight); }
+h2 { font-size: var(--nd-font-size-2xl); font-weight: var(--nd-font-weight-bold); letter-spacing: var(--nd-letter-spacing-tight); }
+h3 { font-size: var(--nd-font-size-xl);  font-weight: var(--nd-font-weight-semibold); }
+h4 { font-size: var(--nd-font-size-lg);  font-weight: var(--nd-font-weight-semibold); }
+h5 { font-size: var(--nd-font-size-md);  font-weight: var(--nd-font-weight-semibold); }
+h6 { font-size: var(--nd-font-size-sm);  font-weight: var(--nd-font-weight-semibold); text-transform: uppercase; letter-spacing: var(--nd-letter-spacing-caps); color: var(--nd-color-text-secondary); }
+
+p {
+  margin-top: 0;
+  margin-bottom: var(--nd-space-3);
+}
+
+small, .small {
+  font-size: var(--nd-font-size-sm);
+}
+
+strong, b {
+  font-weight: var(--nd-font-weight-bold);
+}
+
+a {
+  color: var(--nd-color-link);
+  text-decoration: none;
+  transition: color var(--nd-duration-fast) var(--nd-easing);
+}
+a:hover {
+  color: var(--nd-color-link-hover);
+  text-decoration: underline;
+}
+
+label {
+  font-size: var(--nd-font-size-sm);
+  font-weight: var(--nd-font-weight-medium);
+  color: var(--nd-color-text-secondary);
+}
+
+hr {
+  border: 0;
+  border-top: var(--nd-border-width) solid var(--nd-color-border);
+  opacity: 1;
+  margin: var(--nd-space-4) 0;
+}
+
+::placeholder {
+  color: var(--nd-color-text-muted);
+  opacity: 1;
+}
+
+::selection {
+  background: var(--nd-orange-100);
+  color: var(--nd-color-text);
+}
+
+:focus-visible {
+  outline: 2px solid var(--nd-color-border-focus);
+  outline-offset: 2px;
+}
+
+/* Scrollbars discretos (webkit) */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: var(--nd-gray-300); border-radius: var(--nd-radius-pill); }
+::-webkit-scrollbar-track { background: transparent; }

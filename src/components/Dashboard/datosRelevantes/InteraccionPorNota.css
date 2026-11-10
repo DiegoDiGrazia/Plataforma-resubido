@@ -1,8 +1,8 @@
 #titulo_relevantes{
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid var(--nd-color-text);
     font-size: 20px;
     font-weight: 600;
-    color: #292929;
+    color: var(--nd-color-text);
 }
 
 .nombre_plataforma{
@@ -12,7 +12,7 @@
 
 .linkPlataforma{
     padding: 0px 0px !important;
-    color: grey;
+    color: var(--nd-color-text-secondary);
     text-decoration: none;
 }
 .imagenWidwet{
@@ -26,14 +26,14 @@
     padding-top: 8px;
     object-fit:contain;
     height: 50px;
-    border-radius: 10px;
+    border-radius: var(--nd-radius-lg);
 }
 
 .imagenWidwetInteracciones2{
     display: flex;
     width: 50px;
     height: 50px;
-    border-radius: 10px; /* Ajustar a 10px para que el radio sea el 20% de la altura/ancho */
+    border-radius: var(--nd-radius-lg); /* Ajustar a 10px para que el radio sea el 20% de la altura/ancho */
     object-fit: cover; /* Asegura que la imagen se ajuste bien */
     display: block; /* Para evitar posibles problemas de alineación */
     justify-content: center;
@@ -43,7 +43,7 @@
 .totales_widget{
     float: right;
     padding-top: 15px;
-    color: #667085;
+    color: var(--nd-color-text-secondary);
     font-weight: 600;
     justify-content: end;
     font-size: 18px;
@@ -90,7 +90,7 @@
 }
 
 .medioRowNota{
-    border-bottom: 1px solid #d1d5dd;
+    border-bottom: 1px solid var(--nd-color-border-strong);
     padding-bottom: 25px;
     margin-bottom: 0px;
     height: 98px;

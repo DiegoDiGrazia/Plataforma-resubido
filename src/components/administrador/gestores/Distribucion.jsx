@@ -580,7 +580,7 @@ const goToPage = (newPage) => {
               type="month" 
               value={fechaDesde} 
               onChange={(e) => setFechaDesde(e.target.value)} 
-              style={{ fontSize: "14px", border: "1px solid #ccc", borderRadius: "4px", padding: "2px 5px"}}
+              style={{ fontSize: "14px", border: "1px solid var(--nd-color-border-strong)", borderRadius: 'var(--nd-radius-sm)', padding: "2px 5px"}}
           />
           </span>
           <span style={{ fontSize: "14px"}}>Vencimiento hasta:
@@ -588,7 +588,7 @@ const goToPage = (newPage) => {
                 type="month" 
                 value={fechaHasta} 
                 onChange={(e) => setFechaHasta(e.target.value)} 
-                style={{ fontSize: "14px", border: "1px solid #ccc", borderRadius: "4px", padding: "2px 5px"}}
+                style={{ fontSize: "14px", border: "1px solid var(--nd-color-border-strong)", borderRadius: 'var(--nd-radius-sm)', padding: "2px 5px"}}
             />
           </span>
           <div className="dropdown">
@@ -842,7 +842,7 @@ const goToPage = (newPage) => {
       />
 
       {showContratoModal && (
-        <div className="modal fade show d-block" tabIndex="-1" style={{ background: 'rgba(0,0,0,0.5)' }}>
+        <div className="modal fade show d-block" tabIndex="-1" style={{ background: 'var(--nd-color-overlay)' }}>
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">

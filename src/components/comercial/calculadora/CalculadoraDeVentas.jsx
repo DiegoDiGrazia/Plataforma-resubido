@@ -429,7 +429,7 @@ const CalculadoraDeVentas = ({ datosEdicion, onGuardadoExitoso }) => {
     <div>
       <div className='row miPerfilContainer soporteContainer d-flex align-items-stretch mt-0 pt-0'>
         <h3 id="saludo" className='headerTusNotas ml-0 mb-3 p-0'>
-          <i className={`fs-4 mb-4 bi bi-bag-fill`} style={{color: '#3e4658ff', marginRight: '5px', bottom: '10px'}}></i>
+          <i className={`fs-4 mb-4 bi bi-bag-fill`} style={{color: 'var(--nd-color-text)', marginRight: '5px', bottom: '10px'}}></i>
             {" Calculadora de ventas "}
         </h3>
         <div className='col-7 p-0'>
@@ -576,7 +576,7 @@ const CalculadoraDeVentas = ({ datosEdicion, onGuardadoExitoso }) => {
 
       {/* Modal de Guardar Presupuesto */}
       {showGuardarModal && (
-        <div className="modal fade show d-block" tabIndex="-1" style={{ background: 'rgba(0,0,0,0.5)' }}>
+        <div className="modal fade show d-block" tabIndex="-1" style={{ background: 'var(--nd-color-overlay)' }}>
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">
@@ -626,7 +626,7 @@ const CalculadoraDeVentas = ({ datosEdicion, onGuardadoExitoso }) => {
 
       {/* Modal de Descargar Excel */}
       {showExcelModal && (
-        <div className="modal fade show d-block" tabIndex="-1" style={{ background: 'rgba(0,0,0,0.5)' }}>
+        <div className="modal fade show d-block" tabIndex="-1" style={{ background: 'var(--nd-color-overlay)' }}>
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">

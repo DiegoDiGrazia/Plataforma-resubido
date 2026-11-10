@@ -1,0 +1,10 @@
+/* Punto de entrada del sistema de diseño Noticias (d).
+   Se importa UNA vez desde src/index.css (que carga main.jsx).
+   El orden importa: tokens → fuentes → base → overrides de Bootstrap →
+   componentes → utilidades. */
+@import './tokens.css';
+@import './fonts.css';
+@import './base.css';
+@import './bootstrap-overrides.css';
+@import './components.css';
+@import './utilities.css';

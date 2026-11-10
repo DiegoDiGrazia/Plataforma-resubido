@@ -27,7 +27,7 @@
 .content {
     /* Permite que el contenido ocupe el espacio restante */
     flex-grow: 1;
-    background-color: #fbfcfc ;
+    background-color: var(--nd-color-bg-page) ;
     height: auto;
      /* background-color: rgb(179, 150, 150); */
     
@@ -36,7 +36,7 @@
 #saludo{
     margin-left: 10px;
     display: inline;
-    color: #0E0E0E;
+    color: var(--nd-color-text);
     font-size: 28px;
     font-weight: bold;
 }
@@ -44,12 +44,12 @@
 #nombre_municipio{
     display: inline;
     font-size: 28px;
-    color: #0E0E0E;
+    color: var(--nd-color-text);
     margin: 10px 10px;
 }
 
 #head_dash, .head_dash {
-    border-bottom: 1px solid #e7dfdf;
+    border-bottom: 1px solid var(--nd-color-border);
     padding: 20px;
 }
 
@@ -66,14 +66,14 @@
     margin: 0 0 4px;
     font-size: 24px;
     font-weight: bold;
-    color: #0E0E0E;
+    color: var(--nd-color-text);
 }
 
 .bienvenidaFranquiciaTexto h5 {
     margin: 0;
     font-size: 15px;
     font-weight: 500;
-    color: #667085;
+    color: var(--nd-color-text-secondary);
 }
 
 #subtitulo_performance{
@@ -84,20 +84,20 @@
     font-weight:600;
     display: inline;
     height: 20px;
-    color: #292929
+    color: var(--nd-color-text)
 
 }
 
 .custom-dropdown-button {
-    background-color: white; /* Cambia el color de fondo */
+    background-color: var(--nd-color-bg-surface); /* Cambia el color de fondo */
     color: rgb(78, 70, 70); /* Cambia el color del texto */
-    border-color: #ada4a1; /* Cambia el color del borde */
+    border-color: var(--nd-color-border-strong); /* Cambia el color del borde */
     display: inline;
 }
 
 .custom-dropdown-button:hover {
-    background-color: #e0e0e0; /* Cambia el color de fondo al pasar el mouse */
-    color: #4e4e4e; /* Cambia el color del texto al pasar el mouse */
+    background-color: var(--nd-color-bg-muted); /* Cambia el color de fondo al pasar el mouse */
+    color: var(--nd-color-text); /* Cambia el color del texto al pasar el mouse */
 }
 
 .dropdown{
@@ -114,7 +114,7 @@
     margin-top: 40px;
 }
 .back-white{
-    background-color: white;
+    background-color: var(--nd-color-bg-surface);
 }
 .tamaño_barplot{
     height: auto;
@@ -125,15 +125,15 @@
     max-height: 200px;
     overflow-y: auto;
     scrollbar-width: thin; /* Scroll más delgado */
-    scrollbar-color: #888 #f0f0f0; /* Colores del scroll y el fondo */
+    scrollbar-color: var(--nd-gray-600) var(--nd-color-bg-muted); /* Colores del scroll y el fondo */
 }
 .listaClientes::-webkit-scrollbar {
     width: 6px; /* Ancho del scroll */
 }
 
 .listaClientes::-webkit-scrollbar-thumb {
-    background-color: #888; /* Color del scroll */
-    border-radius: 3px; /* Bordes redondeados */
+    background-color: var(--nd-gray-600); /* Color del scroll */
+    border-radius: var(--nd-radius-sm); /* Bordes redondeados */
 }
 
 .dropdown-search{
@@ -151,8 +151,8 @@
     height: 36px;
     object-fit: contain;
     border: 1.5px solid rgba(210, 215, 222, 0.64);
-    box-shadow: 0px 0px 1px 0.5px rgba(180, 185, 195, 0.11);
-    border-radius: 10px;
+    box-shadow: var(--nd-shadow-sm);
+    border-radius: var(--nd-radius-lg);
     padding: 5px;
 }
 
@@ -179,10 +179,10 @@
 }
 
 .titulo_relevantes {
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid var(--nd-color-text);
     font-size: 20px;
     font-weight: 600;
-    color: #292929;
+    color: var(--nd-color-text);
 }
 
 .titulo_relevantes p {
@@ -263,7 +263,7 @@
 
     }
     .resenaReporte{
-        color:#667085; 
+        color:var(--nd-color-text-secondary); 
         margin-left: 12px;
         font-size: 16px !important;
     }

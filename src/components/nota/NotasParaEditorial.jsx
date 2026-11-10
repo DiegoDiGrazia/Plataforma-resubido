@@ -428,7 +428,7 @@ const NotasParaEditorial = () => {
                             </div>
                             <div className='row' id='headerListadoNotas'>
                                 <div className='col-auto' style={{width: "70px"}}></div>
-                                <div className='col-4 columna_interaccion' style={{fontSize: "12px", color: "#667085", fontWeight: "bold"}}>Título de la Nota</div>
+                                <div className='col-4 columna_interaccion' style={{fontSize: "12px", color: "var(--nd-color-text-secondary)", fontWeight: "bold"}}>Título de la Nota</div>
                                 {/* <div className='col-1 categoriasNotas text-aling-center'>Estado</div> */}
                                 <div className='col categoriasNotas d-flex align-items-center justify-content-center'>Categorías</div> 
                                 { (filtroSeleccionado != 1) ?
@@ -484,7 +484,7 @@ const NotasParaEditorial = () => {
                                             <p>{nota.cliente}</p>
                                         </div>
                                         
-                                    <div className='col totales_widget' id= 'botonesInteraccionNota' style={{ color: "#464d55ff"}}>
+                                    <div className='col totales_widget' id= 'botonesInteraccionNota' style={{ color: "var(--nd-color-text)"}}>
                                             {nota.estado === "PUBLICADO" && (
                                                 <a href={`http://noticiasd.com/nota/${nota.term_id}`} title="Ver nota" target="_blank" rel="noopener noreferrer">
                                                     <i class="bi bi-eye-fill m-2 fs-2"></i>

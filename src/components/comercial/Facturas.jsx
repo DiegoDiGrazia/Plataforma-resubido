@@ -750,8 +750,7 @@ const Facturas = () =>  {
                             <button 
                                 type="submit" 
                                 form="form-editar-factura"
-                                className="btn btn-primary text-white" 
-                                style={{backgroundColor: '#0d6efd'}}
+                                className="btn btn-primary" 
                                 > Guardar
                             </button>
                         </div>
@@ -852,8 +851,7 @@ const Facturas = () =>  {
                             <button 
                                 type="submit" 
                                 form="form-cargar-factura"
-                                className="btn btn-primary text-white" 
-                                style={{backgroundColor: '#0d6efd'}}
+                                className="btn btn-primary" 
                             > 
                                 GUARDAR
                             </button>
@@ -909,8 +907,7 @@ const Facturas = () =>  {
                             <button 
                                 type="submit" 
                                 form="form-unificar-factura"
-                                className="btn btn-primary text-white" 
-                                style={{backgroundColor: '#0d6efd'}}
+                                className="btn btn-primary" 
                                 disabled={facturasAUnificar.length === 0 || procesandoUnificacion}
                             > 
                                 {procesandoUnificacion 
@@ -963,8 +960,7 @@ const Facturas = () =>  {
                             <button 
                                 type="submit" 
                                 form="form-dividir-factura"
-                                className="btn btn-primary text-white" 
-                                style={{backgroundColor: '#0d6efd'}}
+                                className="btn btn-primary" 
                                 disabled={procesandoDivision || !numeroSeleccionado || !mesSeleccionado}
                             > 
                                 {procesandoDivision ? "DIVIDIENDO..." : "DIVIDIR"}

@@ -1,22 +1,22 @@
 
 .toast-custom-exito, .toast-custom-error, .toast-custom-info {
-    background-color: #ffffff !important;
-    color: #3e4658 !important; 
-    border-radius: 8px !important;
+    background-color: var(--nd-color-bg-surface) !important;
+    color: var(--nd-color-text) !important; 
+    border-radius: var(--nd-radius-md) !important;
     font-weight: 500;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+    box-shadow: var(--nd-shadow-md) !important;
 }
 
-.toast-custom-exito { border-left: 5px solid #FF653B !important; }
-.toast-custom-error { border-left: 5px solid #dc3545 !important; }
-.toast-custom-info  { border-left: 5px solid #6c757d !important; }
+.toast-custom-exito { border-left: 5px solid var(--nd-color-primary) !important; }
+.toast-custom-error { border-left: 5px solid var(--nd-color-danger) !important; }
+.toast-custom-info  { border-left: 5px solid var(--nd-color-border-strong) !important; }
 
 .toast-progress-brand {
-    background: #FF653B !important;
+    background: var(--nd-color-primary) !important;
 }
 
 .Toastify__close-button {
-    color: #6c757d !important;
+    color: var(--nd-color-text-secondary) !important;
     opacity: 0.7;
 }
 .Toastify__close-button:hover {
@@ -29,8 +29,8 @@
 }
 
 :root {
-    --toastify-color-success: #FF653B;
-    --toastify-color-progress-success: #FF653B;
+    --toastify-color-success: var(--nd-color-primary);
+    --toastify-color-progress-success: var(--nd-color-primary);
 }
 
 .Toastify__toast-body {

@@ -79,7 +79,7 @@ const Ubicacion = ({ indice }) => {
       <LoadScript googleMapsApiKey={API_KEY}>
         {ubicacion && (
           <GoogleMap
-            mapContainerStyle={{ height: '400px', width: '100%', marginLeft: '55px', borderRadius: '20px' }}
+            mapContainerStyle={{ height: '400px', width: '100%', marginLeft: '55px', borderRadius: 'var(--nd-radius-xl)' }}
             center={ubicacion}
             zoom={15}
           >
