@@ -1,0 +1,709 @@
+import React, { useState, useMemo, useEffect } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import "@/modules/perfil/miPerfil.css";
+import { useSelector } from 'react-redux';
+import ModalMensaje from '@/shared/components/modales/ModalMensaje';
+import { obtenerClientes } from '@/api/apisUsuarios'; // Importa la función para obtener usuarios
+import { obtenerPaises } from '@/api/geosApi.js';
+import { obtenerUsuarios, crearUsuario, editarUsuario, eliminarUsuarioPorId, cambiarClaveUsuario } from '@/api/usuariosApi.js';
+import { obtenerPerfiles } from '@/api/perfilesApi.js';
+import { ToastContainer } from 'react-toastify';
+import { toastExito, toastError } from '@/shared/utils/toastify/toastify.jsx';
+import { formatearFecha } from '@/shared/utils/funcionesVarias.js'
+import SelectorConBuscador from '@/shared/components/form/SelectorConBuscador';
+
+const usuarioVacio = {
+  celular_reporte: "",
+  cliente: "",
+  email: "",
+  email_reporte: "",
+  id: "0",
+  nombre: "",
+  term_id: "",
+  tipo: "1",
+  id_cliente: '',
+  reporte_acceso: "0",
+  reporte_whatsapp: "0",
+  reporte_email: "0",
+  id_pais: null,
+};
+
+function generarPassword(longitud = 8) {
+  const caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
+  let password = "";
+  for (let i = 0; i < longitud; i++) {
+    const indice = Math.floor(Math.random() * caracteres.length);
+    password += caracteres[indice];
+  }
+  return password;
+}
+
+
+const UsuariosAdmin = () => {
+  const [usuarios, setUsuarios] = useState([]);
+  const [clientes, setClientes] = useState([]);
+  const [perfiles, setPerfiles] = useState([]);
+  const [paises, setPaises] = useState([]);
+  const [llevaCliente, setLlevaCliente] = useState(false);
+  const [limitadoAJurisdiccion, setLimitadoAJurisdiccion] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [mensajeModalExito, setMensajeModalExito] = useState("Los cambios se realizaron correctamente.");
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [formData, setFormData] = useState({});
+  const itemsPerPage = 10;  
+  const TOKEN = useSelector((state) => state.formulario.token);
+  const permisoAlta = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Usuarios: Alta") || false);
+  const permisoEdicion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Usuarios: Edicion") || false);
+
+  // Cargar usuarios
+  useEffect(() => {
+    obtenerUsuarios(TOKEN).then(setUsuarios);
+    obtenerClientes(TOKEN).then(setClientes);
+    obtenerPerfiles(TOKEN).then(setPerfiles);
+    obtenerPaises()
+      .then((data) => setPaises(Array.isArray(data) ? data : []))
+      .catch((err) => console.error("Error al obtener paises:", err));
+}, [TOKEN]);
+
+  const paisSeleccionado = paises.find((p) => String(p.pais_id) === String(formData.id_pais))?.nombre;
+
+  // Filtrar por búsqueda
+  const filteredUsuarios = useMemo(() => {
+    return usuarios.filter((item) =>  //-- Cambia esto a usuarios cuando tengas la API
+      item.nombre.toLowerCase().includes(search.toLowerCase()) ||
+      item.email.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [search, usuarios]);
+
+  const totalPages = Math.ceil(filteredUsuarios.length / itemsPerPage);
+
+  const pagedItems = useMemo(() => {
+    const start = (page - 1) * itemsPerPage;
+    return filteredUsuarios.slice(start, start + itemsPerPage);
+  }, [filteredUsuarios, page]);
+
+  const goToPage = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
+
+  useEffect(() => {
+    setPage(1);
+  }, [search]);
+
+  // Abrir modal con datos
+  const handleEditClick = (user) => {
+    setSelectedUser(user);
+    setFormData({ ...user,reporte_acceso: '0', tipo: user?.tipo_usuario || `1` } ); // copia datos
+    if(user?.cliente){
+      setLlevaCliente(true)
+    }
+    if (user?.id_pais) {
+      setLimitadoAJurisdiccion(true);
+    }
+    const modal = new window.bootstrap.Modal(document.getElementById('editModal'));
+    modal.show();
+  };
+
+const handleSave = () => {
+    const payload = {
+      nombre: formData.nombre || "",
+      email: formData.email || "",
+      tipo_usuario: String(formData.tipo),
+      cliente: formData.cliente || "",
+      id_pais: Number(formData.id_pais) || 0,
+      reporte_whatsapp: Number(formData.reporte_whatsapp) || 0,
+      reporte_email: Number(formData.reporte_acceso) || 0,
+      celular_reporte: formData.celular_reporte || "",
+      email_reporte: formData.email_reporte || "",
+      modulo_contactos: Number(formData.modulo_contactos) || 0,
+      modulo_comunicacion: Number(formData.modulo_comunicacion) || 0,
+      administrador_encuesta: Number(formData.administrador_encuesta) || 0
+    };
+
+    const esNuevoUsuario = formData.id === "0";
+
+    const peticion = esNuevoUsuario 
+      ? crearUsuario(TOKEN, payload)
+      : editarUsuario(TOKEN, formData.id, payload);
+
+    peticion
+      .then((usuarioGuardado) => {
+        toastExito('Los cambios se realizaron correctamente.');
+
+        const modalElement = document.getElementById('editModal');
+        const modalInstance = window.bootstrap.Modal.getInstance(modalElement);
+        if (modalInstance) {
+          modalInstance.hide();
+        }
+
+        // Un usuario nuevo se crea sin clave: le asignamos una temporal que va a tener que cambiar al entrar
+        if (esNuevoUsuario && usuarioGuardado?.id) {
+          generarContrasenia(usuarioGuardado.id, generarPassword(8));
+        }
+
+        obtenerUsuarios(TOKEN).then(setUsuarios);
+      })
+      .catch((err) => {
+        console.error("Error al guardar cambios:", err);
+        toastError(err.message || "Error al guardar cambios");
+      });
+  };
+
+const eliminarUsuario = (id) => {
+    eliminarUsuarioPorId(TOKEN, id)
+      .then(() => {
+        toastExito('El usuario se eliminó correctamente');
+        obtenerUsuarios(TOKEN).then(setUsuarios);
+      })
+      .catch((err) => {
+        console.error("Error al eliminar usuario:", err);
+        toastError("Error al eliminar usuario");
+      });
+  };
+
+const generarContrasenia = (id, contrasenia) => {
+    cambiarClaveUsuario(TOKEN, id, contrasenia)
+      .then(() => {
+        toastExito('Contraseña generada con exito!');
+        setMensajeModalExito('La contraseña temporal es: ' + contrasenia + '. El usuario va a tener que cambiarla en su próximo ingreso.');
+        setShowModal(true);
+        obtenerUsuarios(TOKEN).then(setUsuarios);
+      })
+      .catch((err) => {
+        console.error("Error al generar contraseña:", err);
+        toastError(err.message || "Error al generar contraseña");
+      });
+  };
+
+/* input para la paginación
+const handleInputChange = (e) => {
+    setInputPage(e.target.value);
+};
+
+const handleInputKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      let newPage = parseInt(inputPage, 10);
+
+      if (isNaN(newPage) || newPage < 1) {
+        newPage = 1;
+      } else if (newPage > totalPages) {
+        newPage = totalPages;
+      }
+      goToPage(newPage);
+    }
+  };
+*/
+  return (
+    <div className="content flex-grow-1 crearNotaGlobal">
+      
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
+
+      <div className='row miPerfilContainer soporteContainer'>
+        <div className='col p-0'>
+          <h3 id="saludo" className='headerTusNotas ml-0'>
+            <i className="icon me-2 icono_tusNotas bi bi-gear-fill" alt="Icono 1" /> Gestiona tus usuarios
+          </h3>
+          <h4 className='infoCuenta'>Gestiona tus usuarios</h4>
+          <div className='abajoDeTusNotas'>
+            En esta seccion podras gestionar la creación, eliminación y edición de todos los usuarios de la plataforma.
+          </div>
+        </div>
+      </div>
+      {/* Búsqueda */}
+      <div className='row miPerfilContainer soporteContainer mt-4 p-0 mb-3'>
+        <div className='col buscadorNotas'> 
+          {permisoAlta && (
+            <button className="mb-2 btn btn-primary" onClick={() => handleEditClick(usuarioVacio)}>Crear nuevo usuario</button>
+          )}
+          <form className='buscadorNotasForm'>
+            <input
+              className='inputBuscadorNotas'
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="       Buscar por nombre o email"
+            />
+          </form>
+        </div>
+      </div>
+
+      {/* Lista */}
+      <div className='row miPerfilContainer soporteContainer mt-4 p-0'>
+        <div>
+          <ul className="list-group">
+            {pagedItems.length === 0 ? (
+              <li className="list-group-item">No hay resultados.</li>
+            ) : (
+              pagedItems.map((item) => (
+                <li key={item.id} className="list-group-item">
+                  <div className='row pt-0'>
+                    <div className='col-2'>
+                      <button
+                        className="btn btn-link text-primary p-0"
+                        onClick={() => handleEditClick(item)}
+                        disabled={!permisoEdicion}
+                      >
+                        <div className='user-name-text text-start'>{item.nombre}</div>
+                      </button>
+                    </div>
+                    <div className='col-3'>
+                      <small>{item.email}</small>
+                      {item.debe_cambiar_clave && (
+                        <span className="badge bg-danger ms-2" title="En su próximo ingreso va a tener que cambiar la contraseña">
+                          Debe cambiar clave
+                        </span>
+                      )}
+                    </div>
+                    <div className='col-3'>
+                      {item.cliente && <em className='cuenta-text'>Cuenta: {item.cliente}</em>}
+                    </div>
+                    <div className='col-3'>
+                      <span className="text-muted">Creado: {formatearFecha(item.fecha_creacion)}</span>
+                    </div>
+                  </div>
+                </li>
+              ))
+            )}
+          </ul>
+
+          {/* Paginación */}
+          <div className="d-flex justify-content-center mt-3">
+            <button
+              className="btn btn-secondary btn-sm me-2"
+              onClick={() => goToPage(page - 1)}
+              disabled={page === 1}
+            >
+              Anterior
+            </button>
+            <span>Página {page} de {totalPages}</span>
+            {/* input para paginación 
+            <div className="d-flex align-items-center">
+              <span className="me-1">Página</span>
+              <input
+                type="number"
+                className="form-control form-control-sm text-center"
+                style={{ width: '55px' }}
+                value={inputPage}
+                onChange={handleInputChange}
+                onKeyDown={handleInputKeyDown}
+                onBlur={() => setInputPage(page)}
+                min="1"
+                max={totalPages}
+              />
+              <span className="ms-1">de {totalPages}</span>
+            </div>
+            */}
+            <button
+              className="btn btn-secondary btn-sm ms-2"
+              onClick={() => goToPage(page + 1)}
+              disabled={page === totalPages}
+            >
+              Siguiente
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Modal */}
+      <div className="modal fade" id="editModal" tabIndex="-1" aria-hidden="true">
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">
+                {selectedUser?.id === "0" ? "Nuevo Usuario" : "Editar Usuario"}
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+
+            <div className="modal-body">
+              {selectedUser && (
+                <>
+                  {/* Nombre */}
+                  <div className="mb-3">
+                    <label className="form-label">Nombre</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={formData.nombre || ""}
+                      onChange={(e) =>
+                        setFormData({ ...formData, nombre: e.target.value })
+                      }
+                    />
+                  </div>
+
+                  {/* Email */}
+                  <div className="mb-3">
+                    <label className="form-label">Email</label>
+                    <input
+                      type="email"
+                      className="form-control"
+                      value={formData.email || ""}
+                      onChange={(e) =>
+                        setFormData({ ...formData, email: e.target.value })
+                      }
+                    />
+                  </div>
+
+                  {/* Email Reporte */}
+                  <div className="mb-3">
+                    <label className="form-label">Email para envio de reporte (opcional)</label>
+                    <input
+                      type="email"
+                      className="form-control"
+                      value={formData.email_reporte || ""}
+                      onChange={(e) =>
+                        setFormData({ ...formData, email_reporte: e.target.value })
+                      }
+                    />
+                  </div>
+
+                  {/* Celular */}
+                  <div className="mb-3">
+                    <label className="form-label">Numero de celular (opcional)</label>
+                    <input
+                      type="email"
+                      className="form-control"
+                      value={formData.celular_reporte || ""}
+                      onChange={(e) =>
+                        setFormData({ ...formData, celular_reporte: e.target.value })
+                      }
+                    />
+                  </div>
+
+
+                  {/* ver si lleva cliente */}
+                  <div className="mb-3">
+                    <label className="form-label">Acceso</label>
+                    <div className="dropdown">
+                      <button
+                        className="btn btn-secondary dropdown-toggle w-100 text-start"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                      {llevaCliente ? "Limitado a cuentas" : "Acceso a todas las cuentas"}
+                      </button>
+                      <ul className="dropdown-menu w-100">
+                        <li>
+                          <button
+                            type="button"
+                            className="dropdown-item"
+                            onClick={() =>
+                              setLlevaCliente(true)
+                            }
+                          >
+                            Limitado a cuentas
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            type="button"
+                            className="dropdown-item"
+                            onClick={() => {
+                              setLlevaCliente(false);
+                              setFormData({
+                                ...formData,
+                                id_cliente: '',
+                                cliente: '',
+                              });
+                            }}
+                            
+                          >
+                            Acceso a todas las cuentas
+                          </button>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  
+
+
+                  {/* Cuenta (dropdown) */}
+                  {llevaCliente && (
+                  <div className="mb-3">
+                    <SelectorConBuscador
+                      title="Cuenta"
+                      alineacionDerecha={true}
+                      options={clientes}
+                      selectedOption={clientes.find((c) => c.name === formData.cliente) || (formData.cliente ? { name: formData.cliente } : null)}
+                      onSelect={(c) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          id_cliente: c.name,
+                          cliente: c.name,
+                        }))
+                      }
+                      onClear={() =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          id_cliente: '',
+                          cliente: '',
+                        }))
+                      }
+                    />
+                  </div>
+                  )}
+
+                  {/* jurisdiccion */}
+                  <div className="mb-3">
+                    <label className="form-label">Limitado a jurisdiccion</label>
+                    <div className="dropdown">
+                      <button
+                        className="btn btn-secondary dropdown-toggle w-100 text-start"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                      {limitadoAJurisdiccion ? "Limitado a jurisdiccion" : "Acceso a todas las jurisdicciones"}
+                      </button>
+                      <ul className="dropdown-menu w-100">
+                        <li>
+                          <button
+                            type="button"
+                            className="dropdown-item"
+                            onClick={() =>
+                              setLimitadoAJurisdiccion(true)
+                            }
+                          >
+                            Limitado a jurisdiccion
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            type="button"
+                            className="dropdown-item"
+                            onClick={() => {
+                              setLimitadoAJurisdiccion(false);
+                              setFormData({
+                                ...formData,
+                                id_pais: null,
+                              });
+                            }}
+                            
+                          >
+                            Acceso a todos las jurisdicciones
+                          </button>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  {/* pais (dropdown) */}
+                  {limitadoAJurisdiccion && (
+                  <div className="mb-3">
+                    <label className="form-label">Pais</label>
+                    <div className="dropdown">
+                      <button
+                        className="btn btn-secondary dropdown-toggle w-100 text-start"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        {paisSeleccionado || "Seleccionar pais..."}
+                        </button>
+
+                      <ul className="dropdown-menu w-100">
+                        {paises.map((pais) => (
+                          <li key={pais.pais_id}>
+                            <button
+                              type="button"
+                              className="dropdown-item"
+                              onClick={() => {
+                                setFormData({
+                                  ...formData,
+                                  id_pais: pais.pais_id,
+                                });
+                              }}
+                            >
+                              {pais.nombre}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                  )}
+
+                  {/* Perfil (dropdown) */}
+                  <div className="mb-3">
+                    <label className="form-label">Perfil</label>
+                    <div className="dropdown">
+                      <button
+                        className="btn btn-secondary dropdown-toggle w-100 text-start"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        data-bs-display="static"
+                        aria-expanded="false"
+                      >
+                        {formData.tipo
+                          ? (perfiles.find((p) => p.id == formData.tipo)).nombre
+                          : "Seleccionar cuenta..."}
+                      </button>
+
+                      <ul className="dropdown-menu w-100" style={{maxHeight: "170px", overflowY: "auto", marginTop: "12px",}}>
+                        {perfiles.map((p) => (
+                          <li key={p.id}>
+                            <button
+                              type="button"
+                              className="dropdown-item"
+                              onClick={() => {
+                                setFormData({
+                                  ...formData,
+                                  tipo: p.id,
+                                });
+                              }}
+                            >
+                              {p.nombre}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+
+                  {/* reportes automaticos email */}
+                  <div className="mb-3">
+                    <label className="form-label">Recibir reportes automaticos email</label>
+                    <div className="dropdown">
+                      <button
+                        className="btn btn-secondary dropdown-toggle w-100 text-start"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        data-bs-display="static"
+                        aria-expanded="false"
+                      >
+                        {formData.reporte_acceso == '0' ? "No" : "Si"}
+                      </button>
+                      <ul className="dropdown-menu w-100" style={{marginTop: "12px",}}>
+                        <li>
+                          <button
+                            type="button"
+                            className="dropdown-item"
+                            onClick={() =>
+                              setFormData({ ...formData, reporte_acceso: "0" })
+                            }
+                          >
+                            No
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            type="button"
+                            className="dropdown-item"
+                            onClick={() =>
+                              setFormData({ ...formData, reporte_acceso: "1" })
+                            }
+                          >
+                            Si
+                          </button>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  {/* reportes automaticos wsp */}
+                  <div className="mb-3">
+                    <label className="form-label">Recibir reportes celular</label>
+                    <div className="dropdown">
+                      <button
+                        className="btn btn-secondary dropdown-toggle w-100 text-start"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        data-bs-display="static"
+                        aria-expanded="false"
+                      >
+                        {formData.reporte_whatsapp == '0' ? "No" : "Si"}
+                      </button>
+                      <ul className="dropdown-menu w-100" style={{marginTop: "12px",}}>
+                        <li>
+                          <button
+                            type="button"
+                            className="dropdown-item"
+                            onClick={() =>
+                              setFormData({ ...formData, reporte_whatsapp: "0" })
+                            }
+                          >
+                            No
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            type="button"
+                            className="dropdown-item"
+                            onClick={() =>
+                              setFormData({ ...formData, reporte_whatsapp: "1" })
+                            }
+                          >
+                            Si
+                          </button>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cerrar
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                data-bs-dismiss="modal"
+                onClick={() => eliminarUsuario(formData.id)}
+                disabled={formData.id == '0'}
+
+              >
+                Eliminar
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                data-bs-dismiss="modal"
+                onClick={() => generarContrasenia(formData.id, generarPassword(8))}
+                disabled={formData.id == '0'}
+
+              >
+                Generar clave
+              </button>
+
+
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => handleSave()}
+                disabled={!formData.email || !formData.nombre}
+              >
+                Guardar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ModalMensaje
+        show={showModal}
+        mensaje={mensajeModalExito}
+        onClose={() => setShowModal(false)}  // 👈 cierra solo con la cruz
+      />
+
+    </div>
+  );
+};
+
+export default UsuariosAdmin;

@@ -3,7 +3,7 @@
 ## Proceso por pantalla (un PR por pantalla o módulo)
 
 1. **Auditar**
-   `node .claude/skills/noticiasd-design-system/scripts/audit.mjs src/components/<modulo> --detail`
+   `node .claude/skills/noticiasd-design-system/scripts/audit.mjs src/modules/<modulo> --detail`
 2. **Botones**: todo `<Button variant="none" className="...">` o `<button style={{backgroundColor:'#FF653B'}}>`
    → `<Button variant="primary|secondary|...">`. Borrar las clases CSS que solo pintaban el botón
    (`.btnNuevoContrato`, `.btn-cerrar-modal-*`, …).
@@ -72,12 +72,12 @@
 
 ## Prioridad sugerida (por deuda según auditoría inicial)
 
-1. `nota/nota.css` (203) — pantalla central, mayor impacto.
-2. `notaFreemium/NotaFreemiumDistribucion.jsx` (49 inline styles).
-3. `nota/NotasParaEditorialMobile.css`, `nota/verNotaMobile.css`, `nota/VerNota.css` (casi todo `!important`).
-4. `comercial/AbmContratos.css` + `Facturas.*` — ya tienen buena estructura, son las que más rápido quedan como referencia.
-5. `Dashboard/*`, `monitor/MonitorEditorial.css`, `sidebar/*`, `login/*`, `miPerfil/*`.
-6. `utils/toastify/toastify.css` → toasts con tokens.
+1. `modules/notas/nota.css` (203) — pantalla central, mayor impacto.
+2. `modules/notas/freemium/NotaFreemiumDistribucion.jsx` (49 inline styles).
+3. `modules/notas/NotasParaEditorialMobile.css`, `verNotaMobile.css`, `VerNota.css` (casi todo `!important`).
+4. `modules/comercial/AbmContratos.css` + `Facturas.*` — ya tienen buena estructura, son las que más rápido quedan como referencia.
+5. `modules/dashboard/*`, `modules/monitor/MonitorEditorial.css`, `modules/auth/*`, `modules/perfil/*`.
+6. `shared/utils/toastify/toastify.css` → toasts con tokens.
 
 ## Pendientes de infraestructura (fuera de pantallas)
 

@@ -64,7 +64,7 @@ Fuente: `src/styles/tokens.css` (CSS) y `src/styles/tokens.js` (JS). Manual de m
 Orden fijo de series (`chartColors` en tokens.js, `--nd-chart-1…6` en CSS):
 naranja → azul → celeste → magenta → gris → amarillo.
 
-Por canal (`seriesColors`): medios (Google) = naranja, redes (RRSS/Meta) = azul, videos = celeste. Los puntos de leyenda (`.blue-dot-*` en Barplot.css) usan `--nd-chart-1/2/3`, así barras y leyenda coinciden siempre.
+Por canal (`seriesColors`): medios (Google) = naranja, redes (RRSS/Meta) = azul, videos = celeste. Los puntos de leyenda (`.blue-dot-*` en `shared/components/charts/Barplot.css`) usan `--nd-chart-1/2/3`, así barras y leyenda coinciden siempre.
 
 ```js
 import { Chart } from 'chart.js';

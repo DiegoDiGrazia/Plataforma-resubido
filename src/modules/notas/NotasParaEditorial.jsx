@@ -1,0 +1,616 @@
+import React from 'react';
+import { Button } from 'react-bootstrap';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
+import { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { formatearFecha } from '@/modules/dashboard/datosRelevantes/InteraccionPorNota';
+import { formatearTitulo } from '@/modules/dashboard/datosRelevantes/InteraccionPorNota';
+import { Spinner } from 'react-bootstrap';
+import SelectorCliente from '@/shared/components/SelectorCliente';
+import { useCallback } from 'react';
+import { resetCrearNota, setClienteNota, setIdNoti } from '@/store/crearNotaSlice';
+import { analizarHTML, convertirImagenBase64, setContenidoAEditar, setContenidoNota, setImagenPrincipal, setImagenRRSS, setNotaAEditar } from '@/store/crearNotaSlice';
+import BotonEliminarNota from '@/modules/notas/editor/botonEliminarNota';
+import BotonEditarDistribucionGeneracion from '@/modules/notas/editor/BotonEditarDistribucionGeneracion';
+import { updateCliente, updateNotaFreemiumDistribucion } from '@/store/formularioSlice';
+import BotonCrearNota from '@/modules/notas/editor/BotonCrearNota';
+import "./nota.css";
+import "./NotasParaEditorialMobile.css";
+import './verNotaMobile.css'
+import ModalConInputFile from '@/shared/components/modales/ModalConInputFile';
+import { guardarVideoYoutube } from '@/api/apisUsuarios';
+import ModalMensaje from '@/shared/components/modales/ModalMensaje';
+import { obtenerNotaCompletaConIa, obtenerFuenteBot } from '@/api/apisUsuarios';
+
+  function obtenerFechaDeManana() {
+    const hoy = new Date();
+    hoy.setDate(hoy.getDate() + 1); // Incrementa el día en 1
+    const año = hoy.getFullYear();
+    const mes = String(hoy.getMonth() + 1).padStart(2, '0'); // Meses de 0 a 11, sumamos 1
+    const dia = String(hoy.getDate()).padStart(2, '0'); // Día con 2 dígitos
+    return `${año}-${mes}-${dia}`;
+}
+
+const convertirVideoBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.readAsDataURL(file); // 👈 convierte a base64
+
+    reader.onload = () => {
+      resolve(reader.result); // esto es el base64
+    };
+
+    reader.onerror = (error) => {
+      reject(error);
+    };
+  });
+};
+
+
+const NotasParaEditorial = () => {
+    const [searchQuery, setSearchQuery] = useState('');
+    const [mostrarModalYoutube, setMostrarModalYoutube] = useState(false)
+    const [videoYoutube, setVideoYoutube] = useState(null)
+    const [fechaYoutube, setFechaYoutube] = useState('')
+    const [idNotaYoutube, setIdNotaYoutube] = useState('')
+    const [mostrarMensaje, setMostrarMensaje] = useState(false)
+    const [mensaje, setMensaje] = useState('')
+    const TOKEN = useSelector((state) => state.formulario.token);
+
+    const editarNota = async (notaABM, seDuplica) => {
+        console.log("notaABM en editarNota", notaABM);
+        if (notaABM.es_ia == '1' && notaABM.parrafo == "<p></p>") {
+            setMensaje(`Obteniendo nota completa con IA, esto puede tardar unos segundos...
+            En brevedad usted podra editar la nota con toda la informacion y contenido que se genero con IA`);
+            setMostrarMensaje(true)
+            const nota = await obtenerNotaCompletaConIa(TOKEN, notaABM.id, notaABM.term_id);
+            if (nota === 'Sin fondos OpenAI') {
+                setMensaje('No tiene fondos suficientes en OpenAI para obtener el contenido completo de la nota');
+                setMostrarMensaje(true);
+                return;
+            }
+            notaABM = nota
+            
+        }
+        dispatch(resetCrearNota());
+        dispatch(setNotaAEditar(notaABM));
+        dispatch(updateCliente(notaABM.cliente));
+        
+        
+        if (seDuplica) {
+            dispatch(setIdNoti("0"));
+        }
+        // Procesar el contenido HTML
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(notaABM.parrafo, 'text/html');
+        const nodes = doc.body.childNodes;
+        const contenido = [];
+
+        for (let i = 0; i < nodes.length; i++) {
+            const node = nodes[i];
+
+            if (node.nodeType === 1) { // ELEMENT_NODE
+                const tag = node.tagName.toUpperCase();
+
+                if (tag === 'IFRAME' || tag === 'BLOCKQUOTE') {
+                    contenido.push(["embebido", node.outerHTML, "", ""]);
+                } else {
+                    contenido.push(["parrafo", node.outerHTML, "", ""]);
+                }
+            } else if (node.nodeType === 3) { // TEXT_NODE
+                const trimmed = node.textContent.trim();
+                if (trimmed) {
+                    contenido.push(["parrafo", trimmed, "", ""]);
+                }
+            }
+    }
+
+    dispatch(setContenidoAEditar(contenido));
+    try {
+        const base64PPAL = await convertirImagenBase64("https://static.noticiasd.com/img" + notaABM.imagen_principal + "?cb=" + Math.random());
+        dispatch(setImagenPrincipal(base64PPAL));
+    } catch (error) {
+        console.error("Error al convertir la imagen principal:", error);
+        dispatch(setImagenPrincipal(null));
+    }
+
+    try {
+        const base64RRSS = await convertirImagenBase64("https://static.noticiasd.com/img" + notaABM.imagen_feed + "?cb=" + Math.random());
+        dispatch(setImagenRRSS(base64RRSS));
+    } catch (error) {
+        console.error("Error al convertir la imagen de RRSS:", error);
+        dispatch(setImagenRRSS(null));
+    }
+
+    // ✅ Solo después de que todo se haya procesado, se navega
+    navigate("/crearNota");
+};
+    const editarNotaFreemium = async (notaABM, seDuplica) => {
+        dispatch(updateNotaFreemiumDistribucion(notaABM));
+        navigate("/distribuir-nota-freemium");
+    }
+
+    const CLIENTE = useSelector((state) => state.formulario.cliente);
+    const navigate = useNavigate()
+    const [filtroSeleccionado, setFiltroSeleccionado] = useState(2); /// botones TODAS LAS NOTAS; EN PROGRESO; FINALIZADAS
+    const [numeroDePagina, setNumeroDePagina] = useState(1); /// para los botones de la paginacion
+    const [todasLasNotas2, setTodasLasNotas2] = useState([])
+    const [verMasUltimo, setVerMasUltimo] = useState(1)
+    const idPais = useSelector((state) => state.formulario.usuario.id_pais)
+    const verMasCantidadPaginacion = 15
+    const [cargandoNotas, setCargandoNotas] = useState(true);
+    const id_pais = useSelector((state) => state.formulario.usuario.id_pais);
+    const paises = useSelector((state) =>state.formulario.geo);
+    const nombrePaisUsuario = paises.find(pais => pais.pais_id === id_pais)?.nombre || null;
+    const perfilUsuario = useSelector((state) => state.formulario.usuario.perfil);
+    const esContratoConFacturacionAbierta = useSelector((state) => state.formulario.contratoConFacturacionAbierta);
+    
+    const permisoSelectorClientes = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Editorial: Selector clientes") || false);
+    const permisoBorrado = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Editorial: Borrado") || false);
+    const permisoEdicion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Editorial: Edicion") || false);
+
+    let CantidadDeNotasPorPagina = 200;
+    const botones = [
+        { id: 2, nombre: 'Publicaciones' },
+        { id: 3, nombre: 'En revision' },
+        { id: 4, nombre: 'Borradores' },
+        { id: 5, nombre: 'Eliminadas' },
+    ];
+    
+    const categorias = {
+        1: "todas",
+        2: "PUBLICADO",
+        3: "EN REVISION",
+        4: "BORRADOR",
+        5: "ELIMINADO"
+    };
+    
+    const fechaDeMañana = obtenerFechaDeManana(); // Obtener la fecha de mañana al cargar el componente
+    const handleFiltroClick_todasLasNotas = useCallback((id, verMas = false) => {
+
+    setFiltroSeleccionado(id);
+    setCargandoNotas(true);
+
+    const categoria = categorias[id] || "";
+    let desdeLimite = 0;
+    let limite = verMasCantidadPaginacion;
+
+    if (verMas) {
+        const siguientePagina = verMasUltimo + 1;
+        desdeLimite = verMasUltimo * verMasCantidadPaginacion;
+        setVerMasUltimo(siguientePagina);
+    } else {
+        setTodasLasNotas2([]);              
+        setVerMasUltimo(1);                 
+        desdeLimite = 0;                     
+    }
+
+    axios.post(
+        "https://panel.serviciosd.com/app_obtener_noticias",
+        {
+            cliente: CLIENTE,
+            desde: "2020-01-01",
+            hasta: fechaDeMañana,
+            token: TOKEN,
+            categoria: categoria,
+            limite: limite,
+            desde_limite: desdeLimite,
+            titulo: "",
+            id: "",
+        },
+        { headers: { 'Content-Type': 'multipart/form-data' } }
+    )
+    .then((response) => {
+        if (response.data.message === "Token Invalido") {
+            navigate("/");
+            return;
+        }
+
+        if (response.data.status === "true") {
+            setTodasLasNotas2((prev) => [...prev, ...response.data.item]);
+        } else {
+            console.error('Error en la respuesta de la API:', response.data.message);
+        }
+    })
+    .catch((error) => {
+        console.error('Error al hacer la solicitud:', error);
+    })
+    .finally(() => {
+        setCargandoNotas(false);
+    });
+}, [CLIENTE, TOKEN, navigate, verMasUltimo, categorias, verMasCantidadPaginacion]);
+    
+    const handleFiltroClick = useCallback((id, verMas = false) => {
+        console.log("searchQuery", searchQuery);
+        console.log(nombrePaisUsuario, idPais, paises)
+        setFiltroSeleccionado(id);
+        setCargandoNotas(true);
+    
+        const categoria = categorias[id] || "";
+        const limite = verMasCantidadPaginacion;
+        let nuevoOffset = 0;
+        let nuevoVerMasUltimo = verMasUltimo;
+    
+        if (verMas) {
+            nuevoOffset = verMasUltimo * verMasCantidadPaginacion;
+            nuevoVerMasUltimo = verMasUltimo + 1;
+            setVerMasUltimo(nuevoVerMasUltimo); // esto actualiza el estado para la próxima vez
+        } else {
+            setTodasLasNotas2([]);
+            nuevoVerMasUltimo = 1;
+            setVerMasUltimo(1);
+        }
+    
+        axios.post(
+            "https://panel.serviciosd.com/app_obtener_noticias_abm",
+            {
+                cliente: CLIENTE,
+                desde: "",
+                hasta: "",
+                token: TOKEN,
+                categoria: categoria,
+                limit: limite,
+                offset: verMas ? nuevoOffset : 0,  // este es el valor real que irá a la API
+                titulo: isNaN(searchQuery) ? searchQuery : "",
+                pais: nombrePaisUsuario || "",
+                full: "1",
+                term_id: !isNaN(searchQuery) ? searchQuery : "",
+            },
+            { headers: { 'Content-Type': 'multipart/form-data' } }
+        )
+        .then((response) => {
+            if (response.data.message === "Token Invalido") {
+                navigate("/");
+                return;
+            }
+    
+            if (response.data.status === "true") {
+                setTodasLasNotas2((prev) => [...prev, ...response.data.item]);
+            } else {
+                console.error('Error en la respuesta de la API:', response.data.message);
+            }
+        })
+        .catch((error) => {
+            console.error('Error al hacer la solicitud:', error);
+        })
+        .finally(() => {
+            setCargandoNotas(false);
+        });
+    }, [CLIENTE, TOKEN, categorias, verMasUltimo, verMasCantidadPaginacion, nombrePaisUsuario]);
+    
+    
+    const ClickearEnCrearNota = (cliente) => {
+        dispatch(resetCrearNota());
+        dispatch(setClienteNota(cliente))
+        navigate("/crearNota");
+    };
+        
+    const handleInputChange = (e) => {
+        setSearchQuery(e.target.value);
+        setNumeroDePagina(1); 
+    };
+
+    const handleSearch = (e) => {
+    e.preventDefault(); // Evita el comportamiento predeterminado del formulario
+    handleFiltroClick(filtroSeleccionado); // Llama a handleFiltroClick con el filtro seleccionado
+    };
+    
+
+    const subirVideo = async (id) => {
+    setMostrarMensaje(true)
+    try {
+        if (!videoYoutube) {
+        setMensaje('No hay video')
+        return;
+        }
+        setMensaje('Cargando video')
+
+        const videob64 = await convertirVideoBase64(videoYoutube);
+        await guardarVideoYoutube(TOKEN, videob64, fechaYoutube, id);
+        setMensaje('Video subido correctamente')
+
+    } catch (error) {
+        setMensaje('No se ha pudido subir el video')
+        console.error(error);
+    }
+    };
+
+    const dispatch = useDispatch();
+
+    
+    const notasFiltradas = todasLasNotas2;
+
+    const totalPaginas = Math.ceil(notasFiltradas.length / CantidadDeNotasPorPagina);
+    let notasEnPaginaActual = notasFiltradas.slice(
+        (numeroDePagina - 1) * CantidadDeNotasPorPagina,
+        numeroDePagina * CantidadDeNotasPorPagina
+    );
+
+    const listaBotonesPagina = [];
+    for (let i = 1; i <= totalPaginas; i++) {
+        listaBotonesPagina.push(i);
+      }
+
+    
+    console.log(notasEnPaginaActual)
+    
+
+    ///Chat gpt
+    useEffect(() => {
+        if (filtroSeleccionado !== 1) {
+            handleFiltroClick(filtroSeleccionado); // Ejecuta la función solo si filtroSeleccionado no es 1
+        } else {
+            handleFiltroClick_todasLasNotas(filtroSeleccionado); // Llama a la función específica para el caso de id = 1
+        }
+    }, [filtroSeleccionado, CLIENTE]);
+
+    const mostrarFuenteNota = async (term_id) => {
+        const link = await obtenerFuenteBot(TOKEN, term_id);
+        console.log("link fuente", link);
+        setMensaje(`
+            La fuente de esta nota es: ${link[0].url}
+            Título: ${link[0].titulo}
+            Provincia: ${link[0].provincia}
+            Ciudad: ${link[0].ciudad}
+            Imagen: ${link[0].imagen}
+            `);
+        setMostrarMensaje(true);
+    };
+
+    return (
+        <div id='pantalla-notasParaEditorial'>
+            <div className="content flex-grow-1 p-3">
+                <div className='row'>
+                    <h4 id="nota">Notas</h4>
+                </div>
+                <div className='row' id='menu-boton'>
+                    <div className='col'>
+                        <h3 id="saludo" className='headerTusNotas'>
+                            <img src="/images/tusNotasIcon.png" alt="Icono 1" className="icon me-2 icono_tusNotas" /> Tus Notas
+                        </h3>
+                        {permisoSelectorClientes && (
+                            <SelectorCliente/> 
+                        )}          
+                        <div className='abajoDeTusNotas'> Crea, gestiona y monitorea tus notas</div>
+                    </div>
+                    <div className='col boton'>
+                        <BotonCrearNota
+                            onClick={() => ClickearEnCrearNota(CLIENTE)}
+                            cliente={CLIENTE}
+                        />
+                    </div>
+                </div>
+
+                <div className='row' id='filtroNotas'>
+                    <div className="container">
+                    <div className="row">
+                    {botones
+                        .filter((boton) => !(CLIENTE === "" && boton.id === 1)) // Filtra el botón con id 1 si CLIENTE es ""
+                        .map((boton) => (
+                            <div key={boton.id} className="col-auto">
+                                <button
+                                    className={`boton_filtro_notas ${
+                                        filtroSeleccionado === boton.id ? 'active' : ''
+                                    }`}
+                                    onClick={() => setFiltroSeleccionado(boton.id)}
+                                >
+                                    {boton.nombre}
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                    </div>
+                    {/* todas las notas mas buscador */}
+                    <div className='row sin-margin'>
+                        <div className="container-notas">
+                            <div className='row' id='buscador'>
+                                <div className='col-4 todasLasNotas'>
+                                    Todas Las Notas
+                                </div>
+                                <div className='col buscadorNotasForm justify-content-end' >
+                                    <form onSubmit={handleSearch} className='buscadorNotasForm gap-2'>
+                                        <input
+                                            className='inputBuscadorNotas'
+                                            type="text"
+                                            value={searchQuery} 
+                                            onChange={handleInputChange} 
+                                            placeholder="      Buscar por título de la nota o id..."
+                                        />
+                                        <Button type="submit" className="btn btn-danger ml-3">
+                                            Buscar
+                                        </Button>
+                                    </form>
+                                </div>
+                            </div>
+                            <div className='row' id='headerListadoNotas'>
+                                <div className='col-auto' style={{width: "70px"}}></div>
+                                <div className='col-4 columna_interaccion' style={{fontSize: "12px", color: "var(--nd-color-text-secondary)", fontWeight: "bold"}}>Título de la Nota</div>
+                                {/* <div className='col-1 categoriasNotas text-aling-center'>Estado</div> */}
+                                <div className='col categoriasNotas d-flex align-items-center justify-content-center'>Categorías</div> 
+                                { (filtroSeleccionado != 1) ?
+                                    <>
+                                        <div className='col categoriasNotas text-end'>Cuenta</div>
+                                        <div className='col categoriasNotas text-end'>Acciones</div>
+                                    </>
+                                    :
+                                    <>
+                                        <div className='col categoriasNotas text-end'>Amplificacion</div>
+                                    </>
+                                }
+                            </div>
+                            {notasEnPaginaActual.map((nota, index) => (
+                                    <div
+                                        key={nota.id_noti || nota.term_id || `nota-${index}`}
+                                        className={`row pt-1 borderNotas ${nota.editable == '1' ? '' : 'notaNoEditable'}`}
+                                        >
+                                    <div className='col-auto'>
+                                        {nota.imagen  ? (
+                                            nota.imagen.includes('wp-content/uploads') ? 
+                                            <img src={nota.imagen} alt="Icono Nota" className='imagenWidwetInteracciones2' /> : 
+                                            <img src={'https://noticiasd.com/img' + nota.imagen} alt="Icono Nota" className='imagenWidwetInteracciones2' />
+                                        ) : (
+                                            <img src={"https://panel.serviciosd.com/img/" + nota.imagen_principal} alt="Icono Nota" className='imagenWidwetInteracciones2' />
+                                        )}
+                                    </div>
+                                    <div className='col-4 pt-1 columna_interaccion nuevoFont'>
+                                        <Link
+                                            className="link-sin-estilos"
+                                            onClick={(e) => {
+                                                if(nota?.editable == '1') {
+                                                e.preventDefault();
+                                                editarNota(nota);
+                                                } 
+                                            }}
+                                        >
+                                            <div className='row p-0 nombre_plataforma'>
+                                                {nota.titulo}
+                                            </div>
+                                        </Link>
+                                        <div className='row p-0'>
+                                            <span className='FechaPubNota'>{nota.f_pub ? formatearFecha(nota.f_pub) : formatearFecha(nota.update_date)}</span>
+                                        </div>
+                                    </div>
+                                    <div className='col-2'>
+                                        <span className="categoria_notas">{nota.categorias}</span>
+                                    </div>
+
+                                    
+                                    <>
+                                        <div className='col totales_widget' id= 'cuenta'>
+                                            <p>{nota.cliente}</p>
+                                        </div>
+                                        
+                                    <div className='col totales_widget' id= 'botonesInteraccionNota' style={{ color: "var(--nd-color-text)"}}>
+                                            {nota.estado === "PUBLICADO" && (
+                                                <a href={`http://noticiasd.com/nota/${nota.term_id}`} title="Ver nota" target="_blank" rel="noopener noreferrer">
+                                                    <i class="bi bi-eye-fill m-2 fs-2"></i>
+                                                </a>
+                                            )}
+                                        {perfilUsuario === "1" &&  CLIENTE != "" && ///MODIFICAR A 9 DESPUES DE LAS PRUEBAS
+                                            <button title="distribuir nota"
+                                                onClick={() => editarNotaFreemium(nota, true)}
+                                                style={{background: "none", border: "none",padding: 0,
+                                                    margin: 0,
+                                                    cursor: "pointer",
+                                                }}
+                                            >
+                                                <img src="/images/prisma.png" alt="Duplicar Nota" className='mb-3' />
+                                            </button>
+                                        } 
+
+                                        { nota.con_distribucion === 1 &&
+                                        <Link
+                                            title="Grafico de Interacciones"
+                                            className="link-sin-estilos"
+                                            to={nota?.editable == '1' ? `/verNota` : `#`}
+                                            state={{ id: nota.id_noti ? nota.id_noti : nota.term_id, notaABM: nota }}
+                                        >
+                                            <i class="bi bi-bar-chart-line-fill m-2 fs-2"></i>
+                                        </Link>
+                                        }
+
+                                        {permisoEdicion && (
+                                            <>
+                                                <button title="video youtube"
+                                                    onClick={() => {
+                                                        setMostrarModalYoutube(true);
+                                                        setIdNotaYoutube(nota.id);
+                                                        console.log(nota.id)
+                                                    }}
+                                                    style={{background: "none", border: "none",padding: 0,
+                                                        margin: 0,
+                                                        cursor: "pointer",
+                                                    }}
+                                                    >
+                                                    <i className="bi bi-youtube m-2 fs-2"></i>
+                                                </button>
+
+                                                <button title="Duplicar Nota"
+                                                    onClick={() => editarNota(nota, true)}
+                                                    style={{background: "none", border: "none",padding: 0,
+                                                        margin: 0,
+                                                        cursor: "pointer",
+                                                    }}
+                                                    >
+                                                    <i className="bi bi-back m-2 fs-2"></i>
+                                                </button>
+                                            </>
+                                        )}
+
+                                        { nota.es_ia == "1" &&
+                                        <button title="Obtener fuente"
+                                            onClick={() => mostrarFuenteNota(nota.term_id)}
+                                            style={{background: "none", border: "none",padding: 0,
+                                                margin: 0,
+                                                cursor: "pointer",
+                                            }}
+                                            >
+                                            <i className="bi bi-menu-button-wide m-2 fs-2"></i>
+                                        </button>
+                                        }
+                                        
+                                        {nota.estado === "PUBLICADO" && (
+                                            <BotonEditarDistribucionGeneracion id_generacion={nota.id} token={TOKEN} />
+                                        )}
+
+                                        {permisoBorrado &&
+                                        (
+                                            <BotonEliminarNota id={nota.id} token={TOKEN}></BotonEliminarNota>
+                                        )}
+
+                                    </div>
+                                        
+                                    </>
+                                </div>
+                            ))}
+                            {cargandoNotas && 
+                            
+                            <div
+                                className='totales'
+                                style={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    margin: "20px",
+                                    marginLeft: "40px"
+                                }}
+                                >
+                                <Spinner color='blue' />
+                            </div>
+
+                            }
+
+                        <ModalConInputFile show={mostrarModalYoutube} titulo={'Elija un video para youtube'} actualFile={videoYoutube}
+                                            setFile={setVideoYoutube} AlGuardar={() => subirVideo(idNotaYoutube)} onClose={() =>setMostrarModalYoutube(false)} youtube={true}
+                                            fecha = {fechaYoutube} setFecha = {setFechaYoutube}>
+                        </ModalConInputFile>
+                        <ModalMensaje show= {mostrarMensaje} mensaje={mensaje} onClose={() => {setMostrarMensaje(false); setMostrarModalYoutube(false)}}></ModalMensaje>
+
+
+                        {/* Botonera de paginación */}
+                        <div className='row' id='verMas'>
+                            <div className="container">
+                            <div className="row justify-content-center">
+                                <div className="col-auto text-center my-4">
+                                    <button
+                                        className="boton_filtro_notas"
+                                        onClick={() => filtroSeleccionado != 1 ?  handleFiltroClick(filtroSeleccionado, true) : handleFiltroClick_todasLasNotas(filtroSeleccionado, true)}
+                                    >
+                                        Ver más
+                                    </button>
+                                </div>
+                            </div> 
+                            </div> 
+                            </div>
+                        </div>
+                    </div>   
+                </div>
+        </div>
+
+    );
+};
+
+export default NotasParaEditorial;

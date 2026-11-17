@@ -2,6 +2,41 @@
 
 React 18 + react-bootstrap 5.3 + Redux Toolkit. Build/dev con webpack (`npm start`, puerto 4001).
 
+## Estructura de carpetas
+
+```
+src/
+  main.jsx, index.css   entrada (no mover: los usa webpack)
+  app/                  App.jsx (rutas), LayoutConSidebar
+  api/                  llamadas HTTP (*Api.js)
+  store/                Redux: store.js + slices
+  styles/               sistema de diseño (tokens)
+  shared/
+    components/         usados por 2+ módulos: sidebar/, charts/, form/, modales/, SelectorCliente…
+    hooks/  utils/  context/
+  modules/              UNA CARPETA POR ÍTEM DEL SIDEBAR: pantallas + componentes + CSS propios
+    dashboard/          Dashboard
+    notas/              Notas  → {editor, componentes, ia, freemium}/
+    monitor/            Monitor Contenido
+    autoEntrevistas/    Auto-entrevistas
+    administracion/     Administración (clientes, usuarios, perfiles, sitios)
+    gestionReportes/    Gestión reportes
+    feed/               Feed
+    distribucion/       Distribución (+ NotasCliente, que se abre desde ahí)
+    comercial/          Comercial → calculadora/
+    soporte/            Ayuda y soporte
+    perfil/             Mi perfil (+ Notificaciones)
+    auth/               (sin sidebar) login, cambiar clave, re-login
+```
+
+- Sección nueva en el sidebar → carpeta nueva en `modules/` con el mismo nombre.
+
+- Imports entre carpetas **siempre con alias `@/`** (`@/store/crearNotaSlice`, `@/api/apis`);
+  `./` solo dentro de la misma carpeta. Nunca `../`.
+- El nombre del import debe coincidir exacto en mayúsculas con el archivo (el deploy corre en Linux).
+- Un componente nuevo va en su módulo; pasa a `shared/` recién cuando lo usa un segundo módulo.
+- Llamadas a la API van en `api/`, nunca dentro de componentes ni de `modules/`.
+
 ## Estilos — obligatorio en cualquier cambio visual
 
 Antes de escribir o modificar CSS, `className`, `style={{}}`, colores de gráficos o un componente

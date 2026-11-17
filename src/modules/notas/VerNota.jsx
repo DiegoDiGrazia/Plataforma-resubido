@@ -1,0 +1,268 @@
+import React, { useState, useEffect } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import "./nota.css";
+import "./verNotaMobile.css";
+import "./VerNota.css";
+import { useSelector } from 'react-redux';
+import { useLocation, useParams, Link } from 'react-router-dom';
+import BarplotNota from '@/shared/components/charts/BarplotNota';
+import MediosMasRelevantesNotas from '@/modules/dashboard/datosRelevantes/MediosMasRelevantesNotas';
+import { formatearFecha } from '@/modules/dashboard/datosRelevantes/InteraccionPorNota';
+import { traerDatosDeNota } from '@/shared/utils/buscarEnLocal';
+import { obtenerNoticia, obtenerMetricasNoticia } from '@/api/dashboardApi';
+import PlataformaMasImpresiones from '@/modules/dashboard/datosRelevantes/PlataformaMasImpresiones';
+import IframeNota from './IframeNota';
+import IframeNotaEscalable from './IframeNotaEscalable';
+import SelectorConBuscador from '@/shared/components/form/SelectorConBuscador';
+import { obtenerDistribucionGeneracion } from '@/api/apis';
+import { getTipoHistoria, getColorHistoria, getDesplazamientoHistoria, armarParamsColorCreativo } from '@/shared/utils/bannerData';
+
+export const RUTA = "http://localhost:4000/";
+
+const VerNota = () => {
+    const [cargando, setCargando] = useState(true);
+    const location = useLocation();
+    const { id } = location.state || {};
+    const [Nota, setNota] = useState({});
+    const [FPUB, setFPUB] = useState("");
+    const { id_ruta } = useParams();
+    const [dataLocalNota, setdataLocalNota] = useState(null);
+    const [resumenNota, setResumenNota] = useState([]);
+    const [loadingUsuarios, setLoadingUsuarios] = useState(false);
+    const [paisFiltro, setPaisFiltro] = useState(null);
+    const paises = useSelector((state) => state.formulario.geo);
+    
+    const id_nota = id_ruta ? id_ruta : id;
+    const id_noti = id_nota;
+    const es_demo = id_ruta ? true : false;
+    const TOKEN_ESTADO = useSelector((state) => state.formulario.token);
+    const [TOKEN, setTOKEN] = useState(TOKEN_ESTADO);
+    const [CLIENTE, setCLIENTE] = useState("");
+    const idClienteSesion = useSelector((state) => state.formulario.id_cliente);
+    const clienteIdNota = Nota.cliente_id || Nota.id_cliente || idClienteSesion;
+    const [tipoHistoria, setTipoHistoria] = useState(1); // desde banner_data.historiaTipo; 1 si es null
+    const [colorHistoria, setColorHistoria] = useState(null); // desde banner_data.color; solo aplica a tipo 1, 2 y 3
+    const [desplazamientoHistoria, setDesplazamientoHistoria] = useState(null); // desde banner_data.desplazamiento
+    const [distribucionYtLink, setDistribucionYtLink] = useState(null);
+
+    useEffect(() => {
+        if (!id_noti || !TOKEN || !Nota.id_generacion) return;
+        let activo = true;
+        obtenerDistribucionGeneracion(TOKEN, Nota.id_generacion).then((datos) => {
+            if (activo) {
+                setTipoHistoria(getTipoHistoria(datos?.[0]?.banner_data));
+                setColorHistoria(getColorHistoria(datos?.[0]?.banner_data));
+                setDesplazamientoHistoria(getDesplazamientoHistoria(datos?.[0]?.banner_data));
+                setDistribucionYtLink(datos?.[0]?.youtube_link_video);
+            }
+        });
+        return () => { activo = false; };
+    }, [id_noti, TOKEN, Nota]);
+
+    useEffect(() => {
+        if (!id_nota) return;
+        traerDatosDeNota(id_nota).then((data) => {
+            setdataLocalNota(data);
+        });
+    }, [id_nota]);
+
+    useEffect(() => {
+        setLoadingUsuarios(true);
+        obtenerMetricasNoticia(TOKEN, id_noti, paisFiltro?.pais_id)
+            .then((res) => {
+                setResumenNota(res || []);
+            })
+            .catch((err) => {
+                console.error(err);
+            })
+            .finally(() => {
+                setLoadingUsuarios(false);
+            });
+    }, [TOKEN, id_noti, paisFiltro]);
+    
+    useEffect(() => {
+        if (!id_nota) return;
+        obtenerNoticia(TOKEN, id_nota)
+        .then((noticia) => {
+            if (noticia) {
+                setNota(noticia);
+                setFPUB(noticia.f_pub || "");
+                setCLIENTE(noticia.cliente);
+            }
+        })
+        .catch((error) => {
+            console.error('Error al obtener noticia:', error);
+        })
+        .finally(() => {
+            setCargando(false); 
+        });
+    }, [id_nota, es_demo]);
+
+    if (!Nota) {
+        return <div>Cargando...</div>;
+    }
+
+    const descargarReporte = () => {
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        
+        setTimeout(() => {
+            window.print();
+            window.scrollTo(0, 0);
+        }, 1300); 
+    };
+
+    return (
+        <div id='pantalla-verNota'>
+             {!cargando && 
+                <div className="content flex-grow-1">
+                    
+                    <div className='row p-0'>
+                        <div className='col'>
+                            <h4 id="nota">
+                            {!es_demo &&
+                            <nav aria-label="breadcrumb" className="no_print">
+                                <ol className="breadcrumb no_print">
+                                    <li className="breadcrumb-item"><Link to="/notas" className='breadcrumb-item'>{'< '} Notas</Link></li>
+                                    <li className="breadcrumb-item blackActive" aria-current="page">Ver Nota</li>
+                                </ol>
+                            </nav>
+                            }
+                            </h4>
+                            <div className="no_print">
+                                <img src={"/images/imagenParaReportes.png"} alt="Reportes" className="imagenParaReporte" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="dashboard-analitico">
+                        <div className='row margin_vn'>
+                            <div className='col imagen_col'>
+                                <img src={Nota.imagen && Nota.imagen.includes('noticiasd') ? Nota.imagen : "https://static.noticiasd.com/img" + Nota.imagen} alt="Nota" className="imagen_nota" />
+                            </div>
+                            <div className='col-6 d-flex flex-column' style={{ height: "200px" }}>
+                                <div className='row vn_titulo'>{Nota.titulo}</div>
+                                <div className='row vn_fecha'> Publicada el {formatearFecha(Nota.f_pub)} </div>
+                                <div className='row publicada'> 
+                                    <span className="publicada">
+                                        <img src={"/images/puntoVerde.png"} alt="" />
+                                        {Nota.estado ? "   " + Nota.estado : "   Publicada"}
+                                    </span>
+                                </div>
+                                <div className='row order-last flex-grow-1'>
+                                    <div>
+                                        <span className='vn_categoria'>{Array.isArray(Nota.categorias) ? Nota.categorias.join(',') : Nota.categorias}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className='col boton_nota d-flex justify-content-center align-items-center no_print'>
+                                <div className="mt-3">
+                                <SelectorConBuscador title="Filtro pais: " options={paises} selectedOption={paisFiltro} onSelect={setPaisFiltro} onClear={() => setPaisFiltro(null)} />
+                                </div>
+                                {!es_demo &&
+                                <button className="btn custom-dropdown-button dropdown-toggle boton_compartir no_print" onClick={descargarReporte} type="button" id="descargar-reporte">
+                                    <img src="/images/share_icon.png" alt="Descargar" className="icon me-2" />
+                                    Descargar reporte
+                                </button>
+                                }
+                                {/* {notaABM && !notaABM.id_noti && !es_demo &&
+                                <button className="btn custom-dropdown-button boton_compartir" type="button" onClick={() => editarNota(notaABM)}>
+                                    Editar
+                                </button>
+                                } */}
+                            </div>
+                            {/* <div className='col-2 ver_nota_boton'>
+                                    <button className='ver_nota_boton'> 
+                                    <img src="/images/ver_nota_boton.png" alt="Icono 1" className="" />
+                                    </button> 
+                            </div> */}
+                        </div>
+
+                        <div className="subtitulo">
+                            <h5 id="subtitulo_performance">Performance de la nota</h5>
+                        </div>
+
+                        <div className="mb-2 tamaño_barplot">
+                            <BarplotNota id_noti={id_noti} TOKEN={TOKEN} cliente={CLIENTE} fpub={FPUB} dataLocalNota={dataLocalNota?.usuarioDeNota} resumenNota={resumenNota} />
+                        </div>
+
+                        <div className='datos-resumen row g-1'>
+                            <div className='col-lg-12 col-xl col-6 m-2 back-white cuadro-impresion'>
+                                <PlataformaMasImpresiones resumenCliente={resumenNota} loading={loadingUsuarios} aplicarFiltroMeses={false} />
+                            </div>
+                            <div className='col-lg-12 col-xl col-6 m-2 back-white cuadro-impresion'>
+                                <MediosMasRelevantesNotas id_noti={id_noti} TOKEN={TOKEN} cliente_id={clienteIdNota} dataLocalNota={dataLocalNota?.mediosNoticia} paisFiltro={paisFiltro} />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="seccion-creativos-excluida">
+                        <div className='row g-1'>
+                            <h2 className='tituloCreativo'>Creativos DV 360</h2>
+                            <div className='col-lg-12 col-xl col-6 m-2 back-white'>
+                                <div className='row g-1'>
+                                    <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                                        <IframeNota url={`https://builder.ntcias.de/preview.php?id_noti=${id_noti}`} width={350} height={250} title={'350 x 250'} />
+                                    </div>
+                                    <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                                        <IframeNota url={`https://builder.ntcias.de/preview.php?id_noti=${id_noti}`} width={320} height={50} title={'320 x 50'} />
+                                    </div>
+                                    <div className='iframe-w col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                                        <IframeNota url={`https://builder.ntcias.de/preview.php?id_noti=${id_noti}`} width={728} height={90} title={'728 x 90'} />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                                <IframeNota url={`https://builder.ntcias.de/preview.php?id_noti=${id_noti}`} width={300} height={600} title={'300 x 600'} />
+                            </div>
+                        </div>
+                        <div className='row g-1'>
+                            <h2 className='tituloCreativo'>Creativos Facebook</h2>
+                            <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                                <IframeNota url={`https://builder.ntcias.de/preview.php?template=feed_face&id_noti=${id_noti}`} width={340} height={500} baseHeight={500} baseWidth={340} title='Feed'/>
+                            </div>
+                            <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                                <IframeNota url={`https://builder.ntcias.de/preview.php?template=instream_face&id_noti=${id_noti}`} width={340} height={500} baseHeight={500} baseWidth={340} title='instream reels'/>
+                            </div>
+                        </div>
+                        <div className='row g-1'>
+                            <h2 className='tituloCreativo'>Creativos Instagram</h2>
+                            <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                                <IframeNota url={`https://builder.ntcias.de/preview.php?template=feed_insta&id_noti=${id_noti}`} width={340} height={500} baseHeight={500} baseWidth={340} title='Feed'/>
+                            </div>
+                            <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                                <IframeNota url={`https://builder.ntcias.de/preview.php?template=explore_insta&id_noti=${id_noti}`} width={340} height={500} baseHeight={500} baseWidth={340} title='Explorar'/>
+                            </div>
+                        </div>
+                        <div className='row g-1'>
+                            <h2 className='tituloCreativo'>Creativos Historias</h2>
+                            <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                                <IframeNotaEscalable
+                                url={`https://reportes-creativos.noticiasd.com/creativo/${Nota.id_generacion}?tipo=${tipoHistoria}&token=${TOKEN}${armarParamsColorCreativo(colorHistoria, desplazamientoHistoria)}`}
+                                width={360}
+                                height={640}
+                                baseWidth={720}
+                                baseHeight={1280}
+                                />
+                            </div>
+                            {distribucionYtLink &&(
+                            <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                                
+                                <IframeNotaEscalable
+                                    url={distribucionYtLink}
+                                    width={360}
+                                    height={640}
+                                    baseWidth={720}
+                                    baseHeight={1280}
+                                />
+                            </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    );
+};
+
+export default VerNota;

@@ -1,0 +1,254 @@
+import React, { useEffect, useState, useRef } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { useDispatch, useSelector } from 'react-redux';
+import "./Barplot.css";
+import { color, palette, seriesColors } from '@/styles/tokens';
+import "./BarplotMobile.css";
+import { formatNumberMiles } from '@/modules/dashboard/Dashboard.jsx';
+import Barplot_Carga from './Barplot_mejorado_carga.jsx';
+
+///Recibe una fecha del tipo "2024-08" y te devuelve  "jun 24"
+export function formatDate(dateStr) {
+    const months = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 
+                    'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
+    const [year, month] = dateStr.split('-');
+    const monthName = months[parseInt(month, 10) - 1];
+    return `${monthName} ${year.slice(-2)}`;
+}
+
+/// devuelve todos los periodos para la api con este formato 
+/// "2023-10,2023-11,2023-12,2024-01,2024-02,2024-03,2024-04,2024-05,2024-06,2024-07,2024-08,2024-09"
+export function periodoUltimoAnio() {
+    const months = [];
+    const currentDate = new Date();
+
+    for (let i = 0; i < 12; i++) {
+        const year = currentDate.getFullYear();
+        const month = String(currentDate.getMonth() + 1 ).padStart(2, '0');
+        months.unshift(`${year}-${month}`);
+        
+        // Retrocede un mes y ajusta el año si es necesario
+        currentDate.setDate(1); // Evita problemas con días fuera de rango
+        currentDate.setMonth(currentDate.getMonth() - 1);
+    }
+
+    return months.join(',');
+}
+///Recibe un filtro, y devuelve como se debe seleccionar el dato con un slice
+export function seleccionPorFiltro(filtro) {
+    if (filtro === "Ultimos 3 meses") return -3;
+    if (filtro === "Ultimos 6 meses") return -6;
+    return -12;
+}
+
+///Recibe un filtro, y devuelve la cantidad de meses que representa (positivo)
+export function cantidadMesesPorFiltro(filtro) {
+    if (filtro === "Ultimos 3 meses") return 3;
+    if (filtro === "Ultimos 6 meses") return 6;
+    return 12;
+}
+
+/// Filtra una lista de objetos agrupados por mes (campo "YYYY-MM") quedandose
+/// solo con los ultimos `cantidadMeses` meses calendario, sin importar si la
+/// lista tiene "huecos" (meses sin datos que no vinieron en la respuesta).
+/// Usar esto en vez de slice(-N), porque slice(-N) cuenta posiciones del
+/// array y no meses reales: si faltan meses en el medio, termina trayendo
+/// datos de mas atras de lo que corresponde.
+export function filtrarUltimosMeses(lista, filtro, campoFecha = 'month') {
+    const cantidadMeses = cantidadMesesPorFiltro(filtro);
+    const cutoff = new Date();
+    cutoff.setDate(1);
+    cutoff.setMonth(cutoff.getMonth() - (cantidadMeses - 1));
+    const cutoffStr = `${cutoff.getFullYear()}-${String(cutoff.getMonth() + 1).padStart(2, '0')}`;
+    return (lista || []).filter(item => item?.[campoFecha] >= cutoffStr);
+}
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
+const Barplot = ({datosLocales, resumenCliente = null, loading = false, paisFiltro}) => {
+    const FiltroActual = useSelector((state) => state.dashboard.filtro);
+    const captureRef = useRef(null);  // Definir el ref para capturar la imagen
+    const [totales, setTotales] = useState({})
+
+    useEffect(() => {
+        if (resumenCliente) {
+            setTotales(
+            filtrarUltimosMeses(resumenCliente, FiltroActual, 'month').reduce((acumulador, mes) => {
+                ///totalRRSS
+                acumulador.usuariosTotalesRRSS =
+                (acumulador.usuariosTotalesRRSS || 0) +
+                Number(mes.i_instagram_users || 0) +
+                Number(mes.i_facebook_users || 0) +
+                Number(mes.i_x_users || 0);
+
+                ///totalGOOGLE
+                acumulador.usuariosTotalesGoogle =
+                (acumulador.usuariosTotalesGoogle || 0) +
+                Number(mes.i_dv360_users || 0);
+                
+                ///totalVIDEOS
+                acumulador.usuariosTotalesVideos =
+                (acumulador.usuariosTotalesVideos || 0) +
+                Number(mes.i_youtube_users || 0);
+
+                ///totalMetaPorMes
+                acumulador.usuariosMetaPorMes = [
+                ...(acumulador.usuariosMetaPorMes || []),
+                Number(mes.i_instagram_users || 0) +
+                Number(mes.i_x_users || 0) +
+                Number(mes.i_facebook_users || 0)
+                ];
+                ///totalMetaPorGoogle
+                acumulador.usuariosGooglePorMes = [
+                ...(acumulador.usuariosGooglePorMes || []),
+                Number(mes.i_dv360_users || 0)
+                ];
+                ///totalVideosPorMes
+                acumulador.usuariosVideosPorMes = [
+                ...(acumulador.usuariosVideosPorMes || []),
+                Number(mes.i_youtube_users || 0)
+                ];
+                ///meses
+                acumulador.meses = [
+                ...(acumulador.meses|| []),
+                mes.month
+                ];
+                
+
+                return acumulador;
+            }, {})
+            );
+        }
+        }, [resumenCliente, FiltroActual]);
+
+    useEffect(() => {
+        console.log('totales en barplot:', totales)
+    }, [totales])
+
+    const dataReal = {
+        labels: totales.meses,
+        datasets: [
+            {
+                label: `Usuarios totales`,
+                data: totales.usuariosMetaPorMes,
+                backgroundColor: seriesColors.redes,
+                barPercentage: 1.0,
+                categoryPercentage: 0.7,
+            },
+            {
+                label: `Impresiones totales`,
+                data: totales.usuariosGooglePorMes,
+                backgroundColor: seriesColors.medios,
+                barPercentage: 1.0,
+                categoryPercentage: 0.7,
+            },
+            {
+                label: `Videos totales`,
+                data: totales.usuariosVideosPorMes,
+                backgroundColor: seriesColors.videos,
+                barPercentage: 1.0,
+                categoryPercentage: 0.7,
+            },
+        ],
+    };
+
+    const optionsReal = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false,
+            },
+            tooltip: {
+                enabled: true, // Habilita el tooltip
+                callbacks: {
+                    label: function(context) {
+                        // Devuelve solo el valor de la barra (el número)
+                        return context.raw;
+                    },
+                    title: function() {
+                        // Retorna un string vacío para no mostrar el título
+                        return '';
+                    }
+                },
+                backgroundColor: palette.gray0,
+                bodyColor: color.text,
+                borderColor: color.border,
+                borderWidth: 1, // Establece el grosor del borde (opcional)
+            },
+        },
+        scales: {
+            x: {
+                offset: true,
+                grid: {
+                    offset: false,
+                    color: color.border,
+                },
+            },
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: color.border,
+                },
+            },
+        },
+    };
+
+    if (loading) {
+        return (
+            <Barplot_Carga />)
+    }
+    
+    return (
+        <div id='pantalla-barplot'>
+        <div className="container-fluid sinPadding" ref={captureRef}>
+            <div id='contenedor-barplot' className="row cantidades mt-3 back-white w-75">
+                {!totales.usuariosTotalesRRSS  && !totales.usuariosTotalesGoogle && (
+                    <h2 style={{ color: 'var(--nd-color-text)', margin: '20px' }}>No se encontraron usuarios para la fecha seleccionada del pais: {paisFiltro?.nombre || 'Desconocido'}</h2>
+                )}
+                {totales.usuariosTotalesRRSS > 0 && totales.usuariosTotalesGoogle > 0 && (
+                <>
+                    
+                    <div className='col-4 barra_lateral'>
+                        <p className='leyenda_barplot'>
+                            <span className="blue-dot-impresiones "></span> Usuarios Redes Sociales
+                            <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "Son las personas que llegaron a tus notas desde nuestra difusión en redes sociales."/>  
+                        </p>
+                        <p className='totales'>{formatNumberMiles(totales.usuariosTotalesRRSS)}</p>
+                    </div>
+                    <div className='col barra_lateral' style={{ paddingLeft: '20px' }}>
+                        <p className='leyenda_barplot'>
+                            <span className="blue-dot-user"></span>Usuarios Medios
+                            <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "Son las personas que llegaron a tus notas desde nuestra difusión en otros medios de noticias."/>  
+                        </p>
+                        <p className='totales'>{formatNumberMiles(totales.usuariosTotalesGoogle)}</p>
+                    </div>
+                    <div className='col' style={{ paddingLeft: '20px' }}>
+                        <p className='leyenda_barplot'>
+                            <span className="blue-dot-user blue-dot-videos"></span>Usuarios Videos
+                            <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "Son las personas que llegaron a tus notas desde nuestra difusión por medio de Videos."/>  
+                        </p>
+                        <p className='totales'>{formatNumberMiles(totales.usuariosTotalesVideos)}</p>
+                    </div>
+  
+                    </>
+                )}
+                </div>
+             
+                {totales.usuariosTotalesRRSS > 0 && totales.usuariosTotalesGoogle > 0 && (
+                <div className="row back-white">
+                    <div className="col barplot" >
+                        <div style={{ height: '100%' }}>
+                            <Bar data={dataReal} options={optionsReal} />
+                        </div>
+                    </div>
+                </div>
+                )}
+        </div>
+        </div>
+    );
+};
+
+export default Barplot;

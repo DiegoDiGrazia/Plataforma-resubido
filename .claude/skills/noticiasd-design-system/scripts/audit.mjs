@@ -4,8 +4,8 @@
  *
  * Uso (desde la raíz del repo):
  *   node .claude/skills/noticiasd-design-system/scripts/audit.mjs            # resumen de todo src/
- *   node .claude/skills/noticiasd-design-system/scripts/audit.mjs src/components/comercial
- *   node .claude/skills/noticiasd-design-system/scripts/audit.mjs src/components/nota/nota.css --detail
+ *   node .claude/skills/noticiasd-design-system/scripts/audit.mjs src/modules/comercial
+ *   node .claude/skills/noticiasd-design-system/scripts/audit.mjs src/modules/notas/nota.css --detail
  *
  * Reporta por archivo: colores literales (con token sugerido), font-size,
  * border-radius, box-shadow y font-family sin token, !important y style={{}}.

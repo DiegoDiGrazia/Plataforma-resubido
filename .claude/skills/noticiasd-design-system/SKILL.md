@@ -124,14 +124,14 @@ Nunca crear un token para un uso único: usar el más cercano de la escala.
 
 ```bash
 node .claude/skills/noticiasd-design-system/scripts/audit.mjs                 # ranking de todo src/
-node .claude/skills/noticiasd-design-system/scripts/audit.mjs src/components/nota --detail
+node .claude/skills/noticiasd-design-system/scripts/audit.mjs src/modules/notas --detail
 ```
 
 ## Codemod (reemplazo automático)
 
 ```bash
-node .claude/skills/noticiasd-design-system/scripts/migrate.mjs src/components/x            # dry-run
-node .claude/skills/noticiasd-design-system/scripts/migrate.mjs src/components/x --write    # aplica
+node .claude/skills/noticiasd-design-system/scripts/migrate.mjs src/modules/x            # dry-run
+node .claude/skills/noticiasd-design-system/scripts/migrate.mjs src/modules/x --write    # aplica
 node .claude/skills/noticiasd-design-system/scripts/migrate.mjs src --only=radius --write    # solo radios
 ```
 Reemplaza hex, colores por nombre (`white`, `black`…), `border-radius`, `box-shadow` y overlays

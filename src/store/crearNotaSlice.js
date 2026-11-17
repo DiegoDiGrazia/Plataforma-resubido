@@ -1,0 +1,445 @@
+import { createSlice } from '@reduxjs/toolkit';
+import { comprimirImagen } from '@/modules/notas/componentes/ImagenPrincipal.jsx';
+
+function extraerTagImg(texto) {
+  const match = texto.match(/<img[^>]*>/);
+  return match ? match[0] : null;
+}
+
+ export async function analizarHTML(html) {
+  const resultados = [];
+
+  // Crear un contenedor temporal para procesar el HTML
+  const div = document.createElement("div");
+  div.innerHTML = html;
+
+  // Manejar párrafos
+  const parrafos = div.querySelectorAll("p");
+  parrafos.forEach(parrafo => {
+    const strong = parrafo.querySelector("strong");
+    const br = strong?.nextSibling?.nodeName === "BR";
+
+    if (strong && br) {
+      const subtitulo = strong.textContent.trim();
+      resultados.push(["subtitulo", subtitulo]);
+    }
+
+    let textoParrafo = parrafo.innerHTML;
+
+    if (strong && br) {
+      textoParrafo = textoParrafo.replace(`<strong>${strong.textContent}</strong>`, "").trim();
+    } else if (strong) {
+      textoParrafo = textoParrafo.replace(`<strong>${strong.textContent}</strong>`, "").trim();
+    }
+
+    if (textoParrafo) {
+      resultados.push(["parrafo", textoParrafo]);
+    }
+  });
+
+  // Manejar imágenes
+
+  return resultados;
+}
+
+// Función para convertir imágenes a Base64
+export async function convertirImagenBase64(url, maxWidth = 1600) {
+  try {
+    url = url.replace("https://panel.serviciosd.com/img/", "https://noticiasd.com/wp-content/img/");
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(`Error al descargar la imagen: ${response.status}`);
+    }
+
+    const blob = await response.blob();
+
+    const base64 = await comprimirImagen(blob, 1, maxWidth); 
+
+    return base64;
+
+  } catch (error) {
+    console.error("Error en convertirImagenBase64:", error);
+    throw error;
+  }
+}
+
+
+
+const initialState = {
+  listaDeImagenesContenidoEnBase64: "", ///listo
+  epigrafeImagenPpal: "", ///listo
+  tituloNota: "", ///listo
+  contenidoNota: [], // [[tipo, contenido, abre etiqueta, cierra etiqueta ]]
+  categorias: [],
+  categoriasNombres: "", ///listo
+  categoriasActivas: [], ///listo
+  imagenPrincipal: null, ///listo
+  imagenRRSS: null, ///listo
+  con_distribucion: '0', /// listo
+  copete: "", ///listo
+  comentarios: "", /// listo
+  distribucion_prioritaria: '0', /// listo
+  engagement: "", /// listo
+  autor: "", /// listo
+  autor_cliente: "", /// listo
+  es_demo: '0', /// listo
+  es_home: '0', /// listo
+  etiquetas: [],
+  estado: "", /// listo
+  id_noti: "",
+  tipoContenido: "gestion",
+  f_pub: "",
+  url: "",
+  f_vence: "",
+  engagement: "",
+  bajada: "",
+  provincia: {
+    "provincia_id": "",
+    "nombre": "",
+    "iso_nombre": "",
+    "categoria": "",
+    "centroide_lat": "",
+    "centroide_lon": "",
+    "iso_id": "",
+    "nombre_completo": "",
+    "Poblacion": ""
+  },
+  municipio: {
+    "municipio_id": "",
+    "nombre": "",
+    "nombre_completo": "",
+    "provincia_id": "",
+    "centroide_lat": "",
+    "centroide_lon": "",
+    "categoria": "",
+    "poblacion": ""
+  },
+  pais: {
+    "nombre": "Argentina",
+  },
+  atachments: {
+    attachment_1: null,
+    attachment_2: null,
+    attachment_3: null,
+    attachment_4: null,
+    attachment_5: null,
+    attachment_6: null,
+    attachment_7: null,
+    attachment_8: null,
+    attachment_9: null,
+    attachment_10: null,
+  },
+  atachmentsArchivos: {
+    attachment_archivo1: null,
+    attachment_archivo2: null,
+    attachment_archivo3: null,
+  },
+  attachment_video1: null,
+  numeroDeAtachment: 1,
+  id_att: "",
+  cliente: "",
+  demo: '',
+  id_nota_borrador: "",
+  es_ia: '0',
+  term_id: '',
+  distribucion_fecha_vencimiento: "",
+  distribucion_comentarios: "",
+  distribucion_meta_titulo: "",
+  distribucion_meta_engagement: "",
+  distribucion_x_descripcion: "",
+  distribucion_yt_titulo: "",
+  distribucion_yt_descripcion: "",
+  distribucion_yt_link: "",
+  distribucion_search_titulo: "",
+  distribucion_search_descripcion: "",
+  distribucion_banner_data: "",
+  distribucion_diferida: false,
+  distribucion_fecha_diferida: "",
+  distribucion_hora_diferida: "",
+
+};
+
+const crearNotaSlice = createSlice({
+  name: 'crearNota',
+  initialState,
+  reducers: {
+    setCopete: (state, action) => {
+      state.copete = action.payload;
+    },
+    setIdNotaBorrador: (state, action) => {
+      state.id_nota_borrador = action.payload;
+    },
+    setEpigrafeImagenPpal: (state, action) => {
+      state.epigrafeImagenPpal = action.payload;
+    },
+    setTituloNota: (state, action) => {
+      state.tituloNota = action.payload;
+    },
+    setDemo: (state, action) => {
+      state.demo = action.payload;
+    },
+
+    setImagenPrincipal: (state, action) => {
+      state.imagenPrincipal = action.payload;
+    },
+    setImagenRRSS: (state, action) => {
+      state.imagenRRSS = action.payload;
+    },
+    setContenidoNota: (state, action) => {  // aca llega [tipo, contenido]
+      state.contenidoNota.push(action.payload);
+    },
+    setAttachment_video1: (state,action) =>{
+      state.attachment_video1 = action.payload
+    },
+    DeleteContenidoPorIndice: (state, action) => {
+      state.contenidoNota.splice(action.payload, 1);
+    },
+    SubirContenidoPorIndice: (state, action) => {
+      const index = action.payload;
+      if (index >= 0 && index < state.contenidoNota.length - 1) {
+        const temp = state.contenidoNota[index];
+        state.contenidoNota[index] = state.contenidoNota[index + 1];
+        state.contenidoNota[index + 1] = temp;
+      }
+    },
+    setImagenesDeCarrusel: (state, action) => {
+      const indice = action.payload[0];
+      const imagenes = action.payload[1];
+      console.log("Imágenes del carrusel:", imagenes, "indice", indice);
+      if (state.contenidoNota[indice]) {
+        state.contenidoNota[indice][1] = imagenes; // Solo actualiza el array de imágenes
+      }
+    },
+    setAttachmentToNull: (state, action) => {
+      const numero = action.payload; 
+      const key = `attachment_${numero}`;
+      if (state.atachments.hasOwnProperty(key)) {
+        state.atachments[key] = null;
+      }
+    },
+    setAttachmentArchivoToNull: (state, action) => {
+      const numero = action.payload; 
+      const key = `attachment_archivo${numero}`;
+      if (state.atachmentsArchivos.hasOwnProperty(key)) {
+        state.atachmentsArchivos[key] = null;
+      }
+    },
+    BajarContenidoPorIndice: (state, action) => {
+      const index = action.payload;
+      if (index > 0 && index < state.contenidoNota.length) {
+        const temp = state.contenidoNota[index];
+        state.contenidoNota[index] = state.contenidoNota[index - 1];
+        state.contenidoNota[index - 1] = temp;
+      }
+    },
+    setContenidoPorIndice: (state, action) => {
+      const indice = action.payload[0];
+      const contenido = action.payload[1];
+      state.contenidoNota[indice][1] = contenido;
+      state.contenidoNota[indice][2] = action.payload[2];
+      state.contenidoNota[indice][3] = action.payload[3];
+      if(action.payload[4] !== undefined) {
+        state.contenidoNota[indice][4] = action.payload[4];}
+    },
+    setEpigrafeDeImagen: (state, action) => {
+      ///Recibe indice( action.payload[0] ) y epigrafe action.payload[1]
+      const indice = action.payload[0];
+      const epigrafe = action.payload[1];
+      const tagImg = extraerTagImg(state.contenidoNota[indice][2]);
+      state.contenidoNota[indice][2] = tagImg + `<span class="epigrafe">${epigrafe}</span>`;   
+    },
+    setCategorias: (state, action) => {
+      state.categorias = action.payload;
+    },
+    setNotaAEditar: (state, action) => {
+      console.log("action.payload en setNotaAEditar", action.payload);
+      const nota = action.payload;
+      state.url = nota.url;
+      state.es_ia = nota.es_ia; 
+      state.term_id = nota.term_id;
+      state.tituloNota = nota.titulo;
+      state.copete = nota.copete;
+      state.comentarios = nota.comentarios;
+      state.categoriasNombres = nota.categorias;
+      state.engagement = nota.engagement;
+      state.es_demo = nota.es_demo;
+      state.es_home = nota.es_home;
+      state.autor = nota.autor;
+      state.autor_cliente = nota.autor_cliente;
+      state.con_distribucion = nota.con_distribucion;
+      state.distribucion_prioritaria = nota.distribucion_prioritaria == 'Prioritaria' ? '1' : nota.distribucion_prioritaria;
+      state.estado = nota.estado;
+      state.id_noti = nota.id;
+      state.etiquetas = nota.etiquetas?.split(",") || [];
+      state.f_vence = nota.fecha_vencimiento;
+      state.f_pub = nota.f_pub;
+      state.autor = nota.autor;
+      state.pais = {'nombre': nota.pais };
+      state.provincia = {'nombre': nota.provincia };
+      state.municipio = {'nombre': nota.municipio };
+      state.cliente = nota.cliente;
+      state.engagement = nota.engagement || nota.titulo;
+      state.bajada = nota.extracto || nota.copete;
+      state.tipoContenido = nota.tipo_contenido;
+      state.epigrafeImagenPpal = nota.epigrafe_ppal || "";
+    },
+    setContenidoAEditar: (state, action) => {
+    state.contenidoNota = [...state.contenidoNota, ...action.payload];
+    },
+    setItemsEtiquetas: (state, action) => {
+      state.etiquetas = action.payload;
+    },
+    setEsDemo: (state, action) => {
+      state.es_demo = action.payload;
+    },
+    setNoHome: (state, action) => {
+      state.es_home = action.payload;
+    },
+    setDistribucionProioritaria: (state, action) => {
+      state.distribucion_prioritaria = action.payload;
+    },
+    setTipoContenido: (state, action) => {
+      state.tipoContenido = action.payload;
+    },
+    setFechaPublicacion: (state, action) => {
+      state.f_pub= action.payload;
+    },
+    setFechaVencimiento: (state, action) => {
+      state.f_vence = action.payload;
+    },
+    setEngagement: (state, action) => {
+      state.engagement = action.payload;
+    },
+    setBajada: (state, action) => {
+      state.bajada = action.payload;
+    },
+    setIdNoti: (state, action) => {
+      state.id_noti = action.payload;
+    },
+    setAutor: (state, action) => {
+      state.autor = action.payload;
+    },
+    setProvincia: (state, action) => {
+      state.provincia = action.payload;
+    },
+    setMunicipio: (state, action) => {
+      state.municipio = action.payload;
+    },
+    setPais: (state, action) => {
+      state.pais = action.payload;
+    },
+    setListaImagenesContenidoEnBase64: (state, action) => {
+      state.listaDeImagenesContenidoEnBase64 = action.payload;
+    },
+    setComentario: (state, action) => {
+      state.comentarios = action.payload;
+    },
+    ///ejemplo dispatch(setAtachment({ key, value }));
+    setAtachment: (state, action) => {
+      console.log("action.payload", action.payload);
+      const { key, value } = action.payload; // Extraer valores del payload
+      if (state.atachments.hasOwnProperty(key)) {
+        state.atachments[key] = value; // Actualizar el attachment correspondiente
+      }
+    },
+    setAttachmentArchivo: (state, action) => {
+      const { key, value } = action.payload; // Extraer valores del payload
+      if (state.atachmentsArchivos.hasOwnProperty(key)) {
+        state.atachmentsArchivos[key] = value; // Actualizar el attachment correspondiente
+      }
+    },
+    setNumeroDeAtachment: (state, action) => {
+      state.numeroDeAtachment = action.payload
+    },
+
+    setSelectedOptionDistribucion: (state, action) => {
+      state.con_distribucion = action.payload;
+    },
+
+    setSumarUnoAlNumeroDeAtachment: (state, action) => {
+      state.numeroDeAtachment = state.numeroDeAtachment + 1
+    },
+
+    setIdAtt: (state, action) => {
+      state.id_att = action.payload
+    },
+    setUrl: (state, action) => {
+      state.url = action.payload;
+    },
+
+    setCategoriasActivasEnStore: (state, action) => {
+      state.categoriasActivas = action.payload;
+    },
+    setContenidoDeNotaDeIa: (state, action) => {
+    state.contenidoNota = [
+      ['parrafo', action.payload]
+      ];
+    },
+    setClienteNota: (state,action) => {
+      state.cliente = action.payload;
+    },
+
+    setCambiarEstadoActual: (state,action) => {
+      return action.payload;
+    },
+
+    setDistribucionFechaVencimiento: (state, action) => {
+      state.distribucion_fecha_vencimiento = action.payload;
+    },
+    setDistribucionComentarios: (state, action) => {
+      state.distribucion_comentarios = action.payload;
+    },
+    setDistribucionMetaTitulo: (state, action) => {
+      state.distribucion_meta_titulo = action.payload;
+    },
+    setDistribucionMetaEngagement: (state, action) => {
+      state.distribucion_meta_engagement = action.payload;
+    },
+    setDistribucionXDescripcion: (state, action) => {
+      state.distribucion_x_descripcion = action.payload;
+    },
+    setDistribucionYtTitulo: (state, action) => {
+      state.distribucion_yt_titulo = action.payload;
+    },
+    setDistribucionYtDescripcion: (state, action) => {
+      state.distribucion_yt_descripcion = action.payload;
+    },
+    setDistribucionYtLink: (state, action) => {
+      state.distribucion_yt_link = action.payload;
+    },
+    setDistribucionSearchTitulo: (state, action) => {
+      state.distribucion_search_titulo = action.payload;
+    },
+    setDistribucionSearchDescripcion: (state, action) => {
+      state.distribucion_search_descripcion = action.payload;
+    },
+    setDistribucionDiferida: (state, action) => {
+      state.distribucion_diferida = action.payload;
+    },
+    setDistribucionFechaDiferida: (state, action) => {
+      state.distribucion_fecha_diferida = action.payload;
+    },
+    setDistribucionHoraDiferida: (state, action) => {
+      state.distribucion_hora_diferida = action.payload;
+    },
+    setDistribucionBannerData: (state, action) => {
+      state.distribucion_banner_data = action.payload;
+    },
+
+    resetCrearNota: () => initialState,
+  }
+});
+
+export const {
+  setTituloNota,setContenidoDeNotaDeIa, setIdNotaBorrador, setCambiarEstadoActual, setAttachmentArchivo,setAttachmentArchivoToNull, setClienteNota, setContenidoNota, setAttachment_video1, DeleteContenidoPorIndice, setContenidoPorIndice,setFechaPublicacion, setAttachmentToNull,
+  SubirContenidoPorIndice, BajarContenidoPorIndice, setCategorias, setImagenPrincipal, setImagenRRSS, setImagenesDeCarrusel, setUrl,
+  setCopete, setNotaAEditar, setContenidoAEditar, setItemsEtiquetas, setEsDemo, setNoHome, setCategoriasActivasEnStore,
+  setDistribucionProioritaria, setTipoContenido, setFechaVencimiento, setBajada, setEngagement, setComentario, setSelectedOptionDistribucion,
+  setAutor, setMunicipio,setEpigrafeImagenPpal,setDemo, setMunicipios,setIdNoti, setProvincia,setPais, setIdAtt,setProvincias, resetCrearNota, setEpigrafeDeImagen, setListaImagenesContenidoEnBase64, setAtachment, setSumarUnoAlNumeroDeAtachment,
+  setDistribucionFechaVencimiento, setDistribucionComentarios, setDistribucionMetaTitulo, setDistribucionMetaEngagement, setDistribucionXDescripcion, setDistribucionYtTitulo, setDistribucionYtDescripcion, setDistribucionYtLink,
+  setDistribucionSearchTitulo, setDistribucionSearchDescripcion, setDistribucionBannerData,
+  setDistribucionDiferida, setDistribucionFechaDiferida, setDistribucionHoraDiferida
+} = crearNotaSlice.actions;
+
+export default crearNotaSlice.reducer;

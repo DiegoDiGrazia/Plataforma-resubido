@@ -2,12 +2,12 @@ import React, { StrictMode } from 'react'; // Añade React aquí
 import { createRoot } from 'react-dom/client';
 import ReactDOM from 'react-dom';
 
-import App from './App.jsx';
+import App from '@/app/App.jsx';
 import './index.css';
 import { Provider } from 'react-redux';
-import store, { persistor } from './redux/store.js';
+import store, { persistor } from '@/store/store.js';
 import { PersistGate } from 'redux-persist/integration/react';
-import { instalarInterceptor401 } from './utils/interceptor401.js';
+import { instalarInterceptor401 } from '@/shared/utils/interceptor401.js';
 
 instalarInterceptor401();
 
