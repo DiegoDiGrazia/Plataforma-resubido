@@ -7,6 +7,9 @@ import './index.css';
 import { Provider } from 'react-redux';
 import store, { persistor } from './redux/store.js';
 import { PersistGate } from 'redux-persist/integration/react';
+import { instalarInterceptor401 } from './utils/interceptor401.js';
+
+instalarInterceptor401();
 
 createRoot(document.getElementById('root')).render(
   // <StrictMode>

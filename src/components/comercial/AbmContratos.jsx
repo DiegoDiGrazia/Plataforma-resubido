@@ -290,7 +290,7 @@ const AbmContratos
 
       const listaClientes = Array.isArray(clientesData) ? clientesData : [];
       const listaContratos = Array.isArray(contratosData) ? contratosData : [];
-      const clienteLogueado = listaClientes.find((c) => c.id == idClienteLogueado);
+      const clienteLogueado = listaClientes.find((c) => c.id === idClienteLogueado);
       const logueadoEsFranquicia = clienteLogueado?.tipo === 'FRANQUICIA';
 
       let clientesVisibles = listaClientes;
@@ -326,7 +326,7 @@ const AbmContratos
 
   // Si el cliente logueado es una FRANQUICIA, sus contratos siempre son consigo misma
   const clienteLogueado = useMemo(() => (
-    clientes.find((c) => c.id == idClienteLogueado)
+    clientes.find((c) => c.id === idClienteLogueado)
   ), [clientes, idClienteLogueado]);
   const esFranquicia = clienteLogueado?.tipo === 'FRANQUICIA';
 
@@ -356,7 +356,7 @@ const AbmContratos
 
   const contratosDelClienteSeleccionado = useMemo(() => {
     if (!clienteSeleccionado) return null;
-    return contratos.filter(c => c.id_cliente === clienteSeleccionado.id) || null;
+    return contratos.filter(c => Number(c.id_cliente) === clienteSeleccionado.id) || null;
   }, [clienteSeleccionado, contratos]);
 
   const totalPages = Math.ceil(contratosFiltrados.length / itemsPerPage);
@@ -441,7 +441,7 @@ const AbmContratos
     setModalidadSeleccionada(obtenerModalidadDelContrato(contrato));
     const clienteDelContrato = esFranquicia
       ? clienteLogueado
-      : (clientes.find(c => c.id === contrato.id_cliente) || '');
+      : (clientes.find(c => c.id === Number(contrato.id_cliente)) || '');
     setClienteSeleccionado(clienteDelContrato);
     setContratoSeleccionado({...contrato, id_usuario: id_usuario});
     setFormData({

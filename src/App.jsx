@@ -33,8 +33,7 @@ const Perfil = lazy(() => import('./components/miPerfil/miPerfil'));
 const Soporte = lazy(() => import('./components/miPerfil/soporte'));
 const AbmClientes = lazy(() => import('./components/administrador/gestores/AbmClientes'));
 const NotasParaEditorial = lazy(() => import('./components/nota/NotasParaEditorial'));
-const RecuperarContraseña = lazy(() => import('./components/login/RecuperarContraseña'));
-const UpdatePassword = lazy(() => import('./components/login/updatePassword'));
+const CambiarClave = lazy(() => import('./components/login/CambiarClave'));
 const AutoEntrevistasVideoAsk = lazy(() => import('./components/miPerfil/AutoEntrevistasVideoAsk'));
 const NotasCliente = lazy(() => import('./components/administrador/gestores/NotasCliente'));
 const Feed = lazy(() => import('./components/feed/Feed'));
@@ -46,8 +45,7 @@ function App() {
           <Routes>
             {/* Rutas sin Sidebar */}
             <Route path="/" element={<Formulario />} />
-            <Route path="/recuperar-contraseña" element={<RecuperarContraseña />} />
-            <Route path="/actualizar-contraseña" element={<UpdatePassword />} />
+            <Route path="/cambiar-clave" element={<CambiarClave />} />
 
 
             {/* Rutas con Sidebar */}

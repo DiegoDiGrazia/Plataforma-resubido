@@ -16,16 +16,9 @@ const GuardarUbicacionDeCliente= ({id_cliente}) => {
     const [provincia, setProvinciaLocal] = useState("");
     const [municipios, setMunicipiosLocal] = useState("");
     useEffect(() => {
-        obtenerClientes(TOKEN).then((response) => {
-            if (response.data.status === "true") {
-                console.log(response.data);
-                let clientes = response.data.item;
-                // Filtra y guarda el resultado en una nueva variable
-                let clientesFiltrados = clientes.filter((cliente) => cliente.id === id_cliente);
-                setClienteDelUsuario(clientesFiltrados[0]);
-            } else {
-                console.error('Error en la respuesta de la API:', response.data.message);
-            }
+        obtenerClientes(TOKEN).then((data) => {
+            const clientes = Array.isArray(data) ? data : [];
+            setClienteDelUsuario(clientes.find((cliente) => cliente.id === id_cliente));
         })
         .catch((error) => {
             console.error('Error al hacer la solicitud:', error);

@@ -55,7 +55,7 @@ const Sidebar = ({ estadoActual }) => {
       try {
         const contratos = await obtenerContratos(TOKEN);
         const contratoAbierto = contratos.find(contrato => 
-        contrato.id_cliente === id_cliente && contrato.abierto === 'SI');
+        Number(contrato.id_cliente) === id_cliente && contrato.abierto === 'SI');
         console.log('Contrato', contratoAbierto);
         dispatch(updateContratoConFacturacionAbierta(contratoAbierto ? true : false));
       } catch (err) {

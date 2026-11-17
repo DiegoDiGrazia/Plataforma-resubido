@@ -118,7 +118,7 @@ const AbmPresupuestos = ({ onEditar }) => {
         String(p.presupuesto_id).includes(textoBusqueda) || 
         (p.descripcion && p.descripcion.toLowerCase().includes(textoBusqueda));
 
-    const coincideCliente = !cliente_id || cliente_id === '0' || cliente_id === 'Todos' || String(p.cliente_id) === String(cliente_id);
+    const coincideCliente = !cliente_id || p.cliente_id === cliente_id;
 
     const coincideUsuario = filtroUsuario === "Todos" || String(p.usuario_id) === String(usuario_id);
 

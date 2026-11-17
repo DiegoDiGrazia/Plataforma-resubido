@@ -15,7 +15,6 @@ import SelectorConBuscador from '../../nota/Editorial/SelectorConBuscador';
 
 const usuarioVacio = {
   celular_reporte: "",
-  clave: "",
   cliente: "",
   email: "",
   email_reporte: "",
@@ -133,20 +132,25 @@ const handleSave = () => {
       : editarUsuario(TOKEN, formData.id, payload);
 
     peticion
-      .then(() => {
+      .then((usuarioGuardado) => {
         toastExito('Los cambios se realizaron correctamente.');
-        
+
         const modalElement = document.getElementById('editModal');
         const modalInstance = window.bootstrap.Modal.getInstance(modalElement);
         if (modalInstance) {
           modalInstance.hide();
         }
 
+        // Un usuario nuevo se crea sin clave: le asignamos una temporal que va a tener que cambiar al entrar
+        if (esNuevoUsuario && usuarioGuardado?.id) {
+          generarContrasenia(usuarioGuardado.id, generarPassword(8));
+        }
+
         obtenerUsuarios(TOKEN).then(setUsuarios);
       })
       .catch((err) => {
         console.error("Error al guardar cambios:", err);
-        toastError("Error al guardar cambios");
+        toastError(err.message || "Error al guardar cambios");
       });
   };
 
@@ -166,12 +170,13 @@ const generarContrasenia = (id, contrasenia) => {
     cambiarClaveUsuario(TOKEN, id, contrasenia)
       .then(() => {
         toastExito('Contraseña generada con exito!');
-        setMensajeModalExito('La nueva contraseña es: ' + contrasenia);
-        setShowModal(true); 
+        setMensajeModalExito('La contraseña temporal es: ' + contrasenia + '. El usuario va a tener que cambiarla en su próximo ingreso.');
+        setShowModal(true);
+        obtenerUsuarios(TOKEN).then(setUsuarios);
       })
       .catch((err) => {
         console.error("Error al generar contraseña:", err);
-        toastError("Error al generar contraseña");
+        toastError(err.message || "Error al generar contraseña");
       });
   };
 
@@ -248,6 +253,11 @@ const handleInputKeyDown = (e) => {
                     </div>
                     <div className='col-3'>
                       <small>{item.email}</small>
+                      {item.debe_cambiar_clave && (
+                        <span className="badge bg-danger ms-2" title="En su próximo ingreso va a tener que cambiar la contraseña">
+                          Debe cambiar clave
+                        </span>
+                      )}
                     </div>
                     <div className='col-3'>
                       {item.cliente && <em className='cuenta-text'>Cuenta: {item.cliente}</em>}

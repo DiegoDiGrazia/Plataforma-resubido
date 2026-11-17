@@ -10,7 +10,7 @@ const formularioSlice = createSlice({
         status: "",
         codigoRecuperacion : "",
         cliente:"",
-        id_cliente :"",
+        id_cliente: null,
         id_usuario :"",
         es_editor : false,
         usuario: "",
@@ -50,7 +50,9 @@ const formularioSlice = createSlice({
             state.cliente = action.payload;  // Asignación directa para cadenas de texto
         },
         updateIdCliente: (state, action) => {
-            state.id_cliente = action.payload;  // Asignación directa para cadenas de texto
+            // Siempre number o null ("" o null = ningun cliente seleccionado)
+            const id = action.payload;
+            state.id_cliente = id === "" || id == null ? null : Number(id);
         },
         updateEsEditor: (state, action) => {
             state.es_editor = action.payload;  // Asignación directa para cadenas de texto
@@ -87,7 +89,7 @@ const formularioSlice = createSlice({
             state.status = "";
             state.codigoRecuperacion = "";
             state.cliente = "";
-            state.id_cliente = "";
+            state.id_cliente = null;
             state.id_usuario = "";
             state.es_editor = false;
             state.contratoConFacturacionAbierta = true;

@@ -60,7 +60,7 @@ const Dashboard = () => {
     }, [token]);
 
     const clienteLogueado = useMemo(() => (
-        clientes.find((c) => c.id == idClienteLogueado)
+        clientes.find((c) => c.id === idClienteLogueado)
     ), [clientes, idClienteLogueado]);
     const esFranquicia = clienteLogueado?.tipo === 'FRANQUICIA';
 

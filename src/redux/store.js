@@ -1,6 +1,6 @@
 // src/redux/store.js
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
-import { persistStore, persistReducer } from "redux-persist";
+import { persistStore, persistReducer, createMigrate } from "redux-persist";
 import storage from "redux-persist/lib/storage"; // localStorage para web
 
 // Importa tus slices
@@ -25,10 +25,26 @@ const rootReducer = combineReducers({
   datospdf: datospdfSlice,
 });
 
+// Migraciones del estado guardado en localStorage
+const aNumero = (id) => (id === "" || id == null ? null : Number(id));
+const migraciones = {
+  // v1: id_cliente pasa de string (login PHP) a number
+  1: (state) => {
+    const formulario = state?.formulario;
+    if (!formulario) return state;
+    const usuario = formulario.usuario && typeof formulario.usuario === "object"
+      ? { ...formulario.usuario, id_cliente: aNumero(formulario.usuario.id_cliente) }
+      : formulario.usuario;
+    return { ...state, formulario: { ...formulario, id_cliente: aNumero(formulario.id_cliente), usuario } };
+  },
+};
+
 // Configuración de Redux Persist
 const persistConfig = {
   key: "root",
+  version: 1,
   storage, // esto usa localStorage en web
+  migrate: createMigrate(migraciones, { debug: false }),
 };
 
 // Reducer persistido

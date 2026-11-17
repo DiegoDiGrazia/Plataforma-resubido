@@ -99,6 +99,12 @@
     transform: scale(0.99);
   }
 
+  #iniciar_sesion:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+  }
+
   #iniciar_sesion_google{
     margin: 20px 0px;
     background-color: rgba(255, 255, 255, 0); /* Naranja medio transparente */
@@ -119,14 +125,20 @@
     
 }
 
-  #olvide_contraseña, .olvide_contraseña{
-    color: orangered;
-    text-align: center;
-    justify-content: center;
-    align-content: center;
-    display: flex;
-    width: 100%;
-  }
+    #olvide_contraseña, .olvide_contraseña {
+        color: orangered;
+        text-align: center;
+        justify-content: center;
+        align-content: center;
+        display: flex;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .olvide_contraseña:hover {
+        color: #c24e00;
+    }
+
     .emailbox{
         margin-bottom: 20px;
     }
