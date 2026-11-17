@@ -2,20 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import './Formulario.css';
 import './FormularioMobile.css';
-import { updateEmail, updateGeo, updateContraseña, updateToken, updateCliente, updateIdCliente, updateEsEditor, updateUsuario, updateIdUsuario, resetFormulario } from '../../redux/formularioSlice';
+import { updateGeo, resetFormulario } from '../../redux/formularioSlice';
 import { obtenerGeo } from '../Apis/geosApi.js';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import VideoBienvenida from './VideoBienvenida';
+import { autenticar, guardarSesion, rutaInicial } from './sesion.js';
+import { useCuentaRegresiva, formatearCuentaRegresiva } from '../../hooks/useCuentaRegresiva.js';
 
 const Formulario = () => {
     const dispatch = useDispatch();
     const [email, setEmail] = useState('');
-    const [contraseña, setContraseña] = useState('');   
+    const [contraseña, setContraseña] = useState('');
     const navigate = useNavigate();
-    const CLIENTE_DEFAULT = ""
-    const ID_CLIENTE_DEFAULT = ""
-    const [contraseñaIncorrecta, setContraseñaIncorrecta] = useState(false)
+    const [error, setError] = useState('');
+    const [cargando, setCargando] = useState(false);
+    const [segundosBloqueo, setSegundosBloqueo] = useCuentaRegresiva();
     const [rutaDestino, setRutaDestino] = useState(null)
 
     useEffect(() => {
@@ -27,55 +28,35 @@ const Formulario = () => {
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        if (cargando || segundosBloqueo > 0) return;
+
+        setError('');
+        setCargando(true);
         try {
-            const response = await axios.post("https://panel.serviciosd.com/api/login", {
-                usuario: email,
-                password: contraseña
-            }, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-            if(response.data.message === "Usuario o Contrase\u00f1a incorrecta"){
-                setContraseñaIncorrecta(true)
+            const sesion = await autenticar(email, contraseña);
+            dispatch(resetFormulario());
+            guardarSesion(dispatch, email, sesion);
+            setRutaDestino(rutaInicial(sesion.usuario));
+        } catch (err) {
+            if (err.status === 403) {
+                navigate('/cambiar-clave', { state: { email, debeCambiar: true } });
+                return;
             }
-            if (response.data.status === "true" && response.data.item.token) {
-                dispatch(resetFormulario())
-                dispatch(updateEmail(email));
-                dispatch(updateContraseña(contraseña));
-                dispatch(updateToken(response.data.item.token));
-                dispatch(updateCliente(response.data.item.cliente))
-                dispatch(updateIdCliente(response.data.item.id_cliente))
-                dispatch(updateEsEditor(false))
-                dispatch(updateUsuario(response.data.item))
-                dispatch(updateIdUsuario(response.data.id))
-
-                if(!response.data.item.cliente){
-                    console.log("entre porque no tiene cliente")
-                    dispatch(updateCliente(CLIENTE_DEFAULT))
-                    dispatch(updateIdCliente(ID_CLIENTE_DEFAULT))
-                    dispatch(updateEsEditor(true))
-                }
-                setRutaDestino(!response.data.item.cliente ? '/notasEditorial' : '/dashboard');
-
-            } else {
-                console.error('Error en los datos de la API:', response.data.message);
+            if (err.status === 429 && err.retryAfter) {
+                setSegundosBloqueo(err.retryAfter);
             }
-        } catch (error) {
-            if (error.response) {
-                console.error('Error respuesta:', error.response.data);
-                console.error('Código de estado:', error.response.status);
-                console.error('Encabezados:', error.response.headers);
-            } else if (error.request) {
-                console.error('Error solicitud:', error.request);
-            } else {
-                console.error('Error:', error.message);
-            }
+            setError(err.status ? err.message : 'No se pudo conectar con el servidor. Probá de nuevo.');
+            console.error('Error al iniciar sesión:', err);
+        } finally {
+            setCargando(false);
         }
     };
-    const mostrarFormularioRecuperarContraseña = () => {
-        navigate('/recuperar-contraseña'); // Redirige al Dashboard
-    };
+
+    const textoBoton = cargando
+        ? 'Ingresando...'
+        : segundosBloqueo > 0
+            ? `Probá de nuevo en ${formatearCuentaRegresiva(segundosBloqueo)}`
+            : 'Iniciar sesión';
 
     return (
         <div className="container-fluid containerFormulario">
@@ -111,10 +92,13 @@ const Formulario = () => {
                             value={contraseña}
                             onChange={(e) => setContraseña(e.target.value)}
                         />
-                        {contraseñaIncorrecta && <div className='olvide_contraseña text-start'>Usuario y/o contraseña incorrecta </div>}
+                        {error && <div className='olvide_contraseña text-start' role="alert">{error}</div>}
                     </div>
-                    <button type="submit" id='iniciar_sesion'>Iniciar sesión</button>
-                    <button type="button" className="btn btn-link" id="olvide_contraseña" onClick={mostrarFormularioRecuperarContraseña}>Olvidé mi contraseña</button>
+                    <button type="submit" id='iniciar_sesion' disabled={cargando || segundosBloqueo > 0}>
+                        {cargando && <span className="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>}
+                        {textoBoton}
+                    </button>
+                    <button type="button" className="btn btn-link olvide_contraseña" onClick={() => navigate('/cambiar-clave', { state: { email } })}>Cambiar mi contraseña</button>
                 </form>
             </div>
             {rutaDestino && (

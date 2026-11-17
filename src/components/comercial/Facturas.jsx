@@ -95,7 +95,7 @@ const Facturas = () =>  {
 
     // Si el cliente logueado es una FRANQUICIA, solo puede ver lo suyo y lo de sus cuentas creadas
     const clienteLogueado = useMemo(() => (
-        clientes.find((c) => c.id == idClienteLogueado)
+        clientes.find((c) => c.id === idClienteLogueado)
     ), [clientes, idClienteLogueado]);
 
     const idsClientesPermitidos = useMemo(() => {

@@ -32,7 +32,7 @@ const SelectorCliente = ({ incluirTodos = true, editorial = true, clientePresele
                     clientes = clientes.filter(cliente => cliente.pais_id === paisID);
                 }
 
-                const clienteLogueado = clientes.find((cliente) => cliente.id == idClienteLogueado);
+                const clienteLogueado = clientes.find((cliente) => cliente.id === idClienteLogueado);
                 const logueadoEsFranquicia = clienteLogueado?.tipo === 'FRANQUICIA';
                 setEsFranquicia(logueadoEsFranquicia);
 
@@ -81,7 +81,7 @@ const SelectorCliente = ({ incluirTodos = true, editorial = true, clientePresele
 
     const TodosLosClientesParaEditor = () => {
         dispatch(updateCliente(""));
-        dispatch(updateIdCliente(""));
+        dispatch(updateIdCliente(null));
         dispatch(updateActivarTodosLosClientes(true));
         if(editorial) {
             navigate("/notasEditorial");

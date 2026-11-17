@@ -46,7 +46,7 @@ const AbmFeed = () => {
 
   useEffect(() => {
     if (esClienteConFeed && clientes.length > 0 && loggedClienteId) {
-      const clienteLogueado = clientes.find(c => c.id == loggedClienteId);
+      const clienteLogueado = clientes.find(c => Number(c.id) === loggedClienteId);
       if (clienteLogueado) {
         handleSeleccionarCliente(clienteLogueado);
       }

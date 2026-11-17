@@ -12,7 +12,14 @@ const jsonHeaders = (token) => ({
   "Content-Type": "application/json",
 });
 
-export const obtenerUsuarios = (token) => 
+const errorDeApi = async (res, mensajePorDefecto) => {
+  const data = await res.json().catch(() => ({}));
+  const mensaje = Array.isArray(data?.detail) ? data.detail[0]?.msg
+    : typeof data?.detail === "string" ? data.detail : null;
+  return new Error(mensaje || mensajePorDefecto);
+};
+
+export const obtenerUsuarios = (token) =>
     fetch(`${BASE_URL}/usuarios`, {
         headers: headers(token),
     }).then((r) => r.json());
@@ -23,7 +30,7 @@ export const crearUsuario = async (token, payload) => {
     headers: jsonHeaders(token),
     body: JSON.stringify(payload),
   });
-  if (!res.ok) throw new Error("Error al crear usuario");
+  if (!res.ok) throw await errorDeApi(res, "Error al crear usuario");
   return res.json();
 };
 
@@ -33,7 +40,7 @@ export const editarUsuario = async (token, usuario_id, payload) => {
     headers: jsonHeaders(token),
     body: JSON.stringify(payload),
   });
-  if (!res.ok) throw new Error("Error al editar usuario");
+  if (!res.ok) throw await errorDeApi(res, "Error al editar usuario");
   return res.json();
 };
 
@@ -53,7 +60,7 @@ export const cambiarClaveUsuario = async (token, usuario_id, clave) => {
     headers: jsonHeaders(token),
     body: JSON.stringify({ clave: clave }),
   });
-  if (!res.ok) throw new Error("Error al cambiar clave");
+  if (!res.ok) throw await errorDeApi(res, "Error al cambiar clave");
   if (res.status === 204) return true;
   return res.json();
 };

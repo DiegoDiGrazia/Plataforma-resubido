@@ -2,15 +2,12 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { verificarToken } from '../components/Apis/tokenApi.js';
 import { obtenerPaginas } from '../components/Apis/paginasApi.js';
+import { guardarSesion } from '../components/login/sesion.js';
+import { EVENTO_SESION_EXPIRADA } from '../utils/interceptor401.js';
 
-import {  
-    updateToken, 
-    updateCliente, 
-    updateIdCliente, 
-    updateEsEditor, 
-    updateUsuario, 
-    updateIdUsuario,
-    updatePaginasDelUsuario 
+import {
+    updateToken,
+    updatePaginasDelUsuario
 } from '../redux/formularioSlice';
 
 export const useSessionManager = () => {
@@ -20,20 +17,28 @@ export const useSessionManager = () => {
   const tokenActual = useSelector((state) => state.formulario.token);
 
   useEffect(() => {
-    let isMounted = true; 
+    let isMounted = true;
     const channel = new BroadcastChannel('sesion_plataforma');
+
+    const marcarSesionExpirada = () => {
+      if (!isMounted) return;
+      setMostrarModal(true);
+      channel.postMessage({ type: 'SESION_EXPIRADA' });
+    };
 
     channel.onmessage = (event) => {
       if (event.data.type === 'SESION_EXPIRADA') {
         setMostrarModal(true);
       } else if (event.data.type === 'SESION_RESTAURADA') {
         setMostrarModal(false);
-        dispatch(updateToken(event.data.token)); 
+        dispatch(updateToken(event.data.token));
       }
     };
 
+    window.addEventListener(EVENTO_SESION_EXPIRADA, marcarSesionExpirada);
+
     const intervalo = setInterval( async () => {
-      if (!tokenActual) return; 
+      if (!tokenActual) return;
 
       let respuesta;
       try {
@@ -43,49 +48,32 @@ export const useSessionManager = () => {
         return;
       }
 
-      if (!isMounted) return;
-
       if (!respuesta?.active) {
-        setMostrarModal(true);
-        channel.postMessage({ type: 'SESION_EXPIRADA' }); 
+        marcarSesionExpirada();
       }
-    }, 30000); 
+    }, 30000);
 
     return () => {
-      isMounted = false; 
+      isMounted = false;
       clearInterval(intervalo);
+      window.removeEventListener(EVENTO_SESION_EXPIRADA, marcarSesionExpirada);
       channel.close();
     };
   }, [dispatch, tokenActual]);
 
-  const reloguear = async (dataCompletaApi) => {
+  const reloguear = async (email, sesion) => {
     setMostrarModal(false);
-    
-    const item = dataCompletaApi.item;
-    
-    dispatch(updateToken(item.token));
-    dispatch(updateCliente(item.cliente));
-    dispatch(updateIdCliente(item.id_cliente));
-    dispatch(updateUsuario(item));
-    dispatch(updateIdUsuario(dataCompletaApi.id));
-    
-    if(!item.cliente){
-        dispatch(updateCliente(""));
-        dispatch(updateIdCliente(""));
-        dispatch(updateEsEditor(true));
-    } else {
-        dispatch(updateEsEditor(false));
-    }
+    guardarSesion(dispatch, email, sesion);
 
     try {
-        const paginas = await obtenerPaginas(item.token, item.perfil);
+        const paginas = await obtenerPaginas(sesion.token, sesion.usuario.perfil);
         dispatch(updatePaginasDelUsuario(paginas));
     } catch (error) {
         console.error("Error al recuperar las páginas tras el relogin:", error);
     }
 
     const channel = new BroadcastChannel('sesion_plataforma');
-    channel.postMessage({ type: 'SESION_RESTAURADA', token: item.token });
+    channel.postMessage({ type: 'SESION_RESTAURADA', token: sesion.token });
     channel.close();
   };
 
