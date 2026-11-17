@@ -1,5 +1,5 @@
 .col_editorial input:not([type="checkbox"]):not([type="radio"]){
-    border: 1px solid var(--nd-color-border) !important;
+    border: 1px solid var(--nd-color-border);
     border-radius: var(--nd-radius-lg);
 
 }
@@ -19,8 +19,8 @@
 }
 
 .datosDistribucion .datosDistribucionTitulo {
-    font-size: 18px;
-    font-weight: 700;
+    font-size: var(--nd-font-size-lg);
+    font-weight: var(--nd-font-weight-bold);
     color: var(--nd-color-text);
     margin-bottom: 15px;
     padding-bottom: 10px;
@@ -29,8 +29,8 @@
 }
 
 .datosDistribucion .datosDistribucionPlataforma {
-    font-size: 12px;
-    font-weight: 700;
+    font-size: var(--nd-font-size-xs);
+    font-weight: var(--nd-font-weight-bold);
     color: var(--nd-color-text-inverse);
     background: var(--nd-gray-600);
     display: inline-block;
@@ -61,8 +61,8 @@
 }
 
 .datosDistribucion .datosDistribucionCampo.form-check .form-check-label {
-    font-size: 14px;
-    font-weight: 600;
+    font-size: var(--nd-font-size-base);
+    font-weight: var(--nd-font-weight-semibold);
     color: var(--nd-color-text);
     margin-bottom: 0;
     cursor: pointer;
@@ -77,14 +77,38 @@
 }
 
 .datosDistribucion .datosDistribucionCampo label {
-    font-size: 13px;
+    font-size: var(--nd-font-size-sm);
     color: var(--nd-color-text-secondary);
     margin-bottom: 4px;
     display: block;
 }
 
 .datosDistribucion .datosDistribucionCampo .caracteresRestantes {
-    font-size: 12px;
+    font-size: var(--nd-font-size-xs);
     color: var(--nd-color-text-muted);
     margin: 4px 0 0;
+}
+/* Filas "etiqueta + control" de la columna editorial */
+.colEditorial__fila {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--nd-space-3);
+}
+.colEditorial__fila--compacta {
+    margin-bottom: var(--nd-space-2);
+}
+.colEditorial__fila--separada {
+    margin-bottom: var(--nd-space-5);
+}
+.colEditorial__label {
+    font-size: var(--nd-font-size-xl);
+    font-weight: var(--nd-font-weight-bold);
+    color: var(--nd-color-text);
+    margin: 0;
+    padding: 0;
+}
+.colEditorial__fecha {
+    font-size: var(--nd-font-size-xl);
+    font-weight: var(--nd-font-weight-bold);
 }

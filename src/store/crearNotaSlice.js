@@ -143,21 +143,7 @@ const initialState = {
   id_nota_borrador: "",
   es_ia: '0',
   term_id: '',
-  distribucion_fecha_vencimiento: "",
-  distribucion_comentarios: "",
-  distribucion_meta_titulo: "",
-  distribucion_meta_engagement: "",
-  distribucion_x_descripcion: "",
-  distribucion_yt_titulo: "",
-  distribucion_yt_descripcion: "",
-  distribucion_yt_link: "",
-  distribucion_search_titulo: "",
-  distribucion_search_descripcion: "",
-  distribucion_banner_data: "",
-  distribucion_diferida: false,
-  distribucion_fecha_diferida: "",
-  distribucion_hora_diferida: "",
-
+  // Los datos de distribución (Meta, X, YouTube, Search, diferida) están en distribucionNotaSlice
 };
 
 const crearNotaSlice = createSlice({
@@ -384,49 +370,6 @@ const crearNotaSlice = createSlice({
       return action.payload;
     },
 
-    setDistribucionFechaVencimiento: (state, action) => {
-      state.distribucion_fecha_vencimiento = action.payload;
-    },
-    setDistribucionComentarios: (state, action) => {
-      state.distribucion_comentarios = action.payload;
-    },
-    setDistribucionMetaTitulo: (state, action) => {
-      state.distribucion_meta_titulo = action.payload;
-    },
-    setDistribucionMetaEngagement: (state, action) => {
-      state.distribucion_meta_engagement = action.payload;
-    },
-    setDistribucionXDescripcion: (state, action) => {
-      state.distribucion_x_descripcion = action.payload;
-    },
-    setDistribucionYtTitulo: (state, action) => {
-      state.distribucion_yt_titulo = action.payload;
-    },
-    setDistribucionYtDescripcion: (state, action) => {
-      state.distribucion_yt_descripcion = action.payload;
-    },
-    setDistribucionYtLink: (state, action) => {
-      state.distribucion_yt_link = action.payload;
-    },
-    setDistribucionSearchTitulo: (state, action) => {
-      state.distribucion_search_titulo = action.payload;
-    },
-    setDistribucionSearchDescripcion: (state, action) => {
-      state.distribucion_search_descripcion = action.payload;
-    },
-    setDistribucionDiferida: (state, action) => {
-      state.distribucion_diferida = action.payload;
-    },
-    setDistribucionFechaDiferida: (state, action) => {
-      state.distribucion_fecha_diferida = action.payload;
-    },
-    setDistribucionHoraDiferida: (state, action) => {
-      state.distribucion_hora_diferida = action.payload;
-    },
-    setDistribucionBannerData: (state, action) => {
-      state.distribucion_banner_data = action.payload;
-    },
-
     resetCrearNota: () => initialState,
   }
 });
@@ -437,9 +380,6 @@ export const {
   setCopete, setNotaAEditar, setContenidoAEditar, setItemsEtiquetas, setEsDemo, setNoHome, setCategoriasActivasEnStore,
   setDistribucionProioritaria, setTipoContenido, setFechaVencimiento, setBajada, setEngagement, setComentario, setSelectedOptionDistribucion,
   setAutor, setMunicipio,setEpigrafeImagenPpal,setDemo, setMunicipios,setIdNoti, setProvincia,setPais, setIdAtt,setProvincias, resetCrearNota, setEpigrafeDeImagen, setListaImagenesContenidoEnBase64, setAtachment, setSumarUnoAlNumeroDeAtachment,
-  setDistribucionFechaVencimiento, setDistribucionComentarios, setDistribucionMetaTitulo, setDistribucionMetaEngagement, setDistribucionXDescripcion, setDistribucionYtTitulo, setDistribucionYtDescripcion, setDistribucionYtLink,
-  setDistribucionSearchTitulo, setDistribucionSearchDescripcion, setDistribucionBannerData,
-  setDistribucionDiferida, setDistribucionFechaDiferida, setDistribucionHoraDiferida
 } = crearNotaSlice.actions;
 
 export default crearNotaSlice.reducer;

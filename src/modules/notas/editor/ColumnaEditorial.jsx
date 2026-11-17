@@ -25,7 +25,7 @@ import {
     setDistribucionDiferida,
     setDistribucionFechaDiferida,
     setDistribucionHoraDiferida,
-} from '@/store/crearNotaSlice';
+} from '@/store/distribucionNotaSlice';
 import SelectorCliente2 from './SelectorCliente2';
 import EsDemo from './EsDemo';
 import { replace } from 'react-router-dom';
@@ -48,19 +48,19 @@ const ColumnaEditorial = ({ indice }) => {
     const nota = useSelector((state) => state.crearNota);
     const tituloNota = useSelector((state) => state.crearNota.tituloNota);
     const url = useSelector((state) => state.crearNota.url);
-    const distribucionFechaVencimiento = useSelector((state) => state.crearNota.distribucion_fecha_vencimiento);
-    const distribucionComentarios = useSelector((state) => state.crearNota.distribucion_comentarios);
-    const distribucionMetaTitulo = useSelector((state) => state.crearNota.distribucion_meta_titulo);
-    const distribucionMetaEngagement = useSelector((state) => state.crearNota.distribucion_meta_engagement);
-    const distribucionXDescripcion = useSelector((state) => state.crearNota.distribucion_x_descripcion);
-    const distribucionYtTitulo = useSelector((state) => state.crearNota.distribucion_yt_titulo);
-    const distribucionYtDescripcion = useSelector((state) => state.crearNota.distribucion_yt_descripcion);
-    const distribucionYtLink = useSelector((state) => state.crearNota.distribucion_yt_link);
-    const distribucionSearchTitulo = useSelector((state) => state.crearNota.distribucion_search_titulo);
-    const distribucionSearchDescripcion = useSelector((state) => state.crearNota.distribucion_search_descripcion);
-    const distribucionDiferida = useSelector((state) => state.crearNota.distribucion_diferida);
-    const distribucionFechaDiferida = useSelector((state) => state.crearNota.distribucion_fecha_diferida);
-    const distribucionHoraDiferida = useSelector((state) => state.crearNota.distribucion_hora_diferida);
+    const distribucionFechaVencimiento = useSelector((state) => state.distribucionNota.fecha_vencimiento);
+    const distribucionComentarios = useSelector((state) => state.distribucionNota.comentarios);
+    const distribucionMetaTitulo = useSelector((state) => state.distribucionNota.meta_titulo);
+    const distribucionMetaEngagement = useSelector((state) => state.distribucionNota.meta_engagement);
+    const distribucionXDescripcion = useSelector((state) => state.distribucionNota.x_descripcion);
+    const distribucionYtTitulo = useSelector((state) => state.distribucionNota.yt_titulo);
+    const distribucionYtDescripcion = useSelector((state) => state.distribucionNota.yt_descripcion);
+    const distribucionYtLink = useSelector((state) => state.distribucionNota.yt_link);
+    const distribucionSearchTitulo = useSelector((state) => state.distribucionNota.search_titulo);
+    const distribucionSearchDescripcion = useSelector((state) => state.distribucionNota.search_descripcion);
+    const distribucionDiferida = useSelector((state) => state.distribucionNota.diferida);
+    const distribucionFechaDiferida = useSelector((state) => state.distribucionNota.fecha_diferida);
+    const distribucionHoraDiferida = useSelector((state) => state.distribucionNota.hora_diferida);
 
 
 
@@ -167,22 +167,16 @@ const ColumnaEditorial = ({ indice }) => {
             
             <Etiquetas />
             
-            <span style={{ fontSize: "20px", fontWeight: "bold", padding: "0px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-                Cuenta de la nota:
-                <div style={{ marginLeft: "auto" }}>
-                    <SelectorCliente2 />
-                </div>
-            </span>
-            
+            <div className="colEditorial__fila colEditorial__fila--compacta">
+                <span className="colEditorial__label">Cuenta de la nota:</span>
+                <SelectorCliente2 />
+            </div>
+
             <div className='row pt-0'>
-                <div 
-                    className="form-check form_editorial p-0" 
-                    style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
-                >
-                    <label 
-                        className="form-check-label" 
-                        htmlFor="flexCheckDefault" 
-                        style={{ fontSize: "20px", fontWeight: "bold", marginRight: "10px", padding: "0px" }}
+                <div className="form-check form_editorial colEditorial__fila p-0">
+                    <label
+                        className="form-check-label colEditorial__label"
+                        htmlFor="flexCheckChecked1"
                     >
                         No home
                     </label>
@@ -197,14 +191,10 @@ const ColumnaEditorial = ({ indice }) => {
 
                 <EsDemo></EsDemo>
 
-                <div 
-                    className="form-check form_editorial p-0" 
-                    style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
-                >
-                    <label 
-                        className="form-check-label" 
-                        htmlFor="flexCheckChecked2" 
-                        style={{ fontSize: "20px", fontWeight: "bold", marginRight: "10px" }}
+                <div className="form-check form_editorial colEditorial__fila p-0">
+                    <label
+                        className="form-check-label colEditorial__label"
+                        htmlFor="flexCheckChecked2"
                     >
                         Distribucion prioritaria
                     </label>
@@ -231,25 +221,16 @@ const ColumnaEditorial = ({ indice }) => {
                 
                 <SelectorTipoContenido />
                 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: "20px", padding: "0px" }}>
-                    <span style={{ fontSize: "20px", fontWeight: "bold" }}>Fecha Publicacion:</span>
-                    <input 
-                        type="date" 
-                        value={fechaPublicacion} 
-                        onChange={dispacharfechaPublicacion} 
-                        style={{ fontSize: "20px", fontWeight: "bold" }}
+                <div className="colEditorial__fila colEditorial__fila--separada p-0">
+                    <label htmlFor="fecha-publicacion" className="colEditorial__label">Fecha Publicacion:</label>
+                    <input
+                        id="fecha-publicacion"
+                        type="date"
+                        className="colEditorial__fecha"
+                        value={fechaPublicacion}
+                        onChange={dispacharfechaPublicacion}
                     />
                 </div>
-                
-                {/* <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: "20px", padding: "0px" }}>
-                    <span style={{ fontSize: "20px", fontWeight: "bold" }}>Fecha de vencimiento:</span>
-                    <input 
-                        type="date" 
-                        value={fechaVence} 
-                        onChange={dispacharfechaVencimiento} 
-                        style={{ fontSize: "20px", fontWeight: "bold" }}
-                    />
-                </div> */}
                 
                 {nota.con_distribucion == 1 && (
                     <DistribucionGeneracionFields

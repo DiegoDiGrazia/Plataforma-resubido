@@ -10,6 +10,7 @@ import barplotSlice from "./barplotSlice.js";
 import interaccionesPorNotaSlice from "./interaccionesPorNotaSlice.js";
 import notasSlice from "./notasSlice.js";
 import crearNotaSlice from "./crearNotaSlice.js";
+import distribucionNotaSlice from "./distribucionNotaSlice.js";
 import cargadoSlice from "./cargadosSlice.js";
 import datospdfSlice from "./datospdfSlice.js";
 
@@ -21,6 +22,7 @@ const rootReducer = combineReducers({
   interaccionesPorNota: interaccionesPorNotaSlice,
   notas: notasSlice,
   crearNota: crearNotaSlice,
+  distribucionNota: distribucionNotaSlice,
   cargado: cargadoSlice,
   datospdf: datospdfSlice,
 });
@@ -37,12 +39,25 @@ const migraciones = {
       : formulario.usuario;
     return { ...state, formulario: { ...formulario, id_cliente: aNumero(formulario.id_cliente), usuario } };
   },
+  // v2: los campos distribucion_* salen de crearNota a su propio slice (distribucionNota)
+  2: (state) => {
+    const crearNota = state?.crearNota;
+    if (!crearNota) return state;
+    const distribucionNota = {};
+    const restoNota = {};
+    for (const [key, value] of Object.entries(crearNota)) {
+      const esDeDistribucion = key.startsWith("distribucion_") && key !== "distribucion_prioritaria";
+      if (esDeDistribucion) distribucionNota[key.slice("distribucion_".length)] = value;
+      else restoNota[key] = value;
+    }
+    return { ...state, crearNota: restoNota, distribucionNota };
+  },
 };
 
 // Configuración de Redux Persist
 const persistConfig = {
   key: "root",
-  version: 1,
+  version: 2,
   storage, // esto usa localStorage en web
   migrate: createMigrate(migraciones, { debug: false }),
 };
