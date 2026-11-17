@@ -3,6 +3,9 @@
 import React, { Suspense, lazy } from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+// Clases legacy compartidas entre módulos: DESPUÉS de Bootstrap (para ganarle a .row > *, .col-*)
+// y ANTES de importar las pantallas (para que el CSS propio de cada una les gane).
+import '@/styles/legacy.css';
 import 'bootstrap';
 import '@/modules/auth/Formulario.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';

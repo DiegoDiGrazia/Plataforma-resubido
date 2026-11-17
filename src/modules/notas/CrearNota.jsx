@@ -62,8 +62,6 @@ const CrearNota = () => {
     const [futuros, setFuturos] = useState([]);
     const esEditor = useSelector((state) => state.formulario.es_editor);
     const { clave } = useParams();
-    // Quien puede editar cómo se publica la nota no ve los videos tutoriales
-    const permisoDatosCreacion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Editorial: Datos creacion") || false);
     const contenidoNota = useSelector((state) => state.crearNota.contenidoNota);
     const numeroDeAtachmentAUsar= useSelector((state) => state.crearNota.numeroDeAtachment);
 
@@ -348,15 +346,13 @@ const CrearNota = () => {
                             </div>
                         </div>
 
-                        {/* Seccion columna izquierda del tutorial */}
-                        {!permisoDatosCreacion && (
+                        {/* Seccion columna izquierda del tutorial: en Crear nota se ve siempre */}
                         <div className='col-4 d-flex flex-column gap-4'>
                             {!imagenppal ? <CardTutorial title = {videos.portada.title} description = {videos.portada.description} src = {videos.portada.src} /> :
                             <CardTutorial title = {videos.fotoCuerpoNota.title} description = {videos.fotoCuerpoNota.description} src = {videos.fotoCuerpoNota.src}/>}
                             <CardTutorial title = {videos.tituloYBajada.title} description = {videos.tituloYBajada.description} src = {videos.tituloYBajada.src}/>
                             <CardTutorial title = {videos.embebidos.title} description = {videos.embebidos.description} src = {videos.embebidos.src}/>
                         </div>
-                        )}
                         {/* fin seccion columna izquierda */}
                     </div>
 

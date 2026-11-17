@@ -1,813 +1,499 @@
-.app-container {
-    display: flex;
-}
-.content {
-    overflow-y: auto; /* Permitir scroll en el contenido */
-    height: 100vh; /* Asegurarse de que el contenido ocupe toda la altura de la vista */
-}
+/* ==========================================================================
+   Módulo Notas — listado, Crear nota, Ver nota y componentes del editor
+   --------------------------------------------------------------------------
+   Las clases que usan también otros módulos (buscador, subtítulos, carga de
+   imagen, comentarios…) están en src/styles/legacy.css. Las exclusivas de
+   Publicar nota, en publicarNota.css.
 
-.notaNoEditable{
+   !important: solo quedan los que pelean contra librerías de terceros que
+   escriben estilos inline o con su propio !important (Cropper.js, Quill,
+   embeds de Twitter/iframes). Cada uno está comentado.
+   ========================================================================== */
+
+/* ---------- Listado de notas ---------- */
+.notaNoEditable {
     background-color: var(--nd-color-bg-muted);
-}
-
-
-#nota{
-    font-size: 18px;
-    font-weight: 600;
-    padding-left: 30px;
-    padding-top: 20px;
-}
-
-.col.boton{
-    padding-top: 10px;
-}
-
-.header_dash{
-    border-bottom: none !important;
-    padding-left: 20px !important;
-    height: 80px; 
-}
-.abajoDeTusNotas{
-    font-size: 16px;
-    color: var(--nd-color-text-secondary) ;
-    padding-left: 20px;
-}
-.icono_tusNotas{
-    padding-right: 0px !important;
-    margin-right: 0px !important;
 }
 
 .boton_filtro_notas {
-    border: none;
-    background-color:var(--nd-color-bg-page);
-    font-size: 16px;
-    color: var(--nd-color-text-secondary) !important;
-    font-weight: 700;
-    padding: 0px; /* Ajustar el padding */
-    padding-left: 0px;
-    display: inline-block; /* Para que el borde se ajuste al tamaño del texto */
+    display: inline-block;
     width: auto;
-    text-align: center; /* Centrar el texto */
     margin-left: 30px;
-    padding-bottom: 15px;
-} 
-.boton_filtro_notas:active {
-    color: var(--nd-color-text) !important; /* Color más oscuro mientras se presiona */
+    padding: 0 0 15px;
+    border: none;
+    background-color: var(--nd-color-bg-page);
+    font-size: var(--nd-font-size-md);
+    font-weight: var(--nd-font-weight-bold);
+    color: var(--nd-color-text-secondary);
+    text-align: center;
 }
-
-.active{
-    color: var(--nd-color-primary-text) !important;
+.boton_filtro_notas:active {
+    color: var(--nd-color-text);
+}
+/* Filtro seleccionado. Antes era .active a secas y pintaba de naranja cualquier
+   elemento activo de Bootstrap en toda la app (tabs, paginación, carrusel…) */
+.boton_filtro_notas.active {
+    color: var(--nd-color-primary-text);
     border-bottom: 3px solid var(--nd-color-primary);
 }
-.todasLasNotas{
- font-size: 18px;
- font-weight: bold; 
- color: var(--nd-color-text);
- align-items: center;
-}
 
-.buscadorNotasForm {
-    display: flex;
-    width: 400px;
-    height: 44px;
-    float: right;
-    margin-right: 0px;
-}
-
-.inputBuscadorNotas {
-    width: 100%; /* Asegura que el input use todo el ancho del contenedor */
-    padding: 10px; /* Mantiene el padding */
-    font-size: 16px;
-    border: 1px solid var(--nd-color-border);
-    border-radius: var(--nd-radius-lg);
-    outline: none;
-    color: var(--nd-color-text);
-    background-image: url('/images/search.png'); 
-    background-repeat: no-repeat;
-    background-position: 10px center; /* Posiciona la imagen dentro del input */
-    background-size: 20px 20px; /* Tamaño de la imagen */
-    box-sizing: border-box; /* Asegura que el padding y el borde se incluyan en el ancho total */
-}
-.inputBuscadorNotas:focus:not(:placeholder-shown) {
-    background-color: transparent; /* Hace el fondo transparente al escribir */
-    background-image:none;
-}
-.inputBuscadorNotas:focus() {
-    background-color: transparent; /* Hace el fondo transparente al escribir */
-    background-image:none;
-}
-.inputBuscadorNotas:not(:placeholder-shown) {
-    background-color: transparent;
-    background-image: none;
-}
-
-.categoriasNotas{
-    font-size: 12px ;
-    color: var(--nd-color-text-secondary) ;
-    font-weight: 600;
+.categoriasNotas {
     margin-top: 10px;
-
+    font-size: var(--nd-font-size-xs);
+    font-weight: var(--nd-font-weight-semibold);
+    color: var(--nd-color-text-secondary);
 }
 
-.icono_Estado{
-    padding-left: 0px;
-    margin-bottom: 2px;
-    
-}
-
-.container-notas{
+.container-notas {
     flex: 1;
     margin-left: 70px;
     margin-right: 50px;
-    border: 1px solid var(--nd-color-border) ;
+    border: var(--nd-border-width) solid var(--nd-color-border);
     border-radius: var(--nd-radius-lg);
 }
 
-.sin-margin {
-    margin: 0 !important;
+.row.sin-margin {
+    margin: 0;
 }
 
-.borderNotas{
-    border-top: 1px solid var(--nd-color-border) ;
-    border-bottom: 1px solid var(--nd-color-border) ;
+.borderNotas {
     color: var(--nd-color-text);
+    border-top: var(--nd-border-width) solid var(--nd-color-border);
+    border-bottom: var(--nd-border-width) solid var(--nd-color-border);
 }
-.FechaPubNota{
-    font-size: 14px;
+
+.FechaPubNota {
+    padding-left: 0;
+    font-size: var(--nd-font-size-base);
     color: var(--nd-color-text-secondary);
-    padding-left: 0px;
 }
 
-.nuevoFont{
-    font-style: normal ;
+.nuevoFont {
+    font-style: normal;
 }
 
-.vn_titulo{ 
-    font-size: 22px;
-    font-weight: 550;
-    padding-top: 0px;
-    text-align: left;
+.categoria_notas {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 5px 10px;
+    font-size: var(--nd-font-size-md);
+    color: var(--nd-color-secondary);
+    background-color: var(--nd-color-info-subtle);
+    border-radius: var(--nd-radius-xl);
+}
+
+/* ---------- Ver nota ---------- */
+.vn_titulo {
     position: relative;
     top: 0;
-    left: 0;    
+    left: 0;
     max-width: 800px;
-    padding-left: 12px;
+    padding-top: 0;
+    padding-left: var(--nd-space-3);
+    font-size: var(--nd-font-size-2xl);
+    font-weight: var(--nd-font-weight-semibold);
+    text-align: left;
 }
 
-.vn_fecha{
-    font-size: 14px;
-    color:var(--nd-color-text-secondary);
-    text-align: left;
+.vn_fecha {
     position: relative;
     top: 0;
     left: 0;
-    padding-top: 0px;
-    padding-left: 12px;
     margin-top: 5px;
-}
-.margin_vn{
-    padding: 0px 20px;
-    max-height: 300px;
-}
-.vn_estado{
+    padding-top: 0;
+    padding-left: var(--nd-space-3);
+    font-size: var(--nd-font-size-base);
+    color: var(--nd-color-text-secondary);
     text-align: left;
-    position: relative;
-    top: 0;
-    left: 0;
-    padding-top: 0px;
-
-}
-.ml-5{
-    margin-left: 30px !important;
 }
 
+.margin_vn {
+    max-height: 300px;
+    padding: 0 var(--nd-space-5);
+}
 
-.imagen_nota{
+.imagen_nota {
     width: 300px;
     height: 200px;
-    border-radius: var(--nd-radius-lg);
     object-fit: cover;
+    border-radius: var(--nd-radius-lg);
 }
-.boton_nota{
+
+.boton_nota {
     position: relative;
     float: right;
 }
-.imagen_col{
-    max-width: 310px !important;
 
+.imagen_col {
+    max-width: 310px;
 }
-.boton_compartir{
-    border: none;
-    background-color: var(--nd-color-bg-page) !important;
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--nd-color-text-secondary);
+
+/* Convive con .custom-dropdown-button (Dashboard.css, fondo blanco): doble clase para ganarle */
+.boton_compartir.custom-dropdown-button,
+.boton_compartir.custom-dropdown-button:hover {
+    background-color: var(--nd-color-bg-page);
+}
+.boton_compartir {
     margin-top: 5px;
-}
-.ver_nota_boton{
-    background-color: none !important;
     border: none;
-    margin: 0px !important;
-    top: 30px
+    font-size: var(--nd-font-size-md);
+    font-weight: var(--nd-font-weight-semibold);
+    color: var(--nd-color-text-secondary);
 }
 
-.link-sin-estilos {
-    color: inherit;      /* Usa el color del texto del contenedor */
-    text-decoration: none; /* Elimina el subrayado */
-    cursor: pointer;       /* Muestra el cursor de pointer para indicar que es clickeable */
+.ver_nota_boton {
+    top: 30px;
+    margin: 0;
+    border: none;
 }
 
-#botonPublicar:hover{
+.order-last {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: auto;
+    vertical-align: bottom;
+}
+
+.vn_categoria {
+    display: inline-block;
+    height: 40px;
+    padding: 5px 10px;
+    color: var(--nd-color-primary-text);
+    background-color: var(--nd-color-primary-subtle);
+    border-radius: var(--nd-radius-sm);
+    vertical-align: bottom;
+}
+
+.tituloCreativo {
+    margin-bottom: 5px;
+    margin-left: 15px;
+    font-size: var(--nd-font-size-xl);
+}
+
+/* ---------- Breadcrumb (Crear, Publicar y Ver nota) ---------- */
+.breadcrumb-item {
+    color: var(--nd-color-text);
+    border: none;
+    text-decoration: none;
+}
+
+.blackActive {
+    color: var(--nd-color-text);
+}
+
+/* ---------- Crear nota: encabezado y botones ---------- */
+.headerCrearNota {
+    margin-top: 0;
+    font-size: var(--nd-font-size-3xl);
+    font-weight: var(--nd-font-weight-light);
+}
+
+.row.notaTutorial {
+    padding-top: 0;
+}
+
+#botonPublicar {
+    float: right;
+    width: auto;
+    height: 48px;
+    margin-top: 10px;
+    margin-right: 30px;
+    font-size: var(--nd-font-size-md);
+    font-weight: var(--nd-font-weight-semibold);
+    color: var(--nd-color-on-primary);
+    background-color: var(--nd-color-primary);
+    border: var(--nd-border-width) solid var(--nd-color-primary);
+    border-radius: var(--nd-radius-lg);
+}
+#botonPublicar:hover {
+    color: var(--nd-color-on-primary);
     background-color: var(--nd-color-primary-hover);
     border-color: var(--nd-color-primary-hover);
-    color: var(--nd-color-on-primary);
-}
-#botonPublicar{
-    background-color: var(--nd-color-primary);
-    border: 1px solid var(--nd-color-primary);
-    color: var(--nd-color-on-primary);
-    font-size: 16px;
-    float: right;
-    margin-right: 30px;
-    width: auto;
-    height: 48px;
-    font-weight: 600;
-    border-radius: var(--nd-radius-lg);
-    margin-top: 10px;
 }
 
-.icono_vistaPrevia{
-    background-color:none;
+.icono_vistaPrevia {
+    float: right;
+    width: auto;
+    height: 48px;
+    margin-top: 10px;
+    margin-right: 30px;
+    font-size: var(--nd-font-size-md);
+    font-weight: var(--nd-font-weight-semibold);
     color: var(--nd-color-text);
-    font-size: 16px;
-    float: right;
-    margin-right: 30px;
-    width: auto;
-    height: 48px;
-    font-weight: 600;
     border-radius: var(--nd-radius-lg);
-    margin-top: 10px;
 }
 
-    
-
-
-.headerCrearNota{
-    font-size: 28px;
-    font-weight:200;
-    margin-top: 0px;
-}
-#nota{
-    font-size: 18px;
-}
-
-
-.upload-block {
-    width: 613px;
-    height: 182px;
-    border: 2px dashed var(--nd-color-text);
-    border-radius: var(--nd-radius-md);
+.buttons-container {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    background-color: var(--nd-color-bg-page)    ;
-    margin-left: 50px;
-    
-}
-.crearNotaGlobal{
-    background-color: var(--nd-color-bg-surface) !important;
-    padding: 10px;
+    flex-direction: row;
 }
 
-.notaTutorial{
-padding-top: 0px !important;
-}
-
-.upload-block {
-    border: 2px dashed var(--nd-color-text);
-    padding: 20px;
-    text-align: center;
-    transition: background-color 0.3s ease;
-}
-
-.upload-block.dragover {
-    background-color: var(--nd-color-bg-muted);
-}
-
-.custom-file-upload {
-    color: orangered;
-    border-radius: var(--nd-radius-sm);
+.botones-nota {
+    margin: 5px;
+    border: none;
+    background-color: var(--nd-color-bg-surface);
     cursor: pointer;
-    font-size: 14px;
-    background-color: none;
-    transition: background-color 0.3s ease;
-    width: auto;
-    font-weight: 600;
 }
 
-.custom-file-upload:hover {
-    color: rgb(146, 42, 5);
+.boton-plus {
+    border-right: 3px solid var(--nd-gray-800);
 }
-.displayFlex{
-    display: flex !important;
+
+.containerButton {
+    display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 16px;
+    margin-top: var(--nd-space-5);
+    margin-bottom: var(--nd-space-10);
+    padding-left: 0;
 }
-.fontGrisImagen{
-    font-size: 14px;
+
+.float-right {
+    float: right;
+    vertical-align: top;
+    padding-right: 30px;
+}
+
+/* ---------- Crear nota: modal de recorte de imagen ---------- */
+.custom_image_modal {
+    width: 463px;
+    height: 265px;
+    border-radius: var(--nd-radius-lg);
+    contain: content;
+}
+
+.subtitulo-modal {
+    font-size: var(--nd-font-size-md);
     color: var(--nd-color-text-secondary);
 }
 
-.custom-modal{
-    width: auto;
-    height: 485px;
-    color: var(--nd-color-text-secondary);
-
-}
-.custom_image_modal{
-    width: 463px !important;
-    height: 265px !important;
-    border-radius: var(--nd-radius-lg) !important;
-    contain: content !important;
-}
-
-.subtitulo-modal{
-    color: var(--nd-color-text-secondary);
-    font-size: 16px;
-}
-.tituloModal{
+.tituloModal {
+    font-size: var(--nd-font-size-2xl);
+    font-weight: var(--nd-font-weight-semibold);
     color: var(--nd-color-text);
-    font-size: 24px;
-    font-weight: 600;
 }
-.modalBody{
+
+.modalBody {
     padding-top: 5px;
 }
 
-.modalHeader{
-    border: none !important;
-    padding-bottom: 0px !important;
+.modalHeader {
+    border: none;
+    padding-bottom: 0;
 }
 
-.botonModalVolver{
-    text-align: center;
-    border: 1px solid var(--nd-color-border-strong);
-    width: 100%;
-    display: block;
-    margin: 0 auto;
-    font-weight: 600;
-}   
-.botonModalContinuar{
-    text-align: center;
-    border: 1px solid var(--nd-color-primary);
-    width: 100%;
-    display: block;
-    margin: 0 auto;
-    background-color: var(--nd-color-primary);
-    color: var(--nd-color-on-primary);
-    font-weight: 600;
+.modalFooter {
+    border: none;
+    padding-top: 0;
 }
-.botonModalContinuar:hover{
-    border-color: var(--nd-color-primary-hover);
-    background-color: var(--nd-color-primary-hover);
-    color: var(--nd-color-on-primary);
-}
-.modalFooter{
-    border: none !important;
-    padding-top: 0px;
-}
-.rowModalFooter{
+
+.rowModalFooter {
     padding-top: 15px;
-    padding-bottom: 10px; 
+    padding-bottom: 10px;
 }
 
+.botonModalVolver,
+.botonModalContinuar {
+    display: block;
+    width: 100%;
+    margin: 0 auto;
+    font-weight: var(--nd-font-weight-semibold);
+    text-align: center;
+}
+.botonModalVolver {
+    border: var(--nd-border-width) solid var(--nd-color-border-strong);
+}
+.botonModalContinuar {
+    color: var(--nd-color-on-primary);
+    background-color: var(--nd-color-primary);
+    border: var(--nd-border-width) solid var(--nd-color-primary);
+}
+.botonModalContinuar:hover {
+    color: var(--nd-color-on-primary);
+    background-color: var(--nd-color-primary-hover);
+    border-color: var(--nd-color-primary-hover);
+}
+
+/* ---------- Contenido de la nota (editor) ---------- */
 .imagenRecortadaContenedor {
-    position: relative; /* Permite posicionar elementos dentro de este contenedor */
-    display: inline-block; /* Para ajustar el tamaño al de la imagen */
+    position: relative;
+    display: inline-block;
     width: 800px;
+    max-width: calc(100% - 30px); /* nunca más ancha que su columna */
     height: auto;
-    border-radius: var(--nd-radius-xl) !important;
     margin-left: 30px;
+    border-radius: var(--nd-radius-xl);
 }
 
 .imagenRecortada {
-    width: 100%; /* Asegura que la imagen ocupe todo el espacio del contenedor */
-    height: auto; /* Mantiene la relación de aspecto de la imagen */
-    border-radius: var(--nd-radius-xl) !important;
+    width: 100%;
+    height: auto;
+    border-radius: var(--nd-radius-xl);
+}
 
+.imagenNotaContenido {
+    height: auto;
+    max-height: 600px;
+    margin-top: var(--nd-space-5);
+    margin-bottom: var(--nd-space-5);
+    border-radius: var(--nd-radius-xl);
 }
 
 .boton-superior-izquierda {
     position: absolute;
-    top: 10px; /* Ajusta este valor para controlar la distancia desde el borde superior */
-    right: 10px; /* Ajusta este valor para controlar la distancia desde el borde izquierdo */
-    z-index: 10; /* Asegura que el botón esté por encima de la imagen */
-    border: none; /* Sin bordes */
-    padding: 0px; /* Espaciado interno del botón */
-    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+    padding: 10px;
+    border: none;
     background-color: transparent;
-    padding: 10px 10px;
+    cursor: pointer;
 }
 
-.inputTituloNota{
-    border: none;
+.inputTituloNota {
     display: block;
     width: 90%;
-    color: var(--nd-color-text);
-    font-size: 28px;
-    font-weight: 600;
+    margin-left: var(--nd-space-5);
+    padding-right: var(--nd-space-5);
+    border: none;
     resize: none;
     overflow-wrap: break-word;
-    padding-right: 10px;
-    margin-left: 20px;
-    padding-right: 20px;
+    font-size: var(--nd-font-size-3xl);
+    font-weight: var(--nd-font-weight-semibold);
+    color: var(--nd-color-text);
 }
 textarea.inputTituloNota {
-    width: 100% !important;
-}
-.marginTitulo{
-    margin-top: 10px;
-}
-.inputTituloNota::placeholder{
-    border: none;
-    display: block;
     width: 100%;
-    color: var(--nd-color-text-muted);
-    font-size: 28px;
-    font-weight: 600;
-    margin-left: 38px; 
 }
-.inputTituloNota:focus{
+.inputTituloNota::placeholder {
+    font-size: var(--nd-font-size-3xl);
+    font-weight: var(--nd-font-weight-semibold);
+    color: var(--nd-color-text-muted);
+}
+.inputTituloNota:focus {
     display: block;
     outline: none;
-
 }
 
-.buttons-container {
-    display: flex; /* Mostramos los botones en una fila */
-    flex-direction: row;
-  }
-  
-  .botones-nota {
-    margin: 5px;
-    border: none;
-    cursor: pointer;
-    background-color: var(--nd-color-bg-surface);
-  }
-
-  .boton-plus{
-    border-right: 3px solid rgb(31, 31, 31);
-  }
-  
-  .button:hover {
-    background-color: deepskyblue;
-  }
-.containerButton{
-    display: flex;
-    align-items: center;
-    margin-bottom: 40px;
-    margin-top: 20px;
-    padding-left: 0px;
-    
-}
-
-.categoria_notas{
-    display:inline-block;
-    background-color: var(--nd-color-info-subtle);  
-    color: var(--nd-color-secondary);
-    border-radius: var(--nd-radius-xl);
-    justify-content: center;
+.marginTitulo {
     margin-top: 10px;
-    font-size: 16px !important;
-
-    padding: 5px 10px;
-}
-.colImgNota{
-    width: auto;
-    justify-content: center;
-
 }
 
-.publicada {
-    width: 140px;
-    height: auto;
+.subtituloNota {
     margin-top: 10px;
-    padding-top: 0px;
-}
-
-.order-last {
-    margin-top: auto; /* No es necesario el !important a menos que haya conflictos */
-    display: flex; /* Asegúrate de que sea un contenedor flex */
-    justify-content: flex-start; /* Alinea el contenido hacia la izquierda */
-    vertical-align: bottom;
-}
-.vn_categoria {
-    background-color: var(--nd-color-primary-subtle);
-    color: var(--nd-color-primary-text);
-    padding: 5px 10px; /* Ajusta el padding a tu gusto */
-    display: inline-block; /* Cambiar a inline-block */
-    border-radius: var(--nd-radius-sm); /* Opcional: para bordes redondeados */
-    height: 40px;
-    vertical-align: bottom;
-
-}
-
-.subtituloNota{
-    font-size: 24px;
     margin-bottom: 10px;
-    margin-top: 10px;
+    font-size: var(--nd-font-size-2xl);
 }
-.subtituloNota::placeholder{
-    font-size: 24px;
-    margin-left: 15px;
-    margin-bottom: 10px;
-    margin-top: 10px;
-}
-.parrafoNota{
-    font-size: 20px !important;
-    font-weight: 500;
-    margin-bottom: 10px;
-    margin-top: 10px;
-    font-weight:lighter;
-}
-.parrafoNota::placeholder{
-    font-size: 20px;
-    font-weight: 500;
-    margin-bottom: 10px;
-    margin-top: 10px;
-    width: 600px !important;
-    min-width: 300px !important;
-}
-.columnaTutorial {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-}   
-.float-right {
-    float: right !important;
-    vertical-align: top !important;
-    padding-right: 30px;
+.subtituloNota::placeholder {
+    font-size: var(--nd-font-size-2xl);
 }
 
-.breadcrumb-item{
-    color: var(--nd-color-text);
-    border:none;
-    text-decoration: none;
+.parrafoNota {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: var(--nd-font-size-xl);
+    font-weight: var(--nd-font-weight-light);
+}
+.parrafoNota::placeholder {
+    font-size: var(--nd-font-size-xl);
+    font-weight: var(--nd-font-weight-medium);
 }
 
-.blackActive{
-    color: var(--nd-color-text);
+.botonEliminarContenido {
+    padding: 0;
 }
 
-.botonEliminarContenido{
-    padding: 0px;
-}
 .spanContainer {
     display: flex;
-    align-items: center; /* Alinea verticalmente al centro */
-    padding-left: 0px;
-    padding-right: 10px;
+    align-items: center;
     width: 100%;
-  } 
-.imagenNotaContenido{
-    margin-top: 20px;
-    margin-bottom: 20px;
-    border-radius: var(--nd-radius-xl) !important;
-    height: auto !important;
-    max-height: 600px !important;
-
+    padding-left: 0;
+    padding-right: 10px;
 }
 
-
-
-
-
-  
-
-
-
-
-
-.imagenRRSS {
+/* Embebidos (YouTube, Twitter, iframes de franquicias) */
+.centradoContenido {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding-bottom: var(--nd-space-5);
+    text-align: center;
+    border-radius: var(--nd-radius-xl);
+}
+/* !important: el HTML del embed trae width/height inline */
+.centradoContenido iframe {
     display: block;
     width: 100% !important;
-    max-width: 500px;
+    height: 100% !important;
+}
+/* !important: el widget de Twitter le escribe la altura inline */
+.twitter-tweet {
+    height: 100% !important;
+}
+
+/* ---------- Cropper.js (recorte de imágenes) ---------- */
+/* !important: Cropper.js escribe tamaños y estilos inline en sus elementos */
+.cropper-hidden {
+    width: 100% !important;
     height: auto !important;
-    aspect-ratio: 1 / 1;
     object-fit: contain !important;
-    background-color: var(--nd-color-bg-muted);
     border-radius: var(--nd-radius-lg) !important;
-    margin-top: 10px;
-  }
-  .cropper-hidden {
-    width: 100% !important; /* Ocupa todo el ancho del contenedor */
-    height: auto !important; /* Ajusta la altura automáticamente */
-    object-fit: contain !important; /* Asegura que toda la imagen sea visible */
-    border-radius: var(--nd-radius-lg) !important;
-
 }
-.cropper-modal {
-    object-fit: contain !important;
-}
-
+.cropper-modal,
 .cropper-crop-box {
     object-fit: contain !important;
 }
-  
-
-.cropper-wrap-box{
+.cropper-wrap-box {
     border-radius: var(--nd-radius-lg) !important;
-
 }
 
-
-
-
-
-.form-check-input {
-    accent-color: var(--nd-color-primary); /* Cambia a tu color deseado */
-    margin-top: 10px;
-    padding: 10px;
-    margin-left: -15px !important;
-    margin-right: 15px;
-
-
-  }
-
-.form-check-input:checked {
-    background-color: var(--nd-color-primary); /* Color de fondo al estar seleccionado */
-    border-color: var(--nd-color-primary) ;
-    box-shadow: none; /* Eliminar la sombra */
-}
-.textAreaComentarios {
-    width: 100%;         /* Ocupa todo el ancho del contenedor */
-    height: 150px;       /* Ajusta la altura a tu preferencia */
-    resize: none;        /* Elimina las "rayitas" de redimensionamiento */
-    padding: 10px;       /* Añade espacio interno para mejor apariencia */
-    font-size: 16px;     /* Tamaño de fuente */
-    border: 1px solid var(--nd-color-border-strong); /* Personaliza el borde */
-    border-radius: var(--nd-radius-sm);  /* Bordes redondeados */
-    box-sizing: border-box; /* Incluye padding y border en el tamaño total */
-    border-radius: var(--nd-radius-lg);
-    outline: none; 
-  }
-  .textAreaComentarios:focus {
-    border: 1px solid var(--nd-color-border-strong); /* Personaliza el borde */
-  }
-  .textAreaComentarios::placeholder {
-    font-size: 16px;
-    color:var(--nd-color-text-secondary);
-    margin-top: 10px;
-    opacity: 0.8;    /* Asegura que el color se vea bien */
-  }
-
-
-
-.col-2 .publicada{
-    background-color: var(--nd-color-success-subtle);
-    height: 30px;
-    color: var(--nd-color-success);
-    padding: 0px;
-    margin-top: 0px;
-    border-radius: var(--nd-radius-xl);
-    padding-top: 3px;
-    padding-left: 13px;
-}
-
-.BotonUbicacion{
-    width: 150px !important;
-    padding: 5px !important;
-    height: 70px !important;
-    float: right !important;
-    justify-content: end;
-}
-
-.mapa{
-    width: 100%;
-}
-
-.imagenParaReporte{
-    display: none !important;
-}
-
-
-.centradoContenido{
-    display: flex;
-    justify-content: center; /* Centra horizontalmente */
-    align-items: center;    /* Centra verticalmente */
-    text-align: center;     /* Centra texto (si aplica) */
-    width: 100% !important;
-    border-radius: var(--nd-radius-xl);
-    padding-bottom: 20px;
-    height: 100% !important;
-  
-}
-.centradoContenido iframe {
-  width: 100% !important;
-  height: 100% !important;
-  display: block;
-}
-.twitter-tweet{
-    height: 100% !important;
-}
-
-
-
+/* ---------- Quill (editor de párrafos) ---------- */
 .quill-editor {
     display: flex;
-    flex-direction: column-reverse; /* Invierte el orden de los hijos */
+    flex-direction: column-reverse;
     width: 100%;
-  }
+}
 
-  .quill-editor p {
-    margin-bottom: 1em !important; /* Espaciado entre párrafos */
-  }
+/* !important: quill.snow.css se carga después y pone margin: 0 a los párrafos */
+.quill-editor p {
+    margin-bottom: 1em !important;
+}
 
-
-  .ql-editor.ql-blank::before {
+/* !important: quill.snow.css pone el placeholder en itálica con la misma especificidad */
+.ql-editor.ql-blank::before {
     content: attr(data-placeholder);
-    font-weight: 600;
-
-    opacity: 0.3;
+    font-weight: var(--nd-font-weight-semibold);
     font-style: normal !important;
-    pointer-events: none; /* Evita que el placeholder sea seleccionable */
-  }
-  
-  .quill-editor .ql-toolbar {
-    margin-top: 0px; /* Espaciado opcional entre el editor y la barra */
-    border: 1px solid var(--nd-color-border-strong);
-    border-radius: var(--nd-radius-lg);
-    width:auto !important;
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.ql-editor img {
+    border-radius: var(--nd-radius-xl);
+}
+
+/* La barra de herramientas aparece flotando arriba solo con el editor enfocado */
+.quill-editor .ql-toolbar {
+    display: none;
+    width: auto;
+    margin: 0 auto;
     justify-content: center;
     text-align: center;
-    margin: 0 auto;
-    display: none;
-    position: fixed
-  }
-  
-  .quill-editor .ql-container {
-    border-top: none; /* Quita el borde superior para integrarlo mejor */
-
-  }
-  .quill-editor .ql-toolbar {
-    display: none; /* Oculto por defecto */
-  }
-  
-  .quill-editor.focused .ql-toolbar {
-    display: flex; /* Muestra el toolbar cuando está enfocado */
-    position: fixed !important; /* Fija el toolbar en la pantalla */
-    top: 20px; /* Posiciona la barra en la parte inferior */
-    left: 45%; /* Asegura que esté alineada al borde izquierdo */
-    width: 100%; /* Asegura que ocupe todo el ancho de la pantalla */
-    background-color: var(--nd-color-bg-surface); /* Fondo blanco para que sea visible */
-    z-index: 1000; /* Asegura que esté por encima de otros elementos */
-    border-top: 1px solid var(--nd-color-border-strong); /* Línea superior para separar del contenido */
-    padding: 10px; /* Espaciado interno opcional */
-    transform: translateX(-50%)
+    border: var(--nd-border-width) solid var(--nd-color-border-strong);
+    border-radius: var(--nd-radius-lg);
 }
-
-.tituloCreativo{
-    margin-bottom: 5px !important;
-    font-size: 20px !important;
-    margin-left: 15px;
+.quill-editor .ql-container {
+    border-top: none;
 }
-
-@media print {
-    /* Ocultar ciertos componentes */
-    .no-print {
-      display: none !important;
-    }
-  
-    /* Mostrar una imagen al inicio */
-    #print-header {
-      display: block !important;
-      margin-bottom: 20px;
-    }
-  }
-  
-  /* Imagen oculta normalmente */
-  #print-header {
-    display: none;
-  }
-
-  .ql-editor img{
-    border-radius: var(--nd-radius-xl);
-
-  }
-
-  .loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: var(--nd-color-overlay);
+.quill-editor.focused .ql-toolbar {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
+    position: fixed;
+    top: var(--nd-space-5);
+    left: 45%;
+    z-index: var(--nd-z-dropdown);
+    padding: 10px;
+    background-color: var(--nd-color-bg-surface);
+    border-top: var(--nd-border-width) solid var(--nd-color-border-strong);
+    transform: translateX(-50%);
 }
-
-

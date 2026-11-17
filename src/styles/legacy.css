@@ -1,0 +1,204 @@
+/* ==========================================================================
+   Clases legacy compartidas entre módulos
+   --------------------------------------------------------------------------
+   Antes vivían en modules/notas/nota.css, pero las usan pantallas de otros
+   módulos (Administración, Comercial, Feed, Perfil, Monitor…). Como nota.css
+   solo se carga al entrar a una pantalla de notas, esas pantallas se veían
+   distinto según por dónde había navegado el usuario.
+
+   Este archivo se importa en app/App.jsx justo DESPUÉS de Bootstrap (para
+   ganarle en los empates a .row > * y .col-*, como pasaba con nota.css) y ANTES
+   de importar las pantallas (para que el CSS propio de cada una le gane).
+   No moverlo de ahí.
+
+   No agregar clases nuevas acá: para UI nueva usar componentes .nd-*
+   (src/styles/components.css). Equivalencias sugeridas al migrar:
+     .abajoDeTusNotas      → .nd-page-header__subtitle
+     .buscadorNotasForm    → .nd-search
+     .inputBuscadorNotas   → .nd-input
+     .link-sin-estilos     → (sin equivalente; usar <Link> con clase propia)
+   ========================================================================== */
+
+/* ---------- Encabezado de pantalla ---------- */
+#nota {
+    font-size: var(--nd-font-size-lg);
+    font-weight: var(--nd-font-weight-semibold);
+    padding-left: 30px;
+    padding-top: var(--nd-space-5);
+}
+
+.col.boton {
+    padding-top: 10px;
+}
+
+.abajoDeTusNotas {
+    font-size: var(--nd-font-size-md);
+    color: var(--nd-color-text-secondary);
+    padding-left: var(--nd-space-5);
+}
+
+/* Los íconos de encabezado llevan .me-2 de Bootstrap, que trae !important:
+   la única forma de anular ese margen es con !important. La clase va duplicada
+   para ganarle a .me-2 aunque Bootstrap se cargue después que este archivo. */
+.icono_tusNotas.icono_tusNotas {
+    padding-right: 0 !important;
+    margin-right: 0 !important;
+}
+
+.todasLasNotas {
+    font-size: var(--nd-font-size-lg);
+    font-weight: var(--nd-font-weight-bold);
+    color: var(--nd-color-text);
+    align-items: center;
+}
+
+/* Fondo blanco de las pantallas con .content (pisa el gris de .content) */
+.crearNotaGlobal,
+.content.crearNotaGlobal {
+    background-color: var(--nd-color-bg-surface);
+    padding: 10px;
+}
+
+/* ---------- Buscador ---------- */
+.buscadorNotasForm {
+    display: flex;
+    width: 400px;
+    height: 44px;
+    float: right;
+    margin-right: 0;
+}
+
+.inputBuscadorNotas {
+    width: 100%;
+    padding: 10px;
+    font-size: var(--nd-font-size-md);
+    color: var(--nd-color-text);
+    border: var(--nd-border-width) solid var(--nd-color-border);
+    border-radius: var(--nd-radius-lg);
+    outline: none;
+    background-image: url('/images/search.png');
+    background-repeat: no-repeat;
+    background-position: 10px center;
+    background-size: 20px 20px;
+    box-sizing: border-box;
+}
+/* Al escribir se oculta la lupa */
+.inputBuscadorNotas:focus,
+.inputBuscadorNotas:not(:placeholder-shown) {
+    background-color: transparent;
+    background-image: none;
+}
+
+/* ---------- Utilidades legacy ---------- */
+.link-sin-estilos {
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.ml-5 {
+    margin-left: 30px;
+}
+
+.displayFlex {
+    display: flex;
+    align-items: center;
+    gap: var(--nd-space-2);
+    font-size: var(--nd-font-size-md);
+}
+
+.fontGrisImagen {
+    font-size: var(--nd-font-size-base);
+    color: var(--nd-color-text-secondary);
+}
+
+/* ---------- Carga de imagen (Crear nota, Mi perfil) ---------- */
+.upload-block {
+    width: 613px;
+    max-width: calc(100% - 50px); /* nunca más ancha que su columna (descontando el margen) */
+    height: 182px;
+    padding: var(--nd-space-5);
+    margin-left: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: var(--nd-color-bg-page);
+    border: var(--nd-border-width-thick) dashed var(--nd-color-text);
+    border-radius: var(--nd-radius-md);
+    transition: background-color var(--nd-duration-base) var(--nd-easing);
+}
+.upload-block.dragover {
+    background-color: var(--nd-color-bg-muted);
+}
+
+.custom-file-upload {
+    width: auto;
+    font-size: var(--nd-font-size-base);
+    font-weight: var(--nd-font-weight-semibold);
+    color: var(--nd-color-primary-text);
+    border-radius: var(--nd-radius-sm);
+    cursor: pointer;
+    transition: color var(--nd-duration-base) var(--nd-easing);
+}
+.custom-file-upload:hover {
+    color: var(--nd-color-link-hover);
+}
+
+/* ---------- Comentarios (Publicar nota, epígrafes, Mi perfil) ---------- */
+.textAreaComentarios {
+    width: 100%;
+    height: 150px;
+    padding: 10px;
+    resize: none;
+    font-size: var(--nd-font-size-md);
+    border: var(--nd-border-width) solid var(--nd-color-border-strong);
+    border-radius: var(--nd-radius-lg);
+    box-sizing: border-box;
+    outline: none;
+}
+.textAreaComentarios:focus {
+    border-color: var(--nd-color-border-focus);
+}
+.textAreaComentarios::placeholder {
+    font-size: var(--nd-font-size-md);
+    color: var(--nd-color-text-secondary);
+    opacity: 0.8;
+}
+
+/* ---------- Estado "publicada" (Ver nota, Feed) ---------- */
+.publicada {
+    width: 140px;
+    height: auto;
+    margin-top: 10px;
+    padding-top: 0;
+}
+.col-2 .publicada {
+    height: 30px;
+    margin-top: 0;
+    padding: 3px 0 0 13px;
+    color: var(--nd-color-success);
+    background-color: var(--nd-color-success-subtle);
+    border-radius: var(--nd-radius-xl);
+}
+
+/* ---------- Impresión de reportes (Dashboard, Ver nota) ---------- */
+.imagenParaReporte {
+    display: none;
+}
+
+#print-header {
+    display: none;
+}
+
+@media print {
+    /* !important: tiene que ganarle a cualquier display de pantalla */
+    .no-print {
+        display: none !important;
+    }
+    #print-header {
+        display: block !important;
+        margin-bottom: var(--nd-space-5);
+    }
+}

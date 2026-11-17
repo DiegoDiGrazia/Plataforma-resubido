@@ -6,17 +6,15 @@
 //    pestaña edita su nota y cerrar la pestaña no pierde cambios.
 // 3. Si al abrir una nota hay un borrador local con cambios, ofrece recuperarlo.
 // 4. Avisa si la misma nota está abierta en otra pestaña.
-// 5. Autoguarda en el servidor (AutoguardadoServidor). Cuando el servidor le asigna id a una nota
-//    nueva, la URL y el borrador local pasan de "nueva-<uuid>" al id real.
+// No hay autoguardado en el servidor: la nota llega al servidor solo al guardar/publicar.
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Link, Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, Outlet, useParams } from 'react-router-dom';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 import { Alert, Button, Modal, Spinner } from 'react-bootstrap';
 import { resetCrearNota, setCambiarEstadoActual, setClaveEdicion } from '@/store/crearNotaSlice';
 import { setEstadoDistribucion } from '@/store/distribucionNotaSlice';
 import { borrarBorrador, guardarBorrador, leerBorrador, limpiarBorradoresViejos } from '@/shared/utils/borradoresDB';
-import { esBorradorCerrado, esClaveNueva, firmaDistribucion, firmaNota, reabrirBorrador, rutaEditor } from './navegacionEditor';
-import AutoguardadoServidor from './AutoguardadoServidor';
+import { esBorradorCerrado, esClaveNueva, firmaDistribucion, firmaNota, reabrirBorrador } from './navegacionEditor';
 
 const DEBOUNCE_MS = 1000;
 const CANAL = 'nd-editor-notas';
@@ -35,8 +33,6 @@ const EditorNota = () => {
   const { clave } = useParams();
   const dispatch = useDispatch();
   const store = useStore();
-  const navigate = useNavigate();
-  const location = useLocation();
   const es_editor = useSelector((state) => state.formulario.es_editor);
   const nota = useSelector((state) => state.crearNota);
   const distribucion = useSelector((state) => state.distribucionNota);
@@ -45,10 +41,6 @@ const EditorNota = () => {
   const [estado, setEstado] = useState('cargando');
   const [borradorPendiente, setBorradorPendiente] = useState(null);
   const [abiertaEnOtraPestana, setAbiertaEnOtraPestana] = useState(false);
-  // La nota viene de un borrador local: tiene cambios que el servidor no tiene
-  const [restauradaDeBorrador, setRestauradaDeBorrador] = useState(false);
-  // Clave a la que se pasó la URL al recibir id del servidor: no hay que volver a hidratar
-  const claveMigrada = useRef(null);
 
   // ---------- 1. Hidratación ----------
   const aplicarBorrador = useCallback((borrador) => {
@@ -56,18 +48,11 @@ const EditorNota = () => {
     const base = store.getState().crearNota;
     dispatch(setCambiarEstadoActual({ ...base, ...borrador.nota, claveEdicion: clave }));
     dispatch(setEstadoDistribucion(borrador.distribucion || {}));
-    setRestauradaDeBorrador(true);
   }, [dispatch, store, clave]);
 
   useEffect(() => {
-    if (claveMigrada.current === clave) {
-      // Misma nota, solo cambió la clave de la URL (nueva-<uuid> → id): seguir sin recargar
-      claveMigrada.current = null;
-      return;
-    }
     let cancelado = false;
     setEstado('cargando');
-    setRestauradaDeBorrador(false);
     reabrirBorrador(clave);
     limpiarBorradoresViejos().catch(() => {});
 
@@ -182,24 +167,6 @@ const EditorNota = () => {
     };
   }, [guardarAhora]);
 
-  // ---------- 5. Nota nueva que recibió id del servidor ----------
-  useEffect(() => {
-    const idServidor = nota.id_nota_borrador;
-    if (estado !== 'listo' || !esClaveNueva(clave) || !idServidor || nota.claveEdicion !== clave) return;
-    const claveNueva = String(idServidor);
-
-    // El borrador local pasa a la clave del id, así al abrir la nota desde el listado se encuentra
-    const s = store.getState();
-    guardarBorrador(claveNueva, { nota: { ...s.crearNota, claveEdicion: claveNueva }, distribucion: s.distribucionNota })
-      .then(() => borrarBorrador(clave))
-      .catch((e) => console.warn('No se pudo mover el borrador local', e));
-
-    claveMigrada.current = claveNueva;
-    dispatch(setClaveEdicion(claveNueva));
-    const sufijo = location.pathname.slice(rutaEditor(clave).length); // "" o "/publicar"
-    navigate(rutaEditor(claveNueva) + sufijo, { replace: true });
-  }, [nota.id_nota_borrador, nota.claveEdicion, estado, clave, store, dispatch, navigate, location.pathname]);
-
   // ---------- 4. Misma nota en otra pestaña ----------
   useEffect(() => {
     if (!('BroadcastChannel' in window)) return;
@@ -271,12 +238,7 @@ const EditorNota = () => {
         </Alert>
       )}
 
-      {estado === 'listo' && (
-        <>
-          <AutoguardadoServidor guardarAlInicio={restauradaDeBorrador} />
-          <Outlet />
-        </>
-      )}
+      {estado === 'listo' && <Outlet />}
     </>
   );
 };
