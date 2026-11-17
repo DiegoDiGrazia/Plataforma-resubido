@@ -21,6 +21,9 @@ const initialState = {
   diferida: false,
   fecha_diferida: '',
   hora_diferida: '',
+  // id de la nota cuya distribución ya se trajo de la API. Evita que la columna editorial
+  // vuelva a pedirla (y pise los cambios) al recuperar un borrador local.
+  id_nota_cargada: '',
 };
 
 const distribucionNotaSlice = createSlice({
@@ -41,6 +44,9 @@ const distribucionNotaSlice = createSlice({
     setDistribucionDiferida: (state, action) => { state.diferida = action.payload; },
     setDistribucionFechaDiferida: (state, action) => { state.fecha_diferida = action.payload; },
     setDistribucionHoraDiferida: (state, action) => { state.hora_diferida = action.payload; },
+    setDistribucionIdNotaCargada: (state, action) => { state.id_nota_cargada = action.payload; },
+    // Reemplaza todo el estado (al restaurar un borrador local)
+    setEstadoDistribucion: (state, action) => ({ ...initialState, ...action.payload }),
     resetDistribucionNota: () => initialState,
   },
   extraReducers: (builder) => {
@@ -55,6 +61,7 @@ export const {
   setDistribucionYtDescripcion, setDistribucionYtLink, setDistribucionSearchTitulo,
   setDistribucionSearchDescripcion, setDistribucionBannerData, setDistribucionDiferida,
   setDistribucionFechaDiferida, setDistribucionHoraDiferida, resetDistribucionNota,
+  setDistribucionIdNotaCargada, setEstadoDistribucion,
 } = distribucionNotaSlice.actions;
 
 export default distribucionNotaSlice.reducer;

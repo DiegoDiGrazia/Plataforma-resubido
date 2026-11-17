@@ -14,3 +14,6 @@ build
 Thumbs.dbt
 # Configuración personal de Claude Code (la carpeta .claude/skills sí se versiona)
 .claude/settings.local.json
+
+# Repo aparte que estaba dentro de la carpeta del proyecto (no es parte de la plataforma)
+/redux-toolkit/

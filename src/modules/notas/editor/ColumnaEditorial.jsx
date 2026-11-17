@@ -25,6 +25,8 @@ import {
     setDistribucionDiferida,
     setDistribucionFechaDiferida,
     setDistribucionHoraDiferida,
+    setDistribucionIdNotaCargada,
+    setEstadoDistribucion,
 } from '@/store/distribucionNotaSlice';
 import SelectorCliente2 from './SelectorCliente2';
 import EsDemo from './EsDemo';
@@ -61,6 +63,7 @@ const ColumnaEditorial = ({ indice }) => {
     const distribucionDiferida = useSelector((state) => state.distribucionNota.diferida);
     const distribucionFechaDiferida = useSelector((state) => state.distribucionNota.fecha_diferida);
     const distribucionHoraDiferida = useSelector((state) => state.distribucionNota.hora_diferida);
+    const distribucionIdNotaCargada = useSelector((state) => state.distribucionNota.id_nota_cargada);
 
 
 
@@ -73,25 +76,33 @@ const ColumnaEditorial = ({ indice }) => {
 
     useEffect(() => {
         if (!nota.id_noti) return;
+        // Ya se cargó (o se restauró de un borrador local): no pisar los cambios del usuario
+        if (String(distribucionIdNotaCargada) === String(nota.id_noti)) return;
 
         obtenerDistribucionGeneracion(TOKEN, nota.id_noti).then((datos) => {
-            if (!datos || !datos[0]) return;
-
-            dispatch(setDistribucionFechaVencimiento(datos[0].fecha_vencimiento?.slice(0, 10) || ''));
-            dispatch(setDistribucionComentarios(datos[0].comentarios || ''));
-            dispatch(setDistribucionMetaTitulo(datos[0].meta_titulo || ''));
-            dispatch(setDistribucionMetaEngagement(datos[0].meta_engagement || ''));
-            dispatch(setDistribucionXDescripcion(datos[0].x_descripcion || ''));
-            dispatch(setDistribucionYtTitulo(datos[0].youtube_titulo || ''));
-            dispatch(setDistribucionYtDescripcion(datos[0].youtube_descripcion || ''));
-            dispatch(setDistribucionYtLink(datos[0].youtube_link_video || ''));
-            dispatch(setDistribucionSearchTitulo(datos[0].search_titulo || ''));
-            dispatch(setDistribucionSearchDescripcion(datos[0].search_descripcion || ''));
-
-            const diferida = extraerDiferidaDesdeUltimaActualizacion(datos[0].ultima_actualizacion);
-            dispatch(setDistribucionDiferida(diferida.diferida));
-            dispatch(setDistribucionFechaDiferida(diferida.fecha_diferida));
-            dispatch(setDistribucionHoraDiferida(diferida.hora_diferida));
+            if (!datos || !datos[0]) {
+                dispatch(setDistribucionIdNotaCargada(nota.id_noti));
+                return;
+            }
+            const dato = datos[0];
+            const diferida = extraerDiferidaDesdeUltimaActualizacion(dato.ultima_actualizacion);
+            // Una sola acción: el editor la toma como "carga" y no como cambio del usuario
+            dispatch(setEstadoDistribucion({
+                fecha_vencimiento: dato.fecha_vencimiento?.slice(0, 10) || '',
+                comentarios: dato.comentarios || '',
+                meta_titulo: dato.meta_titulo || '',
+                meta_engagement: dato.meta_engagement || '',
+                x_descripcion: dato.x_descripcion || '',
+                yt_titulo: dato.youtube_titulo || '',
+                yt_descripcion: dato.youtube_descripcion || '',
+                yt_link: dato.youtube_link_video || '',
+                search_titulo: dato.search_titulo || '',
+                search_descripcion: dato.search_descripcion || '',
+                diferida: diferida.diferida,
+                fecha_diferida: diferida.fecha_diferida,
+                hora_diferida: diferida.hora_diferida,
+                id_nota_cargada: nota.id_noti,
+            }));
         });
     }, [nota.id_noti, TOKEN]);
 

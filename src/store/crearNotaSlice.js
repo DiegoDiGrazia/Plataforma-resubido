@@ -143,6 +143,9 @@ const initialState = {
   id_nota_borrador: "",
   es_ia: '0',
   term_id: '',
+  // Clave de la URL (/notas/editar/:clave) a la que pertenece esta nota en memoria:
+  // id de la nota en el servidor, o "nueva-<uuid>" si todavía no tiene. Ver modules/notas/navegacionEditor.js
+  claveEdicion: '',
   // Los datos de distribución (Meta, X, YouTube, Search, diferida) están en distribucionNotaSlice
 };
 
@@ -369,6 +372,9 @@ const crearNotaSlice = createSlice({
     setCambiarEstadoActual: (state,action) => {
       return action.payload;
     },
+    setClaveEdicion: (state, action) => {
+      state.claveEdicion = action.payload;
+    },
 
     resetCrearNota: () => initialState,
   }
@@ -380,6 +386,7 @@ export const {
   setCopete, setNotaAEditar, setContenidoAEditar, setItemsEtiquetas, setEsDemo, setNoHome, setCategoriasActivasEnStore,
   setDistribucionProioritaria, setTipoContenido, setFechaVencimiento, setBajada, setEngagement, setComentario, setSelectedOptionDistribucion,
   setAutor, setMunicipio,setEpigrafeImagenPpal,setDemo, setMunicipios,setIdNoti, setProvincia,setPais, setIdAtt,setProvincias, resetCrearNota, setEpigrafeDeImagen, setListaImagenesContenidoEnBase64, setAtachment, setSumarUnoAlNumeroDeAtachment,
+  setClaveEdicion,
 } = crearNotaSlice.actions;
 
 export default crearNotaSlice.reducer;

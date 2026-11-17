@@ -1,13 +1,21 @@
-<<<<<<< HEAD
-# React + Vite
+# Plataforma Noticias (d)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Panel de clientes y editores de Noticias (d): notas, distribución, monitor, reportes y comercial.
 
-Currently, two official plugins are available:
+## Desarrollo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-=======
-# noticiasd-plataforma
-plataforma-noticiasd
->>>>>>> da2144c883ae437f0e58c844f644089489437ed9
+```bash
+npm install
+npm start          # webpack dev server en http://localhost:4001
+```
+
+## Dónde está cada cosa
+
+La estructura de carpetas, las convenciones de imports y el editor de notas están documentados en
+[CLAUDE.md](CLAUDE.md). El sistema de diseño (tokens, componentes, auditoría de estilos) está en
+[.claude/skills/noticiasd-design-system/SKILL.md](.claude/skills/noticiasd-design-system/SKILL.md).
+
+```bash
+# Auditar estilos hardcodeados de una carpeta o archivo
+node .claude/skills/noticiasd-design-system/scripts/audit.mjs src/modules/notas --detail
+```

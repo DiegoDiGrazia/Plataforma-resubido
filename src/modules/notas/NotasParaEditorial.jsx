@@ -19,10 +19,13 @@ import BotonCrearNota from '@/modules/notas/editor/BotonCrearNota';
 import "./nota.css";
 import "./NotasParaEditorialMobile.css";
 import './verNotaMobile.css'
+import './notasListado.css';
 import ModalConInputFile from '@/shared/components/modales/ModalConInputFile';
 import { guardarVideoYoutube } from '@/api/apisUsuarios';
 import ModalMensaje from '@/shared/components/modales/ModalMensaje';
 import { obtenerNotaCompletaConIa, obtenerFuenteBot } from '@/api/apisUsuarios';
+import { abrirEditorNota } from '@/modules/notas/navegacionEditor';
+import BorradoresLocales from './BorradoresLocales';
 
   function obtenerFechaDeManana() {
     const hoy = new Date();
@@ -126,7 +129,7 @@ const NotasParaEditorial = () => {
     }
 
     // ✅ Solo después de que todo se haya procesado, se navega
-    navigate("/crearNota");
+    abrirEditorNota({ dispatch, navigate, idNota: seDuplica ? null : notaABM.id });
 };
     const editarNotaFreemium = async (notaABM, seDuplica) => {
         dispatch(updateNotaFreemiumDistribucion(notaABM));
@@ -285,7 +288,7 @@ const NotasParaEditorial = () => {
     const ClickearEnCrearNota = (cliente) => {
         dispatch(resetCrearNota());
         dispatch(setClienteNota(cliente))
-        navigate("/crearNota");
+        abrirEditorNota({ dispatch, navigate });
     };
         
     const handleInputChange = (e) => {
@@ -384,6 +387,8 @@ const NotasParaEditorial = () => {
                     </div>
                 </div>
 
+                <BorradoresLocales />
+
                 <div className='row' id='filtroNotas'>
                     <div className="container">
                     <div className="row">
@@ -427,8 +432,8 @@ const NotasParaEditorial = () => {
                                 </div>
                             </div>
                             <div className='row' id='headerListadoNotas'>
-                                <div className='col-auto' style={{width: "70px"}}></div>
-                                <div className='col-4 columna_interaccion' style={{fontSize: "12px", color: "var(--nd-color-text-secondary)", fontWeight: "bold"}}>Título de la Nota</div>
+                                <div className='col-auto notasListado__espacioImagen'></div>
+                                <div className='col-4 columna_interaccion nd-text-xs nd-text-secondary nd-fw-bold'>Título de la Nota</div>
                                 {/* <div className='col-1 categoriasNotas text-aling-center'>Estado</div> */}
                                 <div className='col categoriasNotas d-flex align-items-center justify-content-center'>Categorías</div> 
                                 { (filtroSeleccionado != 1) ?
@@ -484,19 +489,15 @@ const NotasParaEditorial = () => {
                                             <p>{nota.cliente}</p>
                                         </div>
                                         
-                                    <div className='col totales_widget' id= 'botonesInteraccionNota' style={{ color: "var(--nd-color-text)"}}>
+                                    <div className='col totales_widget notasListado__acciones' id= 'botonesInteraccionNota'>
                                             {nota.estado === "PUBLICADO" && (
                                                 <a href={`http://noticiasd.com/nota/${nota.term_id}`} title="Ver nota" target="_blank" rel="noopener noreferrer">
-                                                    <i class="bi bi-eye-fill m-2 fs-2"></i>
+                                                    <i className="bi bi-eye-fill m-2 fs-2"></i>
                                                 </a>
                                             )}
                                         {perfilUsuario === "1" &&  CLIENTE != "" && ///MODIFICAR A 9 DESPUES DE LAS PRUEBAS
-                                            <button title="distribuir nota"
+                                            <button className="notasListado__botonIcono" title="distribuir nota"
                                                 onClick={() => editarNotaFreemium(nota, true)}
-                                                style={{background: "none", border: "none",padding: 0,
-                                                    margin: 0,
-                                                    cursor: "pointer",
-                                                }}
                                             >
                                                 <img src="/images/prisma.png" alt="Duplicar Nota" className='mb-3' />
                                             </button>
@@ -509,32 +510,24 @@ const NotasParaEditorial = () => {
                                             to={nota?.editable == '1' ? `/verNota` : `#`}
                                             state={{ id: nota.id_noti ? nota.id_noti : nota.term_id, notaABM: nota }}
                                         >
-                                            <i class="bi bi-bar-chart-line-fill m-2 fs-2"></i>
+                                            <i className="bi bi-bar-chart-line-fill m-2 fs-2"></i>
                                         </Link>
                                         }
 
                                         {permisoEdicion && (
                                             <>
-                                                <button title="video youtube"
+                                                <button className="notasListado__botonIcono" title="video youtube"
                                                     onClick={() => {
                                                         setMostrarModalYoutube(true);
                                                         setIdNotaYoutube(nota.id);
                                                         console.log(nota.id)
                                                     }}
-                                                    style={{background: "none", border: "none",padding: 0,
-                                                        margin: 0,
-                                                        cursor: "pointer",
-                                                    }}
                                                     >
                                                     <i className="bi bi-youtube m-2 fs-2"></i>
                                                 </button>
 
-                                                <button title="Duplicar Nota"
+                                                <button className="notasListado__botonIcono" title="Duplicar Nota"
                                                     onClick={() => editarNota(nota, true)}
-                                                    style={{background: "none", border: "none",padding: 0,
-                                                        margin: 0,
-                                                        cursor: "pointer",
-                                                    }}
                                                     >
                                                     <i className="bi bi-back m-2 fs-2"></i>
                                                 </button>
@@ -542,12 +535,8 @@ const NotasParaEditorial = () => {
                                         )}
 
                                         { nota.es_ia == "1" &&
-                                        <button title="Obtener fuente"
+                                        <button className="notasListado__botonIcono" title="Obtener fuente"
                                             onClick={() => mostrarFuenteNota(nota.term_id)}
-                                            style={{background: "none", border: "none",padding: 0,
-                                                margin: 0,
-                                                cursor: "pointer",
-                                            }}
                                             >
                                             <i className="bi bi-menu-button-wide m-2 fs-2"></i>
                                         </button>
@@ -570,13 +559,7 @@ const NotasParaEditorial = () => {
                             {cargandoNotas && 
                             
                             <div
-                                className='totales'
-                                style={{
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    margin: "20px",
-                                    marginLeft: "40px"
-                                }}
+                                className='totales d-flex justify-content-center m-4'
                                 >
                                 <Spinner color='blue' />
                             </div>

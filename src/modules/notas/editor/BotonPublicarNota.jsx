@@ -9,6 +9,7 @@ import { useContext } from 'react';
 import { ArchivoContext } from '@/shared/context/archivoContext';
 import  store  from '@/store/store'; // o la ruta que tengas definida
 import BotonModalIframes from './BotonModalframes';
+import { cerrarBorrador } from '@/modules/notas/navegacionEditor';
 
 
 const BotonPublicarNota = ({ status, isLoading, setIsLoading }) => {
@@ -158,6 +159,8 @@ const BotonPublicarNota = ({ status, isLoading, setIsLoading }) => {
 
             if (response.status === "true") {
                 console.log("Nota publicada con éxito");
+                // Ya está en el servidor: se borra la copia local de esta nota
+                cerrarBorrador(store.getState().crearNota.claveEdicion);
                 console.log('response en boton: ', response);
                 setIdNotaPublicada(response.item);
 

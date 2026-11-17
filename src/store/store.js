@@ -2,6 +2,7 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { persistStore, persistReducer, createMigrate } from "redux-persist";
 import storage from "redux-persist/lib/storage"; // localStorage para web
+import { guardarBorrador } from "@/shared/utils/borradoresDB.js";
 
 // Importa tus slices
 import dashboardSlice from "./dashboardSlice.js";
@@ -52,12 +53,31 @@ const migraciones = {
     }
     return { ...state, crearNota: restoNota, distribucionNota };
   },
+  // v3: la nota en edición deja de persistirse acá (se pisaba entre pestañas y no entraba en
+  // localStorage por las imágenes). Si había una a medio editar, pasa a borrador local (IndexedDB)
+  // y aparece en "Borradores en este navegador" del listado de notas.
+  3: (state) => {
+    const { crearNota, distribucionNota, ...resto } = state || {};
+    const tieneContenido = crearNota && (crearNota.tituloNota || crearNota.contenidoNota?.length);
+    if (tieneContenido) {
+      const clave = crearNota.id_noti && String(crearNota.id_noti) !== "0"
+        ? String(crearNota.id_noti)
+        : `nueva-recuperada-${Date.now()}`;
+      guardarBorrador(clave, {
+        nota: { ...crearNota, claveEdicion: clave },
+        distribucion: distribucionNota || {},
+      }).catch(() => {});
+    }
+    return resto;
+  },
 };
 
 // Configuración de Redux Persist
 const persistConfig = {
   key: "root",
-  version: 2,
+  version: 3,
+  // La nota en edición vive en IndexedDB, un borrador por nota (ver modules/notas/EditorNota.jsx)
+  blacklist: ["crearNota", "distribucionNota"],
   storage, // esto usa localStorage en web
   migrate: createMigrate(migraciones, { debug: false }),
 };

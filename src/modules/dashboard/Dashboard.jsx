@@ -28,6 +28,7 @@ import { traerDatosLocalmente } from '@/shared/utils/buscarEnLocal.js';
 import { obtenerMetricasCliente } from '@/api/dashboardApi';
 import { obtenerClientes } from '@/api/apis';
 import SelectorConBuscador from '@/shared/components/form/SelectorConBuscador.jsx';
+import { abrirEditorNota } from '@/modules/notas/navegacionEditor';
 
 export function formatNumberMiles(num) {
     if (num === null || num === undefined || num === "") {
@@ -125,7 +126,7 @@ const Dashboard = () => {
     const ClickearEnCrearNota = (nombreCliente) => {
         dispatch(resetCrearNota());
         dispatch(setClienteNota(nombreCliente));
-        navigate("/crearNota");
+        abrirEditorNota({ dispatch, navigate });
     };
 
     return (

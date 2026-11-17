@@ -28,6 +28,8 @@ const Formulario = lazy(() => import('@/modules/auth/Formulario'));
 const Dashboard = lazy(() => import('@/modules/dashboard/Dashboard'));
 const CrearNota = lazy(() => import('@/modules/notas/CrearNota'));
 const PublicarNota = lazy(() => import('@/modules/notas/PublicarNota'));
+const EditorNota = lazy(() => import('@/modules/notas/EditorNota'));
+const RedirigirEditorLegacy = lazy(() => import('@/modules/notas/RedirigirEditorLegacy'));
 const VerNota = lazy(() => import('@/modules/notas/VerNota'));
 const Perfil = lazy(() => import('@/modules/perfil/miPerfil'));
 const Soporte = lazy(() => import('@/modules/soporte/soporte'));
@@ -51,8 +53,14 @@ function App() {
             {/* Rutas con Sidebar */}
             <Route element={<LayoutConSidebar />}>
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/crearNota" element={<CrearNota />} />
-              <Route path="/publicarNota" element={<PublicarNota />} />
+              {/* Editor de notas: la URL identifica la nota (id o "nueva-<uuid>"), así cada pestaña edita la suya */}
+              <Route path="/notas/editar/:clave" element={<EditorNota />}>
+                <Route index element={<CrearNota />} />
+                <Route path="publicar" element={<PublicarNota />} />
+              </Route>
+              {/* Rutas viejas: redirigen a la nueva con la nota que esté en memoria */}
+              <Route path="/crearNota" element={<RedirigirEditorLegacy />} />
+              <Route path="/publicarNota" element={<RedirigirEditorLegacy publicar />} />
               <Route path="/administrador" element={<Administrador />} />
               <Route path="/usuarios" element={<UsuariosAdmin />} />
               <Route path="/perfiles" element={<PerfilesAdmin />} />

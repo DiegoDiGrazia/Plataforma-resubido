@@ -37,6 +37,15 @@ src/
 - Un componente nuevo va en su módulo; pasa a `shared/` recién cuando lo usa un segundo módulo.
 - Llamadas a la API van en `api/`, nunca dentro de componentes ni de `modules/`.
 
+## Editor de notas
+
+- La URL identifica la nota: `/notas/editar/:clave` (crear/editar) y `/notas/editar/:clave/publicar`.
+  `clave` = id de la nota o `nueva-<uuid>`. Así cada pestaña edita su propia nota.
+- Para abrir el editor: cargar la nota en `crearNota` y llamar a `abrirEditorNota({ dispatch, navigate, idNota })`
+  (`modules/notas/navegacionEditor.js`). Nunca `navigate('/crearNota')`.
+- La nota en edición NO se persiste con redux-persist: `EditorNota.jsx` guarda un borrador por nota en
+  IndexedDB (`shared/utils/borradoresDB.js`). Tras guardar/publicar con éxito, `cerrarBorrador(clave)`.
+
 ## Estilos — obligatorio en cualquier cambio visual
 
 Antes de escribir o modificar CSS, `className`, `style={{}}`, colores de gráficos o un componente

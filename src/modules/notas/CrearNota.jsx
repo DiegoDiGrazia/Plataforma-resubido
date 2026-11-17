@@ -16,7 +16,7 @@ import { setTituloNota, setContenidoNota, setImagenPrincipal, setIdAtt, setCambi
 import { useDispatch, useSelector } from 'react-redux';
 import ImagenDeParrafo from '@/modules/notas/componentes/ImagenDeParrafo';
 import { Link, Navigate } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import YoutubeNota from '@/modules/notas/componentes/YoutubeNota';
 import Ubicacion from '@/modules/notas/componentes/Ubicacion';
 import Embebido from '@/modules/notas/componentes/Embebidos';
@@ -36,7 +36,7 @@ import { comprimirPDFaBase64 } from '@/shared/utils/convertirPDFaBase64';
 import CarruselEnNota from '@/modules/notas/componentes/CarruselEnNota';
 import FormFranquicias from '@/modules/notas/componentes/FormFranquicias';
 import ImagePickerModal from '@/modules/notas/componentes/ImagePickerModal';
-import GuardarNotaCada10sg from './GuardarNotaCada10sg';
+import { rutaPublicar } from './navegacionEditor';
 import BotonRegenerarDataConIa from '@/modules/notas/ia/BotonRegenerarTextoConIa';
 import { setContenidoDeNotaDeIa } from '@/store/crearNotaSlice';
 
@@ -61,6 +61,7 @@ const CrearNota = () => {
     const [historial, setHistorial] = useState([]);
     const [futuros, setFuturos] = useState([]);
     const esEditor = useSelector((state) => state.formulario.es_editor);
+    const { clave } = useParams();
     // Quien puede editar cómo se publica la nota no ve los videos tutoriales
     const permisoDatosCreacion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Editorial: Datos creacion") || false);
     const contenidoNota = useSelector((state) => state.crearNota.contenidoNota);
@@ -208,7 +209,6 @@ const CrearNota = () => {
     return (
 
                 <div className="content flex-grow-1 crearNotaGlobal">
-                    {/* <GuardarNotaCada10sg nota={actual} /> */}
                     <div className='row'>
                         <div className='col'>
                             <h4 id="nota">
@@ -228,7 +228,7 @@ const CrearNota = () => {
                             <BotonEnGenerarVistaPrevia status= {'Preview'}/>
                         </div>
                         <div className='col-auto'>
-                            <Button onClick={() => navigate('/publicarNota')} id="botonPublicar" variant="none">
+                            <Button onClick={() => navigate(rutaPublicar(clave))} id="botonPublicar" variant="none">
                                 <img src="/images/send.png" alt="Icono 1" className="icon me-2 icono_tusNotas" />{" Publicar"}
                             </Button>
                         </div>

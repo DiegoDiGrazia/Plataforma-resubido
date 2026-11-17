@@ -1,0 +1,20 @@
+/* Listado de notas (NotasParaEditorial) — estilos propios */
+
+/* Columna vacía del encabezado: mismo ancho que la miniatura de cada fila */
+.notasListado__espacioImagen {
+    width: 70px;
+}
+
+.notasListado__acciones {
+    color: var(--nd-color-text);
+}
+
+/* Botones-icono de cada fila (distribuir, YouTube, duplicar, fuente) */
+.notasListado__botonIcono {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    color: inherit;
+    cursor: pointer;
+}

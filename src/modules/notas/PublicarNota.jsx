@@ -11,7 +11,7 @@ import './publicarNota.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link} from 'react-router-dom';
 import { setCategoriasActivasEnStore, setImagenRRSS } from '@/store/crearNotaSlice'; // Asegúrate de importar setImagenPrincipal
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import ColumnaEditorial from '@/modules/notas/editor/ColumnaEditorial';
 import useCategorias from '@/shared/hooks/useCategorias';
 import BotonPublicarNota from '@/modules/notas/editor/BotonPublicarNota';
@@ -19,10 +19,11 @@ import { videos } from '@/modules/soporte/soporte';
 import CardTutorial from '@/shared/components/CardTutorial';
 import { setComentario } from '@/store/crearNotaSlice';
 import { setSelectedOptionDistribucion } from '@/store/crearNotaSlice';
-import GuardarNotaCada10sg from './GuardarNotaCada10sg';
+import { rutaEditor } from './navegacionEditor';
 
 const PublicarNota = () => {
     const navigate = useNavigate()
+    const { clave } = useParams();
     const dispatch = useDispatch();
     const perfilUsuario = useSelector((state) => state.formulario.usuario.perfil);
     const TOKEN = useSelector((state) => state.formulario.token);
@@ -113,9 +114,6 @@ const PublicarNota = () => {
 
     return (
                 <>
-                {/* {isLoading && (
-                <GuardarNotaCada10sg nota={actual} />
-                )} */}
                 <div className="publicarNotaPage">
                     <header id="head_dash" className='header_dash'>
                         <div className='row'>
@@ -288,7 +286,7 @@ const PublicarNota = () => {
                                     }
 
                                     <Button
-                                        onClick={() => navigate('/crearNota')}
+                                        onClick={() => navigate(rutaEditor(clave))}
                                         variant="secondary"
                                         size="lg"
                                     >
