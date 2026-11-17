@@ -1,0 +1,94 @@
+/* Pantalla Publicar nota (/publicarNota) — estilos propios, siempre bajo .publicarNotaPage */
+
+/* container-fluid + este padding compensan los márgenes negativos del .row de Bootstrap:
+   el contenido queda a --nd-page-padding del sidebar y sin scroll horizontal */
+.publicarNotaPage__cuerpo {
+    padding: var(--nd-space-6) var(--nd-page-padding);
+}
+
+.publicarNotaPage__seccion {
+    margin-bottom: var(--nd-space-6);
+}
+
+.publicarNotaPage .headerPublicarNota,
+.publicarNotaPage .imagenParaRRSSHeader,
+.publicarNotaPage .hDistribucionContenido {
+    font-size: var(--nd-font-size-2xl);
+    font-weight: var(--nd-font-weight-bold);
+    color: var(--nd-color-text);
+    margin: 0 0 var(--nd-space-1);
+}
+
+.publicarNotaPage .abajoDeAgregarCategoria {
+    font-size: var(--nd-font-size-md);
+    color: var(--nd-color-text-secondary);
+    margin: 0 0 var(--nd-space-3);
+}
+
+/* Categorías: pills seleccionables */
+.publicarNotaPage .filaCategorias {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--nd-space-2);
+}
+.publicarNotaPage .categorias,
+.publicarNotaPage .categoriaActiva {
+    padding: var(--nd-space-2) var(--nd-space-4);
+    border: none;
+    border-radius: var(--nd-radius-pill);
+    font-size: var(--nd-font-size-md);
+    font-weight: var(--nd-font-weight-bold);
+}
+.publicarNotaPage .categorias {
+    background-color: var(--nd-color-bg-muted);
+    color: var(--nd-color-text);
+}
+.publicarNotaPage .categorias:hover {
+    background-color: var(--nd-gray-200);
+    color: var(--nd-color-text);
+}
+.publicarNotaPage .categoriaActiva,
+.publicarNotaPage .categoriaActiva:hover {
+    background-color: var(--nd-color-primary-subtle);
+    color: var(--nd-color-primary-text);
+}
+
+/* Opciones de distribución (radio en tarjeta) */
+.publicarNotaPage .containerFormCheck,
+.publicarNotaPage .containerFormCheckActive {
+    border: var(--nd-border-width) solid var(--nd-color-border);
+    border-radius: var(--nd-radius-lg);
+    padding: var(--nd-space-3) var(--nd-space-4);
+    margin: var(--nd-space-3) 0;
+}
+.publicarNotaPage .containerFormCheckActive {
+    border-color: var(--nd-orange-200);
+    background-color: var(--nd-color-primary-subtle);
+}
+.publicarNotaPage .distribuirNotaP {
+    font-size: var(--nd-font-size-lg);
+    margin: 0 0 var(--nd-space-1);
+}
+.publicarNotaPage .containerFormCheck .abajoDeAgregarCategoria,
+.publicarNotaPage .containerFormCheckActive .abajoDeAgregarCategoria {
+    margin: 0;
+}
+
+.publicarNotaPage .datoFaltante {
+    color: var(--nd-color-danger);
+    margin: 0 0 var(--nd-space-1);
+}
+
+/* Botones de acción: row-reverse mantiene el orden visual que daban los float:right */
+.publicarNotaPage__acciones {
+    display: flex;
+    flex-direction: row-reverse;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--nd-space-3);
+    margin: var(--nd-space-6) 0 var(--nd-space-12);
+}
+.publicarNotaPage__acciones #botonPublicar {
+    float: none;
+    margin: 0;
+}

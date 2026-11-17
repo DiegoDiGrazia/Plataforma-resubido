@@ -250,12 +250,8 @@
 }
 
     
-.recorteSinSeleccionar{
-    background-color: rgb(179, 53, 53) !important;
-}
-.recorteSeleccionado{
-    background-color: rgb(53, 179, 53) !important;
-}
+
+
 .headerCrearNota{
     font-size: 28px;
     font-weight:200;
@@ -583,69 +579,16 @@ textarea.inputTituloNota {
     max-height: 600px !important;
 
 }
-.abajoDeAgregarCategoria{
-    font-size: 16px;
-    color:var(--nd-color-text-secondary);
-    margin-top: 10px;
-    opacity: 0.8;
 
-}
-.headerPublicarNota{
-    font-size: 24px;
-    color: var(--nd-color-text);
-    font-weight: 500;
-}
-.categorias {
-    background-color: var(--nd-color-bg-muted);
-    margin:10px 5px;
-    font-size: 16px;
-    color: var(--nd-color-text);
-    padding: 10px;
-    border-radius: var(--nd-radius-pill);
-    display: inline-block ;
-    border: none;
-    font-weight: bold;
-}
-.categorias:hover {
-    background-color: var(--nd-color-info-subtle);
-    margin:10px 5px;
-    font-size: 16px;
-    color: var(--nd-color-text);
-    padding: 10px;
-    border-radius: var(--nd-radius-pill);
-    display: inline-block ;
-    border: none;
-}
-.categoriaActiva{
-    background-color: var(--nd-color-primary-subtle);
-    margin:10px 5px;
-    font-size: 16px;
-    color: var(--nd-color-primary-text);
-    padding: 10px;
-    border-radius: var(--nd-radius-pill);
-    display: inline-block ;
-    border: none;
-    font-weight: bold;
 
-}
 
-.categoriaActiva:hover{
-    background-color: var(--nd-color-primary-subtle);
 
-}
+
   
-.filaCategorias{
-    margin: 0px 40px;
 
-}
 
-.imagenParaRRSSHeader{
-    font-size: 24px;
 
-}
-.seccionImagenRecorteRRSS{
-    margin-left: 35px;
-}
+
 
 .imagenRRSS {
     display: block;
@@ -678,34 +621,10 @@ textarea.inputTituloNota {
     border-radius: var(--nd-radius-lg) !important;
 
 }
-.hDistribucionContenido{
-    margin-top: 10px;
-    font-weight: bold;
-    font-size: 20px;
-}
-.containerFormCheck{
-    border: 1px solid var(--nd-color-border);
-    border-radius: var(--nd-radius-lg);
-    padding: 5px;
-    margin: 10px 0px;
-    height: 82px;
-    
-}
-.containerFormCheckActive{
-    border: 1px solid var(--nd-orange-200);
-    background-color: var(--nd-color-primary-subtle);
-    border-radius: var(--nd-radius-lg);
-    padding: 5px;
-    margin: 10px 0px;
-    height: 82px;
-    
-    
-}
-.distribuirNotaP{
-    margin-top: 5px;
-    margin-bottom: 5px;
-    font-size: 18px;
-}
+
+
+
+
 
 .form-check-input {
     accent-color: var(--nd-color-primary); /* Cambia a tu color deseado */
@@ -744,17 +663,7 @@ textarea.inputTituloNota {
     opacity: 0.8;    /* Asegura que el color se vea bien */
   }
 
-#botonVolver{
-    font-size: 16px;
-    float: right;
-    margin-right: 30px;
-    width: 128px;
-    height: 48px;
-    font-weight: 600;
-    margin-bottom: 50px;
-    padding-top: 21px;
 
-}
 
 .col-2 .publicada{
     background-color: var(--nd-color-success-subtle);
@@ -783,10 +692,7 @@ textarea.inputTituloNota {
     display: none !important;
 }
 
-.datoFaltante{
-    color: var(--nd-color-danger);
 
-}
 .centradoContenido{
     display: flex;
     justify-content: center; /* Centra horizontalmente */

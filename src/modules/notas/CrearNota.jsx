@@ -61,6 +61,8 @@ const CrearNota = () => {
     const [historial, setHistorial] = useState([]);
     const [futuros, setFuturos] = useState([]);
     const esEditor = useSelector((state) => state.formulario.es_editor);
+    // Quien puede editar cómo se publica la nota no ve los videos tutoriales
+    const permisoDatosCreacion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Editorial: Datos creacion") || false);
     const contenidoNota = useSelector((state) => state.crearNota.contenidoNota);
     const numeroDeAtachmentAUsar= useSelector((state) => state.crearNota.numeroDeAtachment);
 
@@ -293,7 +295,7 @@ const CrearNota = () => {
                                             <input
                                                 type="file"
                                                 ref={inputFileRef}
-                                                style={{ display: 'none' }}
+                                                className="d-none"
                                                 onChange={handleFileChangeEnNota}
                                                 accept="image/*"  // Acepta solo archivos de imagen
                                             />
@@ -309,7 +311,7 @@ const CrearNota = () => {
                                             <input
                                                 type="file"
                                                 ref={inputVideoRef}
-                                                style={{ display: 'none' }}
+                                                className="d-none"
                                                 onChange={handleArchivoVideo}
                                                 accept="video/mp4"
                                             />
@@ -322,7 +324,7 @@ const CrearNota = () => {
                                             <input
                                                 type="file"
                                                 ref={inputFileRefArchivoPDF}
-                                                style={{ display: 'none' }}
+                                                className="d-none"
                                                 onChange={handleFileChangeArchivoNota}
                                                 accept=".pdf"  // Acepta solo archivos pdf
                                             />
@@ -347,13 +349,14 @@ const CrearNota = () => {
                         </div>
 
                         {/* Seccion columna izquierda del tutorial */}
-                        <div className='col-4' style={{ paddingRight: "30px", display: "flex", flexDirection: "column", gap: "30px" }}>
-                            {!imagenppal ? <CardTutorial title = {videos.portada.title} description = {videos.portada.description} src = {videos.portada.src} /> : 
+                        {!permisoDatosCreacion && (
+                        <div className='col-4 d-flex flex-column gap-4'>
+                            {!imagenppal ? <CardTutorial title = {videos.portada.title} description = {videos.portada.description} src = {videos.portada.src} /> :
                             <CardTutorial title = {videos.fotoCuerpoNota.title} description = {videos.fotoCuerpoNota.description} src = {videos.fotoCuerpoNota.src}/>}
                             <CardTutorial title = {videos.tituloYBajada.title} description = {videos.tituloYBajada.description} src = {videos.tituloYBajada.src}/>
                             <CardTutorial title = {videos.embebidos.title} description = {videos.embebidos.description} src = {videos.embebidos.src}/>
-
                         </div>
+                        )}
                         {/* fin seccion columna izquierda */}
                     </div>
 

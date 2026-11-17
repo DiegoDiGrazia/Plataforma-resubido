@@ -7,6 +7,7 @@ import 'cropperjs/dist/cropper.css';
 import '@/app/App.css';
 import '@/modules/dashboard/Dashboard.css';
 import './nota.css';
+import './publicarNota.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link} from 'react-router-dom';
 import { setCategoriasActivasEnStore, setImagenRRSS } from '@/store/crearNotaSlice'; // Asegúrate de importar setImagenPrincipal
@@ -115,7 +116,7 @@ const PublicarNota = () => {
                 {/* {isLoading && (
                 <GuardarNotaCada10sg nota={actual} />
                 )} */}
-                <div className="content flex-grow-1">
+                <div className="publicarNotaPage">
                     <header id="head_dash" className='header_dash'>
                         <div className='row'>
                             <div className='col'>
@@ -137,23 +138,30 @@ const PublicarNota = () => {
                     </header>
                     
                     {/* SECCION NOTA */}
+                    <div className='container-fluid publicarNotaPage__cuerpo'>
                     <div className='row notaTutorial'>
                         <div className='col-8 columnaNota'>
-                            <div className='col mt-0'>
-                                <h3 className='headerPublicarNota fw-bold'>Agregar categorias a tu Nota</h3>
-                                <h3 className='abajoDeAgregarCategoria mb-4'>Seleccione una categoria clave para tu contenido</h3>
-                            </div>
-                            <div className='filaCategorias'>
-                                {Array.isArray(categorias) && categorias.map((categoria, index) => (
-                                    <Button onClick={() => actualizarCategoriasActivas(categoria)} key={index} className={categoriasActivas.includes(categoria.id) ? 'categoriaActiva' : 'categorias' }>
-                                        {categoria.unidad}
-                                    </Button>
-                                ))}
-                            </div>
+                            <section className='publicarNotaPage__seccion'>
+                                <h2 className='headerPublicarNota'>Agregar categorias a tu Nota</h2>
+                                <p className='abajoDeAgregarCategoria'>Seleccione una categoria clave para tu contenido</p>
+                                <div className='filaCategorias'>
+                                    {Array.isArray(categorias) && categorias.map((categoria, index) => (
+                                        <button
+                                            type="button"
+                                            key={index}
+                                            onClick={() => actualizarCategoriasActivas(categoria)}
+                                            className={categoriasActivas.includes(categoria.id) ? 'categoriaActiva' : 'categorias'}
+                                            aria-pressed={categoriasActivas.includes(categoria.id)}
+                                        >
+                                            {categoria.unidad}
+                                        </button>
+                                    ))}
+                                </div>
+                            </section>
 
                             <div className='seccionImagenRecorteRRSS'>
-                                <h4 className='imagenParaRRSSHeader fw-bold'>Imagen para redes sociales</h4>
-                                <h4 className='abajoDeAgregarCategoria mlRRSS'>Selecciona el recorte de tu imagen de portada para que podamos ajustarlo en redes sociales</h4>
+                                <h2 className='imagenParaRRSSHeader'>Imagen para redes sociales</h2>
+                                <p className='abajoDeAgregarCategoria'>Selecciona el recorte de tu imagen de portada para que podamos ajustarlo en redes sociales</p>
 
 
                                 {/* Mostrar la imagen recortada si existe y no se está editando */}
@@ -190,9 +198,8 @@ const PublicarNota = () => {
                                                     setIsClickedRecorte(true);
                                                 }
                                             }}
-                                            variant="none"
-                                            id="botonPublicar"
-                                            className={isClickedRecorte ? "recorteSeleccionado" : "recorteSinSeleccionar"}
+                                            variant={isClickedRecorte ? "primary" : "outline-primary"}
+                                            className="mt-3 mb-4"
                                         >
                                             {isClickedRecorte ? "Guardar recorte" : "Editar recorte"}
                                         </Button>
@@ -200,8 +207,8 @@ const PublicarNota = () => {
                                 {/* SI NO ES FREEMIUM LO MUESTRO */}
                                 {perfilUsuario != '9' && 
                                 <>
-                                <div className='hDistribucionContenido'>Distribucion de contenido</div>
-                                <div className='abajoDeAgregarCategoria mlRRSS'>Selecciona el recorte de tu imagen</div>
+                                <h2 className='hDistribucionContenido'>Distribucion de contenido</h2>
+                                <p className='abajoDeAgregarCategoria'>Selecciona el recorte de tu imagen</p>
                                 
                                 <div>
                                     <div className= {selectedOptionDistribucion === 'normal' ? 'containerFormCheckActive' : 'containerFormCheck'}>
@@ -242,7 +249,7 @@ const PublicarNota = () => {
                                     </div>
                                     </div>
                                 </>}
-                                <h4 className='imagenParaRRSSHeader fw-bold mt-3'>Comentarios</h4>
+                                <h2 className='imagenParaRRSSHeader mt-4'>Comentarios</h2>
                                 <p className='abajoDeAgregarCategoria'>Deja comentarios para el el equipo de Noticias 'd' pueda ayudarte a potenciar tus contenidos
                                     y entender mejor tus objetivos
                                 </p>
@@ -263,7 +270,7 @@ const PublicarNota = () => {
 
                                 )}
                                 
-                                <div className='mb-5'>
+                                <div className='publicarNotaPage__acciones'>
                                     {permisoBorrador && (
                                         <BotonPublicarNota status="EN REVISION" isLoading={isLoading} setIsLoading={setIsLoading} />
                                     )}
@@ -282,10 +289,10 @@ const PublicarNota = () => {
 
                                     <Button
                                         onClick={() => navigate('/crearNota')}
-                                        id="botonVolver"
-                                        variant="none"
+                                        variant="secondary"
+                                        size="lg"
                                     >
-                                        {" Volver"}
+                                        Volver
                                     </Button>
 
                                 </div>
@@ -298,12 +305,14 @@ const PublicarNota = () => {
                             <ColumnaEditorial/>  
                         )}
 
-                        {permisoTutorialCreacion && (
-                            <div className='col-4'style={{ paddingRight: "30px"}}>
+                        {/* Quien edita cómo se publica la nota (columna editorial) no ve los videos tutoriales */}
+                        {permisoTutorialCreacion && !permisoDatosCreacion && (
+                            <div className='col-4'>
                                 <CardTutorial title = {videos.publicarNota.title} description = {videos.publicarNota.description} src = {videos.publicarNota.src}/>
                             </div>
-                        )} 
-                        
+                        )}
+
+                    </div>
                     </div>
         </div>
         </>
