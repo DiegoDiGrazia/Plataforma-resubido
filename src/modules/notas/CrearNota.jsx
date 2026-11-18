@@ -276,8 +276,16 @@ const CrearNota = () => {
 
                                 {/* BOTONERA AGREGAR CONTENIDO */}
                                 <div className="containerButton">
-                                    <button onClick={toggleButtons} className={`botones-nota ${showButtons ? 'boton-plus' : ''}`}>
-                                        {showButtons ? <img src="images/plus-circle-x.png" alt="" /> : <img src="images/plus-circle-+.png" alt="" />}
+                                    {/* Rutas absolutas (/images): con la URL /notas/editar/:clave una ruta relativa
+                                        se resolvía a /notas/editar/images/... y el botón quedaba sin ícono (invisible) */}
+                                    <button
+                                        type="button"
+                                        onClick={toggleButtons}
+                                        className={`botones-nota ${showButtons ? 'boton-plus' : ''}`}
+                                        aria-label={showButtons ? 'Cerrar opciones de contenido' : 'Agregar contenido'}
+                                        aria-expanded={showButtons}
+                                    >
+                                        {showButtons ? <img src="/images/plus-circle-x.png" alt="" /> : <img src="/images/plus-circle-+.png" alt="" />}
                                     </button>
 
                                     {showButtons && (

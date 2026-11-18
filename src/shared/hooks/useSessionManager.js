@@ -44,7 +44,9 @@ export const useSessionManager = () => {
       try {
         respuesta = await verificarToken(tokenActual);
       } catch (error) {
-        console.error('Error al verificar el token:', error);
+        // Sin conexión o error del servidor (5xx): no es una sesión vencida.
+        // Se reintenta en el próximo chequeo; un 401 real llega como { active: false }.
+        console.warn('No se pudo verificar el token, se reintenta en 30 s:', error);
         return;
       }
 
