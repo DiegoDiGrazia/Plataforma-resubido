@@ -249,7 +249,7 @@ const MonitorEditorial = () => {
 
     const renderizarTags = (tags) => {
         if (!tags || !Array.isArray(tags) || tags.length === 0) {
-            return <span className="text-muted fst-italic" style={{ fontSize: '0.85rem' }}>Sin tags</span>;
+            return <span className="text-muted fst-italic nd-text-sm">Sin tags</span>;
         }
 
         return tags.map((tag, index) => (
@@ -650,6 +650,7 @@ const MonitorEditorial = () => {
                         <div className="accordion">
                             {monitorFiltrado.map((editor, indexEditor) => { 
                                 const isOpenEditor = editorAbierto === indexEditor;
+                                const notasDelEditor = editor.clientes.reduce((total, cliente) => total + cliente.notas.length, 0);
 
                                 return (
                                     <div className="accordion-item mb-3 border-0 shadow-sm rounded" key={`editor-${indexEditor}`}>
@@ -662,6 +663,9 @@ const MonitorEditorial = () => {
                                             >
                                                 <i className="bi bi-person-fill text-brand me-2 fs-4"></i>
                                                 {editor.nombre_editor}
+                                                <span className="nd-badge nd-badge--primary ms-2">
+                                                    {notasDelEditor} {notasDelEditor === 1 ? 'nota' : 'notas'}
+                                                </span>
                                             </button>
                                         </h2>
 
@@ -699,7 +703,6 @@ const MonitorEditorial = () => {
                                                                                             data-bs-toggle="modal" 
                                                                                             data-bs-target={`#modalComentario-${cliente.id_cliente}`}
                                                                                             onClick={(e) => e.stopPropagation()}
-                                                                                            style={{ cursor: 'pointer' }}
                                                                                         >
                                                                                             <i className="bi bi-chat-text-fill text-brand"></i>
                                                                                         </span>
@@ -707,12 +710,12 @@ const MonitorEditorial = () => {
                                                                                     </div>
                                                                                     {!esGeo && (
                                                                                         cliente.comentario ? (
-                                                                                            <span className="text-muted mt-1 fw-normal texto-comentario" style={{ fontSize: '0.85rem' }}>
+                                                                                            <span className="text-muted mt-1 fw-normal texto-comentario">
                                                                                                 <i className="bi bi-chat-text-fill text-brand me-1"></i>
                                                                                                 {cliente.comentario}
                                                                                             </span>
                                                                                         ) : (
-                                                                                            <span className="text-muted mt-1 fw-normal opacity-50 texto-comentario-vacio" style={{ fontSize: '0.85rem', fontStyle: 'italic' }}>
+                                                                                            <span className="text-muted mt-1 fw-normal opacity-50 texto-comentario-vacio">
                                                                                                 Sin comentario...
                                                                                             </span>
                                                                                         )
