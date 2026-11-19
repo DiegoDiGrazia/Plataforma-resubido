@@ -1,6 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'cropperjs/dist/cropper.css';
 import Etiquetas from './Etiquetas';
 import ArbolDistribucion from '@/shared/components/ArbolDistribucion';

@@ -26,10 +26,10 @@ const SelectorNumerosEnteros = ({
 
     return (
         <div className="mb-2">
-            <div className="d-flex justify-content-between align-items-center mb-2">
-                <span className="fw-bold">{title}</span>
+            <div className="nd-field-row mb-2">
+                <span className="nd-field-row__label">{title}</span>
 
-                <div className="dropdown">
+                <div className="dropdown nd-field-row__control">
                     <button
                         className="btn custom-dropdown-button dropdown-toggle boton_cliente"
                         type="button"
@@ -40,7 +40,7 @@ const SelectorNumerosEnteros = ({
                             : "Ninguno"}
                     </button>
 
-                    <ul className="dropdown-menu listaClientes p-2" style={{ minWidth: "220px" }}>
+                    <ul className="dropdown-menu listaClientes p-2">
                         
                         {/* Buscador */}
                         <li className="mb-2">

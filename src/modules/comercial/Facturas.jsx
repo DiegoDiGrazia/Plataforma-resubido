@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { obtenerMesActual } from '@/modules/distribucion/Distribucion.jsx';
 import DropdownFiltro from '@/shared/components/form/DropdownFiltro.jsx';
 import './Facturas.css'
@@ -134,7 +132,7 @@ const Facturas = () =>  {
 
         { nombre: "Editar Factura", 
           icono: "bi bi-pencil-square",
-          color: "rgb(165, 22, 22)",
+          color: "var(--nd-color-danger-hover)",
           accion: (f) => {
             setFacturaActual(f); 
             setEstadoSeleccionado(f.estado);
@@ -148,7 +146,7 @@ const Facturas = () =>  {
 
         { nombre: "Unificar Facturas", 
           icono: "bi bi-intersect",
-          color: "rgb(8, 6, 6)",
+          color: "var(--nd-color-text)",
           accion: (f) => {
             setFacturaActual(f);
             setFacturasAUnificar([]);
@@ -167,7 +165,7 @@ const Facturas = () =>  {
           
         { nombre: "Archivos", 
           icono: "bi bi-folder-fill",
-          color: "rgb(221, 194, 76)",
+          color: "var(--nd-color-warning)",
           accion: (f) => {
             setFacturaActual(f);
             setArchivosContrato([]);
@@ -184,7 +182,7 @@ const Facturas = () =>  {
 
         { nombre: "Dividir Factura", 
           icono: "bi bi-back",
-          color: "rgb(8, 6, 6)",
+          color: "var(--nd-color-text)",
           accion: (f) => {
             setFacturaActual(f);
             setNumeroSeleccionado("2");
@@ -213,7 +211,7 @@ const Facturas = () =>  {
 
         { nombre: "Eliminar Factura",
           icono: "bi bi-trash3-fill",
-          color: "rgb(165, 22, 22)",
+          color: "var(--nd-color-danger-hover)",
           accion: (f) => {
             setFacturaActual(f);
           },
@@ -502,80 +500,79 @@ const Facturas = () =>  {
 
     return (
         <div className="contenedor-facturas content flex-grow-1 crearNotaGlobal h-100">
-            <div className='row miPerfilContainer soporteContainer gap-5 pb-0 me-5'>
+            <div className='row miPerfilContainer soporteContainer pb-0 facturas__encabezado'>
                 <div className='col p-0'>
                     {/* Saludo */}
                     <h3 id="saludo" className='headerTusNotas ml-0'>
-                        <i className="icon me-2 icono_tusNotas bi bi-bag-fill" alt="Icono 1" /> Gestiona tus Facturas
+                        <i className="bi bi-bag-fill" aria-hidden="true" /> Gestiona tus Facturas
                     </h3>
                     <h4 className='infoCuenta'>Gestiona tus Facturas</h4>
                     <div className='abajoDeTusNotas'>
                         En esta sección podrás gestionar las facturas de los contratos de tus clientes.
                     </div>
                 </div>
-                <div className='row justify-content-end align-items-end gap-3'>
+                <div className='facturas__botones'>
                     {permisoAlta && (
                     <button 
                         id='cargar-factura' 
-                        className="btn btn-primary col-2 h-100 w-auto" 
+                        className="btn btn-primary facturas__boton-icono"
                         title='Cargar factura en contrato abierto'
                         onClick={() => abrirModalFacturaAbierta()}
                         data-bs-toggle="modal" 
                         data-bs-target="#modalCargarFactura"
-                        style={{maxWidth: '50px'}}
                     > 
-                        <i className='bi bi-file-earmark-arrow-up fs-4' style={{color:'rgb(40, 40, 40)'}}></i> {/* bi-file-earmark-arrow-up / bi-file-earmark-plus / bi-receipt / bi-plus-circle*/}
+                        <i className='bi bi-file-earmark-arrow-up' aria-hidden='true'></i>
                     </button>
                     )}
                     <button 
                         id='descargar-excel' 
-                        className='btn col-2 h-100 w-auto' 
+                        className='btn btn-outline-secondary facturas__boton-icono'
                         title="Descargar listado en Excel"
                         onClick={() => handleDescargarExcel()}
                     >
-                        <i className="bi bi-filetype-xlsx fs-4 m-0" style={{color:'rgb(41, 40, 40)'}}></i> {/**bi-file-earmark-excel-fill / bi-journal-x / bi-filetype-xlsx*/}
+                        <i className="bi bi-filetype-xlsx" aria-hidden="true"></i>
                     </button>
                 </div>
             </div>
             
             {/* FILTROS */}
             
-            <div className='miPerfilContainer soporteContainer mt-4 mb-3 ms-5 me-5 p-0'>
-                <div className='row buscadorNotas d-flex flex-wrap align-items-center justify-content-start gap-1 mt-3 p-0 w-100'>
+            <div className='miPerfilContainer soporteContainer mt-4 mb-3 p-0'>
+                <div className='facturas__filtros'>
                     {/* Buscador cuenta */}
-                    <form className='col-2 buscadorNotasForm mt-2 ps-0'>
+                    <form className='buscadorNotasForm facturas__buscador'>
                         <input
                           className='inputBuscadorNotas pe-0'
                           type="text"
                           title= 'Buscar por cuentas, razón social o N° factura'
                           value={search}
                           onChange={(e) => setSearch(e.target.value)}
-                          placeholder="       Buscar cuenta, razón social o N° factura"
+                          placeholder="Buscar cuenta, razón social o N° factura"
                         />
                     </form>                    
                     {/* Fechas */}
-                    <div className='col-3 w-auto d-flex align-items-center gap-2 mt-2 p-0 text-nowrap' title="Vencimiento desde">
-                        <div className="vencimiento-desde d-flex align-items-center gap-1">
-                            <span className="align-items-center d-flex gap-2">Desde:</span>
+                    <div className='facturas__fechas' title="Vencimiento">
+                        <label className="facturas__fecha">
+                            <span>Desde:</span>
                             <input 
                                 type="month" 
                                 className='input-fechas'
                                 value={fechaDesde} 
                                 onChange={(e) => setFechaDesde(e.target.value)} 
                             />
-                        </div>
-                        <div className="vencimiento-hasta d-flex align-items-center gap-2" title="Vencimiento hasta">
-                            <span className="align-items-center d-flex gap-2">Hasta:</span>
+                        </label>
+                        <label className="facturas__fecha" title="Vencimiento hasta">
+                            <span>Hasta:</span>
                             <input 
                                 type="month" 
                                 className='input-fechas'
                                 value={fechaHasta} 
                                 onChange={(e) => setFechaHasta(e.target.value)}
                             />
-                        </div>
+                        </label>
                     </div>
                     {/* Filtros dropdown */}
-                    <div id= 'botones-filtros' className="col-5 d-flex flex-wrap align-items-end justify-content-end gap-1 mt-2 w-auto">
+                    <div id='botones-filtros' className='facturas__dropdowns'>
                         <DropdownFiltro
                             className= 'boton-filtro'
                             label= "Emisión"
@@ -616,24 +613,27 @@ const Facturas = () =>  {
                 </div>
             </div>
             {/* Listado de Facturas */}
-            <ul className= 'list-group gap-1 mx-5 mb-5'>
+            <ul className='list-group gap-2 nd-mx-page mb-5 facturas__listado'>
             {facturas.length <= 0 ? (
                 <SpinnerCarga texto='Cargando facturas...'/>
             ) : (
                 facturasFiltradas && facturasFiltradas.length > 0 ?(
                     facturasFiltradas.map((factura) => (
                         <li className= {`list-group-item py-3 ${factura.numero ? "border border-2 border-success px-1" : ""}`} key= {factura.id}>
-                            <div className="row text-start w-100" style={{ fontSize: "13px" }}>
-                                <div className="col">
-                                    <strong className="datos-factura d-block"><span>{factura.mes ? `${String(factura.mes).slice(0, 4)}-${String(factura.mes).slice(4)}` : ""}</span></strong>
-                                    <strong className="datos-factura d-block mb-2"><span>{factura.cliente}</span></strong>
+                            <div className="facturas__fila">
+                                <div className="facturas__titulo">
+                                    <strong>{factura.mes ? `${String(factura.mes).slice(0, 4)}-${String(factura.mes).slice(4)}` : ""}</strong>
+                                    <strong>{factura.cliente}</strong>
+                                </div>
+                                <div className="facturas__datos">
+                                <div>
                                     <strong className="datos-factura d-block">Id Factura: <span className="fw-normal">{factura.id}</span></strong>
                                     <strong className="datos-factura d-block">Nº Factura: <span className="fw-normal">{factura.numero ? factura.numero : "- -"}</span></strong>
                                     <strong className="datos-factura d-block">Monto Factura: <span className="fw-normal">${formatearMoneda(factura.monto_mensual)}</span></strong>
                                     <strong className="datos-factura d-block">Fecha de pago: <span className="fw-normal">{factura.fecha_pago ? factura.fecha_pago : "- -"}</span></strong>
                                     <strong className="datos-factura d-block">Cantidad Facturas/Notas: <span className="fw-normal">{factura.cantidad_facturas}</span></strong>
                                 </div>
-                                <div className="col mt-5">
+                                <div>
                                     <strong className="datos-factura d-block">Id Contrato: <span className="fw-normal">{factura.id_contrato}</span></strong>
                                     <strong className="datos-factura d-block">Orden: 
                                         {factura.orden_compra ? (
@@ -653,20 +653,20 @@ const Facturas = () =>  {
                                     <strong className="datos-factura d-block">Fin: <span className="fw-normal">{factura.fecha_fin}</span></strong>
                                     <strong className="datos-factura d-block">Total Contrato: <span className="fw-normal">${formatearMoneda(factura.monto_mensual * factura.cantidad_facturas)}</span></strong>
                                 </div>
-                                <div className="col mt-5">
+                                <div>
                                     <strong className="datos-factura d-block">Razón Social: <span className="fw-normal">{factura.razon_social}</span></strong>
                                     <strong className="datos-factura d-block">CUIT: <span className="fw-normal">{factura.cuit}</span></strong>
-                                    <strong className={`datos-factura d-block ${factura.estado === "PAGADA" ? "border border-2 border-success px-1" : ""}`} style={{ width: "fit-content"}}>
+                                    <strong className={`datos-factura d-block facturas__estado ${factura.estado === "PAGADA" ? "border border-2 border-success px-1" : ""}`}>
                                         Estado: <span className="fw-normal">{factura.estado}</span></strong>
                                     <strong className="datos-factura d-block">Empresa: <span className="fw-normal">{factura.empresa}</span></strong>
                                 </div>
-                                <div className="col mt-5">
+                                <div>
                                     <strong className="datos-factura d-block">Enviar a: <span className="fw-normal">{factura.donde ? factura.donde : "- -"}</span></strong>
                                     <strong className="datos-factura d-block">Paga Sellos: <span className="fw-normal">{factura.requiere_pago}</span></strong>
                                     <strong className="datos-factura d-block">Lleva Certificación: <span className="fw-normal">{factura.lleva_certificacion}</span></strong>
                                     <strong className="datos-factura d-block">Generada Como Abierta: <span className="fw-normal">{factura.abierto}</span></strong>
                                 </div>
-                                <div className="col mt-5">
+                                <div>
                                     <strong className="datos-factura d-block">Comisión 1: <span className="fw-normal">${formatearMoneda(factura.comision)}</span></strong>
                                     <strong className="datos-factura d-block">Porcentaje Comisión 1: <span className="fw-normal">{formatearMoneda(factura.porcentaje_comision)}</span></strong>
                                     <strong className="datos-factura d-block">Comisionista 1: <span className="fw-normal">{(factura.com1 || "- -")}</span></strong>
@@ -676,13 +676,14 @@ const Facturas = () =>  {
 
                                 </div>
                                 {/* BOTONES ACCIONES */}
-                                <div className='col-auto d-flex flex-wrap ms-2 mt-3 gap-2 h-auto w-auto p-0' style={{maxWidth: '120px'}}>
+                                </div>
+                                <div className='facturas__acciones'>
                                     {accionesBotones
                                             .filter((boton) => !boton.mostrar || boton.mostrar(factura))
                                             .map((boton, index) => (
                                             <button 
                                                 key={index}
-                                                className='btn col-2 w-auto' 
+                                                className='btn facturas__boton-icono' 
                                                 type='button'
                                                 title={boton.nombre}
                                                 onClick={() => boton.accion(factura)}
@@ -690,7 +691,7 @@ const Facturas = () =>  {
                                                 data-bs-target={boton.modalTarget}
                                                 
                                             >
-                                                <i className={`${boton.icono} fs-4 m-0 botones-accion`} style={{color: `${boton.color}`}}></i>   
+                                                <i className={`${boton.icono} botones-accion`} style={{ color: boton.color }} aria-hidden="true"></i>   
                                             </button>
                                     ))}
 
@@ -718,7 +719,7 @@ const Facturas = () =>  {
                             {facturaActual && (
                                 <form key={facturaActual.id} id="form-editar-factura" onSubmit={handleEditFactura}>
                                     <div className="mb-3">
-                                        <label className="form-label fw-bold" style={{fontSize: '14px'}}>Número</label>
+                                        <label className="form-label fw-bold nd-text-base">Número</label>
                                         <input 
                                             type="text" 
                                             className="form-control" 
@@ -728,7 +729,7 @@ const Facturas = () =>  {
                                         />
                                     </div>
                                     <div className="mb-3">
-                                        <label className="form-label fw-bold" style={{fontSize: '14px'}}>Estado</label>
+                                        <label className="form-label fw-bold nd-text-base">Estado</label>
                                         <select 
                                             className="form-select" 
                                             value={estadoSeleccionado} 
@@ -740,7 +741,7 @@ const Facturas = () =>  {
                                         </select>
                                     </div>
                                     <div className="mb-3">
-                                        <label className="form-label fw-bold" style={{fontSize: '14px'}}>Periodo</label>
+                                        <label className="form-label fw-bold nd-text-base">Periodo</label>
                                         <input 
                                             type="month" 
                                             className="form-control" 
@@ -749,7 +750,7 @@ const Facturas = () =>  {
                                         />
                                     </div>
                                     <div className="mb-3">
-                                        <label className="form-label fw-bold" style={{fontSize: '14px'}}>Fecha de Pago</label>
+                                        <label className="form-label fw-bold nd-text-base">Fecha de Pago</label>
                                         <input 
                                             type="date" 
                                             className="form-control" 
@@ -784,7 +785,7 @@ const Facturas = () =>  {
                         <div className="modal-body text-start">
                             <form id="form-cargar-factura" onSubmit={handleCargarFactura}>
                                 <div className="mb-3">
-                                    <label className="form-label fw-bold" style={{fontSize: '14px'}}>Contrato Abierto <span className="text-danger">*</span></label>
+                                    <label className="form-label fw-bold nd-text-base">Contrato Abierto <span className="text-danger">*</span></label>
                                     {cargandoContratos ? (
                                         <SpinnerCarga texto="Cargando contratos abiertos..." />
                                     ) : (
@@ -803,7 +804,7 @@ const Facturas = () =>  {
                                 </div>
 
                                 <div className="mb-3">
-                                    <label className="form-label fw-bold" style={{fontSize: '14px'}}>Número</label>
+                                    <label className="form-label fw-bold nd-text-base">Número</label>
                                     <input 
                                         type="number" 
                                         className="form-control" 
@@ -814,7 +815,7 @@ const Facturas = () =>  {
                                 </div>
 
                                 <div className="mb-3">
-                                    <label className="form-label fw-bold" style={{fontSize: '14px'}}>Estado <span className="text-danger">*</span></label>
+                                    <label className="form-label fw-bold nd-text-base">Estado <span className="text-danger">*</span></label>
                                     <select 
                                         className="form-select" 
                                         value={estadoSeleccionado} 
@@ -828,7 +829,7 @@ const Facturas = () =>  {
                                 </div>
 
                                 <div className="mb-3">
-                                    <label className="form-label fw-bold" style={{fontSize: '14px'}}>Periodo <span className="text-danger">*</span></label>
+                                    <label className="form-label fw-bold nd-text-base">Periodo <span className="text-danger">*</span></label>
                                     <input 
                                         type="month" 
                                         className="form-control" 
@@ -839,7 +840,7 @@ const Facturas = () =>  {
                                 </div>
 
                                 <div className="mb-3">
-                                    <label className="form-label fw-bold" style={{fontSize: '14px'}}>Fecha de Pago {estadoSeleccionado === "PAGADA" && <span className="text-danger">*</span>}</label>
+                                    <label className="form-label fw-bold nd-text-base">Fecha de Pago {estadoSeleccionado === "PAGADA" && <span className="text-danger">*</span>}</label>
                                     <input 
                                         type="date" 
                                         className="form-control" 
@@ -851,7 +852,7 @@ const Facturas = () =>  {
                                 </div>
 
                                 <div className="mb-3">
-                                    <label className="form-label fw-bold" style={{fontSize: '14px'}}>Monto</label>
+                                    <label className="form-label fw-bold nd-text-base">Monto</label>
                                     <input 
                                         type="number" 
                                         className="form-control" 
@@ -884,7 +885,7 @@ const Facturas = () =>  {
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div className="modal-body text-start">
-                            <p className="text-muted mb-3" style={{fontSize: '14px'}}>
+                            <p className="text-muted mb-3 nd-text-base">
                                 Seleccione las facturas que desea unificar con la factura actual:
                             </p>
                             <form id="form-unificar-factura" onSubmit={handleUnificarFacturas}>
@@ -901,9 +902,9 @@ const Facturas = () =>  {
                                                         value={f.id} 
                                                         checked={facturasAUnificar.includes(f.id)}
                                                         onChange={() => toggleFacturaUnificar(f.id)}
-                                                        style={{fontSize: '1.2em', cursor: 'pointer'}}
+                                                        style={{ cursor: 'pointer' }}
                                                     />
-                                                    <span style={{fontSize: '14px'}}>
+                                                    <span className="nd-text-base">
                                                         <strong>Periodo:</strong> {f.mes ? `${String(f.mes).slice(0, 4)}-${String(f.mes).slice(4)} - ` : "-"} 
                                                         <strong>Monto:</strong> {`${formatearMoneda(f.monto_mensual)} - `} 
                                                         <strong>Estado:</strong> {f.estado}
@@ -947,7 +948,7 @@ const Facturas = () =>  {
                             <form id="form-dividir-factura" onSubmit={handleDividirFactura}>
                                 
                                 <div className="mb-3">
-                                    <label className="form-label fw-bold" style={{fontSize: '14px'}}>Cantidad de facturas a generar <span className="text-danger">*</span></label>
+                                    <label className="form-label fw-bold nd-text-base">Cantidad de facturas a generar <span className="text-danger">*</span></label>
                                     <input 
                                         type="number" 
                                         className="form-control" 
@@ -956,11 +957,11 @@ const Facturas = () =>  {
                                         onChange={(e) => setNumeroSeleccionado(e.target.value)} 
                                         required
                                     />
-                                    <div className="form-text" style={{fontSize: '12px'}}>Debe ser mayor a 1.</div>
+                                    <div className="form-text nd-text-xs">Debe ser mayor a 1.</div>
                                 </div>
 
                                 <div className="mb-3">
-                                    <label className="form-label fw-bold" style={{fontSize: '14px'}}>Periodo de la primera factura <span className="text-danger">*</span></label>
+                                    <label className="form-label fw-bold nd-text-base">Periodo de la primera factura <span className="text-danger">*</span></label>
                                     <input 
                                         type="month" 
                                         className="form-control" 
@@ -1001,13 +1002,13 @@ const Facturas = () =>  {
                                 <div className="table-responsive mt-2">
                                     <table className="table table-borderless align-middle text-center mb-0">
                                         <thead>
-                                            <tr style={{fontSize: '14px', fontWeight: 'bold'}}>
+                                            <tr className="nd-text-base nd-fw-bold">
                                                 <th>Archivo</th>
                                                 <th>Usuario</th>
                                                 <th>Fecha Carga</th>
                                             </tr>
                                         </thead>
-                                        <tbody style={{fontSize: '14px'}}>
+                                        <tbody className="nd-text-base">
                                             {archivosContrato.map((archivo) => (
                                                 <tr key={archivo.id}>
                                                     <td>
@@ -1076,9 +1077,9 @@ const Facturas = () =>  {
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div className="modal-body text-center pb-4 pt-0">
-                            <i className="bi bi-exclamation-circle text-danger mb-2" style={{fontSize: '3.5rem'}}></i>
+                            <i className="bi bi-exclamation-circle text-danger mb-2 fs-1" aria-hidden="true"></i>
                             <h5 className="mt-2 fw-bold">¿Estás seguro de que querés eliminar esta factura?</h5>
-                            <p className="text-muted" style={{fontSize: '14px'}}>
+                            <p className="text-muted nd-text-base">
                                 Vas a eliminar esta factura abierta. Esta acción no se puede deshacer.
                             </p>
                             <div className="d-flex justify-content-center gap-2 mt-4">
@@ -1105,13 +1106,13 @@ const Facturas = () =>  {
                                 <div className="table-responsive mt-2">
                                     <table className="table table-borderless align-middle text-center mb-0">
                                         <thead>
-                                            <tr style={{fontSize: '14px', fontWeight: 'bold'}}>
+                                            <tr className="nd-text-base nd-fw-bold">
                                                 <th>Fecha</th>
                                                 <th>Usuario</th>
                                                 <th>Comentario</th>
                                             </tr>
                                         </thead>
-                                        <tbody style={{fontSize: '14px'}}>
+                                        <tbody className="nd-text-base">
                                             {comentariosContrato.map((comentario, index) => (
                                                 <tr key={index}>
                                                     <td>{comentario.fecha}</td>

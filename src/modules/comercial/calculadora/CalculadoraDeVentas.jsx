@@ -1,7 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import "@/modules/perfil/miPerfil.css";
 import { useSelector } from 'react-redux';
 import { obtenerPoblacion } from '@/api/apisUsuarios';
 import { obtenerGeo } from '@/api/geosApi';
@@ -429,10 +426,10 @@ const CalculadoraDeVentas = ({ datosEdicion, onGuardadoExitoso }) => {
     <div>
       <div className='row miPerfilContainer soporteContainer d-flex align-items-stretch mt-0 pt-0'>
         <h3 id="saludo" className='headerTusNotas ml-0 mb-3 p-0'>
-          <i className={`fs-4 mb-4 bi bi-bag-fill`} style={{color: 'var(--nd-color-text)', marginRight: '5px', bottom: '10px'}}></i>
+          <i className="bi bi-bag-fill" aria-hidden="true"></i>
             {" Calculadora de ventas "}
         </h3>
-        <div className='col-7 p-0'>
+        <div className='col-12 p-0 calculadora__intro'>
           <h4 className='fw-bold'>{'Realice sus calculos'}</h4>
           <div className='abajoDeTusNotas'>
             {'Aqui podra realizar los calculos en tiempo real para armar propuestas comerciales segun los datos de poblacion estimada y alcance por nota.'}
@@ -441,8 +438,8 @@ const CalculadoraDeVentas = ({ datosEdicion, onGuardadoExitoso }) => {
       </div>
       
       {/* FILTROS */}
-      <div className='row miPerfilContainer soporteContainer mt-4 p-0 mb-3'>
-          <div className='col-6'>
+      <div className='row miPerfilContainer soporteContainer mt-4 p-0 mb-3 calculadora__filtros'>
+          <div className='calculadora__columna'>
             <div className="mb-3 d-flex justify-content-between align-items-center">
               <div className="fw-bold m-0">Cuenta</div>
               <SelectorCliente 
@@ -461,9 +458,9 @@ const CalculadoraDeVentas = ({ datosEdicion, onGuardadoExitoso }) => {
               onSetProvincia={(p) => setProvincia(p)}
               onSetMunicipio={(m) => setMunicipio(m)}
             />
-            <h3>población: {Number(poblacionEstimada?.poblacion || 0).toLocaleString('es-AR') || 0} </h3>
+            <p className='calculadora__poblacion'>Población: <strong>{Number(poblacionEstimada?.poblacion || 0).toLocaleString('es-AR') || 0}</strong></p>
           </div>
-          <div className='col-6'>
+          <div className='calculadora__columna'>
               <div className="dropdown p-0">
                 <SelectorNumerosEnteros
                   title="Cantidad de notas"
@@ -507,16 +504,16 @@ const CalculadoraDeVentas = ({ datosEdicion, onGuardadoExitoso }) => {
               </div>
               
             </div>
-        <div style={{ padding: "20px" }}>
+        <div className="calculadora__presupuestos">
           
           <div className='d-flex flex-row justify-content-end mb-2'>
             <button 
                 id='descargar-excel' 
-                className='btn w-auto h-50 bg-success'
+                className='btn btn-outline-secondary'
                 title="Descargar presupuesto en Excel"
                 onClick={() => setShowExcelModal(true)}
                 >
-                <i className="bi bi-filetype-xlsx fs-4 m-0" style={{color:'rgb(41, 40, 40)'}}></i>
+                <i className="bi bi-filetype-xlsx" aria-hidden="true"></i> Excel
             </button>
           </div>
 
@@ -576,7 +573,7 @@ const CalculadoraDeVentas = ({ datosEdicion, onGuardadoExitoso }) => {
 
       {/* Modal de Guardar Presupuesto */}
       {showGuardarModal && (
-        <div className="modal fade show d-block" tabIndex="-1" style={{ background: 'var(--nd-color-overlay)' }}>
+        <div className="modal fade show d-block nd-bg-overlay" tabIndex="-1">
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">
@@ -626,7 +623,7 @@ const CalculadoraDeVentas = ({ datosEdicion, onGuardadoExitoso }) => {
 
       {/* Modal de Descargar Excel */}
       {showExcelModal && (
-        <div className="modal fade show d-block" tabIndex="-1" style={{ background: 'var(--nd-color-overlay)' }}>
+        <div className="modal fade show d-block nd-bg-overlay" tabIndex="-1">
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">

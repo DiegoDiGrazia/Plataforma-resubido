@@ -218,23 +218,62 @@
   /* ------------------------------------------------------------------ */
   --nd-sidebar-width:           250px;
   --nd-sidebar-width-collapsed: 55px;
+  --nd-topbar-height:           44px; /* barra superior fija en mobile (≤768) */
   --nd-content-max-width:       1440px;
-  --nd-page-padding:            var(--nd-space-6);
+  --nd-page-padding:            var(--nd-space-10); /* margen lateral de cada pantalla */
   --nd-control-height:          38px; /* botones e inputs default */
   --nd-control-height-sm:       32px;
 
   /* Breakpoints (referencia: las custom properties NO funcionan dentro de
-     @media; copiá el valor literal y usá SOLO estos):
-       xs  max-width: 380px   teléfonos chicos
-       sm  max-width: 576px   teléfonos
-       md  max-width: 768px   tablet / mobile layout  ← el principal
-       xl  max-width: 1366px  notebooks                                    */
+     @media; copiá el valor literal y usá SOLO estos, siempre max-width).
+     La base (sin media query) es 1920px.
+       1660px  pantallas grandes de notebook/monitor
+       1440px  notebooks grandes
+       1366px  notebooks
+       1024px  tablets horizontales / notebooks chicas
+        768px  tablet vertical: el sidebar pasa a la barra superior  ← mobile
+        420px  teléfonos
+        380px  teléfonos chicos                                           */
+}
+
+/* ------------------------------------------------------------------ */
+/* TOKENS RESPONSIVE — se achican solos. Usando estos tokens, una      */
+/* pantalla ya se adapta sin escribir media queries propias.            */
+/* ------------------------------------------------------------------ */
+@media (max-width: 1660px) {
+  :root {
+    --nd-page-padding: var(--nd-space-8);
+  }
+}
+
+@media (max-width: 1440px) {
+  :root {
+    --nd-page-padding:  var(--nd-space-6);
+    --nd-sidebar-width: 220px;
+  }
+}
+
+@media (max-width: 1024px) {
+  :root {
+    --nd-page-padding:  var(--nd-space-5);
+    --nd-font-size-4xl: 28px;
+    --nd-font-size-3xl: 26px;
+  }
 }
 
 @media (max-width: 768px) {
   :root {
     --nd-page-padding:   var(--nd-space-4);
+    --nd-font-size-4xl:  26px;
     --nd-font-size-3xl:  24px;
     --nd-font-size-2xl:  20px;
+  }
+}
+
+@media (max-width: 420px) {
+  :root {
+    --nd-page-padding:  var(--nd-space-3);
+    --nd-font-size-3xl: 22px;
+    --nd-font-size-2xl: 19px;
   }
 }

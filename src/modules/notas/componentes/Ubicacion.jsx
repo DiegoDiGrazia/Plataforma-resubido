@@ -1,6 +1,4 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'cropperjs/dist/cropper.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { setContenidoPorIndice } from '@/store/crearNotaSlice';

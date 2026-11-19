@@ -79,10 +79,10 @@ const InputNumerico = ({
 
   return (
     <div className="mb-2">
-      <div className="d-flex justify-content-between align-items-center mb-2">
-        <span className="fw-bold">{title}</span>
+      <div className="nd-field-row mb-2">
+        <span className="nd-field-row__label">{title}</span>
 
-        <div className="input-group" style={{ maxWidth: "220px" }}>
+        <div className="input-group nd-field-row__control">
           {isMoney && (
             <span className="input-group-text">$</span>
           )}

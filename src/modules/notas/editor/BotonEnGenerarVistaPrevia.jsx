@@ -135,8 +135,8 @@ const BotonEnGenerarVistaPrevia = ({ status }) => {
         <>
             <Button
                 onClick={clickear_en_publicar_nota}
-                className='icono_vistaPrevia' variant="none">
-                <img src="/images/iconoOjo.png" alt="Icono 1" className="icon me-2 " />{" Vista previa"}
+                className='icono_vistaPrevia' variant="link">
+                <img src="/images/iconoOjo.png" alt="" className="icon" />{" Vista previa"}
             </Button>
 
             <Modal show={showModal} onHide={() => setShowModal(false)} centered>

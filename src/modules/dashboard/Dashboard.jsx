@@ -1,12 +1,9 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { Button } from 'react-bootstrap';
 import '@/app/App.css'
 import '@/modules/notas/nota_print.css'
 import '@/modules/notas/nota.css'
 import './Dashboard.css';
-import './DashboardMobile.css';
 
 import Barplot from '@/shared/components/charts/Barplot.jsx';
 import InteraccionPorNota from '@/modules/dashboard/datosRelevantes/InteraccionPorNota.jsx';
@@ -133,13 +130,13 @@ const Dashboard = () => {
             <div id='pantalla-dashboard'>
                 <div className="content flex-grow-1" ref={componenteRef}>
                     <div id="print-header">
-                            <row>
-                                <img src={"/images/imagenParaReportes.png"} alt="Icono 1" className="imagenParaReporte" />
-                            </row>
+                            <div>
+                                <img src={"/images/imagenParaReportes.png"} alt="Noticias (d)" className="imagenParaReporte" />
+                            </div>
                         <h4 id="saludo" className='nombreReporteEncabezado'>Reporte de {nombreCliente} </h4>
                         <h5 className='resenaReporte'>Reporte emitido el {fecha} de {FiltroActual.toLowerCase()} de la cuenta </h5>
                     </div>
-                    <div className="p-3 mt-4">
+                    <div className="nd-px-page pt-3 pb-5">
                         <header className="head_dash no-print">
                             {esFranquicia ? (
                                 <div className="bienvenidaFranquicia">
@@ -157,8 +154,8 @@ const Dashboard = () => {
                                     <h3 id="nombre_municipio">{nombreCliente}</h3>
                                 </>
                             )}
-                            <Button id="botonCrearNota" className='no-print' variant="none" onClick={() => ClickearEnCrearNota(nombreCliente)}>
-                                <img src="/images/boton_crear_nota.png" alt="Icono 1" className="icon me-2" />
+                            <Button id="botonCrearNota" className='no-print' variant="primary" onClick={() => ClickearEnCrearNota(nombreCliente)}>
+                                <i className="bi bi-plus-lg" aria-hidden="true" /> Crear nota
                             </Button>
                         </header>
                         <div className="subtitulo no-print">
@@ -197,22 +194,18 @@ const Dashboard = () => {
                         <div className="mb-2 tamaño_barplot">
                             <Barplot datosLocales={datosLocalmente} resumenCliente = {resumenCliente} loading ={loadingUsuarios} paisFiltro={paisFiltro}/>
                         </div>
-                        <div className= "tops">
-                            <div className='row g-1'>
-                                <div className='col-lg-12 col-xl col-6 m-2 back-white'>
-                                    <InteraccionPorNota datosLocales={datosLocalmente} paisFiltro={paisFiltro}/>
-                                </div>
-                                <div className='col-lg-12 col-xl col-6 m-2 back-white'>
-                                    <MediosMasRelevantes datosLocales={datosLocalmente} paisFiltro={paisFiltro}/>
-                                </div>
+                        <div className="tops">
+                            <div className='tops__widget back-white'>
+                                <InteraccionPorNota datosLocales={datosLocalmente} paisFiltro={paisFiltro}/>
                             </div>
-                            <div className='row g-1'>
-                                <div className='col-lg-12 col-xl col-6 m-2 back-white'>
-                                    <PlataformaMasImpresiones resumenCliente = {resumenCliente} loading ={loadingUsuarios} paisFiltro={paisFiltro}/>
-                                </div>
-                                <div className='col-lg-12 col-xl col-6 m-2 back-white'>
-                                    <CategoriasMasRelevantes datosLocales={datosLocalmente} paisFiltro={paisFiltro}/>
-                                </div>
+                            <div className='tops__widget back-white'>
+                                <MediosMasRelevantes datosLocales={datosLocalmente} paisFiltro={paisFiltro}/>
+                            </div>
+                            <div className='tops__widget back-white'>
+                                <PlataformaMasImpresiones resumenCliente = {resumenCliente} loading ={loadingUsuarios} paisFiltro={paisFiltro}/>
+                            </div>
+                            <div className='tops__widget back-white'>
+                                <CategoriasMasRelevantes datosLocales={datosLocalmente} paisFiltro={paisFiltro}/>
                             </div>
                         </div>
                     </div>

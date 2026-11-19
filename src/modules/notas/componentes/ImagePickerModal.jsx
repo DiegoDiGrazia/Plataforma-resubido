@@ -72,13 +72,7 @@ export default function ImagePickerModal({ isOpen, onClose, fetchUrl }) {
         Seleccione una imagen
     <button
         onClick={onClose}
-        className="text-xs px-2 py-1 bg-gray-300 rounded hover:bg-gray-400 ml-2 float-right"
-        style={{
-        padding: "3px",
-        fontSize: "15px",
-        margin: "auto",
-        marginTop: "10px",
-        }}
+        className="btn btn-secondary btn-sm float-end mt-2"
     >
         Cerrar
     </button>

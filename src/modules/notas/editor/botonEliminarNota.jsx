@@ -32,10 +32,10 @@ const BotonEliminarNota = ({ id, token }) => {
       {/* Botón de eliminar */}
       <button
         onClick={() => setMostrarModal(true)}
-        className="p-0 m-2 border-0 bg-transparent"
+        className="notasListado__botonIcono"
         title="Eliminar nota"
       >
-        <i className="bi bi-trash3-fill m-2 fs-2 text-danger"></i>
+        <i className="bi bi-trash3-fill text-danger" aria-hidden="true"></i>
       </button>
 
       {/* Modal de confirmación */}

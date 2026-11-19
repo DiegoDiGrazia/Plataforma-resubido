@@ -13,7 +13,7 @@ const GestionPresupuestos = () => {
   };
 
   return (
-    <div className="content flex-grow-1 p-3"> 
+    <div className="content flex-grow-1 gestionPresupuestos">
       {/* HEADER Y PESTAÑAS */}
       <div className="row miPerfilContainer soporteContainer p-0 tabs-container mt-1">
         <div className="col-12 p-0">

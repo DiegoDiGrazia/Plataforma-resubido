@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Button } from 'react-bootstrap';
 import './Formulario.css';
-import './FormularioMobile.css';
 import { resetFormulario } from '@/store/formularioSlice';
 import { cambiarClave } from '@/api/authApi.js';
 import { autenticar, guardarSesion, rutaInicial } from './sesion.js';
@@ -139,13 +139,13 @@ const CambiarClave = () => {
                             value={claveRepetida}
                             onChange={(e) => setClaveRepetida(e.target.value)}
                         />
-                        {error && <div className='olvide_contraseña text-start' role="alert">{error}</div>}
+                        {error && <div className='containerFormulario__error' role="alert">{error}</div>}
                     </div>
-                    <button type="submit" id='iniciar_sesion' disabled={cargando || segundosBloqueo > 0}>
+                    <Button type="submit" variant="primary" size="lg" className="containerFormulario__enviar" disabled={cargando || segundosBloqueo > 0}>
                         {cargando && <span className="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>}
                         {textoBoton}
-                    </button>
-                    <button type="button" className="btn btn-link" id="olvide_contraseña" onClick={() => navigate('/')}>Volver al inicio</button>
+                    </Button>
+                    <Button variant="link" className="containerFormulario__link" onClick={() => navigate('/')}>Volver al inicio</Button>
                 </form>
             </div>
             {rutaDestino && (

@@ -1,96 +1,86 @@
+/* ==========================================================================
+   Galería de imágenes y carrusel dentro del editor de notas.
+   Antes .col-2, .row-2, .carousel-item y .carousel-inner eran globales y
+   pisaban la grilla de Bootstrap y los carruseles de otras pantallas.
+   ========================================================================== */
+
 .contenedor-galeria {
-  padding: 1rem;
-  max-width: 1000px;
-  margin: auto;
+    max-width: 1200px;
+    margin: auto;
+    padding: var(--nd-space-4);
+
+    .wp-block-gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: var(--nd-space-3);
+        margin-top: var(--nd-space-4);
+    }
+
+    .blocks-gallery-item {
+        position: relative;
+        overflow: hidden;
+        aspect-ratio: 1 / 1;
+        border-radius: var(--nd-radius-md);
+    }
+
+    .blocks-gallery-item img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: var(--nd-radius-md);
+    }
+
+    /* Tamaños dinámicos de cada imagen dentro de la grilla */
+    .blocks-gallery-item.col-2 {
+        grid-column: span 2;
+    }
+    .blocks-gallery-item.row-2 {
+        grid-row: span 2;
+    }
+
+    .controles {
+        position: absolute;
+        top: var(--nd-space-1);
+        left: var(--nd-space-1);
+        z-index: var(--nd-z-base);
+        display: flex;
+        gap: var(--nd-space-1);
+    }
+
+    .controles button {
+        padding: 2px var(--nd-space-2);
+        font-size: var(--nd-font-size-xs);
+        color: var(--nd-color-text-inverse);
+        background: var(--nd-color-overlay);
+        border: none;
+        border-radius: var(--nd-radius-sm);
+        cursor: pointer;
+    }
+
+    @media (max-width: 420px) {
+        padding: var(--nd-space-2);
+
+        .wp-block-gallery-grid {
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        }
+
+        /* En teléfonos no hay lugar para imágenes de 2 columnas */
+        .blocks-gallery-item.col-2 {
+            grid-column: span 1;
+        }
+    }
 }
 
-.wp-block-gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 10px;
-  margin-top: 1rem;
-}
+/* Carrusel de imágenes del editor (CarruselEnNota.jsx) */
+.carruselEnNota {
+    .carousel-inner {
+        margin: 0;
+        border-radius: var(--nd-radius-lg);
+    }
 
-.blocks-gallery-item {
-  position: relative;
-  overflow: hidden;
-  border-radius: var(--nd-radius-md);
-  aspect-ratio: 1 / 1;
-}
-
-.blocks-gallery-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  border-radius: var(--nd-radius-md);
-}
-
-/* Tamaños dinámicos */
-.col-2 {
-  grid-column: span 2;
-}
-.row-2 {
-  grid-row: span 2;
-}
-
-.controles {
-  position: absolute;
-  top: 5px;
-  left: 5px;
-  display: flex;
-  gap: 4px;
-  z-index: 10;
-}
-
-.controles button {
-  background: var(--nd-color-overlay);
-  color: var(--nd-color-text-inverse);
-  border: none;
-  padding: 3px 6px;
-  font-size: 0.75rem;
-  border-radius: var(--nd-radius-sm);
-  cursor: pointer;
-}
-
-.controles button:hover {
-  background: var(--nd-color-overlay);
-}
-
-.wp-block-gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* antes 150px */
-  gap: 12px;
-  margin-top: 1rem;
-}
-
-/* Mantener cuadrado pero con más tamaño */
-.blocks-gallery-item {
-  position: relative;
-  overflow: hidden;
-  border-radius: var(--nd-radius-md);
-  aspect-ratio: 1 / 1;
-}
-
-/* Si querés que no sean tan cuadradas, podés probar esto:
-.aspect-cuadrado {
-  aspect-ratio: 4 / 3;
-}
-*/
-
-/* También podés limitar la galería para que no se extienda de más */
-.contenedor-galeria {
-  padding: 1rem;
-  max-width: 1200px; /* antes 1000px */
-  margin: auto;
-}
-
-.carousel-item{
-  height: auto !important;
-  border-radius: var(--nd-radius-sm);
-}
-.carousel-inner{
-  margin: 0px;
-    border-radius: var(--nd-radius-lg);
-
+    .carousel-item {
+        height: auto;
+        border-radius: var(--nd-radius-sm);
+    }
 }

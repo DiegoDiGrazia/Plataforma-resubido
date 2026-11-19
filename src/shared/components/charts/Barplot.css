@@ -1,74 +1,154 @@
-.leyenda_barplot{
-    display: inline-block;
-    font-size: 20px;
-}
-.usuarios_totales{
-    display: inline-block;
-    flex-direction: column;
-    max-width: 300px;
-    margin-top: 30px;
-    max-height: 100px;
-}
+/* ==========================================================================
+   Gráficos de barras con KPIs (Barplot, BarplotNota, Barplot_mejorado_carga)
+   Usados en Dashboard y Ver nota. Todo anidado bajo .nd-barplot: antes este
+   archivo tenía .row { padding-top: 20px } y .col-2 { width: 300px } globales,
+   que cambiaban toda la plataforma apenas se abría el Dashboard. También
+   reemplaza a BarplotMobile.css y BarplotNotaMobile.css (márgenes negativos,
+   left: 145%, anchos fijos de 343/380px).
+   ========================================================================== */
 
-.blue-dot-user, .blue-dot-impresiones {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    background-color: var(--nd-chart-1); /* Medios */
+.nd-barplot {
+    width: 100%;
 
-    border-radius: var(--nd-radius-full);
-    margin-right: 5px;
-    vertical-align: middle;
-}
+    /* ---------- KPIs ---------- */
+    .cantidades {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        width: 100%;
+        margin: var(--nd-space-4) 0 0;
+        padding: var(--nd-space-5) 0;
+        background-color: var(--nd-color-bg-surface);
+        border-radius: var(--nd-radius-lg) var(--nd-radius-lg) 0 0;
+    }
 
-.blue-dot-impresiones {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    background-color: var(--nd-chart-2); /* Redes */
+    .cantidades > * {
+        width: auto;
+        max-width: none;
+        min-width: 0;
+        padding: 0 var(--nd-space-6);
+    }
 
-    border-radius: var(--nd-radius-full);
-    margin-right: 5px;
-    vertical-align: middle;
-}
+    .barra_lateral {
+        margin: 0;
+        border-right: var(--nd-border-width) solid var(--nd-color-border);
+    }
 
-.blue-dot-user.blue-dot-videos,
-.blue-dot-impresiones.blue-dot-videos {
-    background-color: var(--nd-chart-3); /* Videos */
-}
+    .leyenda_barplot {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: var(--nd-space-2);
+        margin-bottom: var(--nd-space-3);
+        font-size: var(--nd-font-size-lg);
+        font-weight: var(--nd-font-weight-semibold);
+        line-height: var(--nd-line-height-snug);
+        color: var(--nd-color-text);
+    }
 
-.barplot{
-    width: 100px;
-    height: 200px;
-}
-.row{
-    height: auto;
-    padding-top: 20px;
-}
-.barra_lateral{
-    border-right: 1px solid var(--nd-color-border); 
-    margin-right: 30px;
-    padding-left: 30px;
-}
+    .totales {
+        margin: 0;
+        font-size: var(--nd-font-size-4xl);
+        font-weight: var(--nd-font-weight-semibold);
+        line-height: var(--nd-line-height-tight);
+    }
 
-.totales{
-    font-size: 32px;
-    font-weight: 600;
-}
+    .info-icon {
+        margin-left: auto;
+    }
 
-.leyenda_barplot {
-    position: relative; /* Para posicionar el tooltip */
-    display: flex; /* Alinear el texto y la imagen */
-    align-items: center; /* Centrar verticalmente */
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--nd-color-text)
-}
+    .nd-barplot__vacio {
+        grid-column: 1 / -1;
+        margin: 0 var(--nd-space-5);
+        font-size: var(--nd-font-size-xl);
+    }
 
-.info-icon{
-    margin-left: 10px;
-}
+    /* Puntitos de color de cada serie (mismos colores que el gráfico) */
+    .blue-dot-user,
+    .blue-dot-impresiones {
+        display: inline-block;
+        flex-shrink: 0;
+        width: 10px;
+        height: 10px;
+        background-color: var(--nd-chart-1); /* Medios */
+        border-radius: var(--nd-radius-full);
+    }
 
-.col-2{
-    width: 300px;
+    .blue-dot-impresiones {
+        background-color: var(--nd-chart-2); /* Redes */
+    }
+
+    .blue-dot-user.blue-dot-videos,
+    .blue-dot-impresiones.blue-dot-videos {
+        background-color: var(--nd-chart-3); /* Videos */
+    }
+
+    /* ---------- Gráfico ---------- */
+    .nd-barplot__grafico {
+        width: 100%;
+        margin: 0;
+        padding: var(--nd-space-4) var(--nd-space-5);
+        background-color: var(--nd-color-bg-surface);
+    }
+
+    .nd-barplot__grafico:last-child {
+        border-radius: 0 0 var(--nd-radius-lg) var(--nd-radius-lg);
+    }
+
+    .barplot {
+        position: relative;
+        height: 320px;
+        padding: 0;
+    }
+
+    /* ---------- Notebooks ---------- */
+    @media (max-width: 1366px) {
+        .cantidades > * {
+            padding: 0 var(--nd-space-4);
+        }
+
+        .leyenda_barplot {
+            font-size: var(--nd-font-size-md);
+        }
+    }
+
+    /* ---------- Mobile: un KPI por fila, etiqueta a la izquierda y número a la derecha ---------- */
+    @media (max-width: 768px) {
+        .cantidades {
+            grid-template-columns: 1fr;
+            padding: var(--nd-space-2) 0;
+        }
+
+        .cantidades > * {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--nd-space-3);
+            padding: var(--nd-space-3) var(--nd-space-4);
+        }
+
+        .barra_lateral {
+            border-right: none;
+            border-bottom: var(--nd-border-width) solid var(--nd-color-border);
+        }
+
+        .leyenda_barplot {
+            margin: 0;
+        }
+
+        .info-icon {
+            margin-left: 0;
+        }
+
+        .totales {
+            font-size: var(--nd-font-size-2xl);
+        }
+
+        .nd-barplot__grafico {
+            padding: var(--nd-space-3);
+        }
+
+        .barplot {
+            height: 260px;
+        }
+    }
 }

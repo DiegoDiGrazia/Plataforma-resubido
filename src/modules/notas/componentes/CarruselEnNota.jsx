@@ -6,6 +6,7 @@ import { calcularNumeroDeAtachment } from './ImagenDeParrafo';
 import { comprimirImagen } from './ImagenPrincipal';
 import { setContenidoPorIndice, setAtachment, setImagenesDeCarrusel } from '@/store/crearNotaSlice';
 import BotoneraContenido from './BotoneraContenido';
+import './Galeria.css';
 const cantidadDeAtachments = 10; // Definimos la cantidad de attachments
 
 
@@ -60,11 +61,11 @@ const handleImageUpload = async (e) => {
 }, [carouselHTML, images, id_att]);
 
 return (
-  <span className="spanContainer">
+  <span className="spanContainer carruselEnNota">
     <BotoneraContenido indice={indice} tipo ={"carrusel"} cantidad={images.length} className="pr-2" />
 
     {images.length > 0 ? (
-      <div style={{ position: 'relative', marginBottom: '1rem' }}>
+      <div className="position-relative mb-3">
         <div id="carouselExample" className="carousel slide" data-bs-ride="carousel" ref={carouselRef}>
           <div className="carousel-inner">
             {images.map((imgSrc, index) => (

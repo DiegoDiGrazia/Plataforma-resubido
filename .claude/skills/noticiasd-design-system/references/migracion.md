@@ -14,7 +14,11 @@
    pantalla (`.contratosPage .x`) en vez de `!important`.
 7. **Inline styles**: mover a clase. Si es dinámico (ancho %, posición), dejarlo pero sin colores/tamaños literales.
 8. **Mobile**: unificar `*Mobile.css` dentro del CSS de la pantalla con `@media (max-width: 768px)`.
-9. Verificar visualmente en desktop, 1366px y 768px. Reauditar: 0 en hex/fontSize/radius/shadow.
+9. **Scope**: todo el archivo anidado bajo la raíz de la pantalla (`#pantalla-x { … }`). Selectores
+   que dependen de la cadena exacta de utilidades (`.row.miPerfilContainer.soporteContainer.mt-4.p-0`)
+   → clase propia en el JSX.
+10. Verificar visualmente en 380 · 420 · 768 · 1024 · 1366 · 1440 · 1660 · 1920. Reauditar: 0 en
+    hex/fontSize/radius/shadow y 0 en `bp` (breakpoints fuera de la lista).
 
 ## Mapeo legacy → token
 
@@ -67,8 +71,9 @@
 `50%` → `--nd-radius-full`.
 
 ### Breakpoints
-`max-width: 768px` se mantiene. `1366px` se mantiene. `380px` y `576px` se mantienen.
-`min-width: 768px` → reescribir como estilos base + `max-width: 768px`.
+Permitidos (`max-width`): `1660 · 1440 · 1366 · 1024 · 768 · 420 · 380`.
+`576px` → `420px` (o `768px` si el cambio es de layout). `992px`/`1200px`/`1280px` → `1024px` o `1366px`.
+`min-width: X` → reescribir como estilos base + `max-width` del breakpoint de abajo.
 
 ## Prioridad sugerida (por deuda según auditoría inicial)
 

@@ -42,7 +42,7 @@ const ReloginModal = ({ onLoginExitoso }) => {
       : 'Volver a la sesión';
 
   return (
-    <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'var(--nd-color-overlay)' }}>
+    <div className="modal show d-block nd-bg-overlay" tabIndex="-1">
       <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content shadow">
 

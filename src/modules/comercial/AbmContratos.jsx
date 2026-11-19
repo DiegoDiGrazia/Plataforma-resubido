@@ -1,13 +1,9 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import "@/modules/perfil/miPerfil.css";
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import ModalMensaje from '@/shared/components/modales/ModalMensaje';
 import { obtenerContratos, obtenerPlanesMarketing, obtenerComisionistas, cargarArchivo } from '@/api/apisUsuarios'; // Importa la función para obtener usuarios
 import { obtenerClientes } from '@/api/apis';
-import '@/modules/administracion/AbmsMobile.css';
 import './AbmContratos.css';
 import DropdawnSiNo from './DropdownSiNo'
 import SelectorConBuscador from '@/shared/components/form/SelectorConBuscador';
@@ -652,8 +648,8 @@ const handleSave = () => {
                 <div className="statValue">${formatearARS(totales.totalComision)}</div>
               </div>
             </div>
-            <div className="statTile" style={{ justifyContent: 'center' }}>
-              <button className="btn btn-secondary w-100" style={{ borderRadius: 'var(--nd-radius-md)' }} onClick={() => {
+            <div className="statTile statTile--accion">
+              <button className="btn btn-secondary w-100" onClick={() => {
                 descargarExcel(contratosFiltrados, "Contratos");
               }}>
                 <i className="bi bi-download me-2" />Descargar Excel
@@ -667,7 +663,7 @@ const handleSave = () => {
       <div className='row miPerfilContainer soporteContainer mt-4 p-0'>
         <div>
           {loading ? (
-            <div className="d-flex justify-content-center align-items-center" style={{ height: "200px" }}>
+            <div className="d-flex justify-content-center align-items-center contratosPage__cargando">
               <div className="spinner-border text-primary" role="status">
                 <span className="visually-hidden">Cargando...</span>
               </div>
@@ -678,8 +674,8 @@ const handleSave = () => {
             <ul className="listaContratos">
               {pagedItems.map((item) => (
                 <li key={item.id} className="contratoCard">
-                  <div className='row pt-0'>
-                    <div className='col-md-3'>
+                  <div className='contratoFila'>
+                    <div>
                       <button
                         className="btn btn-link contratoCliente"
                         onClick={() => handleEditClick(item)}
@@ -692,7 +688,7 @@ const handleSave = () => {
                       <div className="contratoMeta">{obtenerModalidadDelContrato(item).nombre}</div>
                       <div className={`badgeEstado ${claseBadgeEstado(item.estado)}`}>{item.estado || 'Sin estado'}</div>
                     </div>
-                    <div className='col-md-3'>
+                    <div>
                       <div className="contratoLabel">Monto total</div>
                       <div className="contratoDato">${formatearARS(item.monto)}</div>
                       <div className="contratoLabel">Avance</div>
@@ -704,37 +700,37 @@ const handleSave = () => {
                         <div className="contratoDato text-muted">Sin orden de compra</div>
                       )}
                     </div>
-                    <div className='col-3'>
-                      <div>Fecha inicio: {item.fecha_inicio}</div>
-                      <div>Fecha fin: {item.fecha_fin}</div>
-                      <div>Facturas Emitidas: {item.facturado}/{item.facturas}</div>
-                      <div>
-                        <button className="mb-2 btn btn-primary" onClick={() => cargarArchivos(item)}>
-                          Cargar archivo
+                    <div>
+                      <div className="contratoLabel">Vigencia</div>
+                      <div className="contratoDato">{item.fecha_inicio} → {item.fecha_fin}</div>
+                      <div className="contratoLabel">Facturas emitidas</div>
+                      <div className="contratoDato">{item.facturado}/{item.facturas}</div>
+                    </div>
+                    <div className="accionesContrato">
+                      <div className="accionesContrato__grupo">
+                        <span className="contratoLabel">Archivos</span>
+                        <button className="btn btn-outline-secondary btn-sm" onClick={() => cargarArchivos(item)}>
+                          <i className="bi bi-upload" />Cargar
                         </button>
-                        
-                        <button className="btn btn-outline-secondary" disabled={showModalArchivosDelContrato} onClick={() => verArchivosDelContrato(item)}>
-                          <i className="bi bi-folder2-open" />Ver archivos
+                        <button className="btn btn-outline-secondary btn-sm" disabled={showModalArchivosDelContrato} onClick={() => verArchivosDelContrato(item)}>
+                          <i className="bi bi-folder2-open" />Ver
                         </button>
                       </div>
-                    </div>
-                    <div className='col-md-3'>
-                      <div className="accionesContrato">
+                      <div className="accionesContrato__grupo">
+                        <span className="contratoLabel">Comentarios</span>
                         {permisoEdicion && (
-                          <button className="btn btn-outline-secondary" onClick={() => cargarComentario(item)}>
-                            <i className="bi bi-chat-left-text" />Ingresar comentario
+                          <button className="btn btn-outline-secondary btn-sm" onClick={() => cargarComentario(item)}>
+                            <i className="bi bi-chat-left-text" />Ingresar
                           </button>
                         )}
-                      </div>
-                      <div>
-                        <button className="mb-2 btn btn-primary" disabled={showModalComentariosDelContrato} onClick={() => verComentariosDelContrato(item)}>
-                          Ver comentarios
+                        <button className="btn btn-outline-secondary btn-sm" disabled={showModalComentariosDelContrato} onClick={() => verComentariosDelContrato(item)}>
+                          <i className="bi bi-chat-square-dots" />Ver
                         </button>
                       </div>
-                      <div>
+                      <div className="accionesContrato__grupo">
                         {permisoEdicion && (
                           <button
-                            className="btn btn-primary"
+                            className="btn btn-outline-secondary btn-sm"
                             onClick={() => {
                               handleEditClick(item);
                               setFormData(prev => ({
@@ -859,7 +855,7 @@ const handleSave = () => {
                     }}
                   />
                   {!formData.id_vendedor && (
-                    <div className="text-danger mb-3" style={{ fontSize: '13px', marginTop: '-6px' }}>
+                    <div className="text-danger mb-3 nd-text-sm">
                       El vendedor es obligatorio.
                     </div>
                   )}
@@ -958,7 +954,7 @@ const handleSave = () => {
                     }}
                   />
               {ModalidadSeleccionada?.bonificado === "SI" && (
-                <div className="mb-3" style={{ fontSize: '14px', fontWeight: 500 }}>
+                <div className="mb-3 nd-text-base nd-fw-medium">
                   Hasta el momento lleva ${formatearARS(bonificadoDelMesDelVendedor)} bonificados en el mes
                 </div>
               )}
@@ -1023,7 +1019,7 @@ const handleSave = () => {
                             key={comisionista.id}
                             style={{ display: 'flex', alignItems: 'start', gap: '7px' }}
                           >
-                            <span style={{ marginTop: '8px', fontSize: '16px' }}>
+                            <span className="mt-2 nd-text-md">
                               {comisionista.nombre}
                             </span>
 
@@ -1113,7 +1109,7 @@ const handleSave = () => {
                             key={comisionista.id}
                             style={{ display: 'flex', alignItems: 'start', gap: '7px' }}
                           >
-                            <span style={{ marginTop: '8px', fontSize: '16px' }}>
+                            <span className="mt-2 nd-text-md">
                               {comisionista.nombre}
                             </span>
                             <span style={{ width: '90px' }}>
@@ -1126,7 +1122,7 @@ const handleSave = () => {
                                 onSelect={(value) => actualizarPorcentajeComisionista(porcentajeCampo, value)}
                               />
                             </span>
-                            <span style={{ marginTop: '8px', fontSize: '16px' }}>
+                            <span className="mt-2 nd-text-md">
                               {"$" +(Number(formData.monto) * (Number(formData[porcentajeCampo]) / 100)) }
                             </span>
 

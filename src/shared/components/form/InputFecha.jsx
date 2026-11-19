@@ -11,7 +11,7 @@ const InputFecha = ({ label, name, value, onChange }) => {
         padding: "0px"
       }}
     >
-      <span style={{ fontSize: "16px", fontWeight: "bold" }}>
+      <span className="nd-text-md nd-fw-bold">
         {label}
       </span>
 
@@ -20,7 +20,7 @@ const InputFecha = ({ label, name, value, onChange }) => {
         name={name}
         value={value}
         onChange={onChange}
-        style={{ fontSize: "20px", fontWeight: "bold" }}
+        className="nd-text-xl nd-fw-bold"
       />
     </div>
   );

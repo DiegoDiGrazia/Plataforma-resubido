@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import "./InteraccionPorNota.css";
 import { useSelector, useDispatch } from 'react-redux';
 import { obtenerTopMedios } from '@/api/dashboardApi';
@@ -69,19 +68,19 @@ const MediosMasRelevantes = ({datosLocales, paisFiltro}) => {
     console.log(listaTresMedios);
 
     const renderMedio = (medio) => (
-        <div className='row pt-1' key={medio.sitio}>
-            <div className='col-auto'>
+        <div className='datosRelevantes__fila' key={medio.sitio}>
+            <div>
                 <img src={`https://www.google.com/s2/favicons?domain=${medio.sitio}&sz=64`} alt="Icono 1" className='imagenWidwetInteracciones' />
             </div>
-            <div className='col-7 pt-1 ml-2 columnaInteraccion'>
-                <div className='row p-0 nombre_plataforma'>
+            <div className='columnaInteraccion'>
+                <div className='nombre_plataforma'>
                     {formatearTextoNombre(medio.sitio)}
                 </div>
-                <div className='row p-0'>
+                <div>
                     <a href={`https://${medio.sitio}`} className='linkPlataforma'>{medio.sitio}</a>
                 </div>
             </div>
-            <div className='col totales_widget impresionesWidget'>
+            <div className='totales_widget impresionesWidget'>
                 <p>{formatNumberMiles(medio.impresiones)}</p>
             </div>
         </div>

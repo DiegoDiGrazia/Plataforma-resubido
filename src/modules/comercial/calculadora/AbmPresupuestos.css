@@ -1,145 +1,160 @@
-.text-orange {
-  color: var(--nd-color-primary-text) !important;
+/* ==========================================================================
+   Listado de presupuestos (.abmPresupuestos). Antes .text-orange, .btn-orange,
+   .react-collapse… eran globales y se mezclaban con otras pantallas.
+   ========================================================================== */
+
+.abmPresupuestos {
+    .text-orange {
+      color: var(--nd-color-primary-text);
+    }
+
+    .bg-orange {
+      background-color: var(--nd-color-primary);
+      color: var(--nd-color-text-inverse);
+    }
+
+    .border-orange {
+      border-color: var(--nd-color-primary);
+    }
+
+    .btn-orange {
+      background-color: var(--nd-color-primary);
+      color: var(--nd-color-text-inverse);
+      border: none;
+      transition: background-color var(--nd-duration-fast) var(--nd-easing);
+    }
+
+    .btn-orange:hover {
+      background-color: var(--nd-color-primary-hover);
+      color: var(--nd-color-text-inverse);
+    }
+
+    .spinner-orange {
+      color: var(--nd-color-primary-text);
+    }
+
+    .accordion-button-custom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      border: none;
+      background-color: var(--nd-color-bg-page);
+      color: var(--nd-color-primary-text);
+      text-align: left;
+      transition: background-color var(--nd-duration-fast) var(--nd-easing);
+    }
+
+    .accordion-button-custom:hover {
+      background-color: var(--nd-color-primary-subtle);
+    }
+
+    .accordion-button-custom i.bi-chevron-down {
+      transition: transform var(--nd-duration-base) var(--nd-easing);
+    }
+
+    .accordion-button-custom.open i.bi-chevron-down {
+      transform: rotate(180deg);
+    }
+
+    .metric-label {
+      font-size: var(--nd-font-size-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.2rem;
+    }
+
+    .hover-panel {
+      transition: transform var(--nd-duration-fast) var(--nd-easing), box-shadow var(--nd-duration-fast) var(--nd-easing);
+    }
+
+    .hover-panel:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--nd-shadow-md);
+    }
+
+    .btn-icon-only {
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .react-collapse {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows var(--nd-duration-slow) var(--nd-easing);
+    }
+
+    .react-collapse.show {
+      grid-template-rows: 1fr;
+    }
+
+    .react-collapse-inner {
+      overflow: hidden;
+    }
+
+    .metric-divider {
+      border-left: var(--nd-border-width) solid var(--nd-color-border);
+    }
+
+    @media (max-width: 768px) {
+      .metric-divider {
+        border-left: none;
+      }
+    }
+
+    .filtros-container {
+      background-color: var(--nd-color-bg-page);
+      border: 1px solid var(--nd-color-border);
+      border-radius: var(--nd-radius-md);
+    }
+
+    .search-input-container {
+      width: 100%;
+      max-width: 250px;
+    }
+
+    .selector-cliente-container {
+      min-width: 220px;
+      margin-top: 10px;
+    }
+
+    .filter-date-input {
+      font-size: var(--nd-font-size-base);
+      padding: 0.35rem 0.5rem;
+      border-radius: var(--nd-radius-md);
+      border: 1px solid var(--nd-color-border);
+      color: var(--nd-color-text);
+      outline: none;
+      background-color: var(--nd-color-bg-surface);
+    }
+
+    .filter-label {
+      font-size: var(--nd-font-size-base);
+      color: var(--nd-color-text-secondary);
+      font-weight: var(--nd-font-weight-semibold);
+      margin-bottom: 0;
+    }
+
+    @media (max-width: 1366px) {
+      .search-input-container {
+        max-width: 200px;
+      }
+      .selector-cliente-container {
+        min-width: 180px;
+      }
+      .filter-date-input {
+        width: 115px;
+      }
+      .filtros-container.gap-3 {
+        gap: var(--nd-space-2);
+      }
+    }
 }
 
-.bg-orange {
-  background-color: var(--nd-color-primary) !important;
-  color: var(--nd-color-text-inverse) !important;
-}
-
-.border-orange {
-  border-color: var(--nd-color-primary) !important;
-}
-
-.btn-orange {
-  background-color: var(--nd-color-primary);
-  color: var(--nd-color-text-inverse);
-  border: none;
-  transition: background-color 0.2s ease;
-}
-
-.btn-orange:hover {
-  background-color: var(--nd-color-primary-hover);
-  color: var(--nd-color-text-inverse);
-}
-
-.spinner-orange {
-  color: var(--nd-color-primary-text) !important;
-}
-
-.accordion-button-custom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  border: none;
-  background-color: var(--nd-color-bg-page);
-  color: var(--nd-color-primary-text);
-  text-align: left;
-  transition: background-color 0.2s ease;
-}
-
-.accordion-button-custom:hover {
-  background-color: var(--nd-color-primary-subtle);
-}
-
-.accordion-button-custom i.bi-chevron-down {
-  transition: transform 0.3s ease;
-}
-
-.accordion-button-custom.open i.bi-chevron-down {
-  transform: rotate(180deg);
-}
-
-.metric-label {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 0.2rem;
-}
-
-.hover-panel {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.hover-panel:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--nd-shadow-md) !important;
-}
-
-.btn-icon-only {
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.react-collapse {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.35s ease;
-}
-
-.react-collapse.show {
-  grid-template-rows: 1fr;
-}
-
-.react-collapse-inner {
-  overflow: hidden;
-}
-
-@media (min-width: 768px) {
-  .metric-divider {
-    border-left: 1px solid var(--nd-color-border);
-  }
-}
-
-.filtros-container {
-  background-color: var(--nd-color-bg-page);
-  border: 1px solid var(--nd-color-border);
-  border-radius: var(--nd-radius-md);
-}
-
-.search-input-container {
-  width: 100%;
-  max-width: 250px;
-}
-
-.selector-cliente-container {
-  min-width: 220px;
-  margin-top: 10px;
-}
-
-.filter-date-input {
-  font-size: 0.85rem;
-  padding: 0.35rem 0.5rem;
-  border-radius: var(--nd-radius-md);
-  border: 1px solid var(--nd-color-border);
-  color: var(--nd-color-text);
-  outline: none;
-  background-color: var(--nd-color-bg-surface);
-}
-
-.filter-label {
-  font-size: 0.85rem;
-  color: var(--nd-color-text-secondary);
-  font-weight: 600;
-  margin-bottom: 0;
-}
-
-@media (max-width: 1366px) {
-  .search-input-container {
-    max-width: 200px;
-  }
-  .selector-cliente-container {
+.abmPresupuestos__campo {
     min-width: 180px;
-  }
-  .filter-date-input {
-    width: 115px;
-  }
-  .filtros-container {
-    gap: 0.5rem !important;
-  }
 }

@@ -133,7 +133,7 @@ const IconosDistribucionConMonto = ({ nota, token, geo, contratos }) => {
     return (
         <>
         {showConfirmacion && (
-            <div className="modal fade show d-block" tabIndex="-1" style={{ background: 'var(--nd-color-overlay)' }}>
+            <div className="modal fade show d-block nd-bg-overlay" tabIndex="-1">
                 <div className="modal-dialog modal-dialog-centered">
                     <div className="modal-content">
                         <div className="modal-header">

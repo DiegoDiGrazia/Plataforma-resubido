@@ -1,6 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'cropperjs/dist/cropper.css';
 import { useSelector } from 'react-redux';
 import {setEpigrafeImagenPpal} from '@/store/crearNotaSlice';
@@ -33,8 +31,7 @@ const EpigrafeImagenPpal = () => {
         <textarea
             ref={textareaRef}
             placeholder='Epigrafe de imagen principal'
-            className='textAreaComentarios'
-            style={{ width: '90%', minHeight: '0px', resize: 'none', padding: '0px 10px', marginLeft: "50px", height: '30px', marginTop: '5px !important'}}
+            className='textAreaComentarios textAreaComentarios--epigrafe'
             value={epigrafeEnStore}
             onChange={handleEpigrafeChange}
         ></textarea>

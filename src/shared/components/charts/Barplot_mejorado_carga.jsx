@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Spinner } from 'react-bootstrap';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
@@ -78,23 +77,23 @@ const Barplot_Carga = () => {
 
     // Mostrar gráfico de barras animado mientras carga
         return (
-            <div className="container-fluid sinPadding">
-                <div className="row cantidades mt-3 back-white">
-                    <div className='col-2 barra_lateral'>
+            <div className="nd-barplot">
+                <div className="cantidades">
+                    <div className='barra_lateral'>
                         <p className='leyenda_barplot'>
                             <span className="blue-dot-user"></span> Cargando usuarios
                             <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "aca va el texto"/>  
                         </p>
                         <div className='totales'><Spinner color='blue'/></div> {/* Cambiado a div */}
                     </div>
-                    <div className='col barra_lateral' style={{ paddingLeft: '20px' }}>
+                    <div className='barra_lateral'>
                         <p className='leyenda_barplot'>
                             <span className="blue-dot-impresiones"></span> Cargando usuarios
                             <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "aca va el texto"/>  
                         </p>
                         <div className='totales'><Spinner color='primary'/></div> {/* Cambiado a div */}
                     </div>
-                    <div className='col' style={{ paddingLeft: '20px' }}>
+                    <div>
                         <p className='leyenda_barplot'>
                             <span className="blue-dot-impresiones blue-dot-videos"></span> Cargando usuarios
                             <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "aca va el texto"/>  
@@ -102,9 +101,9 @@ const Barplot_Carga = () => {
                         <div className='totales'><Spinner color='primary'/></div> {/* Cambiado a div */}
                     </div>
                 </div>
-                <div className="row back-white">
-                    <div className="col barplot">
-                        <div style={{ height: '100%' }}>
+                <div className="nd-barplot__grafico">
+                    <div className="barplot">
+                        <div className="h-100">
                             <Bar data={dataSimulated} options={optionsSimulated} />
                         </div>
                     </div>

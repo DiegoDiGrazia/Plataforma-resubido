@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { Accordion, Modal, Button, Badge, Table, Form, Spinner } from 'react-bootstrap';
 import { ToastContainer } from 'react-toastify';
 import { toastExito, toastError } from '@/shared/utils/toastify/toastify.jsx';
@@ -12,8 +11,6 @@ import {
   guardarPersonalizacion,
   eliminarPersonalizacion,
 } from '@/api/reportesApi';
-import "@/modules/perfil/miPerfil.css";
-import "@/modules/administracion/AbmsMobile.css";
 
 // ---------------- DEFINICION DE CAMPOS ----------------
 
@@ -523,7 +520,7 @@ const GestionReportes = () => {
           </Form.Select>
         </div>
         <div className='col-12 col-md-3'>
-          <Button type="submit" className="w-100 boton-funcion" variant="dark" size="sm" disabled={cargando}>
+          <Button type="submit" className="w-100 boton-funcion" variant="primary" size="sm" disabled={cargando}>
             {cargando ? <Spinner animation="border" size="sm" /> : 'Buscar reporte'}
           </Button>
         </div>
@@ -690,7 +687,7 @@ const GestionReportes = () => {
       {/* MODAL EDITOR */}
       <Modal show={!!editor} onHide={cerrarEditor} size={editor?.nivel === 'medio' ? undefined : 'lg'} centered>
         <Modal.Header closeButton>
-          <Modal.Title style={{ fontSize: '1.1rem' }}>
+          <Modal.Title className="nd-text-lg">
             {editor?.titulo}
             {editor && !editor.nuevo && !cargandoEditor && badgePersonalizado(editor.personalizado)}
           </Modal.Title>
@@ -723,7 +720,7 @@ const GestionReportes = () => {
       {/* MODAL CONFIRMAR BORRADO */}
       <Modal show={!!aBorrar} onHide={() => !guardando && setABorrar(null)} centered style={{ zIndex: 1060 }}>
         <Modal.Header closeButton>
-          <Modal.Title style={{ fontSize: '1.1rem' }}>Volver a datos reales</Modal.Title>
+          <Modal.Title className="nd-text-lg">Volver a datos reales</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           ¿Seguro que querés borrar {aBorrar?.descripcion}? El reporte volverá a mostrar los valores reales.

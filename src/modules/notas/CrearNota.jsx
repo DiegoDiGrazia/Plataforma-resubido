@@ -1,6 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { Button, Modal } from 'react-bootstrap';
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
@@ -206,9 +204,9 @@ const CrearNota = () => {
 
     return (
 
-                <div className="content flex-grow-1 crearNotaGlobal">
-                    <div className='row'>
-                        <div className='col'>
+                <div className="content flex-grow-1 crearNotaGlobal editorNota">
+                    <div className='row editorNota__encabezado'>
+                        <div className='editorNota__migas'>
                             <h4 id="nota">
                                 <nav aria-label="breadcrumb">
                                     <ol className="breadcrumb">
@@ -222,12 +220,10 @@ const CrearNota = () => {
                                 </nav>
                             </h4>
                         </div>
-                        <div className='col'>
+                        <div className='editorNota__acciones'>
                             <BotonEnGenerarVistaPrevia status= {'Preview'}/>
-                        </div>
-                        <div className='col-auto'>
-                            <Button onClick={() => navigate(rutaPublicar(clave))} id="botonPublicar" variant="none">
-                                <img src="/images/send.png" alt="Icono 1" className="icon me-2 icono_tusNotas" />{" Publicar"}
+                            <Button onClick={() => navigate(rutaPublicar(clave))} id="botonPublicar" variant="primary">
+                                <img src="/images/send.png" alt="" className="icon icono_tusNotas" />{" Publicar"}
                             </Button>
                         </div>
                     </div>
@@ -355,7 +351,7 @@ const CrearNota = () => {
                         </div>
 
                         {/* Seccion columna izquierda del tutorial: en Crear nota se ve siempre */}
-                        <div className='col-4 d-flex flex-column gap-4'>
+                        <div className='col-4 d-flex flex-column gap-4 editorNota__tutoriales'>
                             {!imagenppal ? <CardTutorial title = {videos.portada.title} description = {videos.portada.description} src = {videos.portada.src} /> :
                             <CardTutorial title = {videos.fotoCuerpoNota.title} description = {videos.fotoCuerpoNota.description} src = {videos.fotoCuerpoNota.src}/>}
                             <CardTutorial title = {videos.tituloYBajada.title} description = {videos.tituloYBajada.description} src = {videos.tituloYBajada.src}/>

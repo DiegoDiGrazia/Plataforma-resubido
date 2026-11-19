@@ -1,6 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'cropperjs/dist/cropper.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { setEngagement, setTituloNota, setUrl } from '@/store/crearNotaSlice';
@@ -55,7 +53,7 @@ const TituloNota = ({ indice }) => {
                     resize: 'none',
                 }}
             ></textarea>
-            <div className="text-end mt-1" style={{ fontSize: '0.9rem', marginRight: "50px" }}>
+            <div className="text-end mt-1 nd-text-base notaEditor__contador">
                 {nota.es_ia === '1' &&
                     <BotonRegenerarDataConIa token = {TOKEN} term_id={nota.term_id} 
                     nombreBoton={'Regenerar titulo con ia'}  endpoint = "app_obtener_titulo_ia" action={setTituloNota}

@@ -1,6 +1,13 @@
 /* Estilos base por etiqueta. Define cómo se ve cada elemento HTML "pelado".
    No poner acá estilos de pantallas puntuales. */
 
+/* El scroll vive en body (el sidebar es sticky dentro de él). */
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: auto;
+}
+
 body {
   font-family: var(--nd-font-family);
   font-size: var(--nd-font-size-base);

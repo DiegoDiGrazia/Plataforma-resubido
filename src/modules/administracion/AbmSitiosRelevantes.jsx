@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { editarSitio } from '@/api/apisUsuarios';
 import { obtenerSitiosPaises, obtenerSitiosProvincias, eliminarSitioPaises, eliminarSitioProvincias, agregarSitioPaises, agregarSitioProvincias } from '@/api/sitiosApi';
 import { Accordion, AccordionItem } from 'react-bootstrap';
@@ -164,7 +162,7 @@ const AbmSitiosRelevantes = () => {
                   type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  placeholder="      Buscar sitios por pais o provincia"
+                  placeholder="Buscar sitios por pais o provincia"
                 />
               </form>
             </div>
@@ -271,7 +269,7 @@ const AbmSitiosRelevantes = () => {
                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-cerrar-modal-agregar"></button>
               </div>
               <div className="modal-body text-center pb-4 pt-0">
-                <i className="bi bi-plus-circle text-primary mb-2" style={{fontSize: '3.5rem'}}></i>
+                <i className="bi bi-plus-circle text-primary mb-2 fs-1" aria-hidden="true"></i>
                 <h5 className="mt-2 fw-bold">Agregar nuevo sitio relevante en "{sitioActual?.nombre}"</h5>
                 <div className="text-start mt-4 px-2">
                   <label className="form-label">Sitio <span className="text-danger">*</span></label>
@@ -301,14 +299,14 @@ const AbmSitiosRelevantes = () => {
                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-cerrar-modal-editar"></button>
               </div>
               <div className="modal-body text-center pb-4 pt-0">
-                <i className="bi bi-image text-primary mb-2" style={{fontSize: '3.5rem'}}></i>
+                <i className="bi bi-image text-primary mb-2 fs-1" aria-hidden="true"></i>
                 <h5 className="mt-2 fw-bold">Cambiar imagen</h5>
-                <p className="text-muted" style={{fontSize: '14px'}}>
+                <p className="text-muted nd-text-base">
                   Editando el icono de <strong>{sitioActual?.sitio}</strong>
                 </p>
                 
                 <div className="text-start mt-4 px-2">
-                  <label className="form-label" style={{fontSize: '14px', fontWeight: '500'}}>Seleccionar Imagen <span className="text-danger">*</span></label>
+                  <label className="form-label nd-text-base nd-fw-medium">Seleccionar Imagen <span className="text-danger">*</span></label>
                   <input 
                     type="file" 
                     className="form-control" 
@@ -341,9 +339,9 @@ const AbmSitiosRelevantes = () => {
                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-cerrar-modal-eliminar"></button>
               </div>
               <div className="modal-body text-center pb-4 pt-0">
-                <i className="bi bi-exclamation-circle text-danger mb-2" style={{fontSize: '3.5rem'}}></i>
+                <i className="bi bi-exclamation-circle text-danger mb-2 fs-1" aria-hidden="true"></i>
                 <h5 className="mt-2 mb-3 fw-bold">¿Estás seguro de que querés eliminar este sitio?</h5>
-                <p className="text-muted" style={{fontSize: '14px'}}>
+                <p className="text-muted nd-text-base">
                   Vas a eliminar <strong>{sitioActual?.medio?.sitio}</strong> de <strong>{sitioActual?.sitioGeo?.nombre}</strong>. Esta acción no se puede deshacer.
                 </p>
                 <div className="d-flex justify-content-center gap-2 mt-4">

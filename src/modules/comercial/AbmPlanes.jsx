@@ -1,12 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import "@/modules/perfil/miPerfil.css";
 import { useSelector } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import { toastExito, toastError } from '@/shared/utils/toastify/toastify.jsx';
 import { obtenerPlanes, crearPlan, actualizarPlan, eliminarPlan } from '@/api/planesApi';
-import '@/modules/administracion/AbmsMobile.css';
 import DropdawnSiNo from './DropdownSiNo'
 
 
@@ -159,7 +155,7 @@ const handleSave = () => {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="       Buscar usuario por nombre"
+              placeholder="Buscar usuario por nombre"
             />
           </form>
         </div>

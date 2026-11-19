@@ -472,10 +472,10 @@ const MonitorEditorial = () => {
 
     return (
         <div className="contenedor-monitorEditorial content flex-grow-1 crearNotaGlobal h-100">
-            <div className='row miPerfilContainer soporteContainer gap-5 pb-0 me-5'>
+            <div className='row miPerfilContainer soporteContainer pb-0'>
                 <div className='col p-0'>
                     <h3 id="saludo" className='headerTusNotas ml-0'>
-                        <i className="icon me-2 icono_tusNotas bi bi-display-fill" /> Monitor Contenido
+                        <i className="bi bi-display-fill" aria-hidden="true" /> Monitor Contenido
                     </h3>
                     <h4 className='infoCuenta'>Monitoreá el contenido publicado</h4>
                     <div className='abajoDeTusNotas'>
@@ -484,19 +484,20 @@ const MonitorEditorial = () => {
                 </div>
             </div>
 
-            <div className='d-flex justify-content-end px-5 mt-2'>
+            <div className='d-flex justify-content-end nd-px-page mt-2'>
                 <button 
-                    className='btn bg-secondary' 
+                    className='btn btn-secondary' 
                     id='boton-gestion'
+                    title='Gestionar grupos y editores'
                     data-bs-toggle="modal" 
                     data-bs-target="#modalGestionABM"
                     >
-                    <i className='bi bi-gear-fill text-light fs-5'></i>
+                    <i className='bi bi-gear-fill' aria-hidden='true'></i>
                 </button>
             </div>
          
-            <div className='d-flex flex-wrap justify-content-between mx-5 mt-3' id='filtros-container'>
-                <div className='d-flex align-items-center gap-1'>
+            <div className='monitor__filtros nd-mx-page mt-3' id='filtros-container'>
+                <div className='monitor__grupo-filtros'>
                     <div id="input-buscar-tag" className="input-group">
                         <input 
                             type="text" 
@@ -510,18 +511,20 @@ const MonitorEditorial = () => {
                             <i className="bi bi-search"></i>
                         </span>
                     </div>
-                    <div className='d-flex gap-1 bg-secondary text-white rounded p-2' id='input-fechas-container'>
-                        <label className='label-filtro-fecha'>Fecha Desde:</label>
+                    <div className='monitor__pildora'>
+                        <label className='label-filtro-fecha' htmlFor='monitor-fecha-desde'>Fecha Desde:</label>
                         <input 
+                            id='monitor-fecha-desde'
                             className='input-fecha-custom' 
                             type="date" 
                             value={fechaDesde}
                             onChange={(e) => setFechaDesde(e.target.value)}
                         />
                     </div>
-                    <div className='d-flex gap-1 bg-secondary text-light rounded p-2' id='input-fechas-container'>
-                        <label className='label-filtro-fecha'>Fecha Hasta:</label>
+                    <div className='monitor__pildora'>
+                        <label className='label-filtro-fecha' htmlFor='monitor-fecha-hasta'>Fecha Hasta:</label>
                         <input 
+                            id='monitor-fecha-hasta'
                             className='input-fecha-custom' 
                             type="date" 
                             value={fechaHasta}
@@ -539,7 +542,7 @@ const MonitorEditorial = () => {
 
 
                 </div>
-                <div className='d-flex align-items-center gap-1'>
+                <div className='monitor__grupo-filtros'>
                     <DropdownFiltro
                         className='boton-filtro'
                         label= "Amplificación"
@@ -562,7 +565,7 @@ const MonitorEditorial = () => {
                         opciones={["Todas", "Con Crawler", "Sin Crawler"]}
                         onChange={setFiltroCrawler}
                     />
-                    <div className='d-flex gap-1 bg-secondary text-white rounded p-2 align-items-center justify-content-center' id='switch-geo-container'>
+                    <div className='monitor__pildora' id='switch-geo-container'>
                         <div className="form-check form-switch p-0 mb-0 d-flex align-items-center gap-2">
                             <input 
                                 className="form-check-input m-0 p-0" 
@@ -571,9 +574,8 @@ const MonitorEditorial = () => {
                                 id="switchGeo" 
                                 checked={mostrarGeo}
                                 onChange={(e) => setMostrarGeo(e.target.checked)}
-                                style={{ cursor: 'pointer' }}
                             />
-                            <label className="form-check-label label-filtro-fecha mb-0" htmlFor="switchGeo" style={{ cursor: 'pointer' }}>
+                            <label className="form-check-label label-filtro-fecha mb-0" htmlFor="switchGeo">
                                 Geos
                             </label>
                         </div>
@@ -590,12 +592,12 @@ const MonitorEditorial = () => {
                 </div>
             </div>
 
-            <div className="mt-5 mx-5 mb-4">
+            <div className="mt-5 nd-mx-page mb-4">
                 {cargandoMonitor ? (
                     
                     /* Pantalla de carga */
                     <div className="text-center text-muted py-5 mt-5 bg-light rounded border shadow-sm">
-                        <div className="spinner-border text-brand mb-3" style={{width: '3rem', height: '3rem'}} role="status">
+                        <div className="spinner-border text-brand mb-3 monitor__spinner" role="status">
                             <span className="visually-hidden">Cargando...</span>
                         </div>
                         <h5 className="fw-bold text-secondary">Cargando monitor...</h5>
@@ -777,7 +779,7 @@ const MonitorEditorial = () => {
                                                                                                     </span>
                                                                                                 </div>
                                                                                                     
-                                                                                                <div className="dato-nota" style={{ maxWidth: '250px' }}>
+                                                                                                <div className="dato-nota dato-nota--ancho-md">
                                                                                                     <span className="label">Categoría</span>
                                                                                                     <span className="valor">
                                                                                                         <span className="badge bg-brand px-2 py-1">
@@ -786,7 +788,7 @@ const MonitorEditorial = () => {
                                                                                                     </span>
                                                                                                 </div>
                                                                                                     
-                                                                                                <div className="dato-nota" style={{ maxWidth: '300px' }}>
+                                                                                                <div className="dato-nota dato-nota--ancho-lg">
                                                                                                     <span className="label">Tags</span>
                                                                                                     <span className="valor tags-container">
                                                                                                         {renderizarTags(nota.tags)}
@@ -833,11 +835,10 @@ const MonitorEditorial = () => {
                                                                                             <div className="modal-body">
                                                                                                 <textarea 
                                                                                                     id={`textarea-comentario-${cliente.id_cliente}`}
-                                                                                                    className="form-control bg-light border text-secondary" 
+                                                                                                    className="form-control bg-light border text-secondary monitor__comentario" 
                                                                                                     rows="4" 
                                                                                                     placeholder="Escribí un comentario sobre este cliente..."
                                                                                                     defaultValue={cliente.comentario || ''}
-                                                                                                    style={{ resize: 'none' }}
                                                                                                 ></textarea>
                                                                                             </div>
                                                                                             <div className="modal-footer border-0 pt-0">

@@ -64,7 +64,10 @@ Reglas mínimas (el detalle está en la skill):
   `src/styles/components.css`? Clases nuevas: prefijo `nd-`, BEM-lite.
 - Chart.js / react-pdf no entienden `var()`: usar `color`, `palette`, `seriesColors` de `src/styles/tokens.js`.
 - Sin `!important` y sin `style={{}}` con valores visuales.
-- Breakpoints solo `380 / 576 / 768 / 1366px` (`max-width`).
+- Anchos a cubrir: `380 · 420 · 768 · 1024 · 1366 · 1440 · 1660 · 1920px`. Base = 1920 y se baja
+  con `@media (max-width: 1660|1440|1366|1024|768|420|380px)`; ningún otro valor ni `min-width`.
+- El CSS de cada pantalla va anidado bajo su raíz (`#pantalla-x { … }`): los CSS de `modules/`
+  son globales y una regla suelta pisa a todas las pantallas.
 - **Regla del boy scout:** todo archivo `.css`/`.jsx` que se modifique por cualquier motivo
   (aunque el pedido no sea de estilos) queda normalizado completo, no solo las líneas cambiadas:
   1. `node .claude/skills/noticiasd-design-system/scripts/migrate.mjs <archivo>` (revisar dry-run) y luego `--write`.

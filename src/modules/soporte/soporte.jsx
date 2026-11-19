@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Sidebar from '@/shared/components/sidebar/Sidebar';
-import "@/modules/perfil/miPerfil.css";
 import CardTutorial from '@/shared/components/CardTutorial'; // Importa el nuevo componente
 
 // Diccionario de videos
@@ -79,7 +76,7 @@ const Soporte = () => {
                                     type="text"
                                     value={searchQuery}
                                     onChange={handleInputChange}
-                                    placeholder="      Buscar por palabra clave"
+                                    placeholder="Buscar por palabra clave"
                                 />
                             </form>
                         </div>

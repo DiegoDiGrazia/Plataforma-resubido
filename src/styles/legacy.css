@@ -52,6 +52,14 @@
     align-items: center;
 }
 
+/* Raíz de casi todas las pantallas (y del área de contenido del layout).
+   Antes vivía en Dashboard.css. */
+.content {
+    flex-grow: 1;
+    min-width: 0;
+    background-color: var(--nd-color-bg-page);
+}
+
 /* Fondo blanco de las pantallas con .content (pisa el gris de .content) */
 .crearNotaGlobal,
 .content.crearNotaGlobal {
@@ -70,7 +78,7 @@
 
 .inputBuscadorNotas {
     width: 100%;
-    padding: 10px;
+    padding: 10px 12px 10px 40px; /* lugar para la lupa (antes se simulaba con espacios en el placeholder) */
     font-size: var(--nd-font-size-md);
     color: var(--nd-color-text);
     border: var(--nd-border-width) solid var(--nd-color-border);
@@ -85,6 +93,7 @@
 /* Al escribir se oculta la lupa */
 .inputBuscadorNotas:focus,
 .inputBuscadorNotas:not(:placeholder-shown) {
+    padding-left: 12px;
     background-color: transparent;
     background-image: none;
 }
@@ -129,6 +138,14 @@
     border-radius: var(--nd-radius-md);
     transition: background-color var(--nd-duration-base) var(--nd-easing);
 }
+@media (max-width: 1024px) {
+    .upload-block,
+    .textAreaComentarios--epigrafe {
+        width: 100%;
+        max-width: 100%;
+        margin-left: 0;
+    }
+}
 .upload-block.dragover {
     background-color: var(--nd-color-bg-muted);
 }
@@ -158,6 +175,15 @@
     box-sizing: border-box;
     outline: none;
 }
+/* Epígrafe de la imagen principal (editor): una sola línea alineada con la imagen */
+.textAreaComentarios--epigrafe {
+    width: 613px;
+    max-width: calc(100% - 50px);
+    height: 30px;
+    min-height: 0;
+    margin: var(--nd-space-1) 0 0 50px;
+    padding: 0 var(--nd-space-3);
+}
 .textAreaComentarios:focus {
     border-color: var(--nd-color-border-focus);
 }
@@ -165,6 +191,318 @@
     font-size: var(--nd-font-size-md);
     color: var(--nd-color-text-secondary);
     opacity: 0.8;
+}
+
+/* ==========================================================================
+   Páginas de herramientas y ABM
+   (Administración, Usuarios, Perfiles, Cuentas, Sitios relevantes, Comercial
+   y sus ABM, Distribución, Gestión reportes, Feed, Soporte, Mi perfil,
+   Auto-entrevistas, Monitor). Antes vivía en modules/perfil/miPerfil.css +
+   AbmsMobile.css + AdministradorMobile.css, que se cargaban o no según la
+   pantalla visitada, con márgenes fijos en px y hacks globales
+   (li {}, .col-2 {width:100% !important}) que rompían otras pantallas.
+
+   Estructura típica:
+     .row.miPerfilContainer.soporteContainer        → encabezado (#saludo + .infoCuenta + .abajoDeTusNotas)
+     .row.miPerfilContainer… > .col.buscadorNotas   → barra de acciones (botón + buscador)
+     .row.miPerfilContainer… > ul.list-group        → listado
+   ========================================================================== */
+
+/* Título de pantalla (h3#saludo.headerTusNotas). Antes estaba en Dashboard.css y
+   cambiaba de tamaño según si el usuario había pasado o no por el Dashboard. */
+#saludo,
+.headerTusNotas {
+    display: flex;
+    align-items: center;
+    gap: var(--nd-space-2);
+    margin: 0;
+    font-size: var(--nd-font-size-3xl);
+    font-weight: var(--nd-font-weight-bold);
+    color: var(--nd-color-text);
+}
+
+/* Contenedor de cada bloque de la página. Sin canaleta de Bootstrap: así el
+   título, la barra de acciones y el listado quedan alineados al mismo margen. */
+.miPerfilContainer {
+    --bs-gutter-x: 0;
+    width: auto;
+    margin: var(--nd-space-10) var(--nd-page-padding) 0;
+    padding-bottom: var(--nd-space-6);
+    border-bottom: var(--nd-border-width) solid var(--nd-color-border);
+}
+.miPerfilContainer > * {
+    min-width: 0;
+}
+.soporteContainer {
+    border-bottom: none;
+}
+
+.miPerfilContainer .headerTusNotas {
+    margin-left: 0;
+}
+
+.miPerfilContainer .infoCuenta {
+    margin-top: var(--nd-space-6);
+    margin-bottom: var(--nd-space-1);
+    font-size: var(--nd-font-size-xl);
+    font-weight: var(--nd-font-weight-bold);
+}
+
+.miPerfilContainer .abajoDeTusNotas {
+    padding-left: 0;
+    margin-left: 0;
+    font-size: var(--nd-font-size-base);
+}
+
+.miPerfilContainer .abajoDeTusNotas2 {
+    font-size: var(--nd-font-size-md);
+}
+
+.miPerfilContainer .todasLasNotas {
+    font-size: var(--nd-font-size-lg);
+}
+
+/* Barra de acciones: botón(es) a la izquierda, buscador a la derecha.
+   Se acomoda sola: si no entra, el buscador baja y ocupa todo el ancho. */
+.miPerfilContainer .buscadorNotas {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--nd-space-3);
+}
+.miPerfilContainer .buscadorNotas > .mb-2 {
+    margin-bottom: 0;
+}
+.miPerfilContainer .buscadorNotasForm {
+    float: none;
+    width: 400px;
+    max-width: 100%;
+    margin-left: auto;
+}
+
+/* Listados: las columnas se achican sin pisarse (emails largos cortan línea) */
+.miPerfilContainer .list-group-item {
+    overflow-wrap: break-word;
+}
+.miPerfilContainer .list-group-item .row > * {
+    min-width: 0;
+}
+
+/* Tarjetas */
+.miPerfilContainer .card {
+    margin-bottom: var(--nd-space-10);
+    border-radius: var(--nd-radius-lg);
+}
+.miPerfilContainer .card-body {
+    padding-bottom: 0;
+}
+.miPerfilContainer .card-title {
+    display: flex;
+    justify-content: space-between;
+    width: auto;
+    font-size: var(--nd-font-size-md);
+    font-weight: var(--nd-font-weight-bold);
+}
+.miPerfilContainer .card-title button {
+    margin-left: auto;
+    text-decoration: none;
+    background-color: transparent;
+    border: none;
+}
+.miPerfilContainer .card-title button:hover {
+    color: var(--nd-color-primary-text);
+}
+
+.miPerfilContainer .boton_filtro_notas {
+    margin-left: 0;
+    margin-right: var(--nd-space-8);
+}
+
+/* ---------- Mi perfil ---------- */
+.informacionCuentaSeccion {
+    margin-top: 0;
+    padding-bottom: var(--nd-space-5);
+}
+.informacionCuentaSeccion .infoCuenta {
+    margin-top: var(--nd-space-4);
+    font-size: var(--nd-font-size-md);
+    color: var(--nd-color-text);
+}
+.informacionCuentaSeccion .textAreaContainer {
+    float: right;
+    padding-left: var(--nd-space-12);
+}
+/* Fila "Foto de perfil": texto a la izquierda, zona de carga a la derecha;
+   si no entran, la zona de carga baja entera (antes aplastaba el texto) */
+.informacionCuentaSeccion {
+    gap: var(--nd-space-4);
+}
+.informacionCuentaSeccion > .col {
+    flex: 1 1 240px;
+}
+.informacionCuentaSeccion .upload-block {
+    flex: 1 1 360px;
+    width: auto;
+    max-width: 613px;
+    margin: 0;
+    border-color: var(--nd-color-border-strong);
+}
+.informacionCuentaSeccion .dropdown-toggle {
+    color: var(--nd-color-text);
+}
+.miPerfilContainer .textAreaComentarios {
+    float: right;
+    width: 400px;
+    max-width: 100%;
+    height: 44px;
+    margin-top: 3px;
+    overflow-y: hidden;
+}
+.miPerfilContainer .colFelicitaciones {
+    width: auto;
+    padding-left: 0;
+}
+.miPerfilContainer .felicitacionesRow {
+    padding-top: 0;
+    font-size: var(--nd-font-size-lg);
+    font-weight: var(--nd-font-weight-bold);
+}
+.miPerfilContainer .bolder {
+    font-weight: var(--nd-font-weight-bold);
+    color: var(--nd-color-text);
+}
+.miPerfilContainer .crearCuentaNueva {
+    border: none;
+    color: var(--nd-color-link-hover);
+}
+
+.containerNotificaciones {
+    padding-bottom: 0;
+    border: none;
+}
+.notificacionContainer {
+    height: 200px;
+    padding: var(--nd-space-5);
+    background-color: var(--nd-color-bg-surface);
+    border-radius: var(--nd-radius-xl);
+}
+.notificacionContainer:hover {
+    background-color: var(--nd-color-info-subtle);
+}
+
+/* ---------- Soporte / tutoriales ---------- */
+.imagenDestacadaCrearNota {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: var(--nd-radius-lg);
+}
+.iframeTutorial {
+    display: block;
+    height: 200px;
+    margin: 0 auto var(--nd-space-5);
+    object-fit: cover;
+    border-radius: var(--nd-radius-lg);
+}
+.sinborde {
+    border: none;
+}
+
+/* ---------- Notebooks y mobile ---------- */
+@media (max-width: 1024px) {
+    .miPerfilContainer {
+        margin-top: var(--nd-space-8);
+    }
+
+    /* Columnas del listado de igual base: si no entran todas, la última baja
+       entera a la línea siguiente en vez de cortar emails a la mitad. */
+    .miPerfilContainer .list-group-item .row {
+        row-gap: var(--nd-space-1);
+    }
+    .miPerfilContainer .list-group-item .row > [class*="col"] {
+        flex: 1 1 200px;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .miPerfilContainer {
+        margin-top: var(--nd-space-6);
+    }
+
+    .miPerfilContainer .buscadorNotasForm,
+    .miPerfilContainer .textAreaComentarios {
+        width: 100%;
+    }
+
+    /* Cada fila del listado pasa a una columna: nombre, email, cuenta, fecha */
+    .miPerfilContainer .list-group-item .row > [class*="col"] {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .informacionCuentaSeccion .textAreaContainer {
+        float: none;
+        padding-left: 0;
+    }
+}
+
+/* ==========================================================================
+   Selectores con dropdown y bloques de reporte compartidos
+   (Dashboard, Ver nota, editor de notas, Mi perfil, selectores de shared/).
+   Antes estaban en Dashboard.css, que se carga recién al abrir el Dashboard:
+   en el editor se veían distintos según por dónde había entrado el usuario.
+   ========================================================================== */
+
+/* Botón de dropdown blanco con borde (selector de cuenta, filtros, compartir) */
+.custom-dropdown-button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--nd-space-2);
+    max-width: 100%;
+    color: var(--nd-color-text);
+    background-color: var(--nd-color-bg-surface);
+    border-color: var(--nd-color-border-strong);
+}
+.custom-dropdown-button:hover {
+    color: var(--nd-color-text);
+    background-color: var(--nd-color-bg-muted);
+}
+/* Nombres largos de cuenta: cortan línea en vez de empujar la pantalla */
+.custom-dropdown-button.boton_cliente {
+    white-space: normal;
+    text-align: left;
+}
+
+.listaClientes {
+    max-width: min(470px, calc(100vw - 2 * var(--nd-page-padding)));
+    max-height: 200px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--nd-gray-600) var(--nd-color-bg-muted);
+}
+
+.dropdown-search {
+    width: 470px;
+    max-width: calc(100% - var(--nd-space-4));
+}
+
+.back-white {
+    background-color: var(--nd-color-bg-surface);
+}
+
+.tamaño_barplot {
+    width: 100%;
+    height: auto;
+}
+
+/* Título "Performance de la cuenta / de la nota" */
+#subtitulo_performance {
+    margin: 0;
+    font-size: var(--nd-font-size-2xl);
+    font-weight: var(--nd-font-weight-semibold);
+    color: var(--nd-color-text);
 }
 
 /* ---------- Estado "publicada" (Ver nota, Feed) ---------- */

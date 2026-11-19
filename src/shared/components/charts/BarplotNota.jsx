@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import "./Barplot.css";
 import { color, palette, seriesColors } from '@/styles/tokens';
 import { formatNumberMiles } from '@/modules/dashboard/Dashboard.jsx';
 import Barplot_Carga from './Barplot_mejorado_carga.jsx';
-import './BarplotMobile.css'
-import './BarplotNotaMobile.css'
 import LineChartTwoLines from './LineChartTwoLines.jsx';
 
  export function generarPeriodosDesde(f_pub, cantidadDeMesesAGenerar){
@@ -236,24 +233,24 @@ const BarplotNota = ({id_noti, TOKEN, cliente, fpub, dataLocalNota, resumenNota 
     
     // Mostrar el gráfico real una vez cargados los datos
     return (
-        <div id='pantalla-barplotNota'>
-            <div className="container-fluid ml-5">
-                <div className="row cantidades mt-3 back-white">
-                    <div className='col-4 barra_lateral'>
+        <div id='pantalla-barplotNota' className='nd-barplot'>
+            <div>
+                <div className="cantidades">
+                    <div className='barra_lateral'>
                         <p className='leyenda_barplot'>
                             <span className="blue-dot-user"></span> Impresiones Medios
                             <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "dv360 + search + noticias(d)"/>  
                         </p>
                         <p className='totales'>{formatNumberMiles(totales.impresionesTotalesGoogle)}</p>
                     </div>
-                    <div className='col barra_lateral' style={{ paddingLeft: '20px' }}>
+                    <div className='barra_lateral'>
                         <p className='leyenda_barplot'>
                             <span className="blue-dot-impresiones"></span>Impresiones Redes
                             <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "Instagram + Facebook + X"/>  
                         </p>
                         <p className='totales'>{formatNumberMiles(totales.impresionesTotalesRRSS)}</p>
                     </div>
-                    <div className='col' style={{ paddingLeft: '20px' }}>
+                    <div>
                         <p className='leyenda_barplot'>
                             <span className="blue-dot-impresiones blue-dot-videos"></span>Impresiones Videos
                             <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "Youtube + Videos de X"/>  
@@ -261,16 +258,16 @@ const BarplotNota = ({id_noti, TOKEN, cliente, fpub, dataLocalNota, resumenNota 
                         <p className='totales'>{formatNumberMiles(totales.impresionesTotalesVideos)}</p>
                     </div>
                 </div>
-                <div className="row back-white">
-                    <div className="col barplot">
-                        <div style={{ height: '100%' }}>
+                <div className="nd-barplot__grafico">
+                    <div className="barplot">
+                        <div className="h-100">
                             <Bar data={dataReal} options={optionsReal} />
                         </div>
                     </div>
                 </div>
-                <div className="row back-white" id='linea'>
-                    <div className="col barplot">
-                        <div className='line' style={{ height: '100%', width: 'auto' }}>
+                <div className="nd-barplot__grafico" id='linea'>
+                    <div className="barplot">
+                        <div className='line h-100'>
                             <LineChartTwoLines data={datos} ></LineChartTwoLines>
                         </div>
                     </div>

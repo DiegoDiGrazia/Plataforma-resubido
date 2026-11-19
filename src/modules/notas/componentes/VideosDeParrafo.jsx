@@ -1,6 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'cropperjs/dist/cropper.css';
 import BotoneraContenido from './BotoneraContenido';
 import { ArchivoContext } from '@/shared/context/archivoContext';

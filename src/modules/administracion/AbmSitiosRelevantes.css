@@ -1,38 +1,32 @@
+/* ABM Sitios relevantes (#abm-sitios-relevantes) */
 #abm-sitios-relevantes {
 
     .buscadorNotasForm {
-        width: 20% !important;
+        width: 320px;
+        max-width: 100%;
     }
 
     .accordion-button::after {
-        margin-left: 0px !important;
+        margin-left: 0;
     }
 
     a {
-        font-size: 16px !important;
+        font-size: var(--nd-font-size-md);
     }
 
     .bi-plus-circle {
-        color: rgb(34, 85, 194);
+        color: var(--nd-color-info);
     }
 
     .bi-trash3-fill {
-        color: rgb(194, 33, 33);
+        color: var(--nd-color-danger);
     }
 
     .bi-pencil-square {
-        color: rgba(22, 22, 22, 0.767);
+        color: var(--nd-color-text-secondary);
     }
 
     .boton-funcion {
-        border: none !important;
+        border: none;
     }
-
-    
 }
-
-
-
-
-
-

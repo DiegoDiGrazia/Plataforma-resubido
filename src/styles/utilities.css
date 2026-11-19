@@ -36,6 +36,7 @@
 .nd-bg-surface        { background-color: var(--nd-color-bg-surface) !important; }
 .nd-bg-muted          { background-color: var(--nd-color-bg-muted) !important; }
 .nd-bg-page           { background-color: var(--nd-color-bg-page) !important; }
+.nd-bg-overlay        { background-color: var(--nd-color-overlay) !important; } /* fondo de modales armados a mano */
 
 /* Bordes / radios / sombras */
 .nd-border        { border: var(--nd-border-width) solid var(--nd-color-border) !important; }
@@ -45,6 +46,11 @@
 .nd-rounded-pill  { border-radius: var(--nd-radius-pill) !important; }
 .nd-shadow-sm     { box-shadow: var(--nd-shadow-sm) !important; }
 .nd-shadow-md     { box-shadow: var(--nd-shadow-md) !important; }
+
+/* Margen lateral de página (el mismo que el encabezado): reemplaza mx-5 / px-5 / ms-5 fijos
+   de 48px, que en notebooks y teléfonos dejaban el contenido corrido o desbordado. */
+.nd-mx-page { margin-left: var(--nd-page-padding) !important; margin-right: var(--nd-page-padding) !important; }
+.nd-px-page { padding-left: var(--nd-page-padding) !important; padding-right: var(--nd-page-padding) !important; }
 
 /* Alias legacy: estas clases ya existen en varias pantallas.
    Ahora apuntan a tokens; no crear nuevas, usar .btn-primary / .nd-*. */

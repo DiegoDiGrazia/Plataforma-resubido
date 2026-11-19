@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { useSelector } from 'react-redux';
 import ModalMensaje from '@/shared/components/modales/ModalMensaje';
 import { obtenerClientes, obtenerNotasDeGeneraciones } from '@/api/apisUsuarios';
@@ -441,16 +439,14 @@ const AbmFeed = () => {
                               <div className="d-flex align-items-center gap-1 flex-shrink-0">
                                 <div className="d-flex flex-column gap-0">
                                   <button
-                                    className="btn btn-outline-secondary py-0 px-1"
-                                    style={{ fontSize: '0.65rem', lineHeight: 1.2 }}
+                                    className="btn btn-outline-secondary py-0 px-1 nd-text-xs lh-sm"
                                     disabled={esPrimeroDelGrupo}
                                     onClick={() => handleMoverNota(nota, 'up')}
                                   >
                                     <i className="bi bi-chevron-up" />
                                   </button>
                                   <button
-                                    className="btn btn-outline-secondary py-0 px-1"
-                                    style={{ fontSize: '0.65rem', lineHeight: 1.2 }}
+                                    className="btn btn-outline-secondary py-0 px-1 nd-text-xs lh-sm"
                                     disabled={esUltimoDelGrupo}
                                     onClick={() => handleMoverNota(nota, 'down')}
                                   >
@@ -522,7 +518,7 @@ const AbmFeed = () => {
                                       <div className="small fw-semibold text-truncate" title={nota.titulo}>
                                         {nota.titulo}
                                       </div>
-                                      <div className="text-muted" style={{ fontSize: '0.75rem' }}>
+                                      <div className="text-muted nd-text-xs">
                                         #{nota.term_id}
                                       </div>
                                     </div>

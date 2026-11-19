@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { Button } from 'react-bootstrap';
 import './Formulario.css';
-import './FormularioMobile.css';
 import { updateGeo, resetFormulario } from '@/store/formularioSlice';
 import { obtenerGeo } from '@/api/geosApi.js';
 import { useNavigate } from 'react-router-dom';
@@ -62,12 +62,12 @@ const Formulario = () => {
         <div className="container-fluid containerFormulario">
             <div id='formulario'>
                 <div className="text-center mb-4">
-                    <img src="/images/logoNdNegroNaranja.png" alt="Imagen de ejemplo" className="img-fluid mb-4" id='logo-nd'/>
+                    <img src="/images/logoNdNegroNaranja.png" alt="Noticias (d)" className="img-fluid mb-4" id='logo-nd'/>
                     <h2>Bienvenidos</h2>
                     <h3>Ingresa tus datos para acceder a la plataforma</h3>
                 </div>
                 <form  onSubmit={handleLogin}>
-                    <div className="mb-3 emailbox">
+                    <div className="mb-3">
                         <label htmlFor="email" className="form-label">Email:</label>
                         <input
                             type="email"
@@ -80,7 +80,7 @@ const Formulario = () => {
                             onChange={(e) => setEmail(e.target.value)}
                         />
                     </div>
-                    <div className="mb-3 contraseña">
+                    <div className="mb-3">
                         <label htmlFor="password" className="form-label">Contraseña:</label>
                         <input
                             type="password"
@@ -92,13 +92,13 @@ const Formulario = () => {
                             value={contraseña}
                             onChange={(e) => setContraseña(e.target.value)}
                         />
-                        {error && <div className='olvide_contraseña text-start' role="alert">{error}</div>}
+                        {error && <div className='containerFormulario__error' role="alert">{error}</div>}
                     </div>
-                    <button type="submit" id='iniciar_sesion' disabled={cargando || segundosBloqueo > 0}>
+                    <Button type="submit" variant="primary" size="lg" className="containerFormulario__enviar" disabled={cargando || segundosBloqueo > 0}>
                         {cargando && <span className="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>}
                         {textoBoton}
-                    </button>
-                    <button type="button" className="btn btn-link olvide_contraseña" onClick={() => navigate('/cambiar-clave', { state: { email } })}>Cambiar mi contraseña</button>
+                    </Button>
+                    <Button variant="link" className="containerFormulario__link" onClick={() => navigate('/cambiar-clave', { state: { email } })}>Cambiar mi contraseña</Button>
                 </form>
             </div>
             {rutaDestino && (

@@ -1,199 +1,107 @@
-*{
-    font-family: 'Aeonik', sans-serif;
-    
-}
+/* ==========================================================================
+   Login y Cambiar clave (pantallas sin sidebar)
+   Todo anidado bajo .containerFormulario: antes este archivo tenía reglas
+   globales (*, .mb-3 label, ::placeholder) que achicaban y ponían en negrita
+   los labels de TODOS los formularios de la plataforma.
+   ========================================================================== */
 
-.containerFormulario h2{
-    font-weight: bold;
-    margin-bottom: 10px;
-    font-size: 35px;
-    color: var(--nd-color-text);
-}
-
-.containerFormulario h3{
-    color: var(--nd-color-text-secondary);
-    font-size: 16px;
-    font-weight: normal;
+.containerFormulario {
     width: 100%;
-    margin: 0 auto 10px;
-}
-
-.mb-3 label{
-    font-size: 12px;
-    font-weight: bold;
-
-}
-.containerFormulario .form-control{
-    padding: 12px 16px;
-    border-radius: var(--nd-radius-lg);
-    border: 1px solid var(--nd-color-border);
-    font-size: 14px;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-.containerFormulario .form-control:focus{
-    border-color: rgba(255, 102, 0, 0.7);
-    box-shadow: var(--nd-shadow-focus);
-}
-.mb-3 ::placeholder{
-    font-size: 12px
-
-}
-
-.containerFormulario{
-    width: 100%;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
-    padding: 0;
+    padding: var(--nd-space-6);
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: var(--nd-color-bg-muted);
-}
 
-#formulario{
-    width: 100%;
-    max-width: 440px;
-    background-color: var(--nd-color-bg-surface);
-    border-radius: var(--nd-radius-xl);
-    padding: 48px 40px;
-    box-shadow: var(--nd-shadow-lg);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    top: -5 0px;
-}
-
-#formulario > *{
-    width: 100%;
-}
-
-  #logo-nd{
-    width: 50% !important;
-  }
-
-  #iniciar_sesion {
-    background-color: var(--nd-color-primary); /* Naranja sólido */
-    border: 0px solid var(--nd-color-primary);
-    border-radius: var(--nd-radius-lg); /* Bordes redondeados */
-    color: var(--nd-color-text-inverse); /* Color del texto */
-    display: flex;
-    align-items: center; /* Centra el contenido verticalmente */
-    justify-content: center; /* Centra el contenido horizontalmente */
-    height: 50px; /* Altura del botón */
-    width: 100%; /* Ocupa todo el ancho disponible */
-    font-size: 16px; /* Tamaño de fuente */
-    font-weight: bold; /* Fuente en negrita */
-    text-align: center; /* Centra el texto */
-    text-decoration: none; /* Elimina subrayado si es un enlace */
-    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
-    box-sizing: border-box; /* Incluye padding y border en el ancho y alto del elemento */
-    transition: background-color 0.15s ease, transform 0.1s ease;
-  }
-
-  #iniciar_sesion:hover {
-    background-color: var(--nd-color-primary-hover);
-    color: var(--nd-color-on-primary);
-  }
-
-  #iniciar_sesion:active {
-    transform: scale(0.99);
-  }
-
-  #iniciar_sesion:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-    transform: none;
-  }
-
-  #iniciar_sesion_google{
-    margin: 20px 0px;
-    background-color: rgba(255, 255, 255, 0); /* Naranja medio transparente */
-    border: 1px solid  rgba(119, 112, 112, 0.548); 
-    border-radius: var(--nd-radius-lg); /* Bordes redondeados */
-    color: rgb(24, 24, 24); /* Color del texto */
-    display: flex;
-    align-items: center; /* Centra el contenido verticalmente */
-    justify-content: center; /* Centra el contenido horizontalmente */
-    height: 50px; /* Altura del botón */
-    width: 100%; /* Ocupa todo el ancho disponible */
-    font-size: 16px; /* Tamaño de fuente */
-    font-weight: bold; /* Fuente en negrita */
-    text-align: center; /* Centra el texto */
-    text-decoration: none; /* Elimina subrayado si es un enlace */
-    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
-    box-sizing: border-box; /* Incluye padding y border en el ancho y alto del elemento */
-    
-}
-
-    #olvide_contraseña, .olvide_contraseña {
-        color: orangered;
-        text-align: center;
-        justify-content: center;
-        align-content: center;
-        display: flex;
-        width: 100%;
-        margin-top: 10px;
+    h2 {
+        margin-bottom: var(--nd-space-2);
+        font-size: var(--nd-font-size-4xl);
+        font-weight: var(--nd-font-weight-bold);
+        color: var(--nd-color-text);
     }
 
-    .olvide_contraseña:hover {
-        color: var(--nd-color-link-hover);
+    h3 {
+        margin: 0 auto var(--nd-space-2);
+        font-size: var(--nd-font-size-md);
+        font-weight: var(--nd-font-weight-regular);
+        line-height: var(--nd-line-height-normal);
+        color: var(--nd-color-text-secondary);
     }
 
-    .emailbox{
-        margin-bottom: 20px;
-    }
-    .contraseña{
-        margin-bottom: 20px;
+    .form-label {
+        font-size: var(--nd-font-size-xs);
+        font-weight: var(--nd-font-weight-bold);
     }
 
-    .cartel {
-        position: relative;
-        width: auto; /* Ajusta el tamaño del ancho */
-        height: 70px; /* Ajusta automáticamente el alto */
-        background-color: rgb(24, 124, 24);
-        color: var(--nd-color-text-inverse);
-        text-align: left;
-        padding: 10px 40px 10px 10px; /* Espaciado interno y margen para el botón de cerrar */
-        z-index: 3;
-        top: 13px;
-        left: auto;
+    .form-control {
+        padding: var(--nd-space-3) var(--nd-space-4);
         border-radius: var(--nd-radius-lg);
     }
-    
-    .cartel .actualizaste {
-        position: absolute;
-        display: block; /* Hace que los spans se muestren en bloque (uno debajo del otro) */
-        top:10px;
-        left: 50px;
-        font-size: 20px;
-    }
-    .cartel .cartel_actualizaste {
-        position: absolute;
-        display: block; /* Hace que los spans se muestren en bloque (uno debajo del otro) */
-        top: 35px;
-        left: 50px;
-        
-    }
-    
-    .close-btn {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background-color: transparent;
-        border: none;
-        color: var(--nd-color-text-inverse);
-        font-size: 16px;
-        cursor: pointer;
-    }
-    
-    .img-check {
-        position: absolute;
-        margin-bottom: 20px; /* Para crear un espacio entre la imagen y el texto */
-        left: 10px;
-        top:20px;
+
+    .form-control::placeholder {
+        font-size: var(--nd-font-size-xs);
     }
 
+    #formulario {
+        width: 100%;
+        max-width: 440px;
+        padding: var(--nd-space-12) var(--nd-space-10);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: var(--nd-color-bg-surface);
+        border-radius: var(--nd-radius-xl);
+        box-shadow: var(--nd-shadow-lg);
+    }
 
+    #formulario > * {
+        width: 100%;
+    }
 
-    
+    #logo-nd {
+        width: 50%;
+    }
+
+    .mb-3 {
+        margin-bottom: var(--nd-space-5);
+    }
+
+    /* Botón principal: <Button variant="primary" size="lg">, más alto que el default */
+    .containerFormulario__enviar {
+        width: 100%;
+        min-height: 50px;
+    }
+
+    .containerFormulario__error {
+        margin-top: var(--nd-space-2);
+        font-size: var(--nd-font-size-sm);
+        color: var(--nd-color-danger);
+    }
+
+    .containerFormulario__link {
+        width: 100%;
+        margin-top: var(--nd-space-2);
+    }
+
+    @media (max-width: 768px) {
+        padding: var(--nd-space-5);
+
+        #formulario {
+            padding: var(--nd-space-8) var(--nd-space-6);
+        }
+    }
+
+    @media (max-width: 420px) {
+        padding: var(--nd-space-3);
+
+        #formulario {
+            padding: var(--nd-space-6) var(--nd-space-4);
+        }
+
+        h2 {
+            font-size: var(--nd-font-size-3xl);
+        }
+    }
+}

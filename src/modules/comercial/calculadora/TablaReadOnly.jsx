@@ -1,3 +1,4 @@
+import './TablaReadOnly.css';
 import React from "react";
 
 const TablaReadOnly = ({ 
@@ -25,13 +26,13 @@ const TablaReadOnly = ({
   };
 
   return (
-    <div style={{ overflowX: "auto" }}>
-      <table style={{ borderCollapse: "collapse", width: "100%", minWidth: "600px" }}>
+    <div className="tablaCalculadora">
+      <table className="tablaCalculadora__tabla">
         <thead>
           <tr>
-            <th style={{ border: "1px solid var(--nd-color-border-strong)", backgroundColor: "var(--nd-color-bg-muted)", width: "150px" }} />
+            <th className="tablaCalculadora__esquina" />
             {columns.map((col, index) => (
-              <th key={index} style={{ border: "1px solid var(--nd-color-border-strong)", padding: "8px", backgroundColor: "var(--nd-color-bg-muted)", textAlign: "center" }}>
+              <th key={index}>
                 {col}
               </th>
             ))}
@@ -40,7 +41,7 @@ const TablaReadOnly = ({
         <tbody>
           {rows.length === 0 ? (
             <tr>
-              <td colSpan={columns.length + 1} style={{ textAlign: "center", padding: "10px" }}>Sin datos</td>
+              <td colSpan={columns.length + 1}>Sin datos</td>
             </tr>
           ) : (
             rows.map((rowTitle, rowIndex) => {
@@ -49,13 +50,13 @@ const TablaReadOnly = ({
 
               return (
                 <tr key={rowIndex}>
-                  <th style={{ border: "1px solid var(--nd-color-border-strong)", padding: "8px", backgroundColor: "var(--nd-color-bg-muted)", textAlign: "left", fontWeight: "bold" }}>
+                  <th className="tablaCalculadora__fila">
                     {showCheckbox && (
                       <input
                         type="checkbox"
                         checked={selectedRows[rowIndex]}
                         onChange={() => onToggleRow(rowIndex)}
-                        style={{ marginRight: "6px" }}
+                        className="me-2"
                       />
                     )}
                     {rowTitle}
@@ -69,14 +70,11 @@ const TablaReadOnly = ({
                     const valorOverride = tableOverrides[rowIndex]?.[colIndex];
                     const valorCalculado = data?.[rowIndex]?.[colIndex] ?? "";
 
-                    let bgColor = "white";
-                    let textColor = "black";
-                    if (isHighlightedTotal) {
-                      bgColor = "var(--nd-color-success)";
-                    }
-
                     return (
-                      <td key={colIndex} style={{ border: "1px solid var(--nd-color-border-strong)", padding: "8px", textAlign: "center", fontWeight: isTotalsRow ? "bold" : "normal", backgroundColor: bgColor, color: textColor}}>
+                      <td
+                        key={colIndex}
+                        className={`${isTotalsRow ? 'tablaCalculadora__total' : ''} ${isHighlightedTotal ? 'tablaCalculadora__total--destacado' : ''}`}
+                      >
                         {isInput ? (
                           <div className="d-flex align-items-center justify-content-center gap-1">
                             {isCurrency && <span>$</span>}
@@ -85,12 +83,7 @@ const TablaReadOnly = ({
                               step="0.01"
                               value={valorOverride !== undefined ? valorOverride : valorCalculado}
                               onChange={(e) => onCellChange(rowIndex, colIndex, e.target.value)}
-                              style={{ 
-                                width: colIndex === 2 ? "105px" : "75px",
-                                padding: "4px", 
-                                border: "1px solid var(--nd-color-border-strong)", 
-                                borderRadius: 'var(--nd-radius-sm)' 
-                              }}
+                              className={`tablaCalculadora__input ${colIndex === 2 ? 'tablaCalculadora__input--ancho' : ''}`}
                             />
                           </div>
                         ) : (

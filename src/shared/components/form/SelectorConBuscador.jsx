@@ -14,10 +14,10 @@ const SelectorConBuscador = ({ title, options = [], selectedOption, onSelect, on
     return (
         <div className="mb-2">
             {/* Título + Dropdown en la misma línea */}
-            <div className="d-flex justify-content-between align-items-center mb-2">
-                <span className="fw-bold">{title}</span>
+            <div className="nd-field-row mb-2">
+                <span className="nd-field-row__label">{title}</span>
 
-                <div className="dropdown">
+                <div className="dropdown nd-field-row__control">
                     <button 
                         className="btn custom-dropdown-button dropdown-toggle boton_cliente" 
                         type="button" 
@@ -26,7 +26,7 @@ const SelectorConBuscador = ({ title, options = [], selectedOption, onSelect, on
                         {selectedOption?.nombre || selectedOption?.name || "Ninguno"}
                     </button>
 
-                    <ul className={`dropdown-menu listaClientes p-2 ${alineacionDerecha ? 'dropdown-menu-end' : ''}`} style={{ minWidth: "220px" }}>
+                    <ul className={`dropdown-menu listaClientes p-2 ${alineacionDerecha ? 'dropdown-menu-end' : ''}`}>
                         
                         {/* Buscador */}
                         <li className="mb-2">

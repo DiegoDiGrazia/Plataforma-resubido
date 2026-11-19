@@ -8,7 +8,8 @@
  *   node .claude/skills/noticiasd-design-system/scripts/audit.mjs src/modules/notas/nota.css --detail
  *
  * Reporta por archivo: colores literales (con token sugerido), font-size,
- * border-radius, box-shadow y font-family sin token, !important y style={{}}.
+ * border-radius, box-shadow y font-family sin token, !important, style={{}} y
+ * breakpoints (bp) fuera de la lista 1660/1440/1366/1024/768/420/380 o con min-width.
  * Ignora src/styles/ (ahí viven los tokens).
  */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
@@ -77,7 +78,11 @@ const rx = {
   fontFamily: /font-?family\s*:(?![\s'"]*(?:var\(|inherit))[^;}\n]+/gi,
   important: /!important/g,
   inline: /style=\{\{/g,
+  media: /@media[^{]*\((min|max)-width\s*:\s*([\d.]+)px\)/g,
 };
+// Breakpoints permitidos (max-width). Base = 1920. Ver SKILL.md regla 9.
+const BREAKPOINTS = new Set([1660, 1440, 1366, 1024, 768, 420, 380]);
+const badMedia = (m) => m[1] === 'min' || !BREAKPOINTS.has(+m[2]);
 
 const files = walk(target);
 const rows = [];
@@ -97,8 +102,9 @@ for (const f of files) {
     fontFamily: (src.match(rx.fontFamily) || []).length,
     important: isCss ? (src.match(rx.important) || []).length : 0,
     inline: (src.match(rx.inline) || []).length,
+    bp: isCss ? [...src.matchAll(rx.media)].filter(badMedia).length : 0,
   };
-  r.total = r.hex + r.rgb + r.fontSize + r.radius + r.shadow + r.fontFamily + r.important + r.inline;
+  r.total = r.hex + r.rgb + r.fontSize + r.radius + r.shadow + r.fontFamily + r.important + r.inline + r.bp;
   if (r.total) rows.push(r);
   hexes.forEach((h) => { const k = h.toLowerCase(); hexTotals[k] = (hexTotals[k] || 0) + 1; });
 
@@ -119,6 +125,9 @@ for (const f of files) {
       }
       if (rx.shadow.test(line)) hints.push('box-shadow → --nd-shadow-sm|md|lg|focus');
       rx.shadow.lastIndex = 0;
+      for (const m of line.matchAll(rx.media)) {
+        if (isCss && badMedia(m)) hints.push(`@media ${m[1]}-width ${m[2]}px → max-width de 1660|1440|1366|1024|768|420|380`);
+      }
       if (isCss && line.includes('!important')) hints.push('!important → subir especificidad o usar token/clase .nd-*');
       if (hints.length) console.log(`  L${i + 1}: ${hints.join(' | ')}`);
     });
@@ -132,7 +141,7 @@ console.log(`\nAuditoría de estilos — ${target}  (${files.length} archivos, $
 console.table(rows.slice(0, detail ? rows.length : 25).map(({ file, ...r }) => ({ archivo: file, ...r })));
 console.log('Totales:', {
   hex: sum('hex'), rgb: sum('rgb'), fontSize: sum('fontSize'), radius: sum('radius'),
-  shadow: sum('shadow'), fontFamily: sum('fontFamily'), important: sum('important'), inlineStyle: sum('inline'),
+  shadow: sum('shadow'), fontFamily: sum('fontFamily'), important: sum('important'), inlineStyle: sum('inline'), bp: sum('bp'),
 });
 
 if (!detail) {

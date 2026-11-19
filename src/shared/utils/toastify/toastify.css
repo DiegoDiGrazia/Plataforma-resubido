@@ -3,7 +3,7 @@
     background-color: var(--nd-color-bg-surface) !important;
     color: var(--nd-color-text) !important; 
     border-radius: var(--nd-radius-md) !important;
-    font-weight: 500;
+    font-weight: var(--nd-font-weight-medium);
     box-shadow: var(--nd-shadow-md) !important;
 }
 
@@ -34,5 +34,5 @@
 }
 
 .Toastify__toast-body {
-    font-size: 9px !important; 
+    font-size: var(--nd-font-size-xs) !important; 
 }

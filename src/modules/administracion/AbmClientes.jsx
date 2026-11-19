@@ -1,13 +1,9 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import "@/modules/perfil/miPerfil.css";
 import { useSelector } from 'react-redux';
 import ModalMensaje from '@/shared/components/modales/ModalMensaje';
 import { obtenerUsuarios, obtenerPlanesMarketing } from '@/api/apisUsuarios'; // Importa la función para obtener usuarios
 import { obtenerClientes, crearCliente, actualizarCliente } from '@/api/apis';
 import ArbolDistribucion from '@/shared/components/ArbolDistribucion';
-import './AbmsMobile.css';
 
 const tiposUsuario = [
   {'id': "1", 'nombre': "ENTE"},
@@ -206,7 +202,7 @@ const handleSave = async () => {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="       Buscar cuenta por nombre"
+              placeholder="Buscar cuenta por nombre"
             />
           </form>
         </div>

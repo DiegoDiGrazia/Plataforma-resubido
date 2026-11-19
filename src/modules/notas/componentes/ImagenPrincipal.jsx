@@ -1,6 +1,4 @@
 import React, { useRef } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { setImagenPrincipal } from '@/store/crearNotaSlice';
 

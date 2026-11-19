@@ -1,12 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { Button } from 'react-bootstrap';
 import Sidebar from '@/shared/components/sidebar/Sidebar';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-import "./miPerfil.css";
 import { useSelector } from 'react-redux';
 
 const Perfil = () => {
@@ -57,10 +54,10 @@ const Perfil = () => {
                             <div className='abajoDeTusNotas'> Aquí encontrarás todos los detalles de tu cuenta</div>
                         </div>
                         <div className='col boton col-auto ms-auto'>
-                            <Button onClick={() => navigate('/publicarNota')} variant="none" className='botonCerrarSesion'>
+                            <Button onClick={() => navigate('/publicarNota')} variant="secondary">
                                 {"Cancelar"}
                             </Button>
-                            <Button onClick={() => navigate('/publicarNota')} variant="none" className='botonCerrarSesion guardar'>
+                            <Button onClick={() => navigate('/publicarNota')} variant="primary" className='ms-2'>
                                 {"Guardar"}
                             </Button>
                         </div>
@@ -109,7 +106,7 @@ const Perfil = () => {
                                 ref={fileInputRef}
                                 accept="image/*"
                                 onChange={handleFileChange}
-                                style={{ display: 'none' }}
+                                className="d-none"
                             />
                             <img src="/images/uploadImagen.png" alt="Icono 1" className="icon me-2 icono_tusNotas" />
 
@@ -158,7 +155,7 @@ const Perfil = () => {
                             </div>
                         </div>
                         <div className='col textAreaContainer col-auto ms-auto'>
-                            <Button onClick={() => navigate('/')} variant="none" className='botonCerrarSesion'>
+                            <Button onClick={() => navigate('/')} variant="outline-secondary">
                                 {"Cerrar Sesión"}
                             </Button>
                         </div>

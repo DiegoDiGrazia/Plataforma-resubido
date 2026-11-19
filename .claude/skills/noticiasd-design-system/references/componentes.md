@@ -89,6 +89,30 @@ Modificadores: `--interactive` (hover), `--flat` (sin sombra), `--compact` (padd
 | Destacado / nuevo | `primary` |
 | Informativo, categoría | `info`, `blue`, `magenta` |
 
+### Grilla de tarjetas y tarjeta de herramienta
+```jsx
+<div className="nd-grid-cards">
+  <button type="button" className="nd-tool-card"
+          style={{ '--nd-card-imagen': `url('/images/${clave}.png')` }}   // opcional, dinámico
+          onClick={...}>
+    <h5 className="nd-tool-card__titulo">ABM Planes</h5>
+    <p className="nd-tool-card__texto">Alta, baja y modificación de planes.</p>
+  </button>
+</div>
+```
+`.nd-grid-cards` acomoda columnas solas (`auto-fill, minmax(240px, 1fr)`) en cualquier ancho.
+Lo usan los hubs de Administración y Comercial.
+
+### Campo en línea (etiqueta + control)
+```jsx
+<div className="nd-field-row mb-2">
+  <span className="nd-field-row__label">Rentabilidad</span>
+  <div className="input-group nd-field-row__control">…</div>
+</div>
+```
+Lo usan `InputNumerico`, `SelectorNumerosEnteros` y `SelectorConBuscador`. El ancho del control lo
+fija la pantalla (ej. la Calculadora: `.calculadora__columna .nd-field-row__control { width: 220px }`).
+
 ### Otros
 | Clase | Para |
 |---|---|
@@ -106,6 +130,9 @@ Modificadores: `--interactive` (hover), `--flat` (sin sombra), `--compact` (padd
 - Texto: `.nd-text-primary|secondary|muted|blue|success|danger`, `.nd-text-xs…2xl`, `.nd-fw-regular|medium|semibold|bold`, `.nd-caps`
 - Fondo: `.nd-bg-primary|primary-subtle|secondary|surface|muted|page`
 - Forma: `.nd-border`, `.nd-rounded-sm|md|lg|pill`, `.nd-shadow-sm|md`
+- Fondo de modal armado a mano: `.nd-bg-overlay` (en vez de `style={{ background: 'var(--nd-color-overlay)' }}`).
+- Margen lateral de página: `.nd-mx-page` / `.nd-px-page` (usa `--nd-page-padding`, que se achica por
+  breakpoint). Reemplaza `mx-5`, `px-5`, `ms-5 me-5` fijos de 48px.
 - Layout/spacing: usar las de Bootstrap (`d-flex`, `gap-2`, `p-3`, `mb-4`…).
 
 **Alias legacy** (existen, ya apuntan a tokens, no usar en código nuevo):

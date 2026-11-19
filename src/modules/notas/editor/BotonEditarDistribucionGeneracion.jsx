@@ -76,10 +76,10 @@ const BotonEditarDistribucionGeneracion = ({ id_generacion, token }) => {
         <>
             <button
                 onClick={abrirModal}
-                className="p-0 m-2 border-0 bg-transparent"
+                className="notasListado__botonIcono"
                 title="Editar distribución"
             >
-                <i className="bi bi-pencil-square m-2 fs-2"></i>
+                <i className="bi bi-pencil-square" aria-hidden="true"></i>
             </button>
 
             <Modal show={showModal} onHide={() => setShowModal(false)} centered scrollable>

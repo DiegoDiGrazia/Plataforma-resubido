@@ -1,0 +1,174 @@
+/* ==========================================================================
+   Distribuir nota (freemium) (.notaFreemium)
+   Antes eran 49 style={{}} con colores, tamaños y sombras sueltas.
+   ========================================================================== */
+
+.notaFreemium {
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: var(--nd-space-6) var(--nd-page-padding);
+
+    /* ---------- Pasos (stepper) ---------- */
+    .notaFreemium__pasos {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: var(--nd-space-4) var(--nd-space-2);
+    }
+
+    .notaFreemium__paso {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--nd-space-2);
+        min-width: 90px;
+        text-align: center;
+    }
+
+    .notaFreemium__paso-circulo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        font-size: var(--nd-font-size-md);
+        color: var(--nd-color-text-muted);
+        background: var(--nd-color-bg-muted);
+        border-radius: var(--nd-radius-full);
+        transition: all var(--nd-duration-base) var(--nd-easing);
+    }
+
+    .notaFreemium__paso-texto {
+        font-size: var(--nd-font-size-xs);
+        color: var(--nd-color-text-muted);
+    }
+
+    .notaFreemium__paso--activo .notaFreemium__paso-circulo {
+        color: var(--nd-color-text-inverse);
+        background: var(--nd-color-secondary);
+    }
+
+    .notaFreemium__paso--activo .notaFreemium__paso-texto {
+        color: var(--nd-color-secondary);
+    }
+
+    .notaFreemium__paso--actual .notaFreemium__paso-circulo {
+        box-shadow: 0 0 0 4px var(--nd-color-secondary-subtle);
+    }
+
+    .notaFreemium__paso--actual .notaFreemium__paso-texto {
+        font-weight: var(--nd-font-weight-bold);
+    }
+
+    .notaFreemium__paso-linea {
+        flex: 1;
+        height: 3px;
+        margin: 0 var(--nd-space-1) var(--nd-space-5);
+        background: var(--nd-color-bg-muted);
+        transition: all var(--nd-duration-base) var(--nd-easing);
+    }
+
+    .notaFreemium__paso-linea--completa {
+        background: var(--nd-color-secondary);
+    }
+
+    /* ---------- Crédito ---------- */
+    .notaFreemium__credito {
+        min-width: 220px;
+        padding: var(--nd-space-3) var(--nd-space-5);
+        text-align: center;
+        background: var(--nd-color-bg-surface);
+        border-radius: var(--nd-radius-lg);
+        box-shadow: var(--nd-shadow-md);
+    }
+
+    .notaFreemium__credito-label {
+        font-size: var(--nd-font-size-xs);
+        color: var(--nd-color-text-secondary);
+    }
+
+    .notaFreemium__credito-valor {
+        margin: 2px 0;
+        font-size: var(--nd-font-size-xl);
+        font-weight: var(--nd-font-weight-bold);
+        color: var(--nd-color-text);
+    }
+
+    .notaFreemium__credito-link {
+        font-size: var(--nd-font-size-sm);
+        font-weight: var(--nd-font-weight-medium);
+        color: var(--nd-color-success);
+        text-decoration: none;
+    }
+
+    /* ---------- Bloques ---------- */
+    .notaFreemium__miniatura {
+        flex-shrink: 0;
+        width: 100px;
+        height: 70px;
+        object-fit: cover;
+        border-radius: var(--nd-radius-md);
+    }
+
+    .notaFreemium__caja {
+        background: var(--nd-color-bg-page);
+        border: var(--nd-border-width) solid var(--nd-color-border);
+    }
+
+    .notaFreemium__caja--info {
+        background: var(--nd-color-info-subtle);
+        border-color: var(--nd-sky-100);
+    }
+
+    .notaFreemium__chip {
+        padding: 2px var(--nd-space-2);
+        background: var(--nd-color-bg-page);
+        border: var(--nd-border-width) solid var(--nd-color-border);
+        border-radius: var(--nd-radius-md);
+    }
+
+    .notaFreemium__chip--info {
+        color: var(--nd-color-secondary);
+        background: var(--nd-color-info-subtle);
+        border-color: var(--nd-sky-100);
+    }
+
+    .notaFreemium__flexible {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .notaFreemium__flexible--ancho {
+        min-width: min(260px, 100%);
+    }
+
+    .notaFreemium__alcance {
+        width: 100px;
+    }
+
+    .notaFreemium__logo {
+        width: 14px;
+    }
+
+    .notaFreemium__logo--lg {
+        width: 18px;
+    }
+
+    /* ---------- Teléfonos ---------- */
+    @media (max-width: 420px) {
+        .notaFreemium__paso {
+            min-width: 64px;
+        }
+
+        .notaFreemium__paso-circulo {
+            width: 32px;
+            height: 32px;
+        }
+
+        .notaFreemium__credito {
+            min-width: 0;
+            width: 100%;
+        }
+    }
+}

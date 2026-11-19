@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import "./InteraccionPorNota.css";
 import { useSelector } from 'react-redux';
 import { filtrarUltimosMeses } from '@/shared/components/charts/Barplot';
@@ -166,7 +165,7 @@ const PlataformaMasImpresiones = ({datosLocales, resumenCliente= null, loading =
 
     return (
         <div className="desgloce-plataforma">
-            <div className='row titulo_relevantes pt-3 px-2'>
+            <div className='row titulo_relevantes'>
                 <p>Desgloce por plataforma
                     <img src="/images/help-circle.png" alt="Descripción" className="info-icon no-print" title="Es el desglose de impresiones por plataforma en la que difundimos tus notas. Las impresiones son la contabilización de cada vez que una persona navego en estas plataformas estando presente la difusión de tu contenido."/>
                 </p>
@@ -178,7 +177,7 @@ const PlataformaMasImpresiones = ({datosLocales, resumenCliente= null, loading =
                             <div className='d-flex justify-content-between px-3 pt-0 mb-4'>
                                 <div className='d-flex align-items-center justify-content-center gap-2'>
                                     <img src={plataforma.logo} alt={`Icono ${plataforma.nombre}`} className='imagenWidwet p-0 mt-3 rounded' />
-                                    <strong className='mt-3' style={{ color: 'var(--nd-color-secondary)' }}>
+                                    <strong className='mt-3 nd-text-blue'>
                                         {plataforma.nombre}
                                     </strong>
                                 </div>
@@ -349,7 +348,7 @@ const PlataformaMasImpresiones = ({datosLocales, resumenCliente= null, loading =
                                     }
                                     {plataforma.cincuenta > 0 &&
                                     <div className='col d-flex align-items-center'>
-                                        <span className='icono-ctr bi bi-circle-half d-flex align-items-center justify-content-center img-fluid me-2' style={{ color: 'var(--nd-color-text)', fontSize: '18px' }}/>
+                                        <span className='icono-ctr bi bi-circle-half d-flex align-items-center justify-content-center me-2 nd-text-lg' aria-hidden='true'/>
                                         <div className='cincuenta'>
                                             <span className='d-block'>50% visto</span>
                                             <span className='d-block'>{formatNumberMiles(plataforma.cincuenta)}</span>

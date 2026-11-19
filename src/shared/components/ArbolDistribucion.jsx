@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import SelectorConBuscador from '@/shared/components/form/SelectorConBuscador';
 import { useSelector } from 'react-redux';
 import { obtenerMunicipios } from '@/api/geosApi';

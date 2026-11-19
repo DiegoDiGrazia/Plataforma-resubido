@@ -1,0 +1,49 @@
+/* ==========================================================================
+   Layout general de la app logueada: sidebar + área de contenido.
+   Antes vivía repartido en Dashboard.css (.content, .sinPadding, .d-flex) y
+   se cargaba o no según por dónde entraba el usuario.
+
+   - Desktop: sidebar fijo a la izquierda (ancho = --nd-sidebar-width, que se
+     achica solo por breakpoint) y el contenido ocupa el resto.
+   - Mobile (≤768px): el sidebar se oculta y aparece la barra superior fija;
+     el contenido deja lugar arriba para esa barra.
+   ========================================================================== */
+
+.app-layout {
+    padding: 0;
+}
+
+.app-layout__cuerpo {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* min-width: 0 → un hijo flex no puede ser más ancho que el espacio libre.
+   Sin esto, cualquier tabla o fila ancha empuja la pantalla y aparece scroll
+   horizontal en notebooks y mobile. */
+.app-layout__contenido {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-width: 0;
+    background-color: var(--nd-color-bg-page);
+}
+
+/* La pantalla ocupa todo el alto disponible (sin franja gris al pie) */
+.app-layout__contenido > .content,
+.app-layout__contenido > [id^="pantalla-"] {
+    flex: 1 0 auto;
+}
+
+@media (max-width: 768px) {
+    /* Barra superior fija: su alto + el margen de arriba y abajo */
+    .app-layout__contenido {
+        padding-top: calc(var(--nd-topbar-height) + var(--nd-space-4));
+    }
+}
+
+@media print {
+    .app-layout__contenido {
+        padding-top: 0;
+    }
+}

@@ -46,11 +46,22 @@ src/styles/
    blanco semibold) e iconos, **no para texto**. Texto naranja = `--nd-color-primary-text`
    (#D14301). Amarillo de marca nunca como texto ni línea fina.
 8. **Tamaño mínimo de fuente: 12px** (`--nd-font-size-xs`). Hoy hay 9/10/11px: subirlos.
-9. **Breakpoints:** solo `380 / 576 / 768 / 1366px` (`max-width`). Las variables CSS no
-   funcionan en `@media`: escribir el número literal, uno de esos cuatro.
+9. **Breakpoints:** la plataforma tiene que verse bien en **380 · 420 · 768 · 1024 · 1366 · 1440 ·
+   1660 · 1920px**. El diseño base es 1920 (sin media query) y se baja con `max-width`, solo con
+   estos valores: `1660 / 1440 / 1366 / 1024 / 768 / 420 / 380`. Nada de `min-width` ni otros
+   números. Las variables CSS no funcionan en `@media`: escribir el número literal.
+   Antes de agregar un `@media`, preferir layouts que se adaptan solos (`flex-wrap`, `gap`,
+   `minmax()` en grid, `min-width: 0` en hijos flex, anchos en `%`/`max-width` en vez de px fijos).
+   Los tokens de layout (`--nd-page-padding`, títulos) ya se achican solos por breakpoint.
 10. Clases nuevas propias: prefijo `nd-` + BEM-lite (`.nd-card__title`, `.nd-badge--success`).
-    Estilos específicos de una pantalla: anidados bajo la clase raíz de la pantalla
-    (`.contratosPage .algo`) y en el CSS de esa pantalla, siempre con tokens.
+11. **Todo el CSS de una pantalla va anidado bajo su raíz** (`#pantalla-dashboard { … }`,
+    `.contratosPage { … }`, con CSS nesting). Webpack carga todos los CSS de `modules/` juntos y
+    son globales: una regla suelta como `.col-2 {}`, `li {}` o `.accordion-button {}` pisa a
+    todas las pantallas. Fuera de una raíz solo pueden ir `@media print` de reportes.
+    El layout general (sidebar + contenido) vive en `src/app/LayoutConSidebar.css`.
+12. **Orden de carga** (no cambiarlo): Bootstrap → `src/styles/` (sistema de diseño) →
+    `styles/legacy.css` → CSS de pantallas. Así el CSS de una pantalla le gana a Bootstrap y al
+    sistema en los empates, sin `!important`.
 
 ## Cheat-sheet de tokens
 
@@ -114,7 +125,8 @@ Seguir [references/migracion.md](references/migracion.md). Resumen:
 2. Reemplazar valores por tokens (tabla de mapeo legacy en migracion.md).
 3. Borrar reglas que Bootstrap tematizado ya resuelve (`.btnNuevoContrato` → `variant="primary"`).
 4. Quitar `!important` y `style={{}}` visuales.
-5. Verificar en desktop y en 768px. Volver a correr la auditoría.
+5. Verificar en los 8 anchos (380 · 420 · 768 · 1024 · 1366 · 1440 · 1660 · 1920): sin scroll
+   horizontal, sin textos cortados ni botones encimados. Volver a correr la auditoría.
 
 ### C. Agregar / cambiar un token
 Solo en `tokens.css` **y** `tokens.js` (mismo valor), actualizar `references/tokens.md`.
@@ -144,5 +156,11 @@ Salta archivos con Chart.js o react-pdf (canvas/PDF no entienden `var()`): ahí 
 - 2026-11-10 inicio: 316 hex · 248 font-size · 101 radius · 508 `!important` · 347 `style={{}}`.
 - 2026-11-10 tras codemod: **0 hex · 0 radius** · 1 shadow · 242 font-size · 476 `!important` · 341 `style={{}}`.
 
-Pendiente: font-size, `!important`, inline styles. Objetivo: cada PR que toque una pantalla
+- 2026-11-19 pasada de responsive (380–1920) y scope por pantalla: 0 hex · 0 radius · 31 → 0 font-size
+  en JSX · 177 → ~0 font-size en CSS · 430 → 143 `!important` (la mayoría en reglas de impresión del
+  reporte: nota_print.css, VerNota.css, Dashboard.css) · 266 → ~140 `style={{}}` · 0 breakpoints fuera
+  de la lista. Sin scroll horizontal en ninguna pantalla en los 8 anchos.
+
+Pendiente: `!important` de impresión, inline styles restantes (cursor, valores dinámicos y modales
+de ABM), editor de notas en detalle (nota.css, colEditorial.css, publicarNota.css). Objetivo: cada PR que toque una pantalla
 la deja en 0 en hex/font-size/radius/shadow.

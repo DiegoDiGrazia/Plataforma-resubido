@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import "./InteraccionPorNota.css";
 import { obtenerTopMediosNoticia } from '@/api/dashboardApi';
 import { formatNumberMiles } from '@/modules/dashboard/Dashboard';
@@ -47,17 +46,17 @@ const MediosMasRelevantesNotas = ({ id_noti, TOKEN, cliente_id, dataLocalNota, p
         .slice(0, 5);
 
     const renderMedio = (medio, index) => (
-        <div key={index} className={`row medioRowNota`}>
-            <div className='col-auto mr-2'>
+        <div key={index} className='datosRelevantes__fila medioRowNota'>
+            <div>
                 <img src={`https://www.google.com/s2/favicons?domain=${medio.sitio}&sz=64`} alt="Icono" className='imagenWidwetInteracciones' />
             </div>
-            <div className='col pt-1'>
-                <div className='row p-0 nombre_plataforma'>{formatearTextoNombre(medio.sitio)}</div>
-                <div className='row p-0'>
+            <div>
+                <div className='nombre_plataforma'>{formatearTextoNombre(medio.sitio)}</div>
+                <div>
                     <a href={`https://www.${medio.sitio}`}className='linkPlataforma'>{`www.${medio.sitio}`}</a>
                 </div>
             </div>
-            <div className='col totales_widget impresionesWidget'>
+            <div className='totales_widget impresionesWidget'>
                 <p>{formatNumberMiles(medio.impresiones)}</p>
             </div>
         </div>

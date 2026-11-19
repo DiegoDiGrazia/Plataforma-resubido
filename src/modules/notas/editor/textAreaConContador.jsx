@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { setEngagement, setBajada } from '@/store/crearNotaSlice';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';

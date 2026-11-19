@@ -4,7 +4,7 @@ import './toastify.css';
 
 export const toastExito = (mensaje) => {
     toast.success(mensaje, {
-        icon: <img src='/images/fabicon2.png' className="logo-nd-toastify" style={{ color: 'var(--nd-color-primary-text)', fontSize: '0.9rem' }}></img>,
+        icon: <img src='/images/fabicon2.png' className="logo-nd-toastify"></img>,
         className: 'toast-custom-exito',
         progressClassName: 'toast-progress-brand',
     });
@@ -12,14 +12,14 @@ export const toastExito = (mensaje) => {
 
 export const toastError = (mensaje) => {
     toast.error(mensaje, {
-        icon: <img src='/images/fabicon2.png' className="logo-nd-toastify" style={{ fontSize: '0.9rem' }}></img>,
+        icon: <img src='/images/fabicon2.png' className="logo-nd-toastify"></img>,
         className: 'toast-custom-error',
     });
 };
 
 export const toastInfo = (mensaje) => {
     toast.info(mensaje, {
-        icon: <img src='/images/fabicon2.png' className="logo-nd-toastify" style={{ fontSize: '0.9rem' }}></img>,
+        icon: <img src='/images/fabicon2.png' className="logo-nd-toastify"></img>,
         className: 'toast-custom-info',
     });
 };

@@ -1,126 +1,162 @@
+/* ==========================================================================
+   Administración de Facturas (.contenedor-facturas)
+   Antes: letras de 10–11px a ≤1366 para que todo entrara en una línea,
+   anchos fijos y una regla `i {}` que cambiaba todos los íconos de la pantalla.
+   Ahora los filtros bajan de renglón y cada factura es una grilla flexible.
+   ========================================================================== */
+
 .contenedor-facturas {
 
-
-#descargar-excel{
-    background-color: var(--nd-color-success);
-    border-color: var(--nd-color-border-strong);
-}
-.buscadorNotasForm {
-    width: 275px !important;
-}
-
-i {
-    color: var(--nd-color-text);
-    margin-right: 5px;
-    font-size: 24px;
-}
-
-.input-fechas {
-    width: 150px;
-    font-size: 13px;
-    border: 1px solid var(--nd-color-border-strong);
-    border-radius: var(--nd-radius-sm);
-    padding: 2px 5px;
-}
-
-.form-check-input.flex-shrink-0.mt-0 {
-    margin-left: 1px !important;
-    margin-right: 2px !important;
-}
-
-@media (max-width: 1366px) {
-
-    #cargar-factura, #descargar-excel {
-        width: 35px !important;
-        height: 35px !important;
-        padding: 0 !important; 
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
+    /* ---------- Encabezado + botones (cargar factura, Excel) ---------- */
+    .facturas__encabezado {
+        align-items: flex-end;
+        row-gap: var(--nd-space-4);
     }
 
-    #cargar-factura i, #descargar-excel i {
-        margin: 0 !important;
-        font-size: 20px !important; 
+    .facturas__botones {
+        display: flex;
+        flex: 0 0 auto;
+        width: auto;
+        gap: var(--nd-space-2);
     }
 
-    .vencimiento-desde {
-        width: 153px !important;
-        font-size: 11px !important;
-        margin-right: 5px !important;
+    .facturas__boton-icono {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: var(--nd-control-height);
+        height: var(--nd-control-height);
+        padding: 0;
+        font-size: var(--nd-font-size-xl);
     }
 
-    .vencimiento-hasta {
-        width: 160px !important;
-        font-size: 11px !important;
-        left: 0px !important;
+    /* ---------- Filtros ---------- */
+    .facturas__filtros {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--nd-space-3);
     }
-    
-    .vencimiento-desde input {
-        width: 125px;
-        font-size: 10px !important;
+
+    .facturas__buscador {
+        flex: 1 1 280px;
+        width: auto;
+        max-width: 420px;
+        height: auto;
+        margin: 0;
     }
-    
-    .vencimiento-hasta input {
-        width: 125px;
-        font-size: 10px !important;
+
+    .facturas__fechas {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--nd-space-3);
     }
+
+    .facturas__fecha {
+        display: flex;
+        align-items: center;
+        gap: var(--nd-space-2);
+        margin: 0;
+        font-size: var(--nd-font-size-sm);
+        white-space: nowrap;
+    }
+
     .input-fechas {
-        width: 115px !important;
-    }
-    .row.buscadorNotas.d-flex.flex-wrap.align-items-center.justify-content-between.mt-3.p-0.w-100 {
-        flex-wrap: nowrap !important;
-    }
-
-    .col-3.w-auto.d-flex.align-items-center.gap-2.mt-2.me-4.p-0.text-nowrap {
-        position: relative;
-        left: -8px;
-        gap: 0px !important;
-    }
-    
-    .buscadorNotasForm {
-        width: 142px !important;
-        height: 32px !important;
+        width: 150px;
+        padding: 2px var(--nd-space-1);
+        font-size: var(--nd-font-size-sm);
+        border: var(--nd-border-width) solid var(--nd-color-border-strong);
+        border-radius: var(--nd-radius-sm);
     }
 
-    .inputBuscadorNotas {
-        font-size: 11px !important;
-        padding: 6px 8px !important;
-        background-size: 14px 14px !important;
-        background-position: 6px center !important;
+    .facturas__dropdowns {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--nd-space-2);
+        margin-left: auto;
     }
 
-    .inputBuscadorNotas::placeholder {
-        width: 100%;
-        padding-left: 3px !important;
-        font-size: 10px !important; 
-        overflow: hidden !important; 
+    /* ---------- Listado ---------- */
+    .facturas__fila {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-areas:
+            "titulo acciones"
+            "datos  acciones";
+        gap: var(--nd-space-2) var(--nd-space-4);
+        font-size: var(--nd-font-size-sm);
+        text-align: left;
     }
 
-    #botones-filtros {
-        padding: 0px;
+    .facturas__titulo {
+        grid-area: titulo;
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--nd-space-1) var(--nd-space-4);
+        font-size: var(--nd-font-size-base);
     }
 
-    .row.text-start.w-100 .col {
-        padding-right: 0px !important;
+    /* 5 bloques de datos que se reacomodan solos según el ancho */
+    .facturas__datos {
+        grid-area: datos;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        gap: var(--nd-space-3) var(--nd-space-5);
+        min-width: 0;
     }
 
-    #botones-filtros .dropdown-filtro-btn {
-        font-size: 11px !important;
-        padding: 3px 8px !important;
+    .facturas__datos .datos-factura {
+        overflow-wrap: anywhere;
     }
 
-    #botones-filtros .dropdown-item {
-        font-size: 11px !important;
-        padding: 3px 12px !important;
+    .facturas__estado {
+        width: fit-content;
     }
 
-    .datos-factura  {
-        font-size: 11px !important;
+    .facturas__acciones {
+        grid-area: acciones;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--nd-space-1);
     }
 
-    .datos-factura a {
-        font-size: 11px !important;
+    .facturas__acciones .facturas__boton-icono {
+        border: none;
     }
-}   
+
+    .facturas__acciones .facturas__boton-icono:hover {
+        background-color: var(--nd-color-bg-muted);
+    }
+
+    .form-check-input.flex-shrink-0.mt-0 {
+        margin: 0 2px 0 1px;
+    }
+
+    @media (max-width: 768px) {
+        .facturas__buscador {
+            max-width: none;
+        }
+
+        .facturas__dropdowns {
+            margin-left: 0;
+        }
+
+        /* Las acciones pasan abajo, en fila */
+        .facturas__fila {
+            grid-template-columns: minmax(0, 1fr);
+            grid-template-areas:
+                "titulo"
+                "datos"
+                "acciones";
+        }
+
+        .facturas__acciones {
+            flex-direction: row;
+            flex-wrap: wrap;
+            padding-top: var(--nd-space-2);
+            border-top: var(--nd-border-width) solid var(--nd-color-border);
+        }
+    }
 }

@@ -1,0 +1,63 @@
+/* Tabla de la Calculadora de ventas (TablaReadOnly.jsx).
+   Antes todo iba en style={{}}; ahora con tokens y scroll horizontal propio
+   cuando la pantalla es más angosta que la tabla. */
+
+.tablaCalculadora {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+
+    .tablaCalculadora__tabla {
+        width: 100%;
+        min-width: 640px;
+        border-collapse: collapse;
+        font-size: var(--nd-font-size-sm);
+    }
+
+    th,
+    td {
+        padding: var(--nd-space-2);
+        text-align: center;
+        border: var(--nd-border-width) solid var(--nd-color-border-strong);
+    }
+
+    td {
+        color: var(--nd-color-text);
+        background-color: var(--nd-color-bg-surface);
+    }
+
+    thead th,
+    .tablaCalculadora__fila {
+        font-weight: var(--nd-font-weight-bold);
+        background-color: var(--nd-color-bg-muted);
+    }
+
+    .tablaCalculadora__esquina {
+        width: 150px;
+    }
+
+    .tablaCalculadora__fila {
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .tablaCalculadora__total {
+        font-weight: var(--nd-font-weight-bold);
+    }
+
+    .tablaCalculadora__total--destacado {
+        color: var(--nd-color-success);
+        background-color: var(--nd-color-success-subtle);
+    }
+
+    .tablaCalculadora__input {
+        width: 75px;
+        padding: var(--nd-space-1);
+        border: var(--nd-border-width) solid var(--nd-color-border-strong);
+        border-radius: var(--nd-radius-sm);
+    }
+
+    .tablaCalculadora__input--ancho {
+        width: 105px;
+    }
+}

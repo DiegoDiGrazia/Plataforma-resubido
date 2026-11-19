@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import SelectorConBuscadorMult from './SelectorConBuscadorMult';

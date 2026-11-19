@@ -1,7 +1,4 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import "@/modules/perfil/miPerfil.css";
 import { useSelector } from 'react-redux';
 import { obtenerPerfiles, crearPerfil, editarPerfil, eliminarPerfilPorId } from '@/api/perfilesApi.js';
 import { obtenerPaginas, crearAcceso, eliminarAccesosId } from '@/api/paginasApi.js';
@@ -186,7 +183,7 @@ const PerfilesAdmin = () => {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="       Buscar perfiles por nombre"
+              placeholder="Buscar perfiles por nombre"
             />
           </form>
         </div>

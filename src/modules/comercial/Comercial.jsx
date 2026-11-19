@@ -1,9 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Sidebar from '@/shared/components/sidebar/Sidebar';
-import "@/modules/perfil/miPerfil.css";
 import { useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
@@ -69,7 +66,7 @@ const Comercial = () => {
             <div className='row miPerfilContainer soporteContainer'>
                 <div className='col p-0'>
                     <h3 id="saludo" className='headerTusNotas ml-0'>
-                        <i className="icon me-2 icono_tusNotas bi bi-bag-fill" alt="Icono 1" style={{color: 'var(--nd-color-text)', marginRight: '5px', bottom: '10px', fontSize: '24px'}} /> Comercial
+                        <i className="bi bi-bag-fill" aria-hidden="true" /> Comercial
                     </h3>
                     <h4 className='infoCuenta'>Configuración</h4>
                     <div className='abajoDeTusNotas'>
@@ -90,42 +87,28 @@ const Comercial = () => {
                             type="text"
                             value={searchQuery}
                             onChange={handleInputChange}
-                            placeholder="      Buscar por herramienta"
+                            placeholder="Buscar por herramienta"
                         />
                     </form>
                 </div>
             </div>
 
-            <div className='row miPerfilContainer soporteContainer mt-4 p-0'>
-                {filteredCategories.map((categoriaKey, index) => {
-                const categoria = DEF[categoriaKey]; // Accedemos a la info de esa categoría
-                return (
-                <div key={index} className='col-auto mb-3 d-flex'>
-                    <div
-                    className="card"
-                    style={{
-                        width: "250px",
-                        backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.81)), url('/images/${categoriaKey}.png')`,
-                        backgroundPosition: "center",
-                        backgroundSize: "cover",
-                    }}
-                    >
-                    <div className="card-body d-flex flex-column text-center pb-3">
-                        <Button 
-                            variant='' 
-                            className="p-0 h-100 text-dark border-0 text-decoration-none"
+            <div className='miPerfilContainer soporteContainer mt-4 nd-grid-cards'>
+                {filteredCategories.map((categoriaKey) => {
+                    const categoria = DEF[categoriaKey];
+                    return (
+                        <button
+                            key={categoriaKey}
+                            type="button"
+                            className="nd-tool-card"
+                            style={{ '--nd-card-imagen': `url('/images/${categoriaKey}.png')` }}
                             onClick={() => navigate(`/${categoria.url}`)}
                         >
-                            <div className='h-100'>
-                            <h5 className="card-title justify-content-center">{categoria.titulo}</h5>
-                            <p className="card-text">{categoria.descripcion}</p>
-                            </div>
-                        </Button>
-                    </div>
-                    </div>
-                </div>
-                )
-            })}
+                            <h5 className="nd-tool-card__titulo">{categoria.titulo}</h5>
+                            <p className="nd-tool-card__texto">{categoria.descripcion}</p>
+                        </button>
+                    );
+                })}
             </div>
         </div>
         </>

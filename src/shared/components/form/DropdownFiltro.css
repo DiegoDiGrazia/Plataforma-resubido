@@ -1,23 +1,30 @@
+/* Dropdown de filtro compartido (Monitor, Facturas…) */
 .dropdown-filtro-container {
-    
-    @media (max-width: 1366px) {
-        a {
-            font-size: 10px !important;   
-        }
-    }
 
     .dropdown-filtro-btn {
-        font-size: 13px;
+        gap: var(--nd-space-1);
+        font-size: var(--nd-font-size-sm);
+        white-space: nowrap;
     }
 
     .input-group {
-        width: 98%;
-        margin-left: 5px;
+        width: calc(100% - var(--nd-space-2));
+        margin-left: var(--nd-space-1);
     }
 
     .dropdown-menu-scroll {
         max-height: 300px;
-        overflow-y: auto;
         overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    .dropdown-item {
+        white-space: normal;
+    }
+
+    @media (max-width: 1366px) {
+        .dropdown-item {
+            font-size: var(--nd-font-size-xs);
+        }
     }
 }

@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import "./InteraccionPorNota.css"
 import { useSelector, useDispatch } from 'react-redux';
 import { filtrarUltimosMeses } from '@/shared/components/charts/Barplot';
@@ -97,19 +96,19 @@ const InteraccionPorNota = ({datosLocales, paisFiltro}) => {
                 </p>
             </div>
             {listaTresNotas.map((nota, index) => (
-                <div className='row seccionInteracciones pt-1' key={index}>
-                    <div className='col-1 mr-2'>
+                <div className='datosRelevantes__fila' key={index}>
+                    <div>
                         <img src={seleccionarUrlImagenDeUnaNota(nota.imagen)} alt="Icono" className='imagenWidwetInteracciones2' />
                     </div>
-                    <div className='col-8 pt-1'>
+                    <div>
                         <Link className="link-sin-estilos" to={`/verNota`} state={{ id: nota.id_noti ? nota.id_noti : nota.term_id, notaABM: nota }}>
-                            <div className='row p-0 nombre_plataforma'>{nota.titulo}</div>
+                            <div className='nombre_plataforma'>{nota.titulo}</div>
                         </Link>
-                        <div className='row p-0'>
+                        <div>
                             <p className='linkPlataforma'>{formatearFecha(nota.f_pub)}</p>
                         </div>
                     </div>
-                    <div className='col totales_widget'>
+                    <div className='totales_widget'>
                         <p>{formatNumberMiles(nota.total)}</p>
                     </div>
                 </div>

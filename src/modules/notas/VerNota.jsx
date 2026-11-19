@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import "./nota.css";
-import "./verNotaMobile.css";
+import "./VerNotaPantalla.css";
 import "./VerNota.css";
 import { useSelector } from 'react-redux';
 import { useLocation, useParams, Link } from 'react-router-dom';
@@ -115,7 +113,7 @@ const VerNota = () => {
     return (
         <div id='pantalla-verNota'>
              {!cargando && 
-                <div className="content flex-grow-1">
+                <div className="content flex-grow-1 nd-px-page pt-3 pb-5">
                     
                     <div className='row p-0'>
                         <div className='col'>
@@ -136,11 +134,11 @@ const VerNota = () => {
                     </div>
 
                     <div id="dashboard-analitico">
-                        <div className='row margin_vn'>
+                        <div className='row margin_vn verNota__cabecera'>
                             <div className='col imagen_col'>
                                 <img src={Nota.imagen && Nota.imagen.includes('noticiasd') ? Nota.imagen : "https://static.noticiasd.com/img" + Nota.imagen} alt="Nota" className="imagen_nota" />
                             </div>
-                            <div className='col-6 d-flex flex-column' style={{ height: "200px" }}>
+                            <div className='col-6 d-flex flex-column verNota__info'>
                                 <div className='row vn_titulo'>{Nota.titulo}</div>
                                 <div className='row vn_fecha'> Publicada el {formatearFecha(Nota.f_pub)} </div>
                                 <div className='row publicada'> 
@@ -149,13 +147,13 @@ const VerNota = () => {
                                         {Nota.estado ? "   " + Nota.estado : "   Publicada"}
                                     </span>
                                 </div>
-                                <div className='row order-last flex-grow-1'>
+                                <div className='row order-last flex-grow-1 verNota__categoria'>
                                     <div>
                                         <span className='vn_categoria'>{Array.isArray(Nota.categorias) ? Nota.categorias.join(',') : Nota.categorias}</span>
                                     </div>
                                 </div>
                             </div>
-                            <div className='col boton_nota d-flex justify-content-center align-items-center no_print'>
+                            <div className='col boton_nota no_print verNota__acciones'>
                                 <div className="mt-3">
                                 <SelectorConBuscador title="Filtro pais: " options={paises} selectedOption={paisFiltro} onSelect={setPaisFiltro} onClear={() => setPaisFiltro(null)} />
                                 </div>
@@ -186,57 +184,57 @@ const VerNota = () => {
                             <BarplotNota id_noti={id_noti} TOKEN={TOKEN} cliente={CLIENTE} fpub={FPUB} dataLocalNota={dataLocalNota?.usuarioDeNota} resumenNota={resumenNota} />
                         </div>
 
-                        <div className='datos-resumen row g-1'>
-                            <div className='col-lg-12 col-xl col-6 m-2 back-white cuadro-impresion'>
+                        <div className='datos-resumen row g-1 verNota__widgets'>
+                            <div className='back-white cuadro-impresion verNota__widget'>
                                 <PlataformaMasImpresiones resumenCliente={resumenNota} loading={loadingUsuarios} aplicarFiltroMeses={false} />
                             </div>
-                            <div className='col-lg-12 col-xl col-6 m-2 back-white cuadro-impresion'>
+                            <div className='back-white cuadro-impresion verNota__widget'>
                                 <MediosMasRelevantesNotas id_noti={id_noti} TOKEN={TOKEN} cliente_id={clienteIdNota} dataLocalNota={dataLocalNota?.mediosNoticia} paisFiltro={paisFiltro} />
                             </div>
                         </div>
                     </div>
 
                     <div className="seccion-creativos-excluida">
-                        <div className='row g-1'>
+                        <div className='verNota__creativos'>
                             <h2 className='tituloCreativo'>Creativos DV 360</h2>
-                            <div className='col-lg-12 col-xl col-6 m-2 back-white'>
-                                <div className='row g-1'>
-                                    <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                            <div className='back-white verNota__creativo verNota__creativo--grupo'>
+                                <div className='verNota__creativos'>
+                                    <div className='back-white verNota__creativo'>
                                         <IframeNota url={`https://builder.ntcias.de/preview.php?id_noti=${id_noti}`} width={350} height={250} title={'350 x 250'} />
                                     </div>
-                                    <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                                    <div className='back-white verNota__creativo'>
                                         <IframeNota url={`https://builder.ntcias.de/preview.php?id_noti=${id_noti}`} width={320} height={50} title={'320 x 50'} />
                                     </div>
-                                    <div className='iframe-w col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                                    <div className='iframe-w back-white verNota__creativo'>
                                         <IframeNota url={`https://builder.ntcias.de/preview.php?id_noti=${id_noti}`} width={728} height={90} title={'728 x 90'} />
                                     </div>
                                 </div>
                             </div>
-                            <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                            <div className='back-white verNota__creativo'>
                                 <IframeNota url={`https://builder.ntcias.de/preview.php?id_noti=${id_noti}`} width={300} height={600} title={'300 x 600'} />
                             </div>
                         </div>
-                        <div className='row g-1'>
+                        <div className='verNota__creativos'>
                             <h2 className='tituloCreativo'>Creativos Facebook</h2>
-                            <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                            <div className='back-white verNota__creativo'>
                                 <IframeNota url={`https://builder.ntcias.de/preview.php?template=feed_face&id_noti=${id_noti}`} width={340} height={500} baseHeight={500} baseWidth={340} title='Feed'/>
                             </div>
-                            <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                            <div className='back-white verNota__creativo'>
                                 <IframeNota url={`https://builder.ntcias.de/preview.php?template=instream_face&id_noti=${id_noti}`} width={340} height={500} baseHeight={500} baseWidth={340} title='instream reels'/>
                             </div>
                         </div>
-                        <div className='row g-1'>
+                        <div className='verNota__creativos'>
                             <h2 className='tituloCreativo'>Creativos Instagram</h2>
-                            <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                            <div className='back-white verNota__creativo'>
                                 <IframeNota url={`https://builder.ntcias.de/preview.php?template=feed_insta&id_noti=${id_noti}`} width={340} height={500} baseHeight={500} baseWidth={340} title='Feed'/>
                             </div>
-                            <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                            <div className='back-white verNota__creativo'>
                                 <IframeNota url={`https://builder.ntcias.de/preview.php?template=explore_insta&id_noti=${id_noti}`} width={340} height={500} baseHeight={500} baseWidth={340} title='Explorar'/>
                             </div>
                         </div>
-                        <div className='row g-1'>
+                        <div className='verNota__creativos'>
                             <h2 className='tituloCreativo'>Creativos Historias</h2>
-                            <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                            <div className='back-white verNota__creativo'>
                                 <IframeNotaEscalable
                                 url={`https://reportes-creativos.noticiasd.com/creativo/${Nota.id_generacion}?tipo=${tipoHistoria}&token=${TOKEN}${armarParamsColorCreativo(colorHistoria, desplazamientoHistoria)}`}
                                 width={360}
@@ -246,7 +244,7 @@ const VerNota = () => {
                                 />
                             </div>
                             {distribucionYtLink &&(
-                            <div className='col-lg-12 col-xl col-6 m-2 back-white ms-5'>
+                            <div className='back-white verNota__creativo'>
                                 
                                 <IframeNotaEscalable
                                     url={distribucionYtLink}

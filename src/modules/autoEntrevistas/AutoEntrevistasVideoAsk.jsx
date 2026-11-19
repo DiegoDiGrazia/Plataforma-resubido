@@ -1,8 +1,5 @@
 import React, { useState, useRef } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Sidebar from '@/shared/components/sidebar/Sidebar';
-import "@/modules/perfil/miPerfil.css";
 
 const videos = [
     { title: "Vecinos", description: "Desde Noticias d queremos conocer más sobre tu historia y saber por qué crees que este anuncio es tan importante para vos y la comunidad ¡Contanos!", src: "https://www.videoask.com/fn8g87lo5" },
@@ -85,7 +82,7 @@ const AutoEntrevistasVideoAsk = () => {
                             type="text"
                             value={searchQuery}
                             onChange={handleInputChange}
-                            placeholder="      Buscar por palabra clave"
+                            placeholder="Buscar por palabra clave"
                         />
                     </form>
                 </div>

@@ -1,6 +1,4 @@
 import React, { useCallback, useRef, useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { useSelector, useDispatch } from 'react-redux';
 import { setContenidoPorIndice } from '@/store/crearNotaSlice';
 import BotoneraContenido from './BotoneraContenido';
@@ -59,7 +57,7 @@ const handleInputChange = useCallback(
             type="text"
             value={embebido || ''}
             onChange={handleInputChange}
-            placeholder="       Pega aqui el id del formulario de franquicias"
+            placeholder="Pega aqui el id del formulario de franquicias"
             className="inputTituloNota parrafoNota"
           />
         )}

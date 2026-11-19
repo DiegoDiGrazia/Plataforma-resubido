@@ -1,20 +1,303 @@
-/* Listado de notas (NotasParaEditorial) — estilos propios */
+/* ==========================================================================
+   Listado de notas (NotasParaEditorial, #pantalla-notasParaEditorial)
+   Reemplaza a NotasParaEditorialMobile.css y a las reglas del listado que
+   estaban en nota.css. Cada fila es una grilla: en desktop, columnas
+   (imagen · título · categoría · cuenta · acciones); en notebooks chicas y
+   teléfonos se reacomoda en 2–3 renglones sin cortar textos.
+   ========================================================================== */
 
-/* Columna vacía del encabezado: mismo ancho que la miniatura de cada fila */
-.notasListado__espacioImagen {
-    width: 70px;
-}
+#pantalla-notasParaEditorial {
 
-.notasListado__acciones {
-    color: var(--nd-color-text);
-}
+    /* ---------- Encabezado ---------- */
+    #nota {
+        margin: 0 0 var(--nd-space-2);
+        padding: 0;
+        font-size: var(--nd-font-size-lg);
+        font-weight: var(--nd-font-weight-semibold);
+    }
 
-/* Botones-icono de cada fila (distribuir, YouTube, duplicar, fuente) */
-.notasListado__botonIcono {
-    background: none;
-    border: none;
-    padding: 0;
-    margin: 0;
-    color: inherit;
-    cursor: pointer;
+    .notasListado__encabezado {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: var(--nd-space-4);
+    }
+
+    .notasListado__titulo {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--nd-space-2) var(--nd-space-4);
+        min-width: 0;
+    }
+
+    .notasListado__titulo .abajoDeTusNotas {
+        flex-basis: 100%;
+        padding-left: 0;
+    }
+
+    .notasListado__titulo .dropdown .boton_cliente {
+        margin: 0;
+    }
+
+    /* ---------- Tabs de estado (Publicaciones, En revisión…) ---------- */
+    .notasListado__tabs {
+        display: flex;
+        gap: var(--nd-space-6);
+        margin: var(--nd-space-6) 0 0;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+
+    .boton_filtro_notas {
+        flex-shrink: 0;
+        padding: 0 0 var(--nd-space-3);
+        font-size: var(--nd-font-size-md);
+        font-weight: var(--nd-font-weight-bold);
+        color: var(--nd-color-text-secondary);
+        white-space: nowrap;
+        background-color: transparent;
+        border: none;
+        border-bottom: 3px solid transparent;
+    }
+
+    .boton_filtro_notas:hover,
+    .boton_filtro_notas:active {
+        color: var(--nd-color-text);
+    }
+
+    /* Filtro seleccionado. Antes era .active a secas y pintaba de naranja cualquier
+       elemento activo de Bootstrap en toda la app (tabs, paginación, carrusel…) */
+    .boton_filtro_notas.active {
+        color: var(--nd-color-primary-text);
+        border-bottom-color: var(--nd-color-primary);
+    }
+
+    /* ---------- Caja del listado ---------- */
+    .container-notas {
+        margin-top: var(--nd-space-4);
+        background-color: var(--nd-color-bg-surface);
+        border: var(--nd-border-width) solid var(--nd-color-border);
+        border-radius: var(--nd-radius-lg);
+    }
+
+    .notasListado__barra {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--nd-space-3);
+        padding: var(--nd-space-4);
+    }
+
+    .notasListado__barra .buscadorNotasForm {
+        float: none;
+        width: 460px;
+        max-width: 100%;
+        height: auto;
+        margin: 0;
+    }
+
+    /* ---------- Filas ---------- */
+    .notasListado__fila {
+        display: grid;
+        /* Acciones con ancho fijo: cada nota tiene distinta cantidad de íconos y
+           así las columnas quedan alineadas entre filas y con el encabezado */
+        grid-template-columns: 56px minmax(0, 2.4fr) minmax(0, 1fr) minmax(0, 1fr) 300px;
+        grid-template-areas: "imagen titulo categoria cuenta acciones";
+        align-items: center;
+        gap: var(--nd-space-4);
+        padding: var(--nd-space-3) var(--nd-space-4);
+        color: var(--nd-color-text);
+        border-top: var(--nd-border-width) solid var(--nd-color-border);
+    }
+
+    .notasListado__fila--encabezado {
+        padding-top: var(--nd-space-2);
+        padding-bottom: var(--nd-space-2);
+        font-size: var(--nd-font-size-xs);
+        font-weight: var(--nd-font-weight-semibold);
+        color: var(--nd-color-text-secondary);
+        text-transform: uppercase;
+        letter-spacing: var(--nd-letter-spacing-caps);
+    }
+
+    .notaNoEditable {
+        background-color: var(--nd-color-bg-muted);
+    }
+
+    .notasListado__imagen { grid-area: imagen; }
+    .notasListado__titulo-nota { grid-area: titulo; min-width: 0; }
+    .notasListado__categoria { grid-area: categoria; min-width: 0; }
+    .notasListado__cuenta { grid-area: cuenta; min-width: 0; }
+    .notasListado__acciones { grid-area: acciones; }
+
+    .notasListado__titulo-nota .nombre_plataforma {
+        font-weight: var(--nd-font-weight-semibold);
+        line-height: var(--nd-line-height-snug);
+    }
+
+    .FechaPubNota {
+        font-size: var(--nd-font-size-sm);
+        color: var(--nd-color-text-secondary);
+    }
+
+    .categoria_notas {
+        display: inline-block;
+        max-width: 100%;
+        padding: var(--nd-space-1) var(--nd-space-3);
+        font-size: var(--nd-font-size-sm);
+        color: var(--nd-color-secondary);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        vertical-align: middle;
+        background-color: var(--nd-color-info-subtle);
+        border-radius: var(--nd-radius-pill);
+    }
+
+    .notasListado__cuenta {
+        float: none;
+        padding: 0;
+        font-size: var(--nd-font-size-base);
+        font-weight: var(--nd-font-weight-semibold);
+        color: var(--nd-color-text-secondary);
+        text-align: left;
+    }
+
+    .notasListado__cuenta p {
+        margin: 0;
+    }
+
+    /* Acciones: una sola línea de íconos del mismo tamaño */
+    .notasListado__acciones {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-end;
+        gap: var(--nd-space-2);
+        color: var(--nd-color-text);
+    }
+
+    .notasListado__acciones a,
+    .notasListado__botonIcono {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        margin: 0;
+        color: inherit;
+        background: none;
+        border: none;
+        border-radius: var(--nd-radius-md);
+        cursor: pointer;
+    }
+
+    .notasListado__acciones a:hover,
+    .notasListado__botonIcono:hover {
+        background-color: var(--nd-color-bg-muted);
+    }
+
+    .notasListado__acciones .bi {
+        font-size: var(--nd-font-size-2xl);
+        line-height: 1;
+    }
+
+    .notasListado__acciones .bi-eye-fill {
+        color: var(--nd-color-primary);
+    }
+
+    .notasListado__acciones img {
+        width: 26px;
+        height: auto;
+    }
+
+    /* ---------- Ver más ---------- */
+    .notasListado__ver-mas {
+        display: flex;
+        justify-content: center;
+        padding: var(--nd-space-6) 0;
+        border-top: var(--nd-border-width) solid var(--nd-color-border);
+    }
+
+    /* ---------- Notebooks chicas / tablets: 3 renglones por nota ---------- */
+    @media (max-width: 1024px) {
+        .notasListado__fila--encabezado {
+            display: none;
+        }
+
+        .notasListado__fila {
+            grid-template-columns: 56px minmax(0, 1fr) auto;
+            grid-template-rows: auto;
+            grid-template-areas:
+                "imagen titulo    titulo"
+                "imagen categoria cuenta"
+                "acciones acciones acciones";
+            row-gap: var(--nd-space-2);
+        }
+
+        .notasListado__cuenta {
+            font-size: var(--nd-font-size-sm);
+            text-align: right;
+        }
+
+        .notasListado__acciones {
+            justify-content: flex-start;
+            flex-wrap: wrap;
+            padding-top: var(--nd-space-1);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .notasListado__barra .buscadorNotasForm {
+            width: 100%;
+        }
+
+        .notasListado__tabs {
+            gap: var(--nd-space-4);
+        }
+
+        .boton_filtro_notas {
+            font-size: var(--nd-font-size-base);
+        }
+    }
+
+    /* ---------- Teléfonos ---------- */
+    @media (max-width: 420px) {
+        .notasListado__encabezado > * {
+            width: 100%;
+        }
+
+        .notasListado__encabezado .btn,
+        .notasListado__titulo .dropdown,
+        .notasListado__titulo .dropdown .btn {
+            width: 100%;
+        }
+
+        .notasListado__fila {
+            grid-template-columns: 48px minmax(0, 1fr);
+            grid-template-areas:
+                "imagen   titulo"
+                "imagen   categoria"
+                "cuenta   cuenta"
+                "acciones acciones";
+            padding: var(--nd-space-3);
+        }
+
+        .notasListado__cuenta {
+            text-align: left;
+        }
+
+        .imagenWidwetInteracciones2 {
+            width: 48px;
+            height: 48px;
+        }
+
+        .notasListado__acciones {
+            gap: var(--nd-space-1);
+        }
+    }
 }

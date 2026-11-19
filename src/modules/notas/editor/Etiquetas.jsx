@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "cropperjs/dist/cropper.css";
 import { setItemsEtiquetas } from "@/store/crearNotaSlice";
 
@@ -44,9 +42,9 @@ const Etiquetas = () => {
         onChange={handleInputChange}
         onKeyDown={handleKeyPress}
         placeholder="Escribe una etiqueta y presiona Enter"
-        style={{ padding: "10px", width: "100%", fontSize: "16px" }}
+        className="form-control nd-text-md"
       />
-      <div style={{ marginTop: "20px" }}>
+      <div className="mt-3">
         {itemsEtiquetas &&
           itemsEtiquetas.map((item, index) => (
             <div

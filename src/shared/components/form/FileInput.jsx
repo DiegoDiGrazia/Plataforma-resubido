@@ -74,7 +74,7 @@ const FileInput = ({
       {files.length > 0 && (
         <ul style={{ marginTop: "8px", paddingLeft: "18px" }}>
           {files.map((file, index) => (
-            <li key={index} style={{ fontWeight: "400", fontSize: "14px" }}>
+            <li key={index} className="nd-fw-regular nd-text-base">
               {file.name}
             </li>
           ))}

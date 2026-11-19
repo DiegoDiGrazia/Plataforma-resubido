@@ -2,12 +2,10 @@
 
 import React, { Suspense, lazy } from 'react';
 import './App.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
+// Bootstrap y el sistema de diseño se cargan antes, en main.jsx.
 // Clases legacy compartidas entre módulos: DESPUÉS de Bootstrap (para ganarle a .row > *, .col-*)
 // y ANTES de importar las pantallas (para que el CSS propio de cada una les gane).
 import '@/styles/legacy.css';
-import 'bootstrap';
-import '@/modules/auth/Formulario.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ArchivoProvider } from "@/shared/context/archivoContext";
 import LayoutConSidebar from './LayoutConSidebar'; // Ajustá si está en otra carpeta

@@ -1,7 +1,4 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import "@/modules/perfil/miPerfil.css";
 import { useSelector } from 'react-redux';
 import ModalMensaje from '@/shared/components/modales/ModalMensaje';
 import { obtenerClientes } from '@/api/apisUsuarios'; // Importa la función para obtener usuarios
@@ -226,7 +223,7 @@ const handleInputKeyDown = (e) => {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="       Buscar por nombre o email"
+              placeholder="Buscar por nombre o email"
             />
           </form>
         </div>

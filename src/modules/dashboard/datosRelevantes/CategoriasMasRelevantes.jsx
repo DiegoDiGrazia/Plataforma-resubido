@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import "./InteraccionPorNota.css";
 import { useSelector, useDispatch } from 'react-redux';
 import { obtenerTopCategorias } from '@/api/dashboardApi';
@@ -66,13 +65,13 @@ const CategoriasMasRelevantes = ({datosLocales, paisFiltro}) => {
     const listaTresCategorias = categoriasSinRepetir.sort((categoriaA, categoriaB) => Number(categoriaB.interacciones) - Number(categoriaA.interacciones)).slice(0, 3);
 
     const renderCategoria = (categoria) => (
-        <div className='row pt-1' key={categoria.categoria}>
-            <div className='col-6 pt-1'>
-                <div className='row p-0 nombre_plataforma nombre_categoria'>
+        <div className='datosRelevantes__fila datosRelevantes__fila--sin-imagen' key={categoria.categoria}>
+            <div>
+                <div className='nombre_plataforma nombre_categoria'>
                     {categoria.categoria}
                 </div>
             </div>
-            <div className='col totales_widget impresionesCategorias123'>
+            <div className='totales_widget impresionesCategorias123'>
                 <p>{formatNumberMiles(categoria.interacciones)}</p>
             </div>
         </div>

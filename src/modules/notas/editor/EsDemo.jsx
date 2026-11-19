@@ -60,14 +60,10 @@ const EsDemo = ({ indice }) => {
     return (
      
             <>
-            <div 
-                className="form-check form_editorial p-0" 
-                style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
-            >
+            <div className="form-check form_editorial p-0 d-flex justify-content-between align-items-center">
                 <label 
-                    className="form-check-label" 
+                    className="form-check-label nd-text-xl nd-fw-bold me-2" 
                     htmlFor="flexCheckChecked1" 
-                    style={{ fontSize: "20px", fontWeight: "bold", marginRight: "10px" }}
                 >
                     Es demo
                 </label>

@@ -1,7 +1,5 @@
+import './Distribucion.css';
 import React, { useState, useMemo, useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import "@/modules/perfil/miPerfil.css";
 import { useSelector } from 'react-redux';
 import ModalMensaje from '@/shared/components/modales/ModalMensaje';
 import {obtenerPlanesMarketing, obtenerVideosYoutube, obtenerContratos } from '@/api/apisUsuarios';
@@ -559,7 +557,7 @@ const goToPage = (newPage) => {
 };
 
   return (
-    <div className="content flex-grow-1 crearNotaGlobal">
+    <div className="content flex-grow-1 crearNotaGlobal distribucion">
       <div className='row miPerfilContainer soporteContainer'>
         <div className='col p-0'>
           <h3 id="saludo" className='headerTusNotas ml-0'>
@@ -575,22 +573,22 @@ const goToPage = (newPage) => {
       <div className='row miPerfilContainer soporteContainer mt-4 p-0 mb-3'>
         <div className='col buscadorNotas d-flex align-items-center gap-3 justify-content-between'> 
           {/* <button className="mb-2 btn btn-primary" onClick={() => handleEditClick(usuarioVacio)}>Crear nuevo usuario</button> */}
-          <span style={{ fontSize: "14px"}}>Vencimiento desde:
-          <input 
-              type="month" 
-              value={fechaDesde} 
-              onChange={(e) => setFechaDesde(e.target.value)} 
-              style={{ fontSize: "14px", border: "1px solid var(--nd-color-border-strong)", borderRadius: 'var(--nd-radius-sm)', padding: "2px 5px"}}
-          />
-          </span>
-          <span style={{ fontSize: "14px"}}>Vencimiento hasta:
-            <input 
-                type="month" 
-                value={fechaHasta} 
-                onChange={(e) => setFechaHasta(e.target.value)} 
-                style={{ fontSize: "14px", border: "1px solid var(--nd-color-border-strong)", borderRadius: 'var(--nd-radius-sm)', padding: "2px 5px"}}
+          <label className="distribucion__fecha">Vencimiento desde:
+            <input
+                type="month"
+                className="form-control form-control-sm"
+                value={fechaDesde}
+                onChange={(e) => setFechaDesde(e.target.value)}
             />
-          </span>
+          </label>
+          <label className="distribucion__fecha">Vencimiento hasta:
+            <input
+                type="month"
+                className="form-control form-control-sm"
+                value={fechaHasta}
+                onChange={(e) => setFechaHasta(e.target.value)}
+            />
+          </label>
           <div className="dropdown">
             <a className="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               {pendientes}
@@ -608,7 +606,7 @@ const goToPage = (newPage) => {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="       Buscar cuentas"
+              placeholder="Buscar cuentas"
             />
           </form>
         </div>
@@ -618,7 +616,7 @@ const goToPage = (newPage) => {
       <div className='row miPerfilContainer soporteContainer mt-4 p-0'>
         <div>
           {loading ? (
-          <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '200px' }}>
+          <div className="d-flex justify-content-center align-items-center distribucion__cargando">
             <div className="spinner-border text-primary" role="status">
               <span className="visually-hidden">Cargando...</span>
             </div>
@@ -636,28 +634,28 @@ const goToPage = (newPage) => {
                 return (
                   <Accordion.Item eventKey={index.toString()} key={cliente}>
                     <Accordion.Header>
-                      <div className="row pt-0 w-100">
-                        <div className="col-2">
+                      <div className="distribucion__resumen">
+                        <div className="distribucion__cliente">
                           <button onClick={() => irANotasDelCliente(data, cliente, fechaDesde, fechaHasta)} className="btn btn-link p-0 m-0 text-start">
-                            <strong className={(data.notas.some(notaSinNingunaDistribucion) ? 'text-danger' : 'text-primary')} style={{ fontSize: '18px' }}>{cliente}</strong>
+                            <strong className={'nd-text-lg ' + (data.notas.some(notaSinNingunaDistribucion) ? 'text-danger' : 'text-primary')}>{cliente}</strong>
                           </button>
                           
-                          <div className="row p-1">
+                          <div>
                             <span><strong>Distribuibles: </strong>{data.plan ? data.plan.notas_x_mes : 0}</span>
                           </div>
-                          <div className="row p-1">
+                          <div>
                             <span><strong>Por publicar: </strong>{data.plan ? Number(data.plan.notas_x_mes) - data.notas.length : 0}</span>
                           </div>
                         </div>
+                        <div className="distribucion__plataformas">
                         {PLATAFORMAS.map((plataforma) => (
-                          <div className="col text-center" key={plataforma.key}>
-                            <u><strong>{plataforma.label}</strong></u>
-                            <div className="row p-1 justify-content-center">
-                              <span><strong>Distribuidas: </strong>{data.notas.filter(n => n[plataforma.campoPrimerDato] != null).length}</span>
-                            </div>
-                            <i className={`bi ${plataforma.icono} fs-3 ` + obtenerColorDeEstadoDistribucion(plataforma.campoPrimerDato, data)}></i>
+                          <div className="distribucion__plataforma" key={plataforma.key}>
+                            <i className={`bi ${plataforma.icono} fs-3 ` + obtenerColorDeEstadoDistribucion(plataforma.campoPrimerDato, data)} aria-hidden="true"></i>
+                            <strong>{plataforma.label}</strong>
+                            <span>Distribuidas: <strong>{data.notas.filter(n => n[plataforma.campoPrimerDato] != null).length}</strong></span>
                           </div>
                         ))}
+                        </div>
                       </div>
                     </Accordion.Header>
 
@@ -665,7 +663,7 @@ const goToPage = (newPage) => {
                       <ul className="list-group">
                         {data.notas.map(nota => (
                           <li key={`${nota.id}-${nota.esNotaDeVideo ? 'video' : 'nota'}`} className="list-group-item">
-                            <div className='row p-0'>
+                            <div className='distribucion__nota'>
                               {/* Columna 1 */}
                               {!nota.esNotaDeVideo && (
                               <div className="col">
@@ -842,7 +840,7 @@ const goToPage = (newPage) => {
       />
 
       {showContratoModal && (
-        <div className="modal fade show d-block" tabIndex="-1" style={{ background: 'var(--nd-color-overlay)' }}>
+        <div className="modal fade show d-block nd-bg-overlay" tabIndex="-1">
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">

@@ -10,78 +10,6 @@
    embeds de Twitter/iframes). Cada uno está comentado.
    ========================================================================== */
 
-/* ---------- Listado de notas ---------- */
-.notaNoEditable {
-    background-color: var(--nd-color-bg-muted);
-}
-
-.boton_filtro_notas {
-    display: inline-block;
-    width: auto;
-    margin-left: 30px;
-    padding: 0 0 15px;
-    border: none;
-    background-color: var(--nd-color-bg-page);
-    font-size: var(--nd-font-size-md);
-    font-weight: var(--nd-font-weight-bold);
-    color: var(--nd-color-text-secondary);
-    text-align: center;
-}
-.boton_filtro_notas:active {
-    color: var(--nd-color-text);
-}
-/* Filtro seleccionado. Antes era .active a secas y pintaba de naranja cualquier
-   elemento activo de Bootstrap en toda la app (tabs, paginación, carrusel…) */
-.boton_filtro_notas.active {
-    color: var(--nd-color-primary-text);
-    border-bottom: 3px solid var(--nd-color-primary);
-}
-
-.categoriasNotas {
-    margin-top: 10px;
-    font-size: var(--nd-font-size-xs);
-    font-weight: var(--nd-font-weight-semibold);
-    color: var(--nd-color-text-secondary);
-}
-
-.container-notas {
-    flex: 1;
-    margin-left: 70px;
-    margin-right: 50px;
-    border: var(--nd-border-width) solid var(--nd-color-border);
-    border-radius: var(--nd-radius-lg);
-}
-
-.row.sin-margin {
-    margin: 0;
-}
-
-.borderNotas {
-    color: var(--nd-color-text);
-    border-top: var(--nd-border-width) solid var(--nd-color-border);
-    border-bottom: var(--nd-border-width) solid var(--nd-color-border);
-}
-
-.FechaPubNota {
-    padding-left: 0;
-    font-size: var(--nd-font-size-base);
-    color: var(--nd-color-text-secondary);
-}
-
-.nuevoFont {
-    font-style: normal;
-}
-
-.categoria_notas {
-    display: inline-block;
-    margin-top: 10px;
-    padding: 5px 10px;
-    font-size: var(--nd-font-size-md);
-    color: var(--nd-color-secondary);
-    background-color: var(--nd-color-info-subtle);
-    border-radius: var(--nd-radius-xl);
-}
-
 /* ---------- Ver nota ---------- */
 .vn_titulo {
     position: relative;
@@ -147,7 +75,7 @@
     border: none;
 }
 
-.order-last {
+#pantalla-verNota .order-last {
     display: flex;
     justify-content: flex-start;
     margin-top: auto;
@@ -192,12 +120,15 @@
     padding-top: 0;
 }
 
+/* Botón naranja de acción principal del módulo (Crear nota, Publicar).
+   Antes tenía float: right y márgenes fijos que lo despegaban del resto del
+   encabezado; ahora la posición la da el contenedor. */
 #botonPublicar {
-    float: right;
-    width: auto;
-    height: 48px;
-    margin-top: 10px;
-    margin-right: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--nd-space-2);
+    min-height: 44px;
     font-size: var(--nd-font-size-md);
     font-weight: var(--nd-font-weight-semibold);
     color: var(--nd-color-on-primary);
@@ -211,12 +142,78 @@
     border-color: var(--nd-color-primary-hover);
 }
 
+/* ---------- Editor de notas (.editorNota): encabezado + nota + tutoriales ---------- */
+.editorNota {
+    padding-inline: var(--nd-page-padding);
+
+    .editorNota__encabezado {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--nd-space-3);
+        margin: 0;
+    }
+
+    .editorNota__encabezado > * {
+        width: auto;
+        flex: 0 1 auto;
+        padding: 0;
+    }
+
+    .editorNota__encabezado > .editorNota__migas {
+        flex: 1 1 auto;
+    }
+
+    .editorNota__acciones {
+        display: flex;
+        align-items: center;
+        gap: var(--nd-space-3);
+    }
+
+    /* Bajada (copete) y contadores de caracteres de título/bajada */
+    .notaEditor__copete {
+        overflow: hidden;
+        font-size: var(--nd-font-size-2xl);
+        resize: none;
+    }
+
+    .notaEditor__contador {
+        margin-right: 50px;
+    }
+
+    /* En notebooks chicas y teléfonos los tutoriales bajan debajo de la nota */
+    @media (max-width: 1024px) {
+        .notaTutorial > .columnaNota,
+        .notaTutorial > .editorNota__tutoriales {
+            flex: 0 0 100%;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .editorNota__tutoriales {
+            margin-top: var(--nd-space-6);
+        }
+
+        .notaEditor__contador {
+            margin-right: 0;
+        }
+    }
+
+    @media (max-width: 420px) {
+        .editorNota__acciones {
+            width: 100%;
+            justify-content: space-between;
+        }
+    }
+}
+
 .icono_vistaPrevia {
-    float: right;
-    width: auto;
-    height: 48px;
-    margin-top: 10px;
-    margin-right: 30px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--nd-space-2);
+    min-height: 44px;
     font-size: var(--nd-font-size-md);
     font-weight: var(--nd-font-weight-semibold);
     color: var(--nd-color-text);
@@ -361,8 +358,9 @@
     font-weight: var(--nd-font-weight-semibold);
     color: var(--nd-color-text);
 }
+/* 100% menos el margen izquierdo: antes se salía 20px por la derecha */
 textarea.inputTituloNota {
-    width: 100%;
+    width: calc(100% - var(--nd-space-5));
 }
 .inputTituloNota::placeholder {
     font-size: var(--nd-font-size-3xl);

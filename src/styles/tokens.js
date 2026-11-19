@@ -108,7 +108,11 @@ export const space = { 0: 0, 1: 4, 2: 8, 3: 12, 4: 16, 5: 20, 6: 24, 8: 32, 10: 
 
 export const radius = { sm: 4, md: 8, lg: 12, xl: 16, pill: 999 };
 
-export const breakpoints = { xs: 380, sm: 576, md: 768, xl: 1366 };
+/** Anchos máximos (max-width) de cada breakpoint. Base = 1920. Ver tokens.css. */
+export const breakpoints = { xs: 380, sm: 420, md: 768, lg: 1024, xl: 1366, xxl: 1440, xxxl: 1660 };
+
+/** true si la ventana está en layout mobile (≤768px, sidebar en barra superior). */
+export const esMobile = () => typeof window !== 'undefined' && window.matchMedia(`(max-width: ${breakpoints.md}px)`).matches;
 
 /** Defaults globales para Chart.js. Llamar una vez: applyChartDefaults(Chart) */
 export const applyChartDefaults = (Chart) => {

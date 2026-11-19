@@ -1,11 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { useDispatch, useSelector } from 'react-redux';
 import "./Barplot.css";
 import { color, palette, seriesColors } from '@/styles/tokens';
-import "./BarplotMobile.css";
 import { formatNumberMiles } from '@/modules/dashboard/Dashboard.jsx';
 import Barplot_Carga from './Barplot_mejorado_carga.jsx';
 
@@ -202,30 +200,30 @@ const Barplot = ({datosLocales, resumenCliente = null, loading = false, paisFilt
     }
     
     return (
-        <div id='pantalla-barplot'>
-        <div className="container-fluid sinPadding" ref={captureRef}>
-            <div id='contenedor-barplot' className="row cantidades mt-3 back-white w-75">
+        <div id='pantalla-barplot' className='nd-barplot'>
+        <div ref={captureRef}>
+            <div id='contenedor-barplot' className="cantidades">
                 {!totales.usuariosTotalesRRSS  && !totales.usuariosTotalesGoogle && (
-                    <h2 style={{ color: 'var(--nd-color-text)', margin: '20px' }}>No se encontraron usuarios para la fecha seleccionada del pais: {paisFiltro?.nombre || 'Desconocido'}</h2>
+                    <h2 className='nd-barplot__vacio'>No se encontraron usuarios para la fecha seleccionada del pais: {paisFiltro?.nombre || 'Desconocido'}</h2>
                 )}
                 {totales.usuariosTotalesRRSS > 0 && totales.usuariosTotalesGoogle > 0 && (
                 <>
                     
-                    <div className='col-4 barra_lateral'>
+                    <div className='barra_lateral'>
                         <p className='leyenda_barplot'>
                             <span className="blue-dot-impresiones "></span> Usuarios Redes Sociales
                             <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "Son las personas que llegaron a tus notas desde nuestra difusión en redes sociales."/>  
                         </p>
                         <p className='totales'>{formatNumberMiles(totales.usuariosTotalesRRSS)}</p>
                     </div>
-                    <div className='col barra_lateral' style={{ paddingLeft: '20px' }}>
+                    <div className='barra_lateral'>
                         <p className='leyenda_barplot'>
                             <span className="blue-dot-user"></span>Usuarios Medios
                             <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "Son las personas que llegaron a tus notas desde nuestra difusión en otros medios de noticias."/>  
                         </p>
                         <p className='totales'>{formatNumberMiles(totales.usuariosTotalesGoogle)}</p>
                     </div>
-                    <div className='col' style={{ paddingLeft: '20px' }}>
+                    <div>
                         <p className='leyenda_barplot'>
                             <span className="blue-dot-user blue-dot-videos"></span>Usuarios Videos
                             <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "Son las personas que llegaron a tus notas desde nuestra difusión por medio de Videos."/>  
@@ -238,9 +236,9 @@ const Barplot = ({datosLocales, resumenCliente = null, loading = false, paisFilt
                 </div>
              
                 {totales.usuariosTotalesRRSS > 0 && totales.usuariosTotalesGoogle > 0 && (
-                <div className="row back-white">
-                    <div className="col barplot" >
-                        <div style={{ height: '100%' }}>
+                <div className="nd-barplot__grafico">
+                    <div className="barplot">
+                        <div className="h-100">
                             <Bar data={dataReal} options={optionsReal} />
                         </div>
                     </div>

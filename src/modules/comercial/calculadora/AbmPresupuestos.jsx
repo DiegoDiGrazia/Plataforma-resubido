@@ -133,7 +133,7 @@ const AbmPresupuestos = ({ onEditar }) => {
   });
 
   return (
-    <div className="p-4 mt-1 pt-0">
+    <div className="abmPresupuestos nd-px-page pb-4">
 
       <div className="d-flex flex-wrap justify-content-between align-items-center mb-4 p-3 filtros-container shadow-sm gap-3">
         
@@ -177,7 +177,7 @@ const AbmPresupuestos = ({ onEditar }) => {
                 <SelectorCliente incluirTodos={true} editorial={false} />
             </div>
 
-            <div style={{ minWidth: '180px' }}>
+            <div className='abmPresupuestos__campo'>
                 <DropdownFiltro
                     label="Usuario"
                     valorActual={filtroUsuario}
