@@ -36,6 +36,11 @@ const ParrafoNota = ({ indice }) => {
   const [isFocused, setIsFocused] = useState(false);
   const tituloGlobalNota = useSelector((state) => state.crearNota.contenidoNota[indice][1]);
 
+  // El listener de Quill se registra una sola vez: si usara `indice` directo, al insertar o mover
+  // un bloque arriba de este párrafo seguiría escribiendo en la posición vieja (otro bloque).
+  const indiceRef = useRef(indice);
+  indiceRef.current = indice;
+
 useEffect(() => {
   if (!quillInstanceRef.current) {
     quillInstanceRef.current = new Quill(editorRef.current, {
@@ -52,7 +57,7 @@ useEffect(() => {
     });
 
     quillInstanceRef.current.on('text-change', () => {
-      dispatch(setContenidoPorIndice([indice, quillInstanceRef.current.root.innerHTML, '', '']));
+      dispatch(setContenidoPorIndice([indiceRef.current, quillInstanceRef.current.root.innerHTML, '', '']));
     });
 
     const editorRoot = quillInstanceRef.current.root;
@@ -66,29 +71,28 @@ useEffect(() => {
     });
   }
 
-  // Solo insertar si el contenido cambia
-  if (quillInstanceRef.current && tituloGlobalNota) {
-    const currentHTML = quillInstanceRef.current.root.innerHTML;
-    if (currentHTML !== tituloGlobalNota) {
-      quillInstanceRef.current.clipboard.dangerouslyPasteHTML(tituloGlobalNota);
+  // Sincronizar el editor con el store (carga de la nota, deshacer/rehacer)
+  const quill = quillInstanceRef.current;
+  if (quill) {
+    if (tituloGlobalNota) {
+      if (quill.root.innerHTML !== tituloGlobalNota) {
+        quill.clipboard.dangerouslyPasteHTML(tituloGlobalNota);
+      }
+    } else if (quill.getLength() > 1) {
+      // El bloque quedó vacío en el store (p. ej. al deshacer): vaciar también el editor
+      quill.setText('');
     }
   }
 }, [dispatch, indice, tituloGlobalNota]);
 
   return (
-    <span className="p-0" style={{ display: 'flex', alignItems: 'center' }}>
+    <span className="p-0 parrafoNota__fila">
       <BotoneraContenido indice={indice} />
       <div className={`quill-editor ${isFocused ? 'focused' : ''}`} translate="no">
         <div
           ref={editorRef}
-          className="quill-editor"
+          className="quill-editor parrafoNota__editor"
           translate="no"
-          style={{
-            flex: 1,
-            border: 'none',
-            borderRadius: 'var(--nd-radius-xl)',
-            padding: '5px',
-          }}
         ></div>
       </div>
     </span>

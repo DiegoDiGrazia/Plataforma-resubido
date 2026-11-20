@@ -8,6 +8,7 @@ import InputFecha from '@/shared/components/form/InputFecha';
 import BotonDistribuirNota from './BotonDistribuir';
 import Checkbox from '@/modules/notas/editor/checkbox';
 import { useNavigate } from 'react-router-dom';
+import { htmlATextoPlano } from '@/shared/utils/textoPlano';
 
 export const formatearARS = (valor, decimales = 2) => {
   if (valor === null || valor === undefined || isNaN(valor)) return "$ 0,00";
@@ -298,7 +299,7 @@ const NotaFreemiumDistribucion = () => {
           />
           <div>
             <div className="fw-bold mb-1">{notaFreemium?.titulo}</div>
-            <div className="text-muted small">{notaFreemium?.copete}</div>
+            <div className="text-muted small">{htmlATextoPlano(notaFreemium?.copete)}</div>
           </div>
         </div>
       </div>

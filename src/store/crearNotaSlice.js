@@ -1,5 +1,20 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { comprimirImagen } from '@/modules/notas/componentes/ImagenPrincipal.jsx';
+import { htmlATextoPlano } from '@/shared/utils/textoPlano';
+
+// Id estable por bloque de contenido (contenidoIds, paralelo a contenidoNota). Se usa como key
+// de React: con key={index}, al insertar/borrar/mover un bloque React le pasaba el componente
+// (y su estado interno: Quill, imagen, carrusel…) de otro bloque.
+let contadorBloques = 0;
+const nuevoIdBloque = () => `b${Date.now().toString(36)}${(contadorBloques++).toString(36)}`;
+
+// Deja contenidoIds del mismo largo que contenidoNota (notas viejas, borradores locales anteriores).
+const sincronizarIds = (state) => {
+  if (!Array.isArray(state.contenidoIds)) state.contenidoIds = [];
+  const ids = state.contenidoIds;
+  if (ids.length > state.contenidoNota.length) ids.length = state.contenidoNota.length;
+  while (ids.length < state.contenidoNota.length) ids.push(nuevoIdBloque());
+};
 
 function extraerTagImg(texto) {
   const match = texto.match(/<img[^>]*>/);
@@ -71,6 +86,7 @@ const initialState = {
   epigrafeImagenPpal: "", ///listo
   tituloNota: "", ///listo
   contenidoNota: [], // [[tipo, contenido, abre etiqueta, cierra etiqueta ]]
+  contenidoIds: [],  // id estable de cada bloque de contenidoNota (misma posición)
   categorias: [],
   categoriasNombres: "", ///listo
   categoriasActivas: [], ///listo
@@ -175,21 +191,37 @@ const crearNotaSlice = createSlice({
     setImagenRRSS: (state, action) => {
       state.imagenRRSS = action.payload;
     },
-    setContenidoNota: (state, action) => {  // aca llega [tipo, contenido]
+    setContenidoNota: (state, action) => {  // aca llega [tipo, contenido]: lo agrega al final
+      sincronizarIds(state);
       state.contenidoNota.push(action.payload);
+      state.contenidoIds.push(nuevoIdBloque());
+    },
+    // Inserta un bloque en una posición: { indice, item: [tipo, contenido, …] }
+    insertarContenidoEn: (state, action) => {
+      sincronizarIds(state);
+      const { indice, item } = action.payload;
+      const posicion = Math.max(0, Math.min(indice, state.contenidoNota.length));
+      state.contenidoNota.splice(posicion, 0, item);
+      state.contenidoIds.splice(posicion, 0, nuevoIdBloque());
     },
     setAttachment_video1: (state,action) =>{
       state.attachment_video1 = action.payload
     },
     DeleteContenidoPorIndice: (state, action) => {
+      sincronizarIds(state);
       state.contenidoNota.splice(action.payload, 1);
+      state.contenidoIds.splice(action.payload, 1);
     },
     SubirContenidoPorIndice: (state, action) => {
       const index = action.payload;
+      sincronizarIds(state);
       if (index >= 0 && index < state.contenidoNota.length - 1) {
         const temp = state.contenidoNota[index];
         state.contenidoNota[index] = state.contenidoNota[index + 1];
         state.contenidoNota[index + 1] = temp;
+        const tempId = state.contenidoIds[index];
+        state.contenidoIds[index] = state.contenidoIds[index + 1];
+        state.contenidoIds[index + 1] = tempId;
       }
     },
     setImagenesDeCarrusel: (state, action) => {
@@ -216,10 +248,14 @@ const crearNotaSlice = createSlice({
     },
     BajarContenidoPorIndice: (state, action) => {
       const index = action.payload;
+      sincronizarIds(state);
       if (index > 0 && index < state.contenidoNota.length) {
         const temp = state.contenidoNota[index];
         state.contenidoNota[index] = state.contenidoNota[index - 1];
         state.contenidoNota[index - 1] = temp;
+        const tempId = state.contenidoIds[index];
+        state.contenidoIds[index] = state.contenidoIds[index - 1];
+        state.contenidoIds[index - 1] = tempId;
       }
     },
     setContenidoPorIndice: (state, action) => {
@@ -269,12 +305,15 @@ const crearNotaSlice = createSlice({
       state.municipio = {'nombre': nota.municipio };
       state.cliente = nota.cliente;
       state.engagement = nota.engagement || nota.titulo;
-      state.bajada = nota.extracto || nota.copete;
+      // bajada (extracto) es texto plano; el copete puede traer HTML (negrita, links)
+      state.bajada = nota.extracto || htmlATextoPlano(nota.copete);
       state.tipoContenido = nota.tipo_contenido;
       state.epigrafeImagenPpal = nota.epigrafe_ppal || "";
     },
     setContenidoAEditar: (state, action) => {
+    sincronizarIds(state);
     state.contenidoNota = [...state.contenidoNota, ...action.payload];
+    sincronizarIds(state);
     },
     setItemsEtiquetas: (state, action) => {
       state.etiquetas = action.payload;
@@ -364,13 +403,21 @@ const crearNotaSlice = createSlice({
     state.contenidoNota = [
       ['parrafo', action.payload]
       ];
+    state.contenidoIds = [nuevoIdBloque()];
     },
     setClienteNota: (state,action) => {
       state.cliente = action.payload;
     },
 
     setCambiarEstadoActual: (state,action) => {
-      return action.payload;
+      // Deshacer/rehacer y restaurar borradores: un borrador viejo puede no traer contenidoIds
+      const nuevo = {
+        ...action.payload,
+        contenidoNota: action.payload.contenidoNota || [],
+        contenidoIds: [...(action.payload.contenidoIds || [])],
+      };
+      sincronizarIds(nuevo);
+      return nuevo;
     },
     setClaveEdicion: (state, action) => {
       state.claveEdicion = action.payload;
@@ -386,7 +433,7 @@ export const {
   setCopete, setNotaAEditar, setContenidoAEditar, setItemsEtiquetas, setEsDemo, setNoHome, setCategoriasActivasEnStore,
   setDistribucionProioritaria, setTipoContenido, setFechaVencimiento, setBajada, setEngagement, setComentario, setSelectedOptionDistribucion,
   setAutor, setMunicipio,setEpigrafeImagenPpal,setDemo, setMunicipios,setIdNoti, setProvincia,setPais, setIdAtt,setProvincias, resetCrearNota, setEpigrafeDeImagen, setListaImagenesContenidoEnBase64, setAtachment, setSumarUnoAlNumeroDeAtachment,
-  setClaveEdicion,
+  setClaveEdicion, insertarContenidoEn,
 } = crearNotaSlice.actions;
 
 export default crearNotaSlice.reducer;

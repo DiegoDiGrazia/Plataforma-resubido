@@ -10,7 +10,7 @@ import "./nota.css";
 import SubtituloNota from '@/modules/notas/componentes/SubtituloNota';
 import ParrafoNota from '@/modules/notas/componentes/ParrafoNota';
 import TituloNota from '@/modules/notas/componentes/TituloNota';
-import { setTituloNota, setContenidoNota, setImagenPrincipal, setIdAtt, setCambiarEstadoActual } from '@/store/crearNotaSlice';
+import { setTituloNota, setContenidoNota, setImagenPrincipal, setIdAtt, setCambiarEstadoActual, insertarContenidoEn } from '@/store/crearNotaSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import ImagenDeParrafo from '@/modules/notas/componentes/ImagenDeParrafo';
 import { Link, Navigate } from 'react-router-dom';
@@ -61,6 +61,29 @@ const CrearNota = () => {
     const esEditor = useSelector((state) => state.formulario.es_editor);
     const { clave } = useParams();
     const contenidoNota = useSelector((state) => state.crearNota.contenidoNota);
+    const contenidoIds = useSelector((state) => state.crearNota.contenidoIds) || [];
+
+    // Bloque seleccionado (clic o foco): la botonera "agregar contenido" se muestra debajo de él
+    // y lo nuevo se inserta ahí. null = al final de la nota (comportamiento de siempre).
+    const [seleccion, setSeleccion] = useState(null);
+    const seleccionRef = useRef(null);
+    seleccionRef.current = seleccion;
+
+    // Si el bloque seleccionado ya no existe (se borró o se deshizo), volver al final
+    useEffect(() => {
+        if (seleccion !== null && seleccion >= (contenidoNota?.length || 0)) setSeleccion(null);
+    }, [contenidoNota?.length, seleccion]);
+
+    /** Agrega un bloque debajo del seleccionado (o al final) y deja la botonera debajo del nuevo. */
+    const insertarBloque = (item) => {
+        const actualSeleccion = seleccionRef.current;
+        if (actualSeleccion === null) {
+            dispatch(setContenidoNota(item));
+            return;
+        }
+        dispatch(insertarContenidoEn({ indice: actualSeleccion + 1, item }));
+        setSeleccion(actualSeleccion + 1);
+    };
     const numeroDeAtachmentAUsar= useSelector((state) => state.crearNota.numeroDeAtachment);
 
   // ⚠️ Esta ref indica si el cambio fue por undo/redo (entonces NO guardamos en historial)
@@ -150,28 +173,26 @@ const CrearNota = () => {
         if (tipo === "imagen") {
             try {
                 const compressedBase64 = await comprimirImagen(contenido, 0.8, 1600); 
-                dispatch(setContenidoNota([tipo, compressedBase64])); // Almacena la imagen comprimida en base64
+                insertarBloque([tipo, compressedBase64]); // imagen comprimida en base64
             } catch (error) {
                 console.error("Error al comprimir la imagen:", error);
             }
         } else if((tipo === "video")){
-            dispatch(setContenidoNota([tipo, contenido]));
+            insertarBloque([tipo, contenido]);
 
         } else if((tipo === "archivoPDF")){
             const archivoPDFEnBase64 = await comprimirPDFaBase64(contenido);
             const blobUrl = URL.createObjectURL(contenido);
 
-            dispatch(
-            setContenidoNota([
+            insertarBloque([
                 tipo,
                 archivoPDFEnBase64, "", "", "", // para enviar a la API
                 blobUrl       // para mostrar en iframe
-            ])
-            );
+            ]);
         }else
             {
             // Si no es una imagen, solo almacenamos el contenido normalmente
-            dispatch(setContenidoNota([tipo, contenido]));
+            insertarBloque([tipo, contenido]);
         }
     };
 
@@ -202,76 +223,9 @@ const CrearNota = () => {
   
 
 
-    return (
-
-                <div className="content flex-grow-1 crearNotaGlobal editorNota">
-                    <div className='row editorNota__encabezado'>
-                        <div className='editorNota__migas'>
-                            <h4 id="nota">
-                                <nav aria-label="breadcrumb">
-                                    <ol className="breadcrumb">
-                                        {esEditor ?
-                                            <li className="breadcrumb-item"><Link to="/notasEditorial" className='breadcrumb-item'>{'< '} Notas</Link></li>
-                                            :
-                                            <li className="breadcrumb-item"><Link to="/notas" className='breadcrumb-item'>{'< '} Notas</Link></li>
-                                        }
-                                        <li className="breadcrumb-item blackActive" aria-current="page">Crear Nota</li>
-                                    </ol>
-                                </nav>
-                            </h4>
-                        </div>
-                        <div className='editorNota__acciones'>
-                            <BotonEnGenerarVistaPrevia status= {'Preview'}/>
-                            <Button onClick={() => navigate(rutaPublicar(clave))} id="botonPublicar" variant="primary">
-                                <img src="/images/send.png" alt="" className="icon icono_tusNotas" />{" Publicar"}
-                            </Button>
-                        </div>
-                    </div>
-                    <div className='row'>
-                        <div className='col mt-0'>
-                            <h3 className='headerCrearNota'>Crear nota</h3>
-                        </div>
-                    </div>
-                    {/* SECCION NOTA */}
-                    <div className='row notaTutorial'>
-                        <div className='col-8 columnaNota'>
-                            <ImagenPrincipal />
-                            <EpigrafeImagenPpal />
-                            <div className='row'>
-                                <TituloNota />
-                                <CopeteNota />
-
-                                {contenidoNota &&
-                                    contenidoNota.map((contenido, index) => {
-                                        const componentes = {
-                                        subtitulo: SubtituloNota,
-                                        parrafo: ParrafoNota,
-                                        imagen: ImagenDeParrafo,
-                                        videoYoutube: YoutubeNota,
-                                        ubicacion: Ubicacion,
-                                        embebido: Embebido,
-                                        video: VideosDeParrafo,
-                                        archivoPDF: ArchivoPDFParrafo,
-                                        carousel: CarruselEnNota,
-                                        formFranquicias: FormFranquicias,
-                                        };
-
-                                    const Componente = componentes[contenido[0]]; // Obtiene el componente correspondiente
-
-                                    return Componente ? <Componente key={index} indice={index} numeroDeAtachmentAUsar = {numeroDeAtachmentAUsar} /> : null; // Renderiza el componente si existe
-                                })}
-                                {actual.es_ia === '1' &&
-                                <BotonRegenerarDataConIa token = {TOKEN} term_id={actual.term_id} nombreBoton={'Regenerar contenido'} 
-                                    action = {setContenidoDeNotaDeIa} endpoint={'app_obtener_texto_ia'}/>
-                                }
-                                <ImagePickerModal
-                                    isOpen={show}
-                                    onClose={() => setShow(false)}
-                                    fetchUrl="https://panel.serviciosd.com/app_imagenes_por_cliente" // URL del endpoint que devuelve URLs
-                                />
-
-                                {/* BOTONERA AGREGAR CONTENIDO */}
-                                <div className="containerButton">
+    /** Botonera "agregar contenido". enMedio: se muestra debajo de un bloque seleccionado. */
+    const renderBotonera = (enMedio) => (
+                                <div className={`containerButton ${enMedio ? 'containerButton--insercion' : ''}`}>
                                     {/* Rutas absolutas (/images): con la URL /notas/editar/:clave una ruta relativa
                                         se resolvía a /notas/editar/images/... y el botón quedaba sin ícono (invisible) */}
                                     <button
@@ -346,7 +300,96 @@ const CrearNota = () => {
                                             )}
                                         </div>
                                     )}
+                                    {enMedio && (
+                                        <Button variant="link" size="sm" className="editorNota__insertarAlFinal" onClick={() => setSeleccion(null)}>
+                                            Insertar al final
+                                        </Button>
+                                    )}
                                 </div>
+    );
+
+    return (
+
+                <div className="content flex-grow-1 crearNotaGlobal editorNota">
+                    <div className='row editorNota__encabezado'>
+                        <div className='editorNota__migas'>
+                            <h4 id="nota">
+                                <nav aria-label="breadcrumb">
+                                    <ol className="breadcrumb">
+                                        {esEditor ?
+                                            <li className="breadcrumb-item"><Link to="/notasEditorial" className='breadcrumb-item'>{'< '} Notas</Link></li>
+                                            :
+                                            <li className="breadcrumb-item"><Link to="/notas" className='breadcrumb-item'>{'< '} Notas</Link></li>
+                                        }
+                                        <li className="breadcrumb-item blackActive" aria-current="page">Crear Nota</li>
+                                    </ol>
+                                </nav>
+                            </h4>
+                        </div>
+                        <div className='editorNota__acciones'>
+                            <BotonEnGenerarVistaPrevia status= {'Preview'}/>
+                            <Button onClick={() => navigate(rutaPublicar(clave))} id="botonPublicar" variant="primary">
+                                <img src="/images/send.png" alt="" className="icon icono_tusNotas" />{" Publicar"}
+                            </Button>
+                        </div>
+                    </div>
+                    <div className='row'>
+                        <div className='col mt-0'>
+                            <h3 className='headerCrearNota'>Crear nota</h3>
+                        </div>
+                    </div>
+                    {/* SECCION NOTA */}
+                    <div className='row notaTutorial'>
+                        <div className='col-8 columnaNota'>
+                            <ImagenPrincipal />
+                            <EpigrafeImagenPpal />
+                            <div className='row'>
+                                <TituloNota />
+                                <CopeteNota />
+
+                                {contenidoNota &&
+                                    contenidoNota.map((contenido, index) => {
+                                        const componentes = {
+                                        subtitulo: SubtituloNota,
+                                        parrafo: ParrafoNota,
+                                        imagen: ImagenDeParrafo,
+                                        videoYoutube: YoutubeNota,
+                                        ubicacion: Ubicacion,
+                                        embebido: Embebido,
+                                        video: VideosDeParrafo,
+                                        archivoPDF: ArchivoPDFParrafo,
+                                        carousel: CarruselEnNota,
+                                        formFranquicias: FormFranquicias,
+                                        };
+
+                                    const Componente = componentes[contenido[0]]; // Obtiene el componente correspondiente
+
+                                    if (!Componente) return null;
+                                    // key estable (contenidoIds): al insertar/borrar/mover, cada bloque conserva su componente
+                                    return (
+                                        <div
+                                            key={contenidoIds[index] || `pos-${index}`}
+                                            className="editorNota__bloque"
+                                            onMouseDownCapture={() => setSeleccion(index)}
+                                            onFocusCapture={() => setSeleccion(index)}
+                                        >
+                                            <Componente indice={index} numeroDeAtachmentAUsar = {numeroDeAtachmentAUsar} />
+                                            {seleccion === index && renderBotonera(true)}
+                                        </div>
+                                    );
+                                })}
+                                {actual.es_ia === '1' &&
+                                <BotonRegenerarDataConIa token = {TOKEN} term_id={actual.term_id} nombreBoton={'Regenerar contenido'} 
+                                    action = {setContenidoDeNotaDeIa} endpoint={'app_obtener_texto_ia'}/>
+                                }
+                                <ImagePickerModal
+                                    isOpen={show}
+                                    onClose={() => setShow(false)}
+                                    onAgregar={insertarBloque}
+                                    fetchUrl="https://panel.serviciosd.com/app_imagenes_por_cliente" // URL del endpoint que devuelve URLs
+                                />
+
+                                {seleccion === null && renderBotonera(false)}
                             </div>
                         </div>
 

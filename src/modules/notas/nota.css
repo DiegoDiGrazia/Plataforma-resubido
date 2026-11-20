@@ -171,15 +171,95 @@
         gap: var(--nd-space-3);
     }
 
-    /* Bajada (copete) y contadores de caracteres de título/bajada */
-    .notaEditor__copete {
-        overflow: hidden;
+    /* Bajada (copete): editor Quill de un párrafo, con el mismo aspecto que tenía el textarea */
+    .quill-editor.notaEditor__copete {
+        width: calc(100% - var(--nd-space-5));
+        margin-left: var(--nd-space-5);
+        padding-right: var(--nd-space-5);
+    }
+
+    .notaEditor__copete .ql-container.ql-snow {
+        font-family: inherit;
+        border: none;
+    }
+
+    .notaEditor__copete .ql-editor {
+        padding: 0;
         font-size: var(--nd-font-size-2xl);
-        resize: none;
+        font-weight: var(--nd-font-weight-semibold);
+        line-height: var(--nd-line-height-tight);
+        color: var(--nd-color-text);
+    }
+
+    .notaEditor__copete .ql-editor p {
+        margin-bottom: 0;
+    }
+
+    .notaEditor__copete .ql-editor a {
+        color: var(--nd-color-link);
+        text-decoration: underline;
+    }
+
+    .notaEditor__copete .ql-editor.ql-blank::before {
+        left: 0;
+        right: 0;
+        color: var(--nd-color-text-muted);
+        opacity: 1;
     }
 
     .notaEditor__contador {
         margin-right: 50px;
+    }
+
+    /* ---------- Bloques de contenido (párrafo, imagen, embebido…) ---------- */
+    /* Envoltorio de cada bloque: solo escucha el clic/foco para saber dónde insertar.
+       display: contents → no agrega caja, el layout queda igual que sin envoltorio */
+    .editorNota__bloque {
+        display: contents;
+    }
+
+    /* Con el envoltorio en el medio, los bloques ya no son hijos directos de .row y pierden
+       el `.row > *` de Bootstrap (width: 100%): quedaban uno al lado del otro. Se les aplica lo
+       mismo, con :where() (especificidad 0) para que los estilos propios de cada bloque ganen */
+    :where(.editorNota__bloque) > * {
+        flex-shrink: 0;
+        width: 100%;
+        max-width: 100%;
+        padding-right: calc(var(--bs-gutter-x) * 0.5);
+        padding-left: calc(var(--bs-gutter-x) * 0.5);
+        margin-top: var(--bs-gutter-y);
+    }
+
+    /* Botonera "agregar contenido" mostrada debajo del bloque seleccionado */
+    .containerButton--insercion {
+        margin-top: var(--nd-space-2);
+        margin-bottom: var(--nd-space-4);
+        padding-left: var(--nd-space-2);
+        border-left: var(--nd-border-width-thick) solid var(--nd-color-primary);
+    }
+
+    .editorNota__insertarAlFinal {
+        margin-left: auto;
+        font-size: var(--nd-font-size-sm);
+    }
+
+    /* Los 9 botones no entran en una fila en teléfonos */
+    .containerButton,
+    .buttons-container {
+        flex-wrap: wrap;
+    }
+
+    /* Párrafo (Quill). Doble clase: quill.snow.css le pone borde a .ql-container.ql-snow */
+    .parrafoNota__fila {
+        display: flex;
+        align-items: center;
+    }
+
+    .parrafoNota__editor.ql-container {
+        flex: 1;
+        padding: 5px;
+        border: none;
+        border-radius: var(--nd-radius-xl);
     }
 
     /* En notebooks chicas y teléfonos los tutoriales bajan debajo de la nota */
@@ -454,7 +534,8 @@ textarea.inputTituloNota {
 }
 
 /* !important: quill.snow.css se carga después y pone margin: 0 a los párrafos */
-.quill-editor p {
+/* La bajada (notaEditor__copete) es un solo párrafo: sin margen extra */
+.quill-editor:not(.notaEditor__copete) p {
     margin-bottom: 1em !important;
 }
 
@@ -494,4 +575,38 @@ textarea.inputTituloNota {
     background-color: var(--nd-color-bg-surface);
     border-top: var(--nd-border-width) solid var(--nd-color-border-strong);
     transform: translateX(-50%);
+}
+
+/* ---------- Galería de imágenes del cliente (ImagePickerModal) ----------
+   Raíz propia: el modal se dibuja en un portal fuera de .editorNota */
+.imagePickerModal {
+    .imagePickerModal__grilla {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: var(--nd-space-4);
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .imagePickerModal__opcion {
+        aspect-ratio: 1 / 1;
+        padding: 0;
+        overflow: hidden;
+        background-color: var(--nd-color-bg-muted);
+        border: var(--nd-border-width) solid var(--nd-color-border);
+        border-radius: var(--nd-radius-md);
+        cursor: pointer;
+        transition: border-color var(--nd-duration-fast) var(--nd-easing);
+    }
+
+    .imagePickerModal__opcion:hover,
+    .imagePickerModal__opcion:focus-visible {
+        border-color: var(--nd-color-primary);
+    }
+
+    .imagePickerModal__opcion img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 }
