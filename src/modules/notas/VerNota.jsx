@@ -137,25 +137,20 @@ const VerNota = () => {
                             <div className='col imagen_col'>
                                 <img src={Nota.imagen && Nota.imagen.includes('noticiasd') ? Nota.imagen : "https://static.noticiasd.com/img" + Nota.imagen} alt="Nota" className="imagen_nota" />
                             </div>
-                            <div className='col-6 d-flex flex-column verNota__info'>
+                            <div className='col-6 verNota__info'>
                                 <div className='row vn_titulo'>{Nota.titulo}</div>
                                 <div className='row vn_fecha'> Publicada el {formatearFecha(Nota.f_pub)} </div>
-                                <div className='row publicada'> 
+                                {/* Estado y categoría en la misma línea */}
+                                <div className='verNota__meta'>
                                     <span className="publicada">
                                         <img src={"/images/puntoVerde.png"} alt="" />
-                                        {Nota.estado ? "   " + Nota.estado : "   Publicada"}
+                                        {Nota.estado || "Publicada"}
                                     </span>
-                                </div>
-                                <div className='row order-last flex-grow-1 verNota__categoria'>
-                                    <div>
-                                        <span className='vn_categoria'>{Array.isArray(Nota.categorias) ? Nota.categorias.join(',') : Nota.categorias}</span>
-                                    </div>
+                                    <span className='vn_categoria'>{Array.isArray(Nota.categorias) ? Nota.categorias.join(', ') : Nota.categorias}</span>
                                 </div>
                             </div>
                             <div className='col boton_nota no_print verNota__acciones'>
-                                <div className="mt-3">
-                                <SelectorConBuscador title="Filtro pais: " options={paises} selectedOption={paisFiltro} onSelect={setPaisFiltro} onClear={() => setPaisFiltro(null)} />
-                                </div>
+                                <SelectorConBuscador title="Filtro pais:" options={paises} selectedOption={paisFiltro} onSelect={setPaisFiltro} onClear={() => setPaisFiltro(null)} sinMargen />
                                 {!es_demo &&
                                 <button className="btn custom-dropdown-button dropdown-toggle boton_compartir no_print" onClick={descargarReporte} type="button" id="descargar-reporte">
                                     <img src="/images/share_icon.png" alt="Descargar" className="icon me-2" />

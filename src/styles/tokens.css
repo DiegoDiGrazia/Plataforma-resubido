@@ -132,7 +132,7 @@
   --nd-font-family-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   /* Escala (px fijos: la app es un panel, no hay escalado fluido) */
-  --nd-font-size-xs:   12px; /* mínimo absoluto. Reemplaza 9/10/11px */
+  --nd-font-size-xs:   11px; /* mínimo: badges, notas al pie, thead (10px desde 1366) */
   --nd-font-size-sm:   13px; /* labels, metadatos, celdas densas */
   --nd-font-size-base: 14px; /* cuerpo, inputs, botones */
   --nd-font-size-md:   16px; /* cuerpo destacado, títulos de card */
@@ -253,17 +253,40 @@
   }
 }
 
+/* Notebooks chicas y abajo: los tamaños chicos bajan 1px para que entre más */
+@media (max-width: 1366px) {
+  :root {
+    --nd-font-size-xs:   10px;
+    --nd-font-size-sm:   12px;
+    --nd-font-size-base: 13px;
+  }
+}
+
 @media (max-width: 1024px) {
   :root {
     --nd-page-padding:  var(--nd-space-5);
-    --nd-font-size-4xl: 28px;
-    --nd-font-size-3xl: 26px;
+    /* Pantalla mucho más chica: toda la escala baja un escalón */
+    --nd-font-size-xs:   10px;
+    --nd-font-size-sm:   11px;
+    --nd-font-size-base: 12px;
+    --nd-font-size-md:   14px;
+    --nd-font-size-lg:   16px;
+    --nd-font-size-xl:   18px;
+    --nd-font-size-2xl:  22px;
+    --nd-font-size-3xl:  24px;
+    --nd-font-size-4xl:  26px;
   }
 }
 
 @media (max-width: 768px) {
   :root {
     --nd-page-padding:   var(--nd-space-4);
+    /* Celulares: se leen de cerca, vuelven los tamaños de notebook (1366) */
+    --nd-font-size-sm:   12px;
+    --nd-font-size-base: 13px;
+    --nd-font-size-md:   16px;
+    --nd-font-size-lg:   18px;
+    --nd-font-size-xl:   20px;
     --nd-font-size-4xl:  26px;
     --nd-font-size-3xl:  24px;
     --nd-font-size-2xl:  20px;

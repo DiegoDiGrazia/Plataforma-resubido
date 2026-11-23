@@ -83,13 +83,13 @@ export const chartColors = [
 
 /**
  * Color fijo por tipo de canal en TODOS los gráficos y leyendas (barras,
- * líneas y los puntitos .blue-dot-* de Barplot.css, que usan --nd-chart-1/2/3).
+ * líneas y los puntitos .blue-dot-* de Barplot.css, que usan --nd-chart-1/2/6).
  * Reemplaza los colores de terceros (#34A853, #1877F2, #dc3545).
  */
 export const seriesColors = {
   medios: chartColors[0], // Google / medios — naranja
   redes: chartColors[1],  // RRSS / Meta — azul
-  videos: chartColors[2], // Videos — celeste
+  videos: chartColors[5], // Videos — amarillo de marca (el celeste se confundía con el azul de redes)
 };
 
 /** Hex → rgba, para rellenos de área en Chart.js */
@@ -100,7 +100,7 @@ export const withAlpha = (hex, alpha) => {
 
 export const font = {
   family: "'Aeonik', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
-  size: { xs: 12, sm: 13, base: 14, md: 16, lg: 18, xl: 20, '2xl': 24, '3xl': 28, '4xl': 32 },
+  size: { xs: 11, sm: 13, base: 14, md: 16, lg: 18, xl: 20, '2xl': 24, '3xl': 28, '4xl': 32 },
   weight: { light: 300, regular: 400, medium: 500, semibold: 600, bold: 700 },
 };
 

@@ -288,7 +288,7 @@
        ("Monitor Contenido" / "Administración ⌄"); el resto se reparte como
        margen a cada lado. El fondo del ítem activo sigue ocupando todo el ancho. */
     .sidebar {
-        --sidebar-columna: 170px; /* menor que el ítem más largo: corre la columna a la derecha */
+        --sidebar-columna: 200px; /* menor que el ítem más largo: corre la columna a la derecha */
         --sidebar-inicio: max(var(--nd-space-3), calc((100% - var(--sidebar-columna)) / 2));
     }
 

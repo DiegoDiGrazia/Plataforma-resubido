@@ -72,6 +72,7 @@
         margin-top: var(--nd-space-8);
     }
 
+    /* Filtro país · período · compartir: misma línea y misma altura */
     .botones_subtitulo {
         display: flex;
         flex-wrap: wrap;
@@ -79,17 +80,33 @@
         gap: var(--nd-space-3);
     }
 
+    .botones_subtitulo .custom-dropdown-button {
+        min-height: 40px;
+    }
+
     .tamaño_barplot {
         width: 100%;
     }
 
-    /* ---------- Widgets: 2 columnas en desktop, 1 en notebooks chicas ---------- */
+    /* ---------- Widgets ----------
+       Desktop: Notas con mayor interacción y Desglose por plataforma a todo el
+       ancho; Medios y Categorías comparten renglón. ≤1024: uno abajo del otro
+       en el orden del HTML. */
     .tops {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-areas:
+            "notas    notas"
+            "desglose desglose"
+            "medios   categorias";
         gap: var(--nd-space-4);
         margin-top: var(--nd-space-4);
     }
+
+    .tops__widget--notas { grid-area: notas; }
+    .tops__widget--desglose { grid-area: desglose; }
+    .tops__widget--medios { grid-area: medios; }
+    .tops__widget--categorias { grid-area: categorias; }
 
     .tops__widget {
         min-width: 0;
@@ -100,6 +117,11 @@
     @media (max-width: 1024px) {
         .tops {
             grid-template-columns: minmax(0, 1fr);
+            grid-template-areas: none;
+        }
+
+        .tops__widget {
+            grid-area: auto;
         }
     }
 
@@ -108,17 +130,47 @@
             padding-top: 0;
         }
 
-        /* Filtros a lo ancho: cada uno ocupa lo que necesita y bajan si no entran */
+        /* Sin tooltips en celular: el title no se puede ver con el dedo */
+        .info-icon {
+            display: none;
+        }
+
+        /* Título centrado; filtro país en un renglón y período + compartir en otro */
+        .subtitulo {
+            justify-content: center;
+        }
+
+        #subtitulo_performance {
+            width: 100%;
+            text-align: center;
+        }
+
         .botones_subtitulo {
             width: 100%;
         }
 
         .botones_subtitulo > * {
-            flex: 1 1 auto;
+            flex: 1 1 0;
+            min-width: 0;
+        }
+
+        .botones_subtitulo > .selectorConBuscador {
+            flex-basis: 100%;
+        }
+
+        /* Filtro país: etiqueta a la izquierda y desplegable a la derecha */
+        .botones_subtitulo .nd-field-row {
+            flex-wrap: nowrap;
+            justify-content: space-between;
         }
 
         .botones_subtitulo .btn {
             width: 100%;
+        }
+
+        /* Flechita de los desplegables siempre a la derecha */
+        .botones_subtitulo .dropdown-toggle::after {
+            margin-left: auto;
         }
 
         .tops__widget {
@@ -134,6 +186,11 @@
         .head_dash .dropdown,
         .head_dash .dropdown .btn {
             width: 100%;
+        }
+
+        /* Selector de cuenta a lo ancho: flechita al extremo derecho */
+        .head_dash .dropdown .boton_cliente {
+            justify-content: space-between;
         }
     }
 }

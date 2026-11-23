@@ -51,7 +51,8 @@
 ### Font-size
 | Legacy | Token |
 |---|---|
-| 9, 10, 11, 12px · 0.65rem · 0.75rem | `--nd-font-size-xs` (12) |
+| 9, 10, 11px · 0.65rem | `--nd-font-size-xs` (11) |
+| 12px · 0.75rem | `--nd-font-size-sm` (13) o `xs` según el caso |
 | 13px · 0.85rem | `--nd-font-size-sm` (13) |
 | 14, 15px · 0.9rem | `--nd-font-size-base` (14) |
 | 16px · 1rem · 1.1rem | `--nd-font-size-md` (16) |

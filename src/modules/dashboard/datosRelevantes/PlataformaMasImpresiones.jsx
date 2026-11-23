@@ -188,7 +188,7 @@ const PlataformaMasImpresiones = ({ resumenCliente= null, aplicarFiltroMeses = t
                         </div>
                         <div className={`accordion-collapse collapse show`}>
                             <div className="accordion-body pt-0">
-                                <div className='row row-cols-md-3 row-cols-lg-5 pt-0 ps-4 gy-3'>
+                                <div className='row row-cols-md-3 row-cols-lg-5 pt-0 gy-3'>
                                     {plataforma.interacciones > 0 &&
                                     <div className='col d-flex align-items-center'>
                                         <img src="/images/barchar_icon.png" alt="Me gusta" className='img-fluid icono-ctr me-2' />

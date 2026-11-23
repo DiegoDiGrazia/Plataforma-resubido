@@ -179,11 +179,22 @@
         margin-top: var(--nd-space-1);
     }
 
-    @media (max-width: 420px) {
+    /* Métricas de cada plataforma: 2 por renglón en celular
+       (Bootstrap pone 3 desde 768 con row-cols-md-3) */
+    @media (max-width: 768px) {
+        /* "Impresiones en medios más relevantes" en un solo renglón en todo celular */
         .titulo_relevantes {
-            font-size: var(--nd-font-size-lg);
+            font-size: var(--nd-font-size-md);
+            letter-spacing: var(--nd-letter-spacing-tight);
         }
 
+        .desgloce-plataforma .accordion-body > .row > .col {
+            flex: 0 0 auto;
+            width: 50%;
+        }
+    }
+
+    @media (max-width: 420px) {
         .totales_widget {
             font-size: var(--nd-font-size-md);
         }

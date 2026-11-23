@@ -129,16 +129,16 @@ const Barplot = ({ resumenCliente = null, loading = false, paisFiltro}) => {
         labels: totales.meses,
         datasets: [
             {
-                label: `Usuarios totales`,
-                data: totales.usuariosMetaPorMes,
-                backgroundColor: seriesColors.redes,
+                label: `Impresiones totales`,
+                data: totales.usuariosGooglePorMes,
+                backgroundColor: seriesColors.medios,
                 barPercentage: 1.0,
                 categoryPercentage: 0.7,
             },
             {
-                label: `Impresiones totales`,
-                data: totales.usuariosGooglePorMes,
-                backgroundColor: seriesColors.medios,
+                label: `Usuarios totales`,
+                data: totales.usuariosMetaPorMes,
+                backgroundColor: seriesColors.redes,
                 barPercentage: 1.0,
                 categoryPercentage: 0.7,
             },
@@ -211,17 +211,17 @@ const Barplot = ({ resumenCliente = null, loading = false, paisFiltro}) => {
                     
                     <div className='barra_lateral'>
                         <p className='leyenda_barplot'>
-                            <span className="blue-dot-impresiones "></span> Usuarios Redes Sociales
-                            <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "Son las personas que llegaron a tus notas desde nuestra difusión en redes sociales."/>  
-                        </p>
-                        <p className='totales'>{formatNumberMiles(totales.usuariosTotalesRRSS)}</p>
-                    </div>
-                    <div className='barra_lateral'>
-                        <p className='leyenda_barplot'>
                             <span className="blue-dot-user"></span>Usuarios Medios
                             <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "Son las personas que llegaron a tus notas desde nuestra difusión en otros medios de noticias."/>  
                         </p>
                         <p className='totales'>{formatNumberMiles(totales.usuariosTotalesGoogle)}</p>
+                    </div>
+                    <div className='barra_lateral'>
+                        <p className='leyenda_barplot'>
+                            <span className="blue-dot-impresiones"></span>Usuarios Redes Sociales
+                            <img src="/images/help-circle.png" alt="Descripción" className="info-icon" title= "Son las personas que llegaron a tus notas desde nuestra difusión en redes sociales."/>  
+                        </p>
+                        <p className='totales'>{formatNumberMiles(totales.usuariosTotalesRRSS)}</p>
                     </div>
                     <div>
                         <p className='leyenda_barplot'>

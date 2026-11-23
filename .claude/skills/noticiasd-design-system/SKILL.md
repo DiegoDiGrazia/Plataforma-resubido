@@ -45,7 +45,7 @@ src/styles/
 7. **Contraste:** naranja `#EE4C01` sobre blanco da 3.7:1 → sirve para fondos de botón (con texto
    blanco semibold) e iconos, **no para texto**. Texto naranja = `--nd-color-primary-text`
    (#D14301). Amarillo de marca nunca como texto ni línea fina.
-8. **Tamaño mínimo de fuente: 12px** (`--nd-font-size-xs`). Hoy hay 9/10/11px: subirlos.
+8. **Tamaño mínimo de fuente: `--nd-font-size-xs`** (11px; 10px desde 1366). Nunca px sueltos más chicos.
 9. **Breakpoints:** la plataforma tiene que verse bien en **380 · 420 · 768 · 1024 · 1366 · 1440 ·
    1660 · 1920px**. El diseño base es 1920 (sin media query) y se baja con `max-width`, solo con
    estos valores: `1660 / 1440 / 1366 / 1024 / 768 / 420 / 380`. Nada de `min-width` ni otros
@@ -77,7 +77,7 @@ src/styles/
 | Borde divisor / borde input | `--nd-color-border` / `--nd-color-border-strong` |
 | Éxito / error / aviso / info | `--nd-color-success` / `-danger` / `-warning` / `-info` (+ `-subtle` para fondos) |
 | Fuente | `--nd-font-family` |
-| Tamaños | `xs 12 · sm 13 · base 14 · md 16 · lg 18 · xl 20 · 2xl 24 · 3xl 28 · 4xl 32` → `--nd-font-size-*` |
+| Tamaños | `xs 11 · sm 13 · base 14 · md 16 · lg 18 · xl 20 · 2xl 24 · 3xl 28 · 4xl 32` → `--nd-font-size-*` |
 | Pesos | `regular 400 · medium 500 · semibold 600 · bold 700` → `--nd-font-weight-*` |
 | Espaciado (base 4) | `--nd-space-1`=4 · `2`=8 · `3`=12 · `4`=16 · `5`=20 · `6`=24 · `8`=32 · `10`=40 · `12`=48 |
 | Radios | `sm 4` (badge) · `md 8` (botón/input) · `lg 12` (card) · `xl 16` (modal) · `pill` · `full` |
@@ -97,7 +97,7 @@ Tabla completa con hex, contraste y uso de cada color: [references/tokens.md](re
 | Subtítulo / texto de apoyo | `.nd-page-header__subtitle`, `.nd-text-secondary` |
 | Cuerpo | `<p>` sin clases (14px, line-height 1.5) |
 | Label de formulario | `<Form.Label>` / `.form-label` / `.nd-field__label` (13px medium gris) |
-| Label de KPI / encabezado de tabla | `.nd-stat__label`, `thead th` (12px, mayúsculas, tracking) |
+| Label de KPI / encabezado de tabla | `.nd-stat__label`, `thead th` (xs, mayúsculas, tracking) |
 | Link | `<a>` sin clases |
 | Input | `<Form.Control>` / `.form-control`; fuera de Bootstrap `.nd-input` |
 | Estado (activo, vencido, pendiente) | `.nd-badge .nd-badge--success|danger|warning|info|primary` |

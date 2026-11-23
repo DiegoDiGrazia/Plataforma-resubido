@@ -79,7 +79,7 @@
 
     .blue-dot-user.blue-dot-videos,
     .blue-dot-impresiones.blue-dot-videos {
-        background-color: var(--nd-chart-3); /* Videos */
+        background-color: var(--nd-chart-6); /* Videos (amarillo) */
     }
 
     /* ---------- Gráfico ---------- */

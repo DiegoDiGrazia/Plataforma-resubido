@@ -16,28 +16,27 @@
         font-weight: var(--nd-font-weight-semibold);
     }
 
+    /* "Tus Notas" solo en su renglón; abajo selector de cuenta + botón
+       Crear nota, juntos y de la misma altura (si no entran, bajan) */
     .notasListado__encabezado {
         display: flex;
         flex-wrap: wrap;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: var(--nd-space-4);
+        align-items: stretch;
+        justify-content: flex-start;
+        gap: var(--nd-space-3);
     }
 
+    /* Sus hijos (título y selector) pasan a ser ítems del encabezado */
     .notasListado__titulo {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: var(--nd-space-2) var(--nd-space-4);
-        min-width: 0;
+        display: contents;
     }
 
-    .notasListado__titulo .abajoDeTusNotas {
+    .notasListado__titulo .headerTusNotas {
         flex-basis: 100%;
-        padding-left: 0;
     }
 
     .notasListado__titulo .dropdown .boton_cliente {
+        height: 100%;
         margin: 0;
     }
 
@@ -252,6 +251,48 @@
     }
 
     @media (max-width: 768px) {
+        /* Encabezado apilado, igual en todos los celulares:
+           Tus Notas / selector de cuenta / botón Crear nota, a todo el ancho */
+        .notasListado__encabezado {
+            flex-direction: column;
+            align-items: stretch;
+            gap: var(--nd-space-3);
+        }
+
+        .notasListado__titulo .dropdown,
+        .notasListado__titulo .dropdown .btn,
+        .notasListado__encabezado > .btn {
+            width: 100%;
+        }
+
+        .notasListado__titulo .headerTusNotas {
+            flex-basis: auto;
+        }
+
+        /* Flechita del selector al extremo derecho */
+        .notasListado__titulo .dropdown .boton_cliente {
+            justify-content: space-between;
+        }
+
+        .notasListado__titulo .listaClientes {
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .notasListado__titulo .listaClientes .dropdown-item {
+            white-space: normal;
+        }
+
+        /* Categoría y cuenta en el mismo renglón: la categoría toma su ancho
+           (hasta la mitad) y el nombre de la cuenta usa el resto, cortando línea */
+        .notasListado__fila {
+            grid-template-columns: 56px fit-content(50%) minmax(0, 1fr);
+        }
+
+        .notasListado__cuenta {
+            overflow-wrap: anywhere;
+        }
+
         .notasListado__barra .buscadorNotasForm {
             width: 100%;
         }
@@ -267,28 +308,26 @@
 
     /* ---------- Teléfonos ---------- */
     @media (max-width: 420px) {
-        .notasListado__encabezado > * {
-            width: 100%;
+        /* Fuente un escalón más chica para que entre más */
+        .notasListado__encabezado .btn,
+        .boton_filtro_notas,
+        .notasListado__titulo-nota .nombre_plataforma,
+        .inputBuscadorNotas {
+            font-size: var(--nd-font-size-sm);
         }
 
-        .notasListado__encabezado .btn,
-        .notasListado__titulo .dropdown,
-        .notasListado__titulo .dropdown .btn {
-            width: 100%;
+        .todasLasNotas {
+            font-size: var(--nd-font-size-md);
+        }
+
+        .FechaPubNota,
+        .notasListado__cuenta {
+            font-size: var(--nd-font-size-xs);
         }
 
         .notasListado__fila {
-            grid-template-columns: 48px minmax(0, 1fr);
-            grid-template-areas:
-                "imagen   titulo"
-                "imagen   categoria"
-                "cuenta   cuenta"
-                "acciones acciones";
+            grid-template-columns: 48px fit-content(50%) minmax(0, 1fr);
             padding: var(--nd-space-3);
-        }
-
-        .notasListado__cuenta {
-            text-align: left;
         }
 
         .imagenWidwetInteracciones2 {

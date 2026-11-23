@@ -54,6 +54,16 @@ module.exports = {
     compress: true,
     hot: true,
     port: 4001, // Puerto para el servidor de desarrollo
+    client: {
+      overlay: {
+        // No tapar la pantalla con errores de extensiones del navegador (no son de la app).
+        // La función se serializa al navegador: tiene que ser autocontenida.
+        runtimeErrors: (error) => {
+          const stack = (error && error.stack) || '';
+          return !/chrome-extension:\/\/|moz-extension:\/\/|safari-web-extension:\/\//.test(stack);
+        },
+      },
+    },
     proxy: [
       {
         context: ['/services'],

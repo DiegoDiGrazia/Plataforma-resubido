@@ -8,10 +8,19 @@
 @media screen {
     #pantalla-verNota {
 
-        /* ---------- Cabecera: imagen · título/estado · filtros ---------- */
+        /* ---------- Breadcrumb: misma sangría que la imagen ---------- */
+        #nota {
+            padding-left: 0;
+        }
+
+        /* ---------- Cabecera ----------
+           Desktop:  [imagen] [título / fecha / estado·categoría] [país · descargar]
+           ≤1440:    [imagen] [título / fecha                              ]
+                     [estado·categoría ................... país · descargar] */
         .verNota__cabecera {
             display: grid;
             grid-template-columns: 300px minmax(0, 1fr) auto;
+            grid-template-areas: "imagen info acciones";
             align-items: start;
             gap: var(--nd-space-5);
             max-height: none;
@@ -25,12 +34,18 @@
             padding: 0;
         }
 
+        .imagen_col { grid-area: imagen; }
+        .verNota__info { grid-area: info; }
+        .verNota__acciones { grid-area: acciones; }
+
         .imagen_nota {
             width: 100%;
             height: 200px;
         }
 
         .verNota__info {
+            display: flex;
+            flex-direction: column;
             gap: var(--nd-space-2);
             min-height: 200px;
         }
@@ -44,10 +59,18 @@
             padding-left: 0;
         }
 
-        /* "• Publicada" en una sola línea (antes .publicada medía 60px y el texto bajaba) */
-        .row.publicada {
-            width: auto;
-            padding: 0;
+        .verNota__meta .vn_categoria {
+            min-width: 0;
+        }
+
+        /* 1920: estado arriba de la categoría; desde 1660, en la misma línea */
+        .verNota__meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: var(--nd-space-2) var(--nd-space-4);
+            min-width: 0;
+            margin-top: auto;
         }
 
         span.publicada {
@@ -58,24 +81,69 @@
             margin: 0;
         }
 
-        .verNota__categoria {
-            margin-top: auto;
-        }
-
-        .vn_categoria {
-            height: auto;
-        }
-
+        /* Filtro país + Descargar reporte: misma línea y misma altura */
         .verNota__acciones {
             display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: var(--nd-space-2);
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-end;
+            gap: var(--nd-space-3);
             float: none;
         }
 
-        .verNota__acciones .mt-3 {
-            margin-top: 0;
+        .verNota__acciones .custom-dropdown-button {
+            min-height: 40px;
+        }
+
+        @media (max-width: 1660px) {
+            .verNota__meta {
+                flex-direction: row;
+                align-items: center;
+            }
+        }
+
+        /* ≤1440: todo a la derecha de la imagen; abajo de la fecha,
+           estado·categoría a la izquierda y filtros a la derecha */
+        @media (max-width: 1440px) {
+            .verNota__cabecera {
+                grid-template-columns: 300px minmax(0, 1fr) auto;
+                grid-template-areas:
+                    "imagen titulo titulo"
+                    "imagen fecha  fecha"
+                    "imagen meta   acciones";
+                grid-template-rows: auto auto 1fr;
+                row-gap: var(--nd-space-2);
+            }
+
+            /* Los hijos de la columna de info pasan a ser celdas de la grilla */
+            .verNota__info {
+                display: contents;
+            }
+
+            .vn_titulo { grid-area: titulo; max-width: none; }
+            .vn_fecha { grid-area: fecha; align-self: start; }
+
+            .verNota__meta {
+                grid-area: meta;
+                flex-wrap: nowrap;
+                align-self: end;
+            }
+
+            .verNota__acciones {
+                align-self: end;
+            }
+        }
+
+        /* "Performance de la nota" centrado */
+        @media (max-width: 1366px) {
+            .subtitulo {
+                justify-content: center;
+            }
+
+            #subtitulo_performance {
+                width: 100%;
+                text-align: center;
+            }
         }
 
         .subtitulo {
@@ -83,9 +151,10 @@
         }
 
         /* ---------- Widgets (desglose por plataforma, medios) ---------- */
+        /* Desglose por plataforma y Medios: cada uno en su propio renglón */
         .verNota__widgets {
             display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-template-columns: minmax(0, 1fr);
             gap: var(--nd-space-4);
             margin: var(--nd-space-4) 0 0;
         }
@@ -126,7 +195,7 @@
         /* ---------- Notebooks chicas ---------- */
         @media (max-width: 1024px) {
             .verNota__cabecera {
-                grid-template-columns: 220px minmax(0, 1fr);
+                grid-template-columns: 220px minmax(0, 1fr) auto;
             }
 
             .imagen_nota {
@@ -136,24 +205,30 @@
             .verNota__info {
                 min-height: 0;
             }
-
-            .verNota__acciones {
-                grid-column: 1 / -1;
-                flex-direction: row;
-                flex-wrap: wrap;
-                align-items: center;
-                justify-content: flex-start;
-            }
-
-            .verNota__widgets {
-                grid-template-columns: minmax(0, 1fr);
-            }
         }
 
         /* ---------- Mobile ---------- */
         @media (max-width: 768px) {
+            /* Menos aire arriba del breadcrumb (la barra superior ya separa) */
+            #nota {
+                padding-top: 0;
+            }
+
+            /* Una columna: imagen, título, fecha, estado·categoría, filtros */
             .verNota__cabecera {
                 grid-template-columns: minmax(0, 1fr);
+                grid-template-areas:
+                    "imagen"
+                    "titulo"
+                    "fecha"
+                    "meta"
+                    "acciones";
+                grid-template-rows: auto;
+            }
+
+            .verNota__meta,
+            .verNota__acciones {
+                margin-top: 0;
             }
 
             .imagen_col {
@@ -169,12 +244,29 @@
                 font-size: var(--nd-font-size-xl);
             }
 
+            /* Sin tooltips en celular: el title no se puede ver con el dedo */
+            .info-icon {
+                display: none;
+            }
+
+            /* Filtro país en un renglón y Descargar reporte en otro */
             .verNota__acciones > * {
                 width: 100%;
             }
 
+            /* Filtro país: etiqueta a la izquierda y desplegable a la derecha */
+            .verNota__acciones .nd-field-row {
+                flex-wrap: nowrap;
+                justify-content: space-between;
+            }
+
             .verNota__acciones .btn {
                 width: 100%;
+            }
+
+            /* Flechita de los desplegables siempre a la derecha */
+            .verNota__acciones .dropdown-toggle::after {
+                margin-left: auto;
             }
 
             .verNota__widget {

@@ -64,7 +64,7 @@ Fuente: `src/styles/tokens.css` (CSS) y `src/styles/tokens.js` (JS). Manual de m
 Orden fijo de series (`chartColors` en tokens.js, `--nd-chart-1…6` en CSS):
 naranja → azul → celeste → magenta → gris → amarillo.
 
-Por canal (`seriesColors`): medios (Google) = naranja, redes (RRSS/Meta) = azul, videos = celeste. Los puntos de leyenda (`.blue-dot-*` en `shared/components/charts/Barplot.css`) usan `--nd-chart-1/2/3`, así barras y leyenda coinciden siempre.
+Por canal (`seriesColors`): medios (Google) = naranja, redes (RRSS/Meta) = azul, videos = amarillo de marca (`chartColors[5]`; el celeste se confundía con el azul). Los puntos de leyenda (`.blue-dot-*` en `shared/components/charts/Barplot.css`) usan `--nd-chart-1/2/6`, así barras y leyenda coinciden siempre.
 
 ```js
 import { Chart } from 'chart.js';
@@ -83,9 +83,9 @@ Pesos disponibles: Light, Regular, Bold. `500` renderiza Regular, `600` renderiz
 
 | Token | px | Uso típico |
 |---|---|---|
-| `--nd-font-size-xs` | 12 | labels en mayúsculas, badges, notas al pie, thead |
-| `--nd-font-size-sm` | 13 | labels de form, metadatos, celdas de tabla |
-| `--nd-font-size-base` | 14 | cuerpo, inputs, botones |
+| `--nd-font-size-xs` | 11 (10 ≤1366) | labels en mayúsculas, badges, notas al pie, thead |
+| `--nd-font-size-sm` | 13 (12 ≤1366) | labels de form, metadatos, celdas de tabla |
+| `--nd-font-size-base` | 14 (13 ≤1366) | cuerpo, inputs, botones |
 | `--nd-font-size-md` | 16 | cuerpo destacado, título de card |
 | `--nd-font-size-lg` | 18 | subtítulo de sección |
 | `--nd-font-size-xl` | 20 | título de modal, valor de KPI |
@@ -93,6 +93,7 @@ Pesos disponibles: Light, Regular, Bold. `500` renderiza Regular, `600` renderiz
 | `--nd-font-size-3xl` | 28 (24 mobile) | título de página |
 | `--nd-font-size-4xl` | 32 | KPI grande |
 
+> Escala por ancho: 1920–1440 base · ≤1366 xs/sm/base −1px · **1024–769 toda la escala un escalón abajo** (xs 10 · sm 11 · base 12 · md 14 · lg 16 · xl 18 · 2xl 22 · 3xl 24) · ≤768 celulares vuelven a los valores de 1366 (títulos más chicos).
 Line-height: `tight 1.2` títulos · `snug 1.35` UI densa · `normal 1.5` párrafos.
 
 ## Espaciado, radios, sombras, capas

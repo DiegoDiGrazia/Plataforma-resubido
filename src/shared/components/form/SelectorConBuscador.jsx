@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { borrarTildes } from '@/shared/utils/funcionesVarias';
 
-const SelectorConBuscador = ({ title, options = [], selectedOption, onSelect, onClear, alineacionDerecha = false }) => {
+const SelectorConBuscador = ({ title, options = [], selectedOption, onSelect, onClear, alineacionDerecha = false, sinMargen = false }) => {
     const [searchQuery, setSearchQuery] = useState(''); // Estado para el texto del buscador
 
     // Filtrar las opciones según el texto ingresado
@@ -12,9 +12,10 @@ const SelectorConBuscador = ({ title, options = [], selectedOption, onSelect, on
     });
 
     return (
-        <div className="mb-2">
+        // sinMargen: para ponerlo en una fila de filtros alineado con otros botones
+        <div className={`selectorConBuscador ${sinMargen ? '' : 'mb-2'}`}>
             {/* Título + Dropdown en la misma línea */}
-            <div className="nd-field-row mb-2">
+            <div className={`nd-field-row ${sinMargen ? '' : 'mb-2'}`}>
                 <span className="nd-field-row__label">{title}</span>
 
                 <div className="dropdown nd-field-row__control">
