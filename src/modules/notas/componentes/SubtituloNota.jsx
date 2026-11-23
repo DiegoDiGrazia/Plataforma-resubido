@@ -1,11 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import 'cropperjs/dist/cropper.css';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
-import { setContenidoPorIndice, setTituloNota } from '@/store/crearNotaSlice';
-import { Button } from 'react-bootstrap';
-import { DeleteContenidoPorIndice } from '@/store/crearNotaSlice';
-import { SubirContenidoPorIndice, BajarContenidoPorIndice } from '@/store/crearNotaSlice';
+import { setContenidoPorIndice } from '@/store/crearNotaSlice';
 import BotoneraContenido from './BotoneraContenido';
 
 const SubtituloNota= ({indice}) => {

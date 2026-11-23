@@ -76,6 +76,7 @@ const ImagenPrincipal = () => {
 };
 
 // FUNCIÓN AUXILIAR para COMPRIMIR la imagen sin cambiar tamaño
+// eslint-disable-next-line no-unused-vars -- `calidad` es posicional: los llamadores pasan (file, calidad, maxWidth)
 export async function comprimirImagen(file, calidad = 1, maxWidth = 1600) {
     return new Promise((resolve, reject) => {
         const img = new Image();

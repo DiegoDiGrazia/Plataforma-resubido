@@ -1,12 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import 'cropperjs/dist/cropper.css';
 import { useSelector, useDispatch } from 'react-redux';
-import { Button } from 'react-bootstrap';
 import { setTodosLosClientes } from '@/store/dashboardSlice';
 import { obtenerClientes } from '@/api/apis';
 import { updateActivarTodosLosClientes, updateCliente, updateIdCliente } from '@/store/formularioSlice';
 import '@/modules/dashboard/Dashboard.css';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { setClienteNota } from '@/store/crearNotaSlice';
 import { borrarTildes } from '@/shared/utils/funcionesVarias';
 
@@ -39,7 +38,7 @@ const SelectorCliente = ({ incluirTodos = true, editorial = true, clientePresele
                     try {
                         const datos = clienteLogueado.datosFranquicia ? JSON.parse(clienteLogueado.datosFranquicia) : null;
                         cuentasCreadas = Array.isArray(datos?.cuentas_creadas) ? datos.cuentas_creadas : [];
-                    } catch (err) {
+                    } catch {
                         cuentasCreadas = [];
                     }
                     const idsPermitidos = [clienteLogueado.id, ...cuentasCreadas.map((cuenta) => cuenta.id)];

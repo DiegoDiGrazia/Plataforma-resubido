@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Modal } from 'react-bootstrap';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { clickearEnPublicarNota } from '@/shared/utils/publicarNotaHelper';
 import { editarDistribucionGeneracion } from '@/api/apis';
 import { armarPayloadDistribucion } from '@/shared/utils/distribucionGeneracion';
@@ -21,7 +21,6 @@ const BotonPublicarNota = ({ status, isLoading, setIsLoading }) => {
     
 
     const navigate = useNavigate();
-    const dispatch = useDispatch();
 
     // Obtener los datos necesarios desde el estado global
     const es_editor = useSelector((state) => state.formulario.es_editor);
@@ -64,7 +63,6 @@ const BotonPublicarNota = ({ status, isLoading, setIsLoading }) => {
     const pais = useSelector((state) => state.crearNota.pais);
     const id_noti = useSelector((state) => state.crearNota.id_noti);
     const id_att = useSelector((state) => state.crearNota.id_att);
-    const clienteActual = useSelector((state) => state.formulario.cliente);
     const clienteDeLaNota = useSelector((state) => state.crearNota.cliente)
     const demo = useSelector((state) => state.crearNota.demo.nombre)
     const cliente = clienteDeLaNota;
@@ -80,7 +78,7 @@ const BotonPublicarNota = ({ status, isLoading, setIsLoading }) => {
     // Filtrar los attachments para obtener solo los válidos 
     const attachments = useSelector((state) => state.crearNota.atachments);
     const atachmentsValidos = Object.entries(attachments)
-        .filter(([key, value]) => value !== null)
+        .filter(([, value]) => value !== null)
         .reduce((obj, [key, value]) => {
             obj[key] = value;
             return obj;
@@ -88,7 +86,7 @@ const BotonPublicarNota = ({ status, isLoading, setIsLoading }) => {
 
     const attachmentsArchivos = useSelector((state) => state.crearNota.atachmentsArchivos);
     const atachmentsArchivosValidos = Object.entries(attachmentsArchivos)
-        .filter(([key, value]) => value !== null)
+        .filter(([, value]) => value !== null)
         .reduce((obj, [key, value]) => {
             obj[key] = value;
             return obj;
@@ -110,7 +108,6 @@ const BotonPublicarNota = ({ status, isLoading, setIsLoading }) => {
     };
 
     const clickear_en_publicar_nota = async () => {
-        const state = store.getState(); // 💡 IMPORTANTE: necesitás importar el store
         setIsLoading(true);
         setErrorMessage("");
 

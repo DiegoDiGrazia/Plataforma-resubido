@@ -16,7 +16,6 @@ import SelectorConBuscador from '@/shared/components/form/SelectorConBuscador';
 import { obtenerDistribucionGeneracion } from '@/api/apis';
 import { getTipoHistoria, getColorHistoria, getDesplazamientoHistoria, armarParamsColorCreativo } from '@/shared/utils/bannerData';
 
-export const RUTA = "http://localhost:4000/";
 
 const VerNota = () => {
     const [cargando, setCargando] = useState(true);
@@ -35,7 +34,7 @@ const VerNota = () => {
     const id_noti = id_nota;
     const es_demo = id_ruta ? true : false;
     const TOKEN_ESTADO = useSelector((state) => state.formulario.token);
-    const [TOKEN, setTOKEN] = useState(TOKEN_ESTADO);
+    const [TOKEN] = useState(TOKEN_ESTADO);
     const [CLIENTE, setCLIENTE] = useState("");
     const idClienteSesion = useSelector((state) => state.formulario.id_cliente);
     const clienteIdNota = Nota.cliente_id || Nota.id_cliente || idClienteSesion;

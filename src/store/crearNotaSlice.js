@@ -21,41 +21,6 @@ function extraerTagImg(texto) {
   return match ? match[0] : null;
 }
 
- export async function analizarHTML(html) {
-  const resultados = [];
-
-  // Crear un contenedor temporal para procesar el HTML
-  const div = document.createElement("div");
-  div.innerHTML = html;
-
-  // Manejar párrafos
-  const parrafos = div.querySelectorAll("p");
-  parrafos.forEach(parrafo => {
-    const strong = parrafo.querySelector("strong");
-    const br = strong?.nextSibling?.nodeName === "BR";
-
-    if (strong && br) {
-      const subtitulo = strong.textContent.trim();
-      resultados.push(["subtitulo", subtitulo]);
-    }
-
-    let textoParrafo = parrafo.innerHTML;
-
-    if (strong && br) {
-      textoParrafo = textoParrafo.replace(`<strong>${strong.textContent}</strong>`, "").trim();
-    } else if (strong) {
-      textoParrafo = textoParrafo.replace(`<strong>${strong.textContent}</strong>`, "").trim();
-    }
-
-    if (textoParrafo) {
-      resultados.push(["parrafo", textoParrafo]);
-    }
-  });
-
-  // Manejar imágenes
-
-  return resultados;
-}
 
 // Función para convertir imágenes a Base64
 export async function convertirImagenBase64(url, maxWidth = 1600) {
@@ -172,9 +137,6 @@ const crearNotaSlice = createSlice({
     setCopete: (state, action) => {
       state.copete = action.payload;
     },
-    setIdNotaBorrador: (state, action) => {
-      state.id_nota_borrador = action.payload;
-    },
     setEpigrafeImagenPpal: (state, action) => {
       state.epigrafeImagenPpal = action.payload;
     },
@@ -191,7 +153,7 @@ const crearNotaSlice = createSlice({
     setImagenRRSS: (state, action) => {
       state.imagenRRSS = action.payload;
     },
-    setContenidoNota: (state, action) => {  // aca llega [tipo, contenido]: lo agrega al final
+    setContenidoNota: (state, action) => { // aca llega [tipo, contenido]: lo agrega al final
       sincronizarIds(state);
       state.contenidoNota.push(action.payload);
       state.contenidoIds.push(nuevoIdBloque());
@@ -203,9 +165,6 @@ const crearNotaSlice = createSlice({
       const posicion = Math.max(0, Math.min(indice, state.contenidoNota.length));
       state.contenidoNota.splice(posicion, 0, item);
       state.contenidoIds.splice(posicion, 0, nuevoIdBloque());
-    },
-    setAttachment_video1: (state,action) =>{
-      state.attachment_video1 = action.payload
     },
     DeleteContenidoPorIndice: (state, action) => {
       sincronizarIds(state);
@@ -333,9 +292,6 @@ const crearNotaSlice = createSlice({
     setFechaPublicacion: (state, action) => {
       state.f_pub= action.payload;
     },
-    setFechaVencimiento: (state, action) => {
-      state.f_vence = action.payload;
-    },
     setEngagement: (state, action) => {
       state.engagement = action.payload;
     },
@@ -356,9 +312,6 @@ const crearNotaSlice = createSlice({
     },
     setPais: (state, action) => {
       state.pais = action.payload;
-    },
-    setListaImagenesContenidoEnBase64: (state, action) => {
-      state.listaDeImagenesContenidoEnBase64 = action.payload;
     },
     setComentario: (state, action) => {
       state.comentarios = action.payload;
@@ -385,9 +338,6 @@ const crearNotaSlice = createSlice({
       state.con_distribucion = action.payload;
     },
 
-    setSumarUnoAlNumeroDeAtachment: (state, action) => {
-      state.numeroDeAtachment = state.numeroDeAtachment + 1
-    },
 
     setIdAtt: (state, action) => {
       state.id_att = action.payload
@@ -428,12 +378,11 @@ const crearNotaSlice = createSlice({
 });
 
 export const {
-  setTituloNota,setContenidoDeNotaDeIa, setIdNotaBorrador, setCambiarEstadoActual, setAttachmentArchivo,setAttachmentArchivoToNull, setClienteNota, setContenidoNota, setAttachment_video1, DeleteContenidoPorIndice, setContenidoPorIndice,setFechaPublicacion, setAttachmentToNull,
+  setTituloNota,setContenidoDeNotaDeIa,setCambiarEstadoActual, setAttachmentArchivo,setAttachmentArchivoToNull, setClienteNota, setContenidoNota,DeleteContenidoPorIndice, setContenidoPorIndice,setFechaPublicacion, setAttachmentToNull,
   SubirContenidoPorIndice, BajarContenidoPorIndice, setCategorias, setImagenPrincipal, setImagenRRSS, setImagenesDeCarrusel, setUrl,
   setCopete, setNotaAEditar, setContenidoAEditar, setItemsEtiquetas, setEsDemo, setNoHome, setCategoriasActivasEnStore,
-  setDistribucionProioritaria, setTipoContenido, setFechaVencimiento, setBajada, setEngagement, setComentario, setSelectedOptionDistribucion,
-  setAutor, setMunicipio,setEpigrafeImagenPpal,setDemo, setMunicipios,setIdNoti, setProvincia,setPais, setIdAtt,setProvincias, resetCrearNota, setEpigrafeDeImagen, setListaImagenesContenidoEnBase64, setAtachment, setSumarUnoAlNumeroDeAtachment,
-  setClaveEdicion, insertarContenidoEn,
+  setDistribucionProioritaria, setTipoContenido,setBajada, setEngagement, setComentario, setSelectedOptionDistribucion,
+  setAutor, setMunicipio,setEpigrafeImagenPpal,setDemo, setMunicipios,setIdNoti, setProvincia,setPais, setIdAtt,setProvincias, resetCrearNota, setEpigrafeDeImagen,setAtachment,  setClaveEdicion, insertarContenidoEn,
 } = crearNotaSlice.actions;
 
 export default crearNotaSlice.reducer;

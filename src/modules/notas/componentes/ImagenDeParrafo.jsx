@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import 'cropperjs/dist/cropper.css';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
-import {setAtachment, setContenidoPorIndice, setEpigrafeDeImagen, setSumarUnoAlNumeroDeAtachment } from '@/store/crearNotaSlice';
+import {setAtachment, setContenidoPorIndice, setEpigrafeDeImagen } from '@/store/crearNotaSlice';
 import BotoneraContenido from './BotoneraContenido';
 
 function obtenerTipoDeImagenDesdeBase64(base64) {
@@ -38,7 +38,6 @@ const ImagenDeParrafo = ({ indice }) => {
     const dispatch = useDispatch();
     const imagen = useSelector((state) => state.crearNota.contenidoNota[indice]);
     const id_att = useSelector((state) => state.crearNota.id_att); 
-    const imagenEnAttachment = useSelector((state) => state.crearNota.atachments['attachment_' + numeroDeAtachmentAUsar.toString() ]);
     const [textoEpigrafe, setTextoEpigrafe] = useState("");
         const textareaRef = useRef(null);
     if (!imagen) {

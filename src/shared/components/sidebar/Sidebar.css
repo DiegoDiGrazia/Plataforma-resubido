@@ -1,8 +1,10 @@
 /* ==========================================================================
    Sidebar
    Desktop: siempre visible, fijo a la izquierda.
-   Mobile (≤768px): oculto; la hamburguesa de .sidebar-topbar lo abre a
-   pantalla completa (.sidebar--mobile-visible) y se cierra con la X.
+   Mobile (≤768px): oculto; la hamburguesa de .sidebar-topbar (a la derecha)
+   lo abre a pantalla completa (.sidebar--mobile-visible) y la misma
+   hamburguesa, en la misma posición, lo cierra.
+   Administración y Comercial son grupos desplegables (.sidebar__grupo).
    ========================================================================== */
 
 .sidebar {
@@ -21,7 +23,7 @@
 .sidebar__header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     padding: var(--nd-space-6) var(--nd-space-5) var(--nd-space-4);
 }
 
@@ -32,7 +34,7 @@
     object-fit: contain;
 }
 
-/* La X solo existe en mobile */
+/* El botón de cerrar solo existe en mobile */
 .sidebar__cerrar {
     display: none;
 }
@@ -100,12 +102,56 @@
     text-overflow: ellipsis;
 }
 
-.sidebar__item--activo .sidebar__link {
+.sidebar__item--activo > .sidebar__link {
     background-color: var(--nd-color-primary-subtle);
     font-weight: var(--nd-font-weight-semibold);
 }
-.sidebar__item--activo .sidebar__icono {
+.sidebar__item--activo > .sidebar__link .sidebar__icono {
     color: var(--nd-color-primary);
+}
+
+/* ---------- Grupo desplegable (Administración, Comercial) ---------- */
+.sidebar__chevron {
+    flex-shrink: 0;
+    margin-left: auto;
+    font-size: var(--nd-font-size-sm);
+    color: var(--nd-color-text-secondary);
+    transition: transform var(--nd-duration-fast) var(--nd-easing);
+}
+.sidebar__grupo--abierto > .sidebar__link .sidebar__chevron {
+    transform: rotate(180deg);
+}
+
+/* Estás en una pantalla del grupo: ícono naranja; si está cerrado, además el fondo */
+.sidebar__grupo--activo > .sidebar__link {
+    font-weight: var(--nd-font-weight-semibold);
+}
+.sidebar__grupo--activo > .sidebar__link .sidebar__icono {
+    color: var(--nd-color-primary);
+}
+.sidebar__grupo--activo:not(.sidebar__grupo--abierto) > .sidebar__link {
+    background-color: var(--nd-color-primary-subtle);
+}
+
+/* Sub-ítems colgados de una guía alineada al centro del ícono del grupo */
+.sidebar__sublista {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: var(--nd-space-1) 0 var(--nd-space-2) calc(var(--nd-space-3) + 12px);
+    padding: 0 0 0 var(--nd-space-2);
+    border-left: var(--nd-border-width) solid var(--nd-color-border);
+}
+
+.sidebar__item--sub > .sidebar__link {
+    height: 36px;
+    padding: 0 var(--nd-space-3);
+    font-weight: var(--nd-font-weight-regular);
+    color: var(--nd-color-text-secondary);
+}
+.sidebar__item--sub.sidebar__item--activo > .sidebar__link {
+    color: var(--nd-color-text);
 }
 
 /* ---------- Crédito ---------- */
@@ -150,24 +196,46 @@
 
 /* ---------- Mobile ---------- */
 @media (max-width: 768px) {
+    /* Barra superior y cabecera del menú abierto comparten geometría:
+       logo centrado y hamburguesa a la derecha, en el mismo lugar. */
+    .sidebar-topbar,
+    .sidebar__header {
+        position: relative;
+        height: var(--nd-topbar-height);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 var(--nd-space-2);
+        border-radius: var(--nd-radius-lg);
+    }
+
     .sidebar-topbar {
         position: fixed;
         top: var(--nd-space-2);
         left: var(--nd-space-2);
         right: var(--nd-space-2);
         z-index: var(--nd-z-sticky);
-        height: var(--nd-topbar-height);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0 var(--nd-space-2);
         background-color: var(--nd-color-bg-surface);
-        border-radius: var(--nd-radius-lg);
         box-shadow: var(--nd-shadow-sm);
+    }
+
+    .sidebar__header {
+        flex-shrink: 0;
+        margin: var(--nd-space-2) var(--nd-space-2) var(--nd-space-2);
+    }
+
+    .sidebar-topbar__logo,
+    .sidebar__logo {
+        height: 24px;
+        width: auto;
     }
 
     .sidebar-topbar__boton,
     .sidebar__cerrar {
+        position: absolute;
+        top: 50%;
+        right: var(--nd-space-1);
+        transform: translateY(-50%);
         width: 36px;
         height: 36px;
         display: inline-flex;
@@ -186,21 +254,13 @@
         background-color: var(--nd-color-bg-muted);
     }
 
-    .sidebar-topbar__boton {
-        position: absolute;
-        left: var(--nd-space-1);
-    }
-
-    .sidebar-topbar__logo {
-        height: 24px;
-        width: auto;
-    }
-
     /* Oculto hasta que se toca la hamburguesa */
     .sidebar {
         display: none;
     }
 
+    /* Abierto: pantalla completa; scrollea todo el panel (no solo la lista),
+       así en pantallas bajas (375×667) el pie no tapa ítems. */
     .sidebar.sidebar--mobile-visible {
         display: flex;
         position: fixed;
@@ -208,15 +268,13 @@
         z-index: var(--nd-z-modal);
         width: 100%;
         height: 100%;
+        overflow-y: auto;
         border-right: none;
     }
 
-    .sidebar__header {
-        padding: var(--nd-space-4) var(--nd-space-4) var(--nd-space-2);
-    }
-
-    .sidebar__cerrar {
-        display: inline-flex;
+    .sidebar__nav {
+        flex: 1 0 auto;
+        overflow: visible;
     }
 
     .sidebar__nav,
@@ -225,13 +283,58 @@
         padding-right: var(--nd-space-4);
     }
 
+    /* Ítems en una columna centrada: todos los íconos arrancan en la misma
+       vertical. --sidebar-columna es el ancho del ítem más largo
+       ("Monitor Contenido" / "Administración ⌄"); el resto se reparte como
+       margen a cada lado. El fondo del ítem activo sigue ocupando todo el ancho. */
+    .sidebar {
+        --sidebar-columna: 170px; /* menor que el ítem más largo: corre la columna a la derecha */
+        --sidebar-inicio: max(var(--nd-space-3), calc((100% - var(--sidebar-columna)) / 2));
+    }
+
     .sidebar__link {
         height: 52px;
-        font-size: var(--nd-font-size-md);
+        padding-left: var(--sidebar-inicio);
+        font-size: var(--nd-font-size-lg);
     }
 
     .sidebar__icono {
         width: 28px;
         font-size: var(--nd-font-size-2xl);
+    }
+
+    .sidebar__chevron {
+        margin-left: 0;
+    }
+
+    /* Sub-ítems alineados con el texto del grupo (inicio + ícono + gap) */
+    .sidebar__sublista {
+        margin: 0 0 var(--nd-space-2);
+        padding: 0;
+        border-left: none;
+    }
+
+    .sidebar__item--sub > .sidebar__link {
+        height: 44px;
+        padding-left: calc(var(--sidebar-inicio) + 28px + var(--nd-space-3));
+        font-size: var(--nd-font-size-md);
+    }
+
+    .sidebar__credito {
+        align-items: center;
+        text-align: center;
+    }
+}
+
+/* Celulares chicos (iPhone SE, 380): ítems un poco más bajos para que entre todo */
+@media (max-width: 420px) {
+    .sidebar__link {
+        height: 48px;
+        font-size: var(--nd-font-size-md);
+    }
+
+    .sidebar__item--sub > .sidebar__link {
+        height: 40px;
+        font-size: var(--nd-font-size-base);
     }
 }

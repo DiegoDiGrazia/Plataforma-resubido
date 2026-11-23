@@ -1,8 +1,7 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import CopiarTexto from './CopiarTexto';
 import IconosDistribucionConMonto from './IconosDistribucionConMonto';
 import { useSelector } from 'react-redux';
-import { obtenerUltimoDiaMes } from './Distribucion';
 import { obtenerNotasDeGeneraciones } from '@/api/apisUsuarios';
 import { useParams } from 'react-router-dom';
 
@@ -17,7 +16,6 @@ const NotasCliente = () => {
   const [loading, setLoading] = useState(false); // 👈 nuevo estado
   const TOKEN = useSelector((state) => state.formulario.token);
   const [notasGeneracionesAgrupadas, setNotasGeneracionesAgrupadas] = useState(null);
-  const [datosDelCliente, setDatosDelCliente] = useState([])
   const { cliente, desde, hasta } = useParams();
 
   useEffect(() => {
@@ -30,7 +28,7 @@ const NotasCliente = () => {
       .finally(() => setLoading(false)); 
     }, [cliente, desde, hasta]);
 
-    useEffect(() => {    console.log("Notas de generaciones agrupadas:", notasGeneracionesAgrupadas);
+    useEffect(() => { console.log("Notas de generaciones agrupadas:", notasGeneracionesAgrupadas);
     }, [notasGeneracionesAgrupadas]);
   
 
@@ -40,7 +38,7 @@ return (
     <div className='row miPerfilContainer soporteContainer'>
         <div className='col p-0'>
           <h3 id="saludo" className='headerTusNotas ml-0'>
-             Noticias para amplificar del cliente: {cliente}
+             <i className="bi bi-clipboard2-check-fill" aria-hidden="true" /> Noticias para amplificar del cliente: {cliente}
           </h3>
           <h4 className='infoCuenta'>En el rango de fechas {desde} a {hasta}</h4>
         </div>

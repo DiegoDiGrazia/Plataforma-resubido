@@ -6,11 +6,8 @@ const datospdfSlice = createSlice({
     barplot: "",
   },
   reducers: {
-    setBarplot: (state, action) => {
-      state.barplot = action.payload;
-    },
   },
 });
 
-export const { setBarplot } = datospdfSlice.actions;
+export const {} = datospdfSlice.actions;
 export default datospdfSlice.reducer;

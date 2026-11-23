@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import "./Barplot.css";
 import { color, palette, seriesColors } from '@/styles/tokens';
 import { formatNumberMiles } from '@/modules/dashboard/Dashboard.jsx';
@@ -65,7 +65,7 @@ export function filtrarUltimosMeses(lista, filtro, campoFecha = 'month') {
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const Barplot = ({datosLocales, resumenCliente = null, loading = false, paisFiltro}) => {
+const Barplot = ({ resumenCliente = null, loading = false, paisFiltro}) => {
     const FiltroActual = useSelector((state) => state.dashboard.filtro);
     const captureRef = useRef(null);  // Definir el ref para capturar la imagen
     const [totales, setTotales] = useState({})

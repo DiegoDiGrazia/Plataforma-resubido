@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import 'cropperjs/dist/cropper.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { setContenidoPorIndice } from '@/store/crearNotaSlice';
@@ -7,7 +7,7 @@ import BotoneraContenido from './BotoneraContenido';
 
 const Ubicacion = ({ indice }) => {
   const [ubicacion, setUbicacion] = useState(null); // Guarda la ubicación obtenida
-  const [staticMapUrl, setStaticMapUrl] = useState(null); // URL del mapa estático
+  const [, setStaticMapUrl] = useState(null); // URL del mapa estático
   const direccion = useSelector((state) => state.crearNota.contenidoNota[indice][1]);
   const dispatch = useDispatch();
 

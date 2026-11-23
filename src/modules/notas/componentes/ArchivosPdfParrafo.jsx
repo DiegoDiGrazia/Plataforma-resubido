@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect } from 'react';
 import 'cropperjs/dist/cropper.css';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
-import {setAtachment, setAttachmentArchivo, setContenidoPorIndice, setSumarUnoAlNumeroDeAtachment } from '@/store/crearNotaSlice';
+import { setAttachmentArchivo, setContenidoPorIndice } from '@/store/crearNotaSlice';
 import BotoneraContenido from './BotoneraContenido';
 
 
@@ -38,7 +38,6 @@ const ArchivoPDFListaParrafo = ({ indice }) => {
     useEffect(() => {
         if (id_att && !archivoPDFLista[2]) { // Solo ejecuta este efecto si id_att ya tiene un valor
             const atachment = "attachment_archivo" + numeroDeAtachmentAUsar.toString();
-            const tipoDearchivoPDFLista = archivoPDFLista[1];
 
             const urlPDF = "https://noticiasd.com/img/" +
                obtenerFechaActual() +

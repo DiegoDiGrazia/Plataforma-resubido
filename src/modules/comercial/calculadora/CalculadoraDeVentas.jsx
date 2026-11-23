@@ -426,15 +426,9 @@ const CalculadoraDeVentas = ({ datosEdicion, onGuardadoExitoso }) => {
     <div>
       <div className='row miPerfilContainer soporteContainer d-flex align-items-stretch mt-0 pt-0'>
         <h3 id="saludo" className='headerTusNotas ml-0 mb-3 p-0'>
-          <i className="bi bi-bag-fill" aria-hidden="true"></i>
+          <i className="bi bi-bag-fill" aria-hidden="true" />
             {" Calculadora de ventas "}
         </h3>
-        <div className='col-12 p-0 calculadora__intro'>
-          <h4 className='fw-bold'>{'Realice sus calculos'}</h4>
-          <div className='abajoDeTusNotas'>
-            {'Aqui podra realizar los calculos en tiempo real para armar propuestas comerciales segun los datos de poblacion estimada y alcance por nota.'}
-          </div>
-        </div>
       </div>
       
       {/* FILTROS */}

@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useSelector } from 'react-redux';
 import SelectorConBuscadorMult from './SelectorConBuscadorMult';
 import { obtenerMunicipios } from '@/api/geosApi';
 
 const ArbolConSelectorMultiple = ({
-  TOKEN,
-  jurisdiccion = null,
-  esGestion = false,
   pais,
   provinciasSeleccionadas,
   municipiosSeleccionados,

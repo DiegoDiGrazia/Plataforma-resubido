@@ -7,27 +7,12 @@ import { formatNumberMiles } from '@/modules/dashboard/Dashboard.jsx';
 import Barplot_Carga from './Barplot_mejorado_carga.jsx';
 import LineChartTwoLines from './LineChartTwoLines.jsx';
 
- export function generarPeriodosDesde(f_pub, cantidadDeMesesAGenerar){
-    if(f_pub){
-        const months = [];
-        const currentDate = new Date(f_pub );
-        currentDate.setDate(1);
-    
-        for (let i = 0; i < cantidadDeMesesAGenerar; i++) {
-            const year = currentDate.getFullYear();
-            const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-            months.push(`${year}-${month}`);
-            currentDate.setMonth(currentDate.getMonth() + 1);
-        }
-        return months.join(',');
-    }
-}
 
 
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const BarplotNota = ({id_noti, TOKEN, cliente, fpub, dataLocalNota, resumenNota = null}) => {
+const BarplotNota = ({ dataLocalNota, resumenNota = null}) => {
 
     console.log("LOCAL DATA NOTA", dataLocalNota)
     const [loading, setLoading] = useState(false); // Estado de carga

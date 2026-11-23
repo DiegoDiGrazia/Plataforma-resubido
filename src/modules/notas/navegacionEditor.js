@@ -74,6 +74,7 @@ export const firmaNota = (nota, { conCategorias = true } = {}) => {
  */
 export const firmaDistribucion = (dist, nota) => {
   if (!dist) return '';
+  // eslint-disable-next-line no-unused-vars -- se desestructura para sacarlo de `campos`
   const { id_nota_cargada, ...campos } = dist;
   if (campos.meta_titulo === nota?.tituloNota) campos.meta_titulo = '';
   if (campos.meta_engagement === nota?.bajada) campos.meta_engagement = '';

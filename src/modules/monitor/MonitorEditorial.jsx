@@ -40,7 +40,7 @@ const MonitorEditorial = () => {
     // Qué editores están en qué grupo: { grupoId: [editorId1, editorId2] }
     const [relGruposEditores, setRelGruposEditores] = useState({}); 
     // Qué clientes tiene cada editor: { editorId: [clienteId1] }
-    const [relEditoresClientes, setRelEditoresClientes] = useState({ });
+    const [relEditoresClientes, setRelEditoresClientes] = useState({});
 
     const [fechaDesde, setFechaDesde] = useState("");
     const [fechaHasta, setFechaHasta] = useState("");
@@ -279,7 +279,7 @@ const MonitorEditorial = () => {
             setRefreshData(prev => !prev);
             toastExito("¡El grupo fue creado exitosamente!")
         })
-        .catch(error => {
+        .catch(() => {
             toastError("Ocurrió un error al crear el grupo")
             setLoading(false);
         })
@@ -400,7 +400,7 @@ const MonitorEditorial = () => {
             setRefreshData(prev => !prev),
             toastExito('¡Comentario agregado exitosamente!')
         )
-        .catch(error => {
+        .catch(() => {
             toastError('Ocurrió un error al agregar el comentario')
         })
     };
@@ -477,10 +477,6 @@ const MonitorEditorial = () => {
                     <h3 id="saludo" className='headerTusNotas ml-0'>
                         <i className="bi bi-display-fill" aria-hidden="true" /> Monitor Contenido
                     </h3>
-                    <h4 className='infoCuenta'>Monitoreá el contenido publicado</h4>
-                    <div className='abajoDeTusNotas'>
-                        En esta sección podrás monitorear el contenido diario del área Editorial, repartido en grupos de editores y cuentas.
-                    </div>
                 </div>
             </div>
 

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Sidebar from '@/shared/components/sidebar/Sidebar';
 import CardTutorial from '@/shared/components/CardTutorial'; // Importa el nuevo componente
 
 // Diccionario de videos
@@ -55,13 +54,8 @@ const Soporte = () => {
                     <div className='row miPerfilContainer soporteContainer'>
                         <div className='col p-0'>
                             <h3 id="saludo" className='headerTusNotas ml-0'>
-                                <img src="/images/miPerfilIcon.png" alt="Icono 1" className="icon me-2 icono_tusNotas" /> Ayuda y soporte
+                                <i className="bi bi-headset" aria-hidden="true" /> Ayuda y soporte
                             </h3>
-                            <h4 className='infoCuenta'>Centro de contenidos</h4>
-                            <div className='abajoDeTusNotas'>
-                                Aquí encontrarás contenidos que te ayudarán a potenciar el uso de nuestra plataforma. <br />
-                                Tips, consejos, tutoriales y ayuda para tus contenidos
-                            </div>
                         </div>
                     </div>
 

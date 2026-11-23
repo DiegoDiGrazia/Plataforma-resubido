@@ -221,6 +221,13 @@
     color: var(--nd-color-text);
 }
 
+/* Ícono del título: el mismo del sidebar, en naranja de marca */
+.headerTusNotas > .bi {
+    flex-shrink: 0;
+    line-height: 1;
+    color: var(--nd-color-primary);
+}
+
 /* Contenedor de cada bloque de la página. Sin canaleta de Bootstrap: así el
    título, la barra de acciones y el listado quedan alineados al mismo margen. */
 .miPerfilContainer {

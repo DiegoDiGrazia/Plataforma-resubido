@@ -2,7 +2,6 @@ import * as React from 'react';
 import Slider from '@mui/material/Slider';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import { useState } from 'react';
 
 const  SliderVertical = ({setPosicion, valor}) => {
   // const [valor, setValor] = useState(50);

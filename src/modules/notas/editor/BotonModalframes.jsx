@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
-import GoogleStyleSlider from './GoogleStyleSlider';
 import SliderVertical from './SliderVertical';
 import IframeNotaEscalable from '@/modules/notas/IframeNotaEscalable';
 import SelectorNumerosEnteros from '@/shared/components/form/SelectorNumerosEnteros';

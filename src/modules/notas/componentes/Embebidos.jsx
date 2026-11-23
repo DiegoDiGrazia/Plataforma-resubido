@@ -75,10 +75,6 @@ const Embebido = ({ indice }) => {
   };
 }, [embebido]);
 
-const embebidoConEstilo = embebido.replace(
-  /<iframe(.*?)>/,
-  '<iframe$1 style="width: 100% !important; height: 100% !important; maxWidth: 100% !important; display: block;">'
-);
   return (
     <span className="spanContainer">
       <div className="d-flex align-items-center mb-3 justify-content-start">

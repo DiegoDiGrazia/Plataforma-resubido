@@ -17,9 +17,3 @@ export const toastError = (mensaje) => {
     });
 };
 
-export const toastInfo = (mensaje) => {
-    toast.info(mensaje, {
-        icon: <img src='/images/fabicon2.png' className="logo-nd-toastify"></img>,
-        className: 'toast-custom-info',
-    });
-};

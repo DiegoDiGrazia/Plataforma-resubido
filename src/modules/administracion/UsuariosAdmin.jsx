@@ -203,12 +203,8 @@ const handleInputKeyDown = (e) => {
       <div className='row miPerfilContainer soporteContainer'>
         <div className='col p-0'>
           <h3 id="saludo" className='headerTusNotas ml-0'>
-            <i className="icon me-2 icono_tusNotas bi bi-gear-fill" alt="Icono 1" /> Gestiona tus usuarios
+            <i className="bi bi-gear-fill" aria-hidden="true" /> ABM Usuarios
           </h3>
-          <h4 className='infoCuenta'>Gestiona tus usuarios</h4>
-          <div className='abajoDeTusNotas'>
-            En esta seccion podras gestionar la creación, eliminación y edición de todos los usuarios de la plataforma.
-          </div>
         </div>
       </div>
       {/* Búsqueda */}

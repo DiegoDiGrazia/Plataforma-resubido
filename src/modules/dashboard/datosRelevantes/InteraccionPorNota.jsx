@@ -7,9 +7,6 @@ import { setNotasMayorInteraccion } from '@/store/interaccionesPorNotaSlice';
 import { formatNumberMiles } from '@/modules/dashboard/Dashboard.jsx';
 import { Link } from 'react-router-dom';
 
-export function formatearTitulo(titulo, corte = 30) {
-    return titulo.length > corte ? titulo.slice(0, corte) + "..." : titulo;
-}
 
 export function formatearFecha(fechaStr) {
     const [anio, mes, dia] = fechaStr.split('-');

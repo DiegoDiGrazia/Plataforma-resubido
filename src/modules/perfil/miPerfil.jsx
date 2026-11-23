@@ -1,17 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { Button } from 'react-bootstrap';
-import Sidebar from '@/shared/components/sidebar/Sidebar';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 import { useSelector } from 'react-redux';
 
 const Perfil = () => {
-    const [nombre, setNombre] = useState('');
-    const [email, setEmail] = useState('');
-    const [idCliente, setIdCliente] = useState('');
-    const [conReporteWSP, setConReporteWSP] = useState('0');
-    const [conReporteEmail, setConReporteEmail] = useState('0');
     const fileInputRef = useRef(null);
     const navigate = useNavigate();
     const UsuarioActual =  useSelector((state) => state.formulario.usuario);
@@ -48,10 +41,8 @@ const Perfil = () => {
                     <div className='row miPerfilContainer'>
                         <div className='col p-0'>
                             <h3 id="saludo" className='headerTusNotas ml-0'>
-                                <img src="/images/miPerfilIcon.png" alt="Icono 1" className="icon me-2 icono_tusNotas" /> Mi Perfil
+                                <i className="bi bi-person-fill" aria-hidden="true" /> Mi Perfil
                             </h3>
-                            <h4 className='infoCuenta'>Información de la cuenta</h4>
-                            <div className='abajoDeTusNotas'> Aquí encontrarás todos los detalles de tu cuenta</div>
                         </div>
                         <div className='col boton col-auto ms-auto'>
                             <Button onClick={() => navigate('/publicarNota')} variant="secondary">

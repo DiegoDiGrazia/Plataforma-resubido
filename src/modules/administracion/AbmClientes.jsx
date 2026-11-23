@@ -41,7 +41,7 @@ const clienteVacio = {
 
 const AbmClientes
  = () => {
-  const [usuarios, setUsuarios] = useState([]);
+  const [, setUsuarios] = useState([]);
   const [planes, setPlanes] = useState([]);
   const [clientes, setClientes] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -75,7 +75,7 @@ const AbmClientes
     try {
       const datos = JSON.parse(clienteLogueado.datosFranquicia);
       return Array.isArray(datos?.cuentas_creadas) ? datos.cuentas_creadas : [];
-    } catch (err) {
+    } catch {
       return [];
     }
   }, [clienteLogueado]);
@@ -181,13 +181,8 @@ const handleSave = async () => {
       <div className='row miPerfilContainer soporteContainer'>
         <div className='col p-0'>
           <h3 id="saludo" className='headerTusNotas ml-0'>
-            <i className="icon me-2 icono_tusNotas bi bi-gear-fill" alt="Icono 1" /> Gestiona tus cuentas
+            <i className="bi bi-gear-fill" aria-hidden="true" /> ABM Cuentas
           </h3>
-          <h4 className='infoCuenta'>Gestiona tus cuentas</h4>
-          <div className='abajoDeTusNotas'>
-            En esta seccion podras gestionar la creacion, eliminacion y edicion <br />
-            de todos los cuentas de la plataforma.
-          </div>
         </div>
       </div>
       {/* Búsqueda */}

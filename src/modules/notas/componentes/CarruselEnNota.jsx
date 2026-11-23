@@ -1,13 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useSelector,useDispatch } from 'react-redux';
-import { obtenerFechaActual } from './ImagenDeParrafo';
 import { actualizarSRCDeUnHTML } from '@/shared/utils/funcionesVarias';
 import { calcularNumeroDeAtachment } from './ImagenDeParrafo';
 import { comprimirImagen } from './ImagenPrincipal';
 import { setContenidoPorIndice, setAtachment, setImagenesDeCarrusel } from '@/store/crearNotaSlice';
 import BotoneraContenido from './BotoneraContenido';
 import './Galeria.css';
-const cantidadDeAtachments = 10; // Definimos la cantidad de attachments
 
 
 const CarruselEnNota = ({indice}) => {
@@ -19,7 +17,6 @@ const CarruselEnNota = ({indice}) => {
   const carouselRef = useRef(null);
   const id_att = useSelector((state) => state.crearNota.id_att); 
   const attachments = useSelector((state) => state.crearNota.atachments);
-  const numeroDeAtachmentAUsar = calcularNumeroDeAtachment(attachments);
 
 
 

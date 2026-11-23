@@ -130,13 +130,6 @@ const AbmSitiosRelevantes = () => {
   }
 
   const limpiarURL = (texto) => {
-    
-    let valor = texto; 
-
-    valor = valor.replace(/^https?:\/\//i, '');
-    valor = valor.replace(/^www\./i, '');
-    valor = valor.split('/')[0];
-
     setNuevoSitio(texto);
   };
 
@@ -145,12 +138,8 @@ const AbmSitiosRelevantes = () => {
           <div className='row miPerfilContainer soporteContainer'>
             <div className='col p-0'>
               <h3 id="saludo" className='headerTusNotas ml-0'>
-                <i className="icon me-2 icono_tusNotas bi bi-gear-fill" alt="Icono 1" /> Gestiona tus sitios relevantes
+                <i className="bi bi-gear-fill" aria-hidden="true" /> ABM Sitios Relevantes
               </h3>
-              <h4 className='infoCuenta'>Gestiona tus sitios relevantes</h4>
-              <div className='abajoDeTusNotas'>
-                En esta seccion podrás gestionar la visualización y edición de todos los sitios relevantes de la plataforma.
-              </div>
             </div>
           </div>
           {/* Búsqueda */}

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Modal } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
 import '@/app/App.css';
@@ -26,12 +26,11 @@ const PublicarNota = () => {
     const perfilUsuario = useSelector((state) => state.formulario.usuario.perfil);
     const TOKEN = useSelector((state) => state.formulario.token);
     const imageRef = useRef(null);
-    const actual = useSelector((state) => state.crearNota);
     const [cropper, setCropper] = useState(null);
     const es_editor = useSelector((state) => state.formulario.es_editor);
     const image = useSelector((state) => state.crearNota.imagenPrincipal); // Imagen seleccionada
     const imagefeed = useSelector((state) => state.crearNota.imagenRRSS); // Imagen seleccionada  
-    const { categorias, categoriasActivas, setCategoriasActivas } = useCategorias(TOKEN);
+    const { categorias, categoriasActivas } = useCategorias(TOKEN);
     const [isClickedRecorte, setIsClickedRecorte] = useState(false);
     const comentario = useSelector((state) => state.crearNota.comentarios); // Comentario de la nota
     const con_distribucion = useSelector((state) => state.crearNota.con_distribucion); // Comentario de la nota
@@ -39,7 +38,6 @@ const PublicarNota = () => {
 
     const permisoPublicarNota = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Editorial: Publicacion") || false);
     const permisoBorrador = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Editorial: Borrador") || false);
-    const permisoRevision = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Editorial: Revision") || false);
     const permisoDatosCreacion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Editorial: Datos creacion") || false);
     const permisoTutorialCreacion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Editorial: Tutoriales creacion") || false);
 

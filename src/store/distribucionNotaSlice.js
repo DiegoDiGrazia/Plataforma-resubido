@@ -40,14 +40,12 @@ const distribucionNotaSlice = createSlice({
     setDistribucionYtLink: (state, action) => { state.yt_link = action.payload; },
     setDistribucionSearchTitulo: (state, action) => { state.search_titulo = action.payload; },
     setDistribucionSearchDescripcion: (state, action) => { state.search_descripcion = action.payload; },
-    setDistribucionBannerData: (state, action) => { state.banner_data = action.payload; },
     setDistribucionDiferida: (state, action) => { state.diferida = action.payload; },
     setDistribucionFechaDiferida: (state, action) => { state.fecha_diferida = action.payload; },
     setDistribucionHoraDiferida: (state, action) => { state.hora_diferida = action.payload; },
     setDistribucionIdNotaCargada: (state, action) => { state.id_nota_cargada = action.payload; },
     // Reemplaza todo el estado (al restaurar un borrador local)
     setEstadoDistribucion: (state, action) => ({ ...initialState, ...action.payload }),
-    resetDistribucionNota: () => initialState,
   },
   extraReducers: (builder) => {
     // Al resetear la nota (nueva nota, volver al listado) se limpia también la distribución
@@ -59,9 +57,8 @@ export const {
   setDistribucionFechaVencimiento, setDistribucionComentarios, setDistribucionMetaTitulo,
   setDistribucionMetaEngagement, setDistribucionXDescripcion, setDistribucionYtTitulo,
   setDistribucionYtDescripcion, setDistribucionYtLink, setDistribucionSearchTitulo,
-  setDistribucionSearchDescripcion, setDistribucionBannerData, setDistribucionDiferida,
-  setDistribucionFechaDiferida, setDistribucionHoraDiferida, resetDistribucionNota,
-  setDistribucionIdNotaCargada, setEstadoDistribucion,
+  setDistribucionSearchDescripcion,setDistribucionDiferida,
+  setDistribucionFechaDiferida, setDistribucionHoraDiferida,  setDistribucionIdNotaCargada, setEstadoDistribucion,
 } = distribucionNotaSlice.actions;
 
 export default distribucionNotaSlice.reducer;

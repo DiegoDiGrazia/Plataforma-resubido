@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import 'cropperjs/dist/cropper.css';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
-import { BajarContenidoPorIndice, setAttachmentArchivoToNull, setAttachmentToNull, setContenidoPorIndice, setTituloNota, SubirContenidoPorIndice } from '@/store/crearNotaSlice';
+import { BajarContenidoPorIndice, setAttachmentArchivoToNull, setAttachmentToNull, SubirContenidoPorIndice } from '@/store/crearNotaSlice';
 import { Button } from 'react-bootstrap';
 import { DeleteContenidoPorIndice } from '@/store/crearNotaSlice';
 

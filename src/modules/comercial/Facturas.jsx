@@ -102,7 +102,7 @@ const Facturas = () =>  {
         try {
             const datos = clienteLogueado.datosFranquicia ? JSON.parse(clienteLogueado.datosFranquicia) : null;
             cuentasCreadas = Array.isArray(datos?.cuentas_creadas) ? datos.cuentas_creadas : [];
-        } catch (err) {
+        } catch {
             cuentasCreadas = [];
         }
         return [clienteLogueado.id, ...cuentasCreadas.map((cuenta) => cuenta.id)];
@@ -140,7 +140,7 @@ const Facturas = () =>  {
             setMesSeleccionado(f.mes ? `${String(f.mes).slice(0, 4)}-${String(f.mes).slice(4)}` : "");
             setFechaPagoSeleccionada(f.fecha_pago);
           },
-          mostrar: (f) => permisoEdicion,
+          mostrar: () => permisoEdicion,
           modalTarget: "#modalEditarFactura"
         },
 
@@ -176,7 +176,7 @@ const Facturas = () =>  {
             })
             .finally(() => setCargandoArchivos(false));
           },
-          mostrar: (f) => permisoEdicion,
+          mostrar: () => permisoEdicion,
           modalTarget: "#modalArchivos",
         },
 
@@ -205,7 +205,7 @@ const Facturas = () =>  {
             })
             .finally(() => setCargandoComentarios(false));
           },
-          mostrar: (f) => permisoEdicion,
+          mostrar: () => permisoEdicion,
           modalTarget: "#modalComentarios",  
         },
 
@@ -504,12 +504,8 @@ const Facturas = () =>  {
                 <div className='col p-0'>
                     {/* Saludo */}
                     <h3 id="saludo" className='headerTusNotas ml-0'>
-                        <i className="bi bi-bag-fill" aria-hidden="true" /> Gestiona tus Facturas
+                        <i className="bi bi-bag-fill" aria-hidden="true" /> Administración de Facturas
                     </h3>
-                    <h4 className='infoCuenta'>Gestiona tus Facturas</h4>
-                    <div className='abajoDeTusNotas'>
-                        En esta sección podrás gestionar las facturas de los contratos de tus clientes.
-                    </div>
                 </div>
                 <div className='facturas__botones'>
                     {permisoAlta && (

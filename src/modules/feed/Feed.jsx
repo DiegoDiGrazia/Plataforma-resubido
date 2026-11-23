@@ -279,9 +279,8 @@ const AbmFeed = () => {
       <div className="row miPerfilContainer soporteContainer">
         <div className="col p-0">
           <h3 id="saludo" className="headerTusNotas ml-0">
-            <i className="bi bi-rss-fill icon me-2 icono_tusNotas" /> Gestión de Feeds
+            <i className="bi bi-rss-fill" aria-hidden="true" /> Gestión de Feeds
           </h3>
-          <h4 className="infoCuenta">Administrá los feeds curados de {esClienteConFeed ? 'tu cuenta' : 'las cuentas '}</h4>
         </div>
       </div>
 

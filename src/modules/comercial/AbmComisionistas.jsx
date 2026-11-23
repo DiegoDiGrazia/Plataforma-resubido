@@ -15,7 +15,7 @@ const comisionistaVacio = {
 
 const AbmComisionistas
  = () => {
-  const [planes, setPlanes] = useState([]);
+  const [planes] = useState([]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [selectedComisionista, setselectedComisionista] = useState(null);
@@ -114,12 +114,8 @@ const handleSave = () => {
       <div className='row miPerfilContainer soporteContainer'>
         <div className='col p-0'>
           <h3 id="saludo" className='headerTusNotas ml-0'>
-            <i className="icon me-2 icono_tusNotas bi bi-bag-fill" alt="Icono 1" /> Gestiona Agentes Comerciales
+            <i className="bi bi-bag-fill" aria-hidden="true" /> ABM Agentes Comerciales
           </h3>
-          <h4 className='infoCuenta'>Gestiona tus agentes comerciales</h4>
-          <div className='abajoDeTusNotas'>
-            En esta seccion podras gestionar los agentes comerciales de la plataforma.
-          </div>
         </div>
       </div>
       {/* Búsqueda */}

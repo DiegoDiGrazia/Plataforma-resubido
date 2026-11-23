@@ -1,5 +1,5 @@
 // ModalConInputTexto.jsx
-import React, { useState } from "react";
+import React from "react";
 export default function ModalConInputTexto({ show, titulo, actualTexto, setTexto, AlGuardar, onClose }) {
   if (!show) return null; // si no está visible, no se renderiza
 

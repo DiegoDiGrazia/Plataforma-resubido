@@ -134,13 +134,8 @@ const handleSave = () => {
       <div className='row miPerfilContainer soporteContainer'>
         <div className='col p-0'>
           <h3 id="saludo" className='headerTusNotas ml-0'>
-            <i className="icon me-2 icono_tusNotas bi bi-bag-fill" alt="Icono 1" /> Gestiona tus Planes
+            <i className="bi bi-bag-fill" aria-hidden="true" /> ABM Planes
           </h3>
-          <h4 className='infoCuenta'>Gestiona tus Planes</h4>
-          <div className='abajoDeTusNotas'>
-            En esta seccion podras gestionar la creacion, eliminacion y edicion <br />
-            de todos los planes de la plataforma.
-          </div>
         </div>
       </div>
       {/* Búsqueda */}

@@ -90,16 +90,6 @@ export const guardarPersonalizacion = async (token, id_cliente, anio, mes, body,
   return res.json();
 };
 
-// Modifica solo los campos enviados (404 si no existe)
-export const modificarPersonalizacion = async (token, id_cliente, anio, mes, body, id_noti, nombre_sitio) => {
-  const res = await fetch(urlPersonalizacion(id_cliente, anio, mes, id_noti, nombre_sitio), {
-    method: "PATCH",
-    headers: jsonHeaders(token),
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) await lanzarError(res);
-  return res.json();
-};
 
 // Borra la personalizacion -> el reporte vuelve a los valores reales
 export const eliminarPersonalizacion = async (token, id_cliente, anio, mes, id_noti, nombre_sitio) => {

@@ -28,11 +28,6 @@ export const obtenerFeedsPorCliente = (token, clientId) =>
 
   }).then((r) => r.json());
 
-export const obtenerFeed = (token, feedId) =>
-  fetch(`${BASE_URL}/feed/${feedId}`, {
-    headers: headers(token),
-
-  }).then((r) => r.json());
 
 export const actualizarFeed = (token, feedId, data) =>
   fetch(`${BASE_URL}/feed/${feedId}`, {
@@ -127,13 +122,6 @@ export const obtenerClientes = (token) =>
     headers: headers(token),
   }).then((r) => r.json());
 
-export const obtenerCliente = async (token, id_cliente) => {
-  const response = await fetch(`${BASE_URL}/clientes/${id_cliente}`, {
-    headers: headers(token),
-  });
-  if (!response.ok) return null;
-  return response.json();
-};
 
 export const crearCliente = (token, data) =>
   fetch(`${BASE_URL}/clientes`, {
@@ -149,11 +137,6 @@ export const actualizarCliente = (token, id_cliente, data) =>
     body: JSON.stringify(data),
   }).then((r) => r.json());
 
-export const eliminarCliente = (token, id_cliente) =>
-  fetch(`${BASE_URL}/clientes/${id_cliente}`, {
-    method: "DELETE",
-    headers: headers(token),
-  });
 
 export const editarComentarioCliente = (token, id_cliente, comentario) =>
   fetch(`${BASE_URL}/monitor/comentario/${id_cliente}`, {

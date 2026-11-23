@@ -31,20 +31,11 @@ const formularioSlice = createSlice({
         updateContratoConFacturacionAbierta: (state, action) => {
             state.contratoConFacturacionAbierta = action.payload;  // Asignación directa para cadenas de texto
         },
-        updateIdUsuario: (state, action) => {
-            state.email = action.payload;  // Asignación directa para cadenas de texto
-        },
-        updateContraseña: (state, action) => {
-            state.contraseña = action.payload;  // Asignación directa para cadenas de texto
-        },
         updateToken: (state, action) => {
             state.token = action.payload;  // Asignación directa para cadenas de texto
         },
         updateStatus: (state, action) => {
             state.status = action.payload;  // Asignación directa para cadenas de texto
-        },
-        updateCodigoRecuperacion: (state, action) => {
-            state.codigoRecuperacion = action.payload;  // Asignación directa para cadenas de texto
         },
         updateCliente: (state, action) => {
             state.cliente = action.payload;  // Asignación directa para cadenas de texto
@@ -59,9 +50,6 @@ const formularioSlice = createSlice({
         },
         updateUsuario: (state, action) =>{
             state.usuario = action.payload;
-        },
-        updatePaisUsuario: (state, action) => {
-            state.paisUsuario = action.payload;  // Asignación directa para cadenas de texto
         },
         updateProvinciaUsuario: (state, action) => {
             state.provinciaUsuario = action.payload;  // Asignación directa para cadenas de texto
@@ -104,7 +92,7 @@ const formularioSlice = createSlice({
     }
 });
 
-export const { updateEmail,updateContratoConFacturacionAbierta, updateContraseña,updateEsEditor, updateCodigoRecuperacion, updateMunicipioUsuario,
-    updatePaisUsuario,updatePaginasDelUsuario, updateNotaFreemiumDistribucion, updateProvinciaUsuario, updateGeo,
-    updateToken, updateCliente, updateIdCliente, setTodosLosClientes,updateUsuario, updateActivarTodosLosClientes,updateIdUsuario, resetFormulario } = formularioSlice.actions;
+export const { updateEmail,updateContratoConFacturacionAbierta,updateEsEditor,updateMunicipioUsuario,
+updatePaginasDelUsuario, updateNotaFreemiumDistribucion, updateProvinciaUsuario, updateGeo,
+    updateToken, updateCliente, updateIdCliente, setTodosLosClientes,updateUsuario, updateActivarTodosLosClientes,resetFormulario } = formularioSlice.actions;
 export default formularioSlice.reducer;

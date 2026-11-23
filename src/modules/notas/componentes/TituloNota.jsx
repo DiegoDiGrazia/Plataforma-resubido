@@ -5,7 +5,7 @@ import { setEngagement, setTituloNota, setUrl } from '@/store/crearNotaSlice';
 import BotonRegenerarDataConIa from '@/modules/notas/ia/BotonRegenerarTextoConIa';
 import { normaliarAUrl } from '@/shared/utils/normalizarUrl';
 
-const TituloNota = ({ indice }) => {
+const TituloNota = () => {
     const tituloRef = useRef(null);
     const tituloGlobalNota = useSelector((state) => state.crearNota.tituloNota);
     const dispatch = useDispatch();

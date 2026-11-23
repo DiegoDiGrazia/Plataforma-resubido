@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Spinner } from 'react-bootstrap';
+import { Spinner } from 'react-bootstrap';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import "./Barplot.css";
-import { setImpresionesTotalesInstagram, setImpresionesTotalesGoogle, setImpresionesTotalesFacebook, 
-    setUsuariosTotales, setUsuariosTotalesGoogle, setUsuariosTotalesMeta, setFechas } from '@/store/barplotSlice.js';
-import axios from 'axios';
-import { formatNumberMiles } from '@/modules/dashboard/Dashboard.jsx';
 
 
 
@@ -23,11 +19,7 @@ export function seleccionPorFiltro(filtro) {
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const Barplot_Carga = () => {
-    const dispatch = useDispatch();
-    const token = useSelector((state) => state.formulario.token);
-    const fechas = useSelector((state) => state.barplot.fechas);
     const FiltroActual = useSelector((state) => state.dashboard.filtro);
-    const nombreCliente = useSelector((state) => state.formulario.cliente);
     const [simulatedData, setSimulatedData] = useState(generateRandomData()); // Estado para los datos animados
 
     useEffect(() => {

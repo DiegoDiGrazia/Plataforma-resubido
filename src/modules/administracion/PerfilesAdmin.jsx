@@ -162,12 +162,8 @@ const PerfilesAdmin = () => {
       <div className='row miPerfilContainer soporteContainer'>
         <div className='col p-0'>
           <h3 id="saludo" className='headerTusNotas ml-0'>
-            <i className="icon me-2 icono_tusNotas bi bi-gear-fill" alt="Icono" /> Gestiona tus perfiles
+            <i className="bi bi-gear-fill" aria-hidden="true" /> ABM Perfiles
           </h3>
-          <h4 className='infoCuenta'>Gestiona tus perfiles</h4>
-          <div className='abajoDeTusNotas'>
-            En esta sección podrás gestionar la creación, eliminación y edición de todos los perfiles de la plataforma.
-          </div>
         </div>
       </div>
       

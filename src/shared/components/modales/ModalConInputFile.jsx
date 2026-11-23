@@ -1,11 +1,10 @@
 // ModalConInputFile.jsx
 import React, { useState } from "react";
-import FormCheckInput from "react-bootstrap/esm/FormCheckInput";
 import Checkbox from "@/modules/notas/editor/checkbox";
 import InputFecha from "@/shared/components/form/InputFecha";
 
 
-export default function ModalConInputFile({ show, titulo, actualFile, setFile, AlGuardar, onClose, youtube = null, fecha, setFecha }) {
+export default function ModalConInputFile({ show, titulo, setFile, AlGuardar, onClose, fecha, setFecha }) {
   const [distribuir, setDistribuir] = useState(false)
 
   if (!show) return null; // si no está visible, no se renderiza

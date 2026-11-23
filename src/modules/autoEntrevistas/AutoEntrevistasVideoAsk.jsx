@@ -1,5 +1,4 @@
 import React, { useState, useRef } from 'react';
-import Sidebar from '@/shared/components/sidebar/Sidebar';
 
 const videos = [
     { title: "Vecinos", description: "Desde Noticias d queremos conocer más sobre tu historia y saber por qué crees que este anuncio es tan importante para vos y la comunidad ¡Contanos!", src: "https://www.videoask.com/fn8g87lo5" },
@@ -63,13 +62,8 @@ const AutoEntrevistasVideoAsk = () => {
             <div className="row miPerfilContainer soporteContainer">
                 <div className="col p-0">
                     <h3 id="saludo" className="headerTusNotas ml-0">
-                        <img src="/images/auto_entrevistas_icon.png" alt="Icono 1" className="icon me-2 icono_tusNotas" /> Autoentrevistas
+                        <i className="bi bi-mic-fill" aria-hidden="true" /> Autoentrevistas
                     </h3>
-                    <h4 className="infoCuenta">Entrevistas</h4>
-                    <div className="abajoDeTusNotas" style={{ maxWidth: "600px" }}>
-                        Responde las preguntas en video de forma sencilla y rápida. Solo sigue las instrucciones en pantalla y graba tus respuestas.  
-                        ¡Tómate tu tiempo y muestra lo mejor de ti!
-                    </div>
                 </div>
             </div>
 

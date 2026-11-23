@@ -5,7 +5,6 @@ import ModalMensaje from '@/shared/components/modales/ModalMensaje';
 import { obtenerContratos, obtenerPlanesMarketing, obtenerComisionistas, cargarArchivo } from '@/api/apisUsuarios'; // Importa la función para obtener usuarios
 import { obtenerClientes } from '@/api/apis';
 import './AbmContratos.css';
-import DropdawnSiNo from './DropdownSiNo'
 import SelectorConBuscador from '@/shared/components/form/SelectorConBuscador';
 import InputFecha from '@/shared/components/form/InputFecha';
 import InputNumerico from '@/shared/components/form/InputNumerico';
@@ -297,7 +296,7 @@ const AbmContratos
         try {
           const datos = clienteLogueado.datosFranquicia ? JSON.parse(clienteLogueado.datosFranquicia) : null;
           cuentasCreadas = Array.isArray(datos?.cuentas_creadas) ? datos.cuentas_creadas : [];
-        } catch (err) {
+        } catch {
           cuentasCreadas = [];
         }
         const idsPermitidos = [clienteLogueado.id, ...cuentasCreadas.map((cuenta) => cuenta.id)];
@@ -578,13 +577,8 @@ const handleSave = () => {
       <div className='row miPerfilContainer soporteContainer'>
         <div className='col p-0'>
           <h3 id="saludo" className='headerTusNotas ml-0'>
-            <i className="icon me-2 icono_tusNotas bi bi-bag-fill" alt="Icono 1" /> Gestiona tus Contratos
+            <i className="bi bi-bag-fill" aria-hidden="true" /> ABM Contratos
           </h3>
-          <h4 className='infoCuenta'>Gestiona tus Contratos</h4>
-          <div className='abajoDeTusNotas'>
-            En esta seccion podras gestionar la creacion, eliminacion y edicion <br />
-            de todos los contratos de la plataforma.
-          </div>
         </div>
       </div>
       {/* Búsqueda */}
@@ -815,7 +809,7 @@ const handleSave = () => {
                         ...datosFacturacionDelCliente(cliente.id, prev.id)
                       }));
                     }}
-                    onClear={(cliente) => {
+                    onClear={() => {
                       setClienteSeleccionado('');
                       setFormData(prev => ({
                         ...prev,

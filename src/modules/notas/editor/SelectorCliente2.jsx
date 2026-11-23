@@ -1,14 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import 'cropperjs/dist/cropper.css';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
-import { Button } from 'react-bootstrap';
 import { setTodosLosClientes } from '@/store/dashboardSlice';
 import axios from 'axios';
-import { updateActivarTodosLosClientes, updateCliente, updateIdCliente } from '@/store/formularioSlice';
 import '@/modules/dashboard/Dashboard.css';
-import { Navigate, useNavigate } from 'react-router-dom';
-import { useCallback } from 'react';
 import { setClienteNota } from '@/store/crearNotaSlice';
 
 
@@ -20,7 +16,6 @@ const SelectorCliente2= () => {
     const nombreCliente = useSelector((state) => state.crearNota.cliente)
     const TOKEN = useSelector((state) => state.formulario.token)
     const todosLosClientes = useSelector((state) => state.dashboard.todosLosClientes) || []
-    const navigate = useNavigate();
     
         const dispatch = useDispatch(); // Agrega esto al inicio del componente
 

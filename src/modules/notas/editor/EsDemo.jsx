@@ -9,7 +9,7 @@ import { setDemo } from '@/store/crearNotaSlice';
 
 
 
-const EsDemo = ({ indice }) => {
+const EsDemo = () => {
 
     const isCheckedDemo = useSelector((state) => state.crearNota.es_demo)
     const demo = useSelector((state) => state.crearNota.demo)

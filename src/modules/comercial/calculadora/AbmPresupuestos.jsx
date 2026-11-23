@@ -59,7 +59,7 @@ const AbmPresupuestos = ({ onEditar }) => {
             toastExito("Presupuesto eliminado correctamente");
             setPresupuestos(prev => prev.filter(p => p.presupuesto_id !== presupuestoAEliminar.presupuesto_id));
             setPresupuestoAEliminar(null);
-        } catch (error) {
+        } catch {
             toastError("No se pudo eliminar el presupuesto");
         } finally {
             setEliminando(false);

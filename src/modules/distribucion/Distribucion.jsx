@@ -96,7 +96,7 @@ const notaSinNingunaDistribucion = (nota) =>
   PLATAFORMAS.every(plataforma => nota[plataforma.campoPrimerDato] == null);
 
 const filtrarClientesSegunPendientes = (clientesObj, pendientes) => {
-  const clientesFiltradosEntries = Object.entries(clientesObj).filter(([nombre, datos]) => {
+  const clientesFiltradosEntries = Object.entries(clientesObj).filter(([, datos]) => {
     if (!datos.notas || datos.notas.length === 0) return false;
     if (pendientes === 'Todos los casos') return true;
 
@@ -254,7 +254,6 @@ const DistribucionAdmin = () => {
   const [contratoSeleccionado, setContratoSeleccionado] = useState(null);
 
   const permisoGuardarComentario = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Distribucion: Guardar comentario") || false);
-  const permisoMarcarDistribucion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Distribucion: Marcar distribucion") || false);
 
   const obtenerTermId = async (nota) => {
     if (termIdsPorGeneracion[nota.id_generacion]) {
@@ -306,17 +305,6 @@ const DistribucionAdmin = () => {
       return;
     }
     window.open(`https://www.noticiasd.com/nota/${termId}`, '_blank');
-  };
-
-  const copiarIdDeNota = async (nota) => {
-    const termId = await obtenerTermId(nota);
-    if (termId == null) {
-      alert('No se pudo obtener el id de la nota.');
-      return;
-    }
-    navigator.clipboard.writeText(termId)
-      .then(() => alert(`Se a copiado con exito: \n ${termId} ✅`))
-      .catch(err => console.error('Error al copiar: ', err));
   };
 
   const mostrarContrato = (nota) => {
@@ -508,7 +496,7 @@ const nombresClientesPermitidos = useMemo(() => {
   try {
     const datos = clienteLogueado.datosFranquicia ? JSON.parse(clienteLogueado.datosFranquicia) : null;
     cuentasCreadas = Array.isArray(datos?.cuentas_creadas) ? datos.cuentas_creadas : [];
-  } catch (err) {
+  } catch {
     cuentasCreadas = [];
   }
   const idsPermitidos = [clienteLogueado.id, ...cuentasCreadas.map((cuenta) => cuenta.id)];
@@ -528,7 +516,6 @@ const filteredClientes = useMemo(() => {
   );
 }, [search, notasGeneracionesAgrupadas, nombresClientesPermitidos]);
 
-const totalPages = Math.ceil(filteredClientes.length / itemsPerPage);
 
 // Listas planas del arbol geo para buscar la jurisdiccion de cada nota
 const geo = useMemo(() => {
@@ -551,22 +538,14 @@ useEffect(() => {
   console.log('notasGeneracionesAgrupadas filtradas: ', notasGeneracionesAgrupadas);
 }, [pendientes]);
 
-const goToPage = (newPage) => {
-  if (newPage < 1 || newPage > totalPages) return;
-  setPage(newPage);
-};
 
   return (
     <div className="content flex-grow-1 crearNotaGlobal distribucion">
       <div className='row miPerfilContainer soporteContainer'>
         <div className='col p-0'>
           <h3 id="saludo" className='headerTusNotas ml-0'>
-             Gestiona tu contenido
+              <i className="bi bi-clipboard2-check-fill" aria-hidden="true" /> Panel de Distribución
           </h3>
-          <h4 className='infoCuenta'>Distribucion</h4>
-          <div className='abajoDeTusNotas'>
-            En esta seccion podras gestionar la distribucion de tu contenido <br />
-          </div>
         </div>
       </div>
       {/* Búsqueda */}

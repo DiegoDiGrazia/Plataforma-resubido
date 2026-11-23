@@ -1,14 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import 'cropperjs/dist/cropper.css';
 import Etiquetas from './Etiquetas';
 import ArbolDistribucion from '@/shared/components/ArbolDistribucion';
 import SelectorTipoContenido from './SelectorContenido';
-import TextareaWithCounter from './textAreaConContador';
 import SelectorAutor from './SelectorAutor';
 import "./colEditorial.css"
 import { useDispatch, useSelector } from 'react-redux';
 import { setPais, setProvincia, setMunicipio } from '@/store/crearNotaSlice';
-import { setDistribucionProioritaria,setNoHome, setFechaVencimiento, setFechaPublicacion, setUrl} from '@/store/crearNotaSlice';
+import { setDistribucionProioritaria,setNoHome, setFechaPublicacion, setUrl} from '@/store/crearNotaSlice';
 import {
     setDistribucionFechaVencimiento,
     setDistribucionComentarios,
@@ -28,7 +27,6 @@ import {
 } from '@/store/distribucionNotaSlice';
 import SelectorCliente2 from './SelectorCliente2';
 import EsDemo from './EsDemo';
-import { replace } from 'react-router-dom';
 import { obtenerDistribucionGeneracion } from '@/api/apis';
 import DistribucionGeneracionFields from './DistribucionGeneracionFields';
 import { normaliarAUrl } from '@/shared/utils/normalizarUrl';
@@ -36,10 +34,9 @@ import { extraerDiferidaDesdeUltimaActualizacion } from '@/shared/utils/distribu
 
 
 
-const ColumnaEditorial = ({ indice }) => {
+const ColumnaEditorial = () => {
     const isCheckedDistribucionPrioritaria = useSelector((state) => state.crearNota.distribucion_prioritaria)
     const isCheckedNoHome = useSelector((state) => state.crearNota.es_home)
-    const fechaVence = useSelector((state) => state.crearNota.f_vence)
     const fechaPublicacion = useSelector((state) => state.crearNota.f_pub)
     const provincia = useSelector((state) => state.crearNota.provincia);
     const municipio = useSelector((state) => state.crearNota.municipio);
@@ -126,9 +123,6 @@ const ColumnaEditorial = ({ indice }) => {
 
 
     const dispatch = useDispatch();
-    const dispacharfechaVencimiento = (e) => {
-      dispatch(setFechaVencimiento(e.target.value)); 
-    };
     const dispacharfechaPublicacion = (e) => {
         dispatch(setFechaPublicacion(e.target.value)); 
     };

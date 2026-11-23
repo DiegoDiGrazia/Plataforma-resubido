@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 
 
 const EpigrafeImagenPpal = () => { 
-    const [textoEpigrafe, setTextoEpigrafe] = useState("");
+    const [textoEpigrafe] = useState("");
     const epigrafeEnStore = useSelector((state) => state.crearNota.epigrafeImagenPpal);
     const textareaRef = useRef(null);
     const dispatch = useDispatch();

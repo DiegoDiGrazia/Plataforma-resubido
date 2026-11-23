@@ -9,12 +9,10 @@ import '@/styles/legacy.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ArchivoProvider } from "@/shared/context/archivoContext";
 import LayoutConSidebar from './LayoutConSidebar'; // Ajustá si está en otra carpeta
-import Administrador from '@/modules/administracion/Administrador';
 import UsuariosAdmin from '@/modules/administracion/UsuariosAdmin';
 import PerfilesAdmin from '@/modules/administracion/PerfilesAdmin';
 import DistribucionAdmin from '@/modules/distribucion/Distribucion';
 import NotaFreemiumDistribucion from '@/modules/notas/freemium/NotaFreemiumDistribucion';
-import Comercial from '@/modules/comercial/Comercial';
 import AbmPlanes from '@/modules/comercial/AbmPlanes';
 import AbmComisionistas from '@/modules/comercial/AbmComisionistas';
 import AbmContratos from '@/modules/comercial/AbmContratos';
@@ -62,7 +60,6 @@ function App() {
               {/* Rutas viejas: redirigen a la nueva con la nota que esté en memoria */}
               <Route path="/crearNota" element={<RedirigirEditorLegacy />} />
               <Route path="/publicarNota" element={<RedirigirEditorLegacy publicar />} />
-              <Route path="/administrador" element={<Administrador />} />
               <Route path="/usuarios" element={<UsuariosAdmin />} />
               <Route path="/perfiles" element={<PerfilesAdmin />} />
               <Route path="/distribucion" element={<DistribucionAdmin />} />
@@ -83,7 +80,6 @@ function App() {
               
 
               {/* COMERCIAL */}
-              <Route path="/comercial" element={<Comercial />} />
               <Route path="/comercial/abm-presupuestos" element={<GestionPresupuestos />} />
               <Route path="/comercial/abm-planes" element={<AbmPlanes />} />
               <Route path="/comercial/abm-comisionistas" element={<AbmComisionistas />} />

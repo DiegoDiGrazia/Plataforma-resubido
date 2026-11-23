@@ -1,8 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import 'cropperjs/dist/cropper.css';
 import { useSelector } from 'react-redux';
-import { Button } from 'react-bootstrap';
-import { useDispatch } from 'react-redux';
 
 import BotoneraContenido from './BotoneraContenido';
 
@@ -14,7 +12,6 @@ const YoutubeNota= ({ indice }) => {
         console.log(imagen[0], "Asdasd")
         return null; // Manejo de casos donde no hay imagen
     }
-    const dispatch = useDispatch();
 
     return (
            <span className="spanContainer mt-3" style={{height: "400px", width: "750px"}}>

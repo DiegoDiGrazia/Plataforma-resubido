@@ -106,7 +106,7 @@ const EditorNota = () => {
     setEstado('listo');
   };
   const descartar = async () => {
-    try { await borrarBorrador(clave); } catch (e) { /* sin borrador que borrar */ }
+    try { await borrarBorrador(clave); } catch { /* sin borrador que borrar */ }
     setBorradorPendiente(null);
     setEstado('listo');
   };

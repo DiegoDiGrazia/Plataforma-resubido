@@ -9,7 +9,6 @@ import dashboardSlice from "./dashboardSlice.js";
 import formularioSlice from "./formularioSlice.js";
 import barplotSlice from "./barplotSlice.js";
 import interaccionesPorNotaSlice from "./interaccionesPorNotaSlice.js";
-import notasSlice from "./notasSlice.js";
 import crearNotaSlice from "./crearNotaSlice.js";
 import distribucionNotaSlice from "./distribucionNotaSlice.js";
 import cargadoSlice from "./cargadosSlice.js";
@@ -21,7 +20,6 @@ const rootReducer = combineReducers({
   barplot: barplotSlice,
   dashboard: dashboardSlice,
   interaccionesPorNota: interaccionesPorNotaSlice,
-  notas: notasSlice,
   crearNota: crearNotaSlice,
   distribucionNota: distribucionNotaSlice,
   cargado: cargadoSlice,
@@ -70,12 +68,17 @@ const migraciones = {
     }
     return resto;
   },
+  // v4: se elimina el slice `notas` (nadie lo leía ni lo escribía)
+  4: (state) => {
+    const { notas, ...resto } = state || {}; // eslint-disable-line no-unused-vars
+    return resto;
+  },
 };
 
 // Configuración de Redux Persist
 const persistConfig = {
   key: "root",
-  version: 3,
+  version: 4,
   // La nota en edición vive en IndexedDB, un borrador por nota (ver modules/notas/EditorNota.jsx)
   blacklist: ["crearNota", "distribucionNota"],
   storage, // esto usa localStorage en web

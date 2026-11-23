@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Modal } from 'react-bootstrap';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { clickearEnPublicarNota } from '@/shared/utils/publicarNotaHelper';
 import { useNavigate } from 'react-router-dom';
 
@@ -11,7 +11,6 @@ const BotonEnGenerarVistaPrevia = ({ status }) => {
     const [idPreview, setidPreview] = useState(null);
 
     const navigate = useNavigate();
-    const dispatch = useDispatch();
 
     // Obtener los datos necesarios desde el estado global
     const TOKEN = useSelector((state) => state.formulario.token);
@@ -37,7 +36,6 @@ const BotonEnGenerarVistaPrevia = ({ status }) => {
     const pais = useSelector((state) => state.crearNota.pais);
     const epigrafeImagenPpal = useSelector((state) => state.crearNota.epigrafeImagenPpal);
     const id_att = useSelector((state) => state.crearNota.id_att);
-    const clienteActual = useSelector((state) => state.formulario.cliente);
     const clienteDeLaNota = useSelector((state) => state.crearNota.cliente)
     const cliente = clienteDeLaNota;
 
@@ -55,7 +53,7 @@ const BotonEnGenerarVistaPrevia = ({ status }) => {
 
     
     const atachmentsValidos = Object.entries(attachments)
-        .filter(([key, value]) => value !== null)
+        .filter(([, value]) => value !== null)
         .reduce((obj, [key, value]) => {
             obj[key] = value;
             return obj;

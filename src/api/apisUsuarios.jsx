@@ -65,15 +65,7 @@ export const obtenerClientes = (token) =>
   fetchData("https://panel.serviciosd.com/app_get_contratos", token, {
   });
 
-export const eliminarPaginaDelPerfil = (token, id_perfil, id_pagina) =>
-  fetchData("https://panel.serviciosd.com/app_acceso_eliminar", token, {
-    id_perfil, id_pagina
-  });
 
-export const agregarPaginaDelPerfil = (token, id_perfil, id_pagina) =>
-  fetchData("https://panel.serviciosd.com/app_acceso_agregar", token, {
-    id_perfil, id_pagina
-});
 
 export const obtenerNotasDeGeneraciones = (token, cliente = '', desde, hasta, 
                                             categoria, limit, offset, titulo, pais, vencimiento_desde = '', vencimiento_hasta = '') =>
@@ -87,24 +79,8 @@ export const obtenerPlanesMarketing = (token, desde, hasta) =>
     desde, hasta
 });
 
-export const setearComentarioANota = (token, nota) =>
-  fetchData("https://panel.serviciosd.com/app_setear_dato_meta_360", token, {
-    id_generacion: nota.id,
-    comentarios: nota.comentarios
-  });
 
-  export const setearMontoDVoMeta = (token, nota, primer_dato_en_meta = null, primer_dato_en_360 = null) =>
-  fetchData("https://panel.serviciosd.com/app_setear_dato_meta_360", token, {
-    id_generacion: nota.id,
-    primer_dato_en_meta, 
-    primer_dato_en_360
-  });
 
-//guardar_posicion_iframes
-export const guardar_dato_en_banner_data = (token, id, datos) =>
-  fetchData("https://reporte.noticiasd.com/api/guardar_posicion_creativos", token, {
-    id, datos
-});
 
 export const obtenerPoblacion = (token, division, id) =>
   fetchData("https://panel.serviciosd.com/app_get_estimacion", token, {
@@ -134,12 +110,6 @@ export const obtenerConsolidacionCliente = (token, id_cliente) =>
       division, id, id_usuario, usuarios, id_cliente, id_noti, monto_dv360, monto_meta, fecha_fin, fecha_inicio, comentarios
   });
 
-  export const editar_o_crear_cliente = (token, id, name,   
-      authors, provincia_cliente, municipio_cliente, pais_cliente, tipo_cliente, juridisccion_cliente, muestra_consumo, id_plan) =>
-      console.log('token', token, 'id', id, 'name', name, 
-      'authors', authors, 'provincia_cliente', provincia_cliente, 'municipio_cliente', municipio_cliente, 
-      'pais_cliente', pais_cliente, 'tipo_cliente', tipo_cliente, 'juridisccion_cliente', juridisccion_cliente, 
-      'muestra_consumo', muestra_consumo, 'id_plan', id_plan);
 
 export const obtenerTextoRegeneradoConIa = (token, term_id, endpoint) =>
   fetchDataDevolviendoMensaje("https://panel.serviciosd.com/" + endpoint, token, {
@@ -169,11 +139,7 @@ export const agregarSitioPaises = (token, pais_id, sitio) =>
 export const agregarSitioProvincias = (token, provincia_id, sitio) =>
   fetchData("https://panel.serviciosd.com/app_agregar_m_sitios_provincias", token, {provincia_id, sitio});
 
-export const eliminarSitiosPaises = (token, pais_id, id_sitio) =>
-  fetchData("https://panel.serviciosd.com/app_eliminar_m_sitios_paises", token, {pais_id, id_sitio});
 
-export const eliminarSitiosProvincias = (token, provincia_id, id_sitio) =>
-  fetchData("https://panel.serviciosd.com/app_eliminar_m_sitios_provincias", token, {provincia_id, id_sitio});
 
 export const editarSitio = (token, id, sitio, imagen) => 
 fetchData ("https://panel.serviciosd.com/app_sitio_edit", token, {id, sitio, imagen});

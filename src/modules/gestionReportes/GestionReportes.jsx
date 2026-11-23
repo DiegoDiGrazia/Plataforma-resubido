@@ -479,13 +479,8 @@ const GestionReportes = () => {
       <div className='row miPerfilContainer soporteContainer'>
         <div className='col p-0'>
           <h3 id="saludo" className='headerTusNotas ml-0'>
-            <i className="icon me-2 icono_tusNotas bi bi-file-earmark-bar-graph-fill" style={{ color: 'var(--nd-color-text)' }} /> Gestión de reportes
+            <i className="bi bi-file-earmark-bar-graph-fill" aria-hidden="true" /> Gestión de reportes
           </h3>
-          <h4 className='infoCuenta'>Personalización del reporte mensual integrado</h4>
-          <div className='abajoDeTusNotas'>
-            Corregí o completá a mano el reporte mensual de un cliente. Los valores cargados pisan campo por campo a las métricas reales;
-            si un campo queda vacío se sigue mostrando el valor real.
-          </div>
         </div>
       </div>
 

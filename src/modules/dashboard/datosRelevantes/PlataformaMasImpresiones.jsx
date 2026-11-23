@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import "./InteraccionPorNota.css";
 import { useSelector } from 'react-redux';
 import { filtrarUltimosMeses } from '@/shared/components/charts/Barplot';
@@ -56,7 +56,7 @@ const CAMPOS_METRICAS = [
     "i_x_video_views",
 ];
 
-const PlataformaMasImpresiones = ({datosLocales, resumenCliente= null, loading = false, aplicarFiltroMeses = true}) => {
+const PlataformaMasImpresiones = ({ resumenCliente= null, aplicarFiltroMeses = true}) => {
     const FiltroActual = useSelector((state) => state.dashboard.filtro);
 
     const sumarCampos = (data, campos) => {

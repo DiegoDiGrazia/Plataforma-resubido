@@ -6,12 +6,11 @@ import axios from 'axios';
 import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { formatearFecha } from '@/modules/dashboard/datosRelevantes/InteraccionPorNota';
-import { formatearTitulo } from '@/modules/dashboard/datosRelevantes/InteraccionPorNota';
 import { Spinner } from 'react-bootstrap';
 import SelectorCliente from '@/shared/components/SelectorCliente';
 import { useCallback } from 'react';
 import { resetCrearNota, setClienteNota, setIdNoti } from '@/store/crearNotaSlice';
-import { analizarHTML, convertirImagenBase64, setContenidoAEditar, setContenidoNota, setImagenPrincipal, setImagenRRSS, setNotaAEditar } from '@/store/crearNotaSlice';
+import { convertirImagenBase64, setContenidoAEditar, setImagenPrincipal, setImagenRRSS, setNotaAEditar } from '@/store/crearNotaSlice';
 import BotonEliminarNota from '@/modules/notas/editor/botonEliminarNota';
 import BotonEditarDistribucionGeneracion from '@/modules/notas/editor/BotonEditarDistribucionGeneracion';
 import { updateCliente, updateNotaFreemiumDistribucion } from '@/store/formularioSlice';
@@ -129,7 +128,7 @@ const NotasParaEditorial = () => {
     // ✅ Solo después de que todo se haya procesado, se navega
     abrirEditorNota({ dispatch, navigate, idNota: seDuplica ? null : notaABM.id });
 };
-    const editarNotaFreemium = async (notaABM, seDuplica) => {
+    const editarNotaFreemium = async (notaABM) => {
         dispatch(updateNotaFreemiumDistribucion(notaABM));
         navigate("/distribuir-nota-freemium");
     }
@@ -147,7 +146,6 @@ const NotasParaEditorial = () => {
     const paises = useSelector((state) =>state.formulario.geo);
     const nombrePaisUsuario = paises.find(pais => pais.pais_id === id_pais)?.nombre || null;
     const perfilUsuario = useSelector((state) => state.formulario.usuario.perfil);
-    const esContratoConFacturacionAbierta = useSelector((state) => state.formulario.contratoConFacturacionAbierta);
     
     const permisoSelectorClientes = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Editorial: Selector clientes") || false);
     const permisoBorrado = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Editorial: Borrado") || false);
@@ -364,17 +362,15 @@ const NotasParaEditorial = () => {
     return (
         <div id='pantalla-notasParaEditorial'>
             <div className="content flex-grow-1 nd-px-page pt-4 pb-5">
-                <h4 id="nota">Notas</h4>
 
                 <header className='notasListado__encabezado' id='menu-boton'>
                     <div className='notasListado__titulo'>
                         <h3 id="saludo" className='headerTusNotas'>
-                            <img src="/images/tusNotasIcon.png" alt="" className="icon icono_tusNotas" /> Tus Notas
+                            <i className="bi bi-stack" aria-hidden="true" /> Tus Notas
                         </h3>
                         {permisoSelectorClientes && (
                             <SelectorCliente/>
                         )}
-                        <div className='abajoDeTusNotas'>Crea, gestiona y monitorea tus notas</div>
                     </div>
                     <BotonCrearNota
                         onClick={() => ClickearEnCrearNota(CLIENTE)}
