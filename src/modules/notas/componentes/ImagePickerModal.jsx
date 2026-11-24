@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Modal, Spinner } from "react-bootstrap";
 import { setContenidoNota } from "@/store/crearNotaSlice";
 import SelectorConBuscador from "@/shared/components/form/SelectorConBuscador";
-import { obtenerClientes } from "@/api/apisUsuarios";
+import { obtenerClientes, obtenerImagenesPorCliente } from "@/api/apisUsuarios";
 
 const BASE_PATH = 'https://noticiasd.com/img/';
 
@@ -13,13 +12,14 @@ const BASE_PATH = 'https://noticiasd.com/img/';
  * @param onAgregar (item) => void  — recibe el bloque ['parrafo', '<img …>'] para insertarlo donde
  *   corresponda (Crear nota lo inserta debajo del bloque seleccionado). Sin esta prop, lo agrega al final.
  */
-export default function ImagePickerModal({ isOpen, onClose, fetchUrl, onAgregar }) {
+export default function ImagePickerModal({ isOpen, onClose, onAgregar }) {
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [clientes, setClientes] = useState([]);
     const [cliente, setCliente] = useState("");
     const clienteDelusuario = useSelector((state) => state.formulario.cliente);
+    const idClienteDelUsuario = useSelector((state) => state.formulario.id_cliente);
     const TOKEN = useSelector((state) => state.formulario.token);
     const dispatch = useDispatch();
 
@@ -34,12 +34,12 @@ export default function ImagePickerModal({ isOpen, onClose, fetchUrl, onAgregar 
             setLoading(true);
             setError("");
             try {
-                const res = await axios.post(
-                    fetchUrl,
-                    { token: TOKEN, cliente: clienteDelusuario || cliente.name },
-                    { headers: { "Content-Type": "multipart/form-data" } }
+                const data = await obtenerImagenesPorCliente(
+                    TOKEN,
+                    clienteDelusuario || cliente?.name,
+                    idClienteDelUsuario ?? cliente?.id
                 );
-                setImages(res.data.item || []);
+                setImages(data.item || []);
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -47,7 +47,7 @@ export default function ImagePickerModal({ isOpen, onClose, fetchUrl, onAgregar 
             }
         };
         fetchImages();
-    }, [isOpen, fetchUrl, cliente]);
+    }, [isOpen, cliente, idClienteDelUsuario, TOKEN]);
 
     const handleSelect = (url) => {
         const item = ['parrafo', `<img src=${url}>`];

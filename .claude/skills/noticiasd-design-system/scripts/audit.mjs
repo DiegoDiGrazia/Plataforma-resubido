@@ -13,7 +13,7 @@
  * Ignora src/styles/ (ahí viven los tokens).
  */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { join, relative, extname } from 'node:path';
+import { join, relative, extname, sep } from 'node:path';
 
 const args = process.argv.slice(2);
 const detail = args.includes('--detail');
@@ -62,8 +62,14 @@ const FONT_SIZE_MAP = {
 };
 const RADIUS_MAP = (px) => (px <= 5 ? 'sm' : px <= 9 ? 'md' : px <= 14 ? 'lg' : px <= 20 ? 'xl' : 'pill');
 
+// Compara carpetas enteras: con p.includes('dist') se salteaba también "distribucion"
+const ignorado = (p) => {
+  const ruta = sep + join(p) + sep;
+  return IGNORE.some((i) => ruta.includes(sep + i + sep));
+};
+
 const walk = (p) => {
-  if (IGNORE.some((i) => p.includes(i))) return [];
+  if (ignorado(p)) return [];
   const st = statSync(p);
   if (st.isFile()) return EXT.has(extname(p)) ? [p] : [];
   return readdirSync(p).flatMap((f) => walk(join(p, f)));

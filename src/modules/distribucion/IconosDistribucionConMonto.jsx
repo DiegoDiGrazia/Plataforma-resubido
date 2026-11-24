@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { obtenerPoblacion } from '@/api/apisUsuarios';
 import { editarDistribucionGeneracion } from '@/api/apis';
 import { useSelector } from 'react-redux';
+import { mismoId } from '@/shared/utils/clientes';
 
 const obtenerColorDeEstadoDistribucionDeNota = (valor) => {
     if (valor == null) return 'text-danger';
@@ -47,10 +48,11 @@ const IconosDistribucionConMonto = ({ nota, token, geo, contratos }) => {
     const permisoMarcarDistribucion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Distribucion: Marcar distribucion") || false);
 
     const alcance = useMemo(() => {
-        if (!contratos || !nota.cliente) return 0;
-        const contratoEncontrado = contratos.find(c => c.name?.toLowerCase() === nota.cliente.toLowerCase());
+        // nota.id_cliente lo resuelve Distribucion al recibir los datos
+        if (!contratos || nota.id_cliente == null) return 0;
+        const contratoEncontrado = contratos.find(c => mismoId(c.id_cliente, nota.id_cliente));
         return contratoEncontrado ? Number(contratoEncontrado.alcance_x_nota) : 0;
-    }, [contratos, nota.cliente]);
+    }, [contratos, nota.id_cliente]);
 
     const { division, divisionId } = useMemo(() => {
         if (!geo) return { division: null, divisionId: null };
@@ -158,7 +160,7 @@ const IconosDistribucionConMonto = ({ nota, token, geo, contratos }) => {
                     <div className="col-auto d-flex align-items-center pe-0">
                         <i
                             className={`bi ${plataforma.icono} fs-5 me-1 ` + obtenerColorDeEstadoDistribucionDeNota(primerosDatos[plataforma.key])}
-                            style={{ cursor: (permisoMarcarDistribucion && (primerosDatos[plataforma.key] == null)) ? 'pointer' : 'default' }}
+                            role={(permisoMarcarDistribucion && primerosDatos[plataforma.key] == null) ? 'button' : undefined}
                             onClick={ permisoMarcarDistribucion ? () => {
                                     if (primerosDatos[plataforma.key] == null) {
                                         setAccionPendiente(() => () => marcarComoDistribuido(plataforma));

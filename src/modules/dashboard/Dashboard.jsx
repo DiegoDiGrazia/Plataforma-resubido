@@ -120,9 +120,9 @@ const Dashboard = () => {
         year: 'numeric'
     });
 
-    const ClickearEnCrearNota = (nombreCliente) => {
+    const ClickearEnCrearNota = () => {
         dispatch(resetCrearNota());
-        dispatch(setClienteNota(nombreCliente));
+        dispatch(setClienteNota({ nombre: nombreCliente, id: cliente_id }));
         abrirEditorNota({ dispatch, navigate });
     };
 
@@ -154,7 +154,7 @@ const Dashboard = () => {
                                     <h3 id="nombre_municipio">{nombreCliente}</h3>
                                 </>
                             )}
-                            <Button id="botonCrearNota" className='no-print' variant="primary" onClick={() => ClickearEnCrearNota(nombreCliente)}>
+                            <Button id="botonCrearNota" className='no-print' variant="primary" onClick={ClickearEnCrearNota}>
                                 <i className="bi bi-plus-lg" aria-hidden="true" /> Crear nota
                             </Button>
                         </header>

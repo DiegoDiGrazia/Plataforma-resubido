@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { borrarTildes } from '@/shared/utils/funcionesVarias';
+import { idClienteDe, mismoId, clientePorId } from '@/shared/utils/clientes';
 import { obtenerGrupos, obtenerAutores, obtenerGruposClientes, crearGrupo, 
          crearAutor, actualizarGrupo, actualizarAutor, eliminarGrupo, eliminarAutor, 
        } from '@/api/gruposApi.js';
@@ -116,21 +117,24 @@ const MonitorEditorial = () => {
             setRelGruposEditores(mapeoGrupos);
         }
 
-        if (clientesRelacionados && clientesRelacionados.length > 0 && autores && autores.length > 0) {
+        // Editor → [id_cliente]. La relación viene del backend con el nombre del cliente:
+        // se pasa a id acá y se vuelve a nombre solo al guardar (handleEditarAutor).
+        if (clientesRelacionados && clientesRelacionados.length > 0 && autores && autores.length > 0 && clientes.length > 0) {
             let mapeoClientes = {};
             clientesRelacionados.forEach(rel => {
                 const autorObj = autores.find(a => a.id === rel.id_autores_grupo);
-                if (autorObj && rel.cliente) {
+                const idCliente = idClienteDe(rel, clientes);
+                if (autorObj && idCliente != null) {
                     const nombreAutor = autorObj.autor;
                     if (!mapeoClientes[nombreAutor]) mapeoClientes[nombreAutor] = [];
-                    if (!mapeoClientes[nombreAutor].includes(rel.cliente)) {
-                        mapeoClientes[nombreAutor].push(rel.cliente);
+                    if (!mapeoClientes[nombreAutor].includes(idCliente)) {
+                        mapeoClientes[nombreAutor].push(idCliente);
                     }
                 }
             });
             setRelEditoresClientes(mapeoClientes);
         }
-    }, [autores, clientesRelacionados]);
+    }, [autores, clientesRelacionados, clientes]);
     
     useEffect(() => { // Busca los datos del monitor según los filtros de fecha y grupo
         if (!fechaDesde || !fechaHasta || !grupoFiltro) return;
@@ -140,18 +144,12 @@ const MonitorEditorial = () => {
 
         const nombresAutores = relGruposEditores[grupoSeleccionado.id] || [];
         const clientesSet = new Set();
-        
+
         nombresAutores.forEach(nombreEditor => {
-            const clientesDelEditorNombres = relEditoresClientes[nombreEditor] || [];
-            clientesDelEditorNombres.forEach(nombreCliente => clientesSet.add(nombreCliente));
+            (relEditoresClientes[nombreEditor] || []).forEach(idCliente => clientesSet.add(idCliente));
         });
-        
-        const clientesNombresFiltrados = Array.from(clientesSet);
-        
-        const clientesIDFiltrados = clientesNombresFiltrados.map(nombre => {
-            const c = clientes.find(c => c.name === nombre);
-            return c ? c.id : null;
-        }).filter(Boolean);
+
+        const clientesIDFiltrados = Array.from(clientesSet);
 
         if (clientesIDFiltrados.length === 0 && nombresAutores.length === 0) {
             setMonitorData([]);
@@ -166,21 +164,20 @@ const MonitorEditorial = () => {
                 const notasSinCliente = res.notas_sin_cliente || [];
 
                 const dataEstructurada = nombresAutores.map(nombreEditor => {
-                    const clientesDelEditorNombres = relEditoresClientes[nombreEditor] || [];
-                    
-                    let clientesCruzados = clientesDelEditorNombres.map(nombreCliente => {
-                        const clienteLocal = clientes.find(c => c.name === nombreCliente);
+                    const idsClientesDelEditor = relEditoresClientes[nombreEditor] || [];
+
+                    let clientesCruzados = idsClientesDelEditor.map(idCliente => {
+                        const clienteLocal = clientePorId(clientes, idCliente);
                         if (!clienteLocal) return null;
-                        
-                        const idCliente = clienteLocal.id;
-                        const dataApi = notasConCliente.find(c => c.id_cliente === idCliente);
+
+                        const dataApi = notasConCliente.find(c => mismoId(c.id_cliente, idCliente));
                         if (!dataApi) return null;
 
                         const notasDelEditor = (dataApi.notas || []).filter(n => n.autor_cliente === nombreEditor);
 
                         return {
                             id_cliente: idCliente,
-                            nombre_cliente: nombreCliente,
+                            nombre_cliente: clienteLocal.name,
                             objetivo_contrato: dataApi.objetivo_contrato || 0,
                             comentario: dataApi.comentarios || clienteLocal.comentarios || "",
                             notas: notasDelEditor 
@@ -374,7 +371,10 @@ const MonitorEditorial = () => {
         if (!selectedAutor) return;
         setLoading(true);
 
-        const clientesStrings = relEditoresClientes[selectedAutor.autor] || [];
+        // El endpoint guarda la relación por nombre de cliente: se traducen los ids recién acá
+        const clientesStrings = (relEditoresClientes[selectedAutor.autor] || [])
+            .map(idCliente => clientePorId(clientes, idCliente)?.name)
+            .filter(Boolean);
 
         const idsDelAutor = autores.filter(a => a.autor === selectedAutor.autor).map(a => a.id);
         
@@ -434,8 +434,7 @@ const MonitorEditorial = () => {
     const monitorFiltrado = monitorData.map(editor => {
 
         const clientesFiltrados = editor.clientes.filter(cliente => {
-            return filtroCliente === "Todas" || 
-                  (cliente.nombre_cliente === filtroCliente);
+            return filtroCliente === "Todas" || mismoId(cliente.id_cliente, filtroCliente);
         });
 
         const clientesConNotasFiltradas = clientesFiltrados.map(cliente => ({
@@ -579,9 +578,11 @@ const MonitorEditorial = () => {
                     <DropdownFiltro
                         className='boton-filtro'
                         label= "Cuenta"
-                        valorActual={filtroCliente}
+                        valorActual={filtroCliente === "Todas" ? "Todas" : (clientePorId(clientesUnicos, filtroCliente)?.name ?? "Todas")}
                         opciones={["Todas", ...clientesUnicos.map(c => c.name)]}
-                        onChange={setFiltroCliente}
+                        onChange={(nombre) => setFiltroCliente(
+                            nombre === "Todas" ? "Todas" : (clientesUnicos.find(c => c.name === nombre)?.id ?? "Todas")
+                        )}
                         mostrarBuscador={true}
                         alineacionDerecha={true}
                     />
@@ -1026,7 +1027,7 @@ const MonitorEditorial = () => {
                                                     })
                                                 ) : (
                                                     clientesDerecha.map(cliente => {
-                                                        const estaAsignado = (relEditoresClientes[selectedAutor.autor] || []).includes(cliente.name);
+                                                        const estaAsignado = (relEditoresClientes[selectedAutor.autor] || []).includes(Number(cliente.id));
                                                         return (
                                                             <div className="col-md-6" key={cliente.id}>
                                                                 <div className="form-check d-flex align-items-center gap-2">
@@ -1035,7 +1036,7 @@ const MonitorEditorial = () => {
                                                                         type="checkbox" 
                                                                         id={`chk-cliente-${cliente.id}`}
                                                                         checked={estaAsignado}
-                                                                        onChange={() => toggleCheckbox(selectedAutor.autor, cliente.name, setRelEditoresClientes)}
+                                                                        onChange={() => toggleCheckbox(selectedAutor.autor, Number(cliente.id), setRelEditoresClientes)}
                                                                     />
                                                                     <label className="form-check-label text-truncate" htmlFor={`chk-cliente-${cliente.id}`} title={cliente.name}>
                                                                         {cliente.name}

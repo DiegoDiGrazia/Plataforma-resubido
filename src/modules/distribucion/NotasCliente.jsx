@@ -3,7 +3,7 @@ import CopiarTexto from './CopiarTexto';
 import IconosDistribucionConMonto from './IconosDistribucionConMonto';
 import { useSelector } from 'react-redux';
 import { obtenerNotasDeGeneraciones } from '@/api/apisUsuarios';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 function formatearFechaDDMMAAAA(fechaStr) {
   if (!fechaStr) return "";
@@ -17,16 +17,18 @@ const NotasCliente = () => {
   const TOKEN = useSelector((state) => state.formulario.token);
   const [notasGeneracionesAgrupadas, setNotasGeneracionesAgrupadas] = useState(null);
   const { cliente, desde, hasta } = useParams();
+  const [searchParams] = useSearchParams();
+  const idCliente = searchParams.get('id_cliente') || '';
 
   useEffect(() => {
       setLoading(true);
-      obtenerNotasDeGeneraciones(TOKEN, cliente, '', '', 'PUBLICADO', '150', '0', '', '', desde, hasta)
+      obtenerNotasDeGeneraciones(TOKEN, cliente, '', '', 'PUBLICADO', '150', '0', '', '', desde, hasta, idCliente)
       .then((res) => {
       setNotasGeneracionesAgrupadas(res);
       console.log("Respuesta de notas de generaciones agrupadas:", res);
       })
-      .finally(() => setLoading(false)); 
-    }, [cliente, desde, hasta]);
+      .finally(() => setLoading(false));
+    }, [cliente, idCliente, desde, hasta]);
 
     useEffect(() => { console.log("Notas de generaciones agrupadas:", notasGeneracionesAgrupadas);
     }, [notasGeneracionesAgrupadas]);

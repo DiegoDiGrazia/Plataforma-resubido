@@ -44,7 +44,8 @@ export async function convertirImagenBase64(url, maxWidth = 1600) {
   }
 }
 
-
+// id de cliente siempre number o null ("" / undefined = sin cliente)
+const aIdCliente = (id) => (id === "" || id == null ? null : Number(id));
 
 const initialState = {
   listaDeImagenesContenidoEnBase64: "", ///listo
@@ -119,7 +120,8 @@ const initialState = {
   attachment_video1: null,
   numeroDeAtachment: 1,
   id_att: "",
-  cliente: "",
+  cliente: "",      // nombre, solo para mostrar
+  id_cliente: null, // lo que se envía a la API
   demo: '',
   id_nota_borrador: "",
   es_ia: '0',
@@ -263,6 +265,7 @@ const crearNotaSlice = createSlice({
       state.provincia = {'nombre': nota.provincia };
       state.municipio = {'nombre': nota.municipio };
       state.cliente = nota.cliente;
+      state.id_cliente = aIdCliente(nota.id_cliente);
       state.engagement = nota.engagement || nota.titulo;
       // bajada (extracto) es texto plano; el copete puede traer HTML (negrita, links)
       state.bajada = nota.extracto || htmlATextoPlano(nota.copete);
@@ -355,8 +358,10 @@ const crearNotaSlice = createSlice({
       ];
     state.contenidoIds = [nuevoIdBloque()];
     },
+    // payload: { nombre, id } — o null/undefined para "sin cliente"
     setClienteNota: (state,action) => {
-      state.cliente = action.payload;
+      state.cliente = action.payload?.nombre || "";
+      state.id_cliente = aIdCliente(action.payload?.id);
     },
 
     setCambiarEstadoActual: (state,action) => {

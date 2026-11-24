@@ -2,7 +2,6 @@ import React from 'react';
 import { Button } from 'react-bootstrap';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
 import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { formatearFecha } from '@/modules/dashboard/datosRelevantes/InteraccionPorNota';
@@ -13,14 +12,14 @@ import { resetCrearNota, setClienteNota, setIdNoti } from '@/store/crearNotaSlic
 import { convertirImagenBase64, setContenidoAEditar, setImagenPrincipal, setImagenRRSS, setNotaAEditar } from '@/store/crearNotaSlice';
 import BotonEliminarNota from '@/modules/notas/editor/botonEliminarNota';
 import BotonEditarDistribucionGeneracion from '@/modules/notas/editor/BotonEditarDistribucionGeneracion';
-import { updateCliente, updateNotaFreemiumDistribucion } from '@/store/formularioSlice';
+import { updateCliente, updateIdCliente, updateNotaFreemiumDistribucion } from '@/store/formularioSlice';
 import BotonCrearNota from '@/modules/notas/editor/BotonCrearNota';
 import "./nota.css";
 import './notasListado.css';
 import ModalConInputFile from '@/shared/components/modales/ModalConInputFile';
 import { guardarVideoYoutube } from '@/api/apisUsuarios';
 import ModalMensaje from '@/shared/components/modales/ModalMensaje';
-import { obtenerNotaCompletaConIa, obtenerFuenteBot } from '@/api/apisUsuarios';
+import { obtenerNotaCompletaConIa, obtenerFuenteBot, obtenerNoticias, obtenerNoticiasAbm } from '@/api/apisUsuarios';
 import { abrirEditorNota } from '@/modules/notas/navegacionEditor';
 import BorradoresLocales from './BorradoresLocales';
 
@@ -78,7 +77,8 @@ const NotasParaEditorial = () => {
         dispatch(resetCrearNota());
         dispatch(setNotaAEditar(notaABM));
         dispatch(updateCliente(notaABM.cliente));
-        
+        dispatch(updateIdCliente(notaABM.id_cliente));
+
         
         if (seDuplica) {
             dispatch(setIdNoti("0"));
@@ -134,6 +134,7 @@ const NotasParaEditorial = () => {
     }
 
     const CLIENTE = useSelector((state) => state.formulario.cliente);
+    const ID_CLIENTE = useSelector((state) => state.formulario.id_cliente);
     const navigate = useNavigate()
     const [filtroSeleccionado, setFiltroSeleccionado] = useState(2); /// botones TODAS LAS NOTAS; EN PROGRESO; FINALIZADAS
     const [numeroDePagina, setNumeroDePagina] = useState(1); /// para los botones de la paginacion
@@ -187,31 +188,27 @@ const NotasParaEditorial = () => {
         desdeLimite = 0;                     
     }
 
-    axios.post(
-        "https://panel.serviciosd.com/app_obtener_noticias",
-        {
-            cliente: CLIENTE,
-            desde: "2020-01-01",
-            hasta: fechaDeMañana,
-            token: TOKEN,
-            categoria: categoria,
-            limite: limite,
-            desde_limite: desdeLimite,
-            titulo: "",
-            id: "",
-        },
-        { headers: { 'Content-Type': 'multipart/form-data' } }
-    )
-    .then((response) => {
-        if (response.data.message === "Token Invalido") {
+    obtenerNoticias(TOKEN, {
+        cliente: CLIENTE,
+        id_cliente: ID_CLIENTE,
+        desde: "2020-01-01",
+        hasta: fechaDeMañana,
+        categoria: categoria,
+        limite: limite,
+        desde_limite: desdeLimite,
+        titulo: "",
+        id: "",
+    })
+    .then((data) => {
+        if (data.message === "Token Invalido") {
             navigate("/");
             return;
         }
 
-        if (response.data.status === "true") {
-            setTodasLasNotas2((prev) => [...prev, ...response.data.item]);
+        if (data.status === "true") {
+            setTodasLasNotas2((prev) => [...prev, ...data.item]);
         } else {
-            console.error('Error en la respuesta de la API:', response.data.message);
+            console.error('Error en la respuesta de la API:', data.message);
         }
     })
     .catch((error) => {
@@ -220,7 +217,7 @@ const NotasParaEditorial = () => {
     .finally(() => {
         setCargandoNotas(false);
     });
-}, [CLIENTE, TOKEN, navigate, verMasUltimo, categorias, verMasCantidadPaginacion]);
+}, [ID_CLIENTE, TOKEN, navigate, verMasUltimo, categorias, verMasCantidadPaginacion]);
     
     const handleFiltroClick = useCallback((id, verMas = false) => {
         console.log("searchQuery", searchQuery);
@@ -243,33 +240,29 @@ const NotasParaEditorial = () => {
             setVerMasUltimo(1);
         }
     
-        axios.post(
-            "https://panel.serviciosd.com/app_obtener_noticias_abm",
-            {
-                cliente: CLIENTE,
-                desde: "",
-                hasta: "",
-                token: TOKEN,
-                categoria: categoria,
-                limit: limite,
-                offset: verMas ? nuevoOffset : 0,  // este es el valor real que irá a la API
-                titulo: isNaN(searchQuery) ? searchQuery : "",
-                pais: nombrePaisUsuario || "",
-                full: "1",
-                term_id: !isNaN(searchQuery) ? searchQuery : "",
-            },
-            { headers: { 'Content-Type': 'multipart/form-data' } }
-        )
-        .then((response) => {
-            if (response.data.message === "Token Invalido") {
+        obtenerNoticiasAbm(TOKEN, {
+            cliente: CLIENTE,
+            id_cliente: ID_CLIENTE,
+            desde: "",
+            hasta: "",
+            categoria: categoria,
+            limit: limite,
+            offset: verMas ? nuevoOffset : 0,  // este es el valor real que irá a la API
+            titulo: isNaN(searchQuery) ? searchQuery : "",
+            pais: nombrePaisUsuario || "",
+            full: "1",
+            term_id: !isNaN(searchQuery) ? searchQuery : "",
+        })
+        .then((data) => {
+            if (data.message === "Token Invalido") {
                 navigate("/");
                 return;
             }
-    
-            if (response.data.status === "true") {
-                setTodasLasNotas2((prev) => [...prev, ...response.data.item]);
+
+            if (data.status === "true") {
+                setTodasLasNotas2((prev) => [...prev, ...data.item]);
             } else {
-                console.error('Error en la respuesta de la API:', response.data.message);
+                console.error('Error en la respuesta de la API:', data.message);
             }
         })
         .catch((error) => {
@@ -278,12 +271,12 @@ const NotasParaEditorial = () => {
         .finally(() => {
             setCargandoNotas(false);
         });
-    }, [CLIENTE, TOKEN, categorias, verMasUltimo, verMasCantidadPaginacion, nombrePaisUsuario]);
-    
-    
-    const ClickearEnCrearNota = (cliente) => {
+    }, [ID_CLIENTE, TOKEN, categorias, verMasUltimo, verMasCantidadPaginacion, nombrePaisUsuario]);
+
+
+    const ClickearEnCrearNota = () => {
         dispatch(resetCrearNota());
-        dispatch(setClienteNota(cliente))
+        dispatch(setClienteNota({ nombre: CLIENTE, id: ID_CLIENTE }))
         abrirEditorNota({ dispatch, navigate });
     };
         
@@ -344,7 +337,7 @@ const NotasParaEditorial = () => {
         } else {
             handleFiltroClick_todasLasNotas(filtroSeleccionado); // Llama a la función específica para el caso de id = 1
         }
-    }, [filtroSeleccionado, CLIENTE]);
+    }, [filtroSeleccionado, ID_CLIENTE]);
 
     const mostrarFuenteNota = async (term_id) => {
         const link = await obtenerFuenteBot(TOKEN, term_id);
@@ -373,7 +366,7 @@ const NotasParaEditorial = () => {
                         )}
                     </div>
                     <BotonCrearNota
-                        onClick={() => ClickearEnCrearNota(CLIENTE)}
+                        onClick={ClickearEnCrearNota}
                         cliente={CLIENTE}
                     />
                 </header>

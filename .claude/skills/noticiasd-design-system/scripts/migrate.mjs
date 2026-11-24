@@ -16,7 +16,7 @@
  * react-chartjs-2 / @react-pdf (canvas/PDF no resuelven var(); usar tokens.js).
  */
 import { readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs';
-import { join, relative, extname } from 'node:path';
+import { join, relative, extname, sep } from 'node:path';
 
 const args = process.argv.slice(2);
 const WRITE = args.includes('--write');
@@ -199,8 +199,14 @@ function transformLine(line, isJsx) {
 }
 
 /* ---------- Recorrido ---------- */
+// Compara segmentos de ruta enteros: con p.includes('dist') se salteaba también "distribucion"
+const ignorado = (p) => {
+  const ruta = sep + join(p) + sep;
+  return IGNORE_PATHS.some((i) => ruta.includes(sep + i + sep) || ruta === sep + i + sep);
+};
+
 const walk = (p) => {
-  if (IGNORE_PATHS.some((i) => p.includes(i))) return [];
+  if (ignorado(p)) return [];
   const st = statSync(p);
   if (st.isFile()) return ['.css', '.jsx'].includes(extname(p)) ? [p] : [];
   return readdirSync(p).flatMap((f) => walk(join(p, f)));

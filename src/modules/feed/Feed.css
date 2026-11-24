@@ -1,0 +1,28 @@
+/* ==========================================================================
+   Feed (#pantalla-feed)
+   ========================================================================== */
+
+#pantalla-feed {
+
+    /* Listas del modal (notas en el feed / notas disponibles) con scroll propio */
+    .nd-feed__lista {
+        max-height: 420px;
+        overflow-y: auto;
+    }
+
+    .nd-feed__lista--disponibles {
+        max-height: 400px;
+    }
+
+    /* Hijos flex con título truncado: sin esto el texto empuja el ancho */
+    .nd-feed__contenido {
+        min-width: 0;
+    }
+
+    .nd-feed__miniatura {
+        width: var(--nd-space-10);
+        height: var(--nd-space-10);
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+}

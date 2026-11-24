@@ -8,11 +8,13 @@ import '@/modules/dashboard/Dashboard.css';
 import { useNavigate } from 'react-router-dom';
 import { setClienteNota } from '@/store/crearNotaSlice';
 import { borrarTildes } from '@/shared/utils/funcionesVarias';
+import { mismoId, clientePorId } from '@/shared/utils/clientes';
 
 const SelectorCliente = ({ incluirTodos = true, editorial = true, clientePreseleccionado = null }) => {
     const esEditor = useSelector((state) => state.formulario.esEditor);
     const paisID = useSelector((state) => state.formulario.usuario.id_pais);
-    const nombreCliente = useSelector((state) => state.formulario.cliente);
+    const nombreCliente = useSelector((state) => state.formulario.cliente); // solo para mostrar
+    const idClienteSeleccionado = useSelector((state) => state.formulario.id_cliente);
     const TOKEN = useSelector((state) => state.formulario.token);
     const idClienteLogueado = useSelector((state) => state.formulario.usuario.id_cliente);
     const todosLosClientes = useSelector((state) => state.dashboard.todosLosClientes) || [];
@@ -60,7 +62,7 @@ const SelectorCliente = ({ incluirTodos = true, editorial = true, clientePresele
 
     const editarCliente = (cliente) => {
         dispatch(updateCliente(cliente.name));
-        dispatch(setClienteNota(cliente.name));
+        dispatch(setClienteNota({ nombre: cliente.name, id: cliente.id }));
         if (cliente.id) {
             dispatch(updateIdCliente(cliente.id));
         }
@@ -69,12 +71,12 @@ const SelectorCliente = ({ incluirTodos = true, editorial = true, clientePresele
 
     useEffect(() => {
         if (clientePreseleccionado && todosLosClientes.length > 0) {
-            const clienteEncontrado = todosLosClientes.find(c => String(c.id) === String(clientePreseleccionado));
-            if (clienteEncontrado && clienteEncontrado.name !== nombreCliente) {
+            const clienteEncontrado = clientePorId(todosLosClientes, clientePreseleccionado);
+            if (clienteEncontrado && !mismoId(clienteEncontrado.id, idClienteSeleccionado)) {
                 editarCliente(clienteEncontrado);
             }
         }
-    }, [clientePreseleccionado, todosLosClientes, nombreCliente]);
+    }, [clientePreseleccionado, todosLosClientes, idClienteSeleccionado]);
 
     const TodosLosClientesParaEditor = () => {
         dispatch(updateCliente(""));
@@ -105,15 +107,15 @@ const SelectorCliente = ({ incluirTodos = true, editorial = true, clientePresele
             >
                 {nombreCliente === "" ? textoSinSeleccion : nombreCliente}
             </button>
-            <ul className="dropdown-menu listaClientes" aria-labelledby="dropdownMenuButton1" style={{ maxHeight: '200px', overflowY: 'auto' }}>
+            <ul className="dropdown-menu listaClientes" aria-labelledby="dropdownMenuButton1">
                 <li>
                     <input
                         type="text"
-                        className="form-control dropdown-search"
+                        className="form-control dropdown-search m-2"
                         placeholder="Buscar cuenta..."
                         value={filtro}
                         onChange={(e) => setFiltro(e.target.value)}
-                        style={{ margin: '0.5rem', maxHeight: "250px !important" }}
+                        
                     />
                 </li>
                 {!esFranquicia && incluirTodos && (

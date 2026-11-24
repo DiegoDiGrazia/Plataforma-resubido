@@ -385,7 +385,6 @@ const CrearNota = () => {
                                     isOpen={show}
                                     onClose={() => setShow(false)}
                                     onAgregar={insertarBloque}
-                                    fetchUrl="https://panel.serviciosd.com/app_imagenes_por_cliente" // URL del endpoint que devuelve URLs
                                 />
 
                                 {seleccion === null && renderBotonera(false)}

@@ -9,6 +9,11 @@ import { getTipoHistoria, getColorHistoria, getDesplazamientoHistoria, armarPara
 import CopiarTexto from './CopiarTexto';
 import IconosDistribucionConMonto, { PLATAFORMAS } from './IconosDistribucionConMonto';
 import { Accordion } from 'react-bootstrap';
+import { idClienteDe, mismoId, clientePorId } from '@/shared/utils/clientes';
+
+// El diccionario de distribución se indexa por id de cliente. Si una nota no se pudo
+// asociar a ningún cliente (nombre desconocido), queda agrupada aparte por su nombre.
+const claveCliente = (nota) => (nota.id_cliente != null ? String(nota.id_cliente) : `sin-id:${nota.cliente}`);
 
 
 export const obtenerMesActual = (mesesDeDiferencia) => {
@@ -145,21 +150,25 @@ function agregarPlanAlDiccionarioDeNotas(dicNotas, clientes, planes) {
 
   const nuevoDic = {};
 
-  for (const [nombreCliente, notas] of entradasOrdenadas) {
-    const municipio = clientes.find(m => m.name === nombreCliente);
-
-    const plan = municipio
-      ? planes.find(p => p.id === municipio.id_plan)
-      : null;
-
-    nuevoDic[nombreCliente] = {
-      notas: ordenarNotasPorUltimaActualizacion(notas),
-      plan: plan || null
-    };
+  for (const [clave, notas] of entradasOrdenadas) {
+    nuevoDic[clave] = armarEntradaCliente(notas, clientes, planes);
   }
 
   return nuevoDic;
 }
+
+// { id_cliente, nombre, plan, notas } de un grupo de notas del mismo cliente
+const armarEntradaCliente = (notas, clientes, planes) => {
+  const { id_cliente, cliente: nombre } = notas[0];
+  const municipio = clientePorId(clientes, id_cliente);
+  const plan = municipio ? planes.find(p => p.id === municipio.id_plan) : null;
+  return {
+    id_cliente,
+    nombre: municipio?.name || nombre,
+    plan: plan || null,
+    notas: ordenarNotasPorUltimaActualizacion(notas),
+  };
+};
 
 
 
@@ -170,12 +179,19 @@ const obtenerContratoMasReciente = (contratosDelCliente) => {
   }, null);
 };
 
+// distribucion-generaciones y los videos todavía no traen id_cliente: se resuelve acá,
+// una sola vez al recibir los datos, y de ahí en más todo compara por id.
+const conIdCliente = (registros, clientes) =>
+  (registros || []).map(r => ({ ...r, id_cliente: idClienteDe(r, clientes) }));
+
+const contratosDelCliente = (contratos, idCliente) =>
+  idCliente == null ? [] : contratos.filter(c => mismoId(c.id_cliente, idCliente));
+
 const completarContratoEnNotas = (notas, contratos) => {
   if (!notas || !contratos || contratos.length === 0) return notas;
   return notas.map(nota => {
     if (nota.id_contrato != null) return nota;
-    const contratosDelCliente = contratos.filter(c => c.name?.toLowerCase() === nota.cliente?.toLowerCase());
-    const contrato = obtenerContratoMasReciente(contratosDelCliente);
+    const contrato = obtenerContratoMasReciente(contratosDelCliente(contratos, nota.id_cliente));
     if (!contrato) return nota;
     return {
       ...nota,
@@ -204,10 +220,11 @@ const agruparNotasPorCliente = (notas) => {
     if (esDistribucionDiferidaFutura(nota)) {
       return acc;
     }
-    if (!acc[nota.cliente]) {
-      acc[nota.cliente] = [nota];
+    const clave = claveCliente(nota);
+    if (!acc[clave]) {
+      acc[clave] = [nota];
     } else {
-      acc[nota.cliente].push(nota);
+      acc[clave].push(nota);
     }
     return acc;
   }, {});
@@ -219,10 +236,11 @@ const agruparVideosPorCliente = (videos) => {
     if (!video.cliente) return acc;
     if (esDistribucionDiferidaFutura(video)) return acc;
     const notaDeVideo = { ...video, esNotaDeVideo: true };
-    if (!acc[video.cliente]) {
-      acc[video.cliente] = [notaDeVideo];
+    const clave = claveCliente(video);
+    if (!acc[clave]) {
+      acc[clave] = [notaDeVideo];
     } else {
-      acc[video.cliente].push(notaDeVideo);
+      acc[clave].push(notaDeVideo);
     }
     return acc;
   }, {});
@@ -317,18 +335,16 @@ const DistribucionAdmin = () => {
     const contratosActualizados = await obtenerContratos(TOKEN);
     setContratos(contratosActualizados);
 
-    const contratosDelCliente = contratosActualizados.filter(
-      c => c.name?.toLowerCase() === nota.cliente?.toLowerCase()
-    );
-    const contrato = obtenerContratoMasReciente(contratosDelCliente);
+    const contrato = obtenerContratoMasReciente(contratosDelCliente(contratosActualizados, nota.id_cliente));
 
     if (contrato) {
       setNotasGeneracionesAgrupadas(prev => {
-        const datosCliente = prev[nota.cliente];
+        const clave = claveCliente(nota);
+        const datosCliente = prev[clave];
         if (!datosCliente) return prev;
         return {
           ...prev,
-          [nota.cliente]: {
+          [clave]: {
             ...datosCliente,
             notas: datosCliente.notas.map(n =>
               n.id === nota.id && n.esNotaDeVideo === nota.esNotaDeVideo
@@ -392,11 +408,12 @@ const DistribucionAdmin = () => {
       return;
     }
     setNotasGeneracionesAgrupadas(prev => {
-      const datosCliente = prev[nota.cliente];
+      const clave = claveCliente(nota);
+      const datosCliente = prev[clave];
       if (!datosCliente) return prev;
       return {
         ...prev,
-        [nota.cliente]: {
+        [clave]: {
           ...datosCliente,
           notas: datosCliente.notas.filter(n => !(n.id === nota.id && !n.esNotaDeVideo)),
         },
@@ -425,16 +442,15 @@ useEffect(() => {
   setLoading(true);
   obtenerDistribucionPorFechaVencimiento(TOKEN, fechaDesde+'-01', `${fechaHasta}-${ultimoDiaHasta}`)
   .then((res) => {
-  const resConContrato = completarContratoEnNotas(res, contratos);
+  const resConContrato = completarContratoEnNotas(conIdCliente(res, clientes), contratos);
   const diccionarioDeCLientesConSusNotas = agruparNotasPorCliente(resConContrato);
   const agrupadasConPlanes = agregarPlanAlDiccionarioDeNotas(diccionarioDeCLientesConSusNotas, clientes, planes);
-  console.log('agrupadasConPlanes: ', agrupadasConPlanes);
   setNotasGeneracionesAgrupadas(prev => {
     const actualizado = { ...prev };
-    for (const [nombreCliente, datos] of Object.entries(agrupadasConPlanes)) {
-      const notasDeVideoPrevias = actualizado[nombreCliente]?.notas?.filter(n => n.esNotaDeVideo) || [];
-      actualizado[nombreCliente] = {
-        plan: datos.plan,
+    for (const [clave, datos] of Object.entries(agrupadasConPlanes)) {
+      const notasDeVideoPrevias = actualizado[clave]?.notas?.filter(n => n.esNotaDeVideo) || [];
+      actualizado[clave] = {
+        ...datos,
         notas: ordenarNotasPorUltimaActualizacion([...datos.notas, ...notasDeVideoPrevias])
       };
     }
@@ -445,6 +461,8 @@ useEffect(() => {
 }, [TOKEN, clientes, planes, contratos, fechaDesde, fechaHasta]);
 
 useEffect(() => {
+  // Sin la lista de clientes no se puede resolver el id de cada video
+  if (clientes.length === 0) return;
   const [añoHasta, mesHasta] = fechaHasta.split("-");
   const ultimoDiaHasta = obtenerUltimoDiaMes(añoHasta, mesHasta);
   obtenerVideosYoutube(
@@ -454,35 +472,31 @@ useEffect(() => {
     '150',
     '0'
   ).then((res) => {
-    const videosPorCliente = agruparVideosPorCliente(res);
+    const videosPorCliente = agruparVideosPorCliente(conIdCliente(res, clientes));
     setNotasGeneracionesAgrupadas(prev => {
       const actualizado = { ...prev };
-      for (const [nombreCliente, notasDeVideo] of Object.entries(videosPorCliente)) {
-        if (actualizado[nombreCliente]) {
-          actualizado[nombreCliente] = {
-            ...actualizado[nombreCliente],
-            notas: ordenarNotasPorUltimaActualizacion([...actualizado[nombreCliente].notas, ...notasDeVideo])
+      for (const [clave, notasDeVideo] of Object.entries(videosPorCliente)) {
+        if (actualizado[clave]) {
+          actualizado[clave] = {
+            ...actualizado[clave],
+            notas: ordenarNotasPorUltimaActualizacion([...actualizado[clave].notas, ...notasDeVideo])
           };
         } else {
-          const municipio = clientes.find(m => m.name === nombreCliente);
-          const plan = municipio ? planes.find(p => p.id === municipio.id_plan) : null;
-          actualizado[nombreCliente] = { notas: ordenarNotasPorUltimaActualizacion(notasDeVideo), plan: plan || null };
+          actualizado[clave] = armarEntradaCliente(notasDeVideo, clientes, planes);
         }
       }
       return ordenarClientesPorId(actualizado);
     });
   });
 
-}, [TOKEN, fechaDesde, fechaHasta]);
+}, [TOKEN, fechaDesde, fechaHasta, clientes]);
 
-  useEffect(() => {
-    console.log('notasGeneracionesAgrupadas actualizadas: ', notasGeneracionesAgrupadas);
-  }, [notasGeneracionesAgrupadas]);
-
-  const irANotasDelCliente = (data, cliente, fechaDesde, fechaHasta) => {
+  const irANotasDelCliente = (data, fechaDesde, fechaHasta) => {
     const [añoHasta, mesHasta] = fechaHasta.split("-");
     const ultimoDiaHasta = obtenerUltimoDiaMes(añoHasta, mesHasta);
-    window.open(`/notas-cliente/${cliente}/${fechaDesde}-01/${fechaHasta}-${ultimoDiaHasta}`, "_blank");
+    // El nombre va en la URL solo para el título; la pantalla filtra por id_cliente
+    const query = data.id_cliente != null ? `?id_cliente=${data.id_cliente}` : '';
+    window.open(`/notas-cliente/${encodeURIComponent(data.nombre)}/${fechaDesde}-01/${fechaHasta}-${ultimoDiaHasta}${query}`, "_blank");
   };
 
 // Si el cliente logueado es una FRANQUICIA, solo puede ver sus notas y las de sus cuentas creadas
@@ -490,7 +504,7 @@ const clienteLogueado = useMemo(() => (
   clientes.find((c) => c.id === idClienteLogueado)
 ), [clientes, idClienteLogueado]);
 
-const nombresClientesPermitidos = useMemo(() => {
+const idsClientesPermitidos = useMemo(() => {
   if (clienteLogueado?.tipo !== 'FRANQUICIA') return null;
   let cuentasCreadas = [];
   try {
@@ -499,22 +513,21 @@ const nombresClientesPermitidos = useMemo(() => {
   } catch {
     cuentasCreadas = [];
   }
-  const idsPermitidos = [clienteLogueado.id, ...cuentasCreadas.map((cuenta) => cuenta.id)];
-  return clientes
-    .filter((c) => idsPermitidos.some((id) => id == c.id))
-    .map((c) => c.name);
-}, [clienteLogueado, clientes]);
+  return [clienteLogueado.id, ...cuentasCreadas.map((cuenta) => cuenta.id)];
+}, [clienteLogueado]);
 
 const filteredClientes = useMemo(() => {
-  let allKeys = Object.keys(notasGeneracionesAgrupadas || {});
-  if (nombresClientesPermitidos) {
-    allKeys = allKeys.filter((clave) => nombresClientesPermitidos.includes(clave));
+  const dic = notasGeneracionesAgrupadas || {};
+  let allKeys = Object.keys(dic);
+  if (idsClientesPermitidos) {
+    allKeys = allKeys.filter((clave) => idsClientesPermitidos.some((id) => mismoId(id, dic[clave].id_cliente)));
   }
   if (!search) return allKeys;
+  // La búsqueda es por texto: compara contra el nombre que se muestra
   return allKeys.filter((clave) =>
-    clave.toLowerCase().includes(search.toLowerCase())
+    (dic[clave].nombre || '').toLowerCase().includes(search.toLowerCase())
   );
-}, [search, notasGeneracionesAgrupadas, nombresClientesPermitidos]);
+}, [search, notasGeneracionesAgrupadas, idsClientesPermitidos]);
 
 
 // Listas planas del arbol geo para buscar la jurisdiccion de cada nota
@@ -615,8 +628,8 @@ useEffect(() => {
                     <Accordion.Header>
                       <div className="distribucion__resumen">
                         <div className="distribucion__cliente">
-                          <button onClick={() => irANotasDelCliente(data, cliente, fechaDesde, fechaHasta)} className="btn btn-link p-0 m-0 text-start">
-                            <strong className={'nd-text-lg ' + (data.notas.some(notaSinNingunaDistribucion) ? 'text-danger' : 'text-primary')}>{cliente}</strong>
+                          <button onClick={() => irANotasDelCliente(data, fechaDesde, fechaHasta)} className="btn btn-link p-0 m-0 text-start">
+                            <strong className={'nd-text-lg ' + (data.notas.some(notaSinNingunaDistribucion) ? 'text-danger' : 'text-primary')}>{data.nombre}</strong>
                           </button>
                           
                           <div>

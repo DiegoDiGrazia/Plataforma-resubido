@@ -37,6 +37,7 @@ export const clickearEnPublicarNota = async ({
     id_noti,
     id_att,
     cliente,
+    id_cliente,
     demo,
     epigrafeImagenPpal,
     setIsLoading,
@@ -62,6 +63,8 @@ export const clickearEnPublicarNota = async ({
                 parrafo: reemplazarComillasSimplePorDoble(contenidoHTMLSTR),
                 estado: status,
                 cliente: demo || datosUsuario.cliente || cliente,
+                // usuario de un cliente → su cliente; editor → el cliente elegido en la nota
+                id_cliente: datosUsuario.id_cliente ?? id_cliente ?? "",
                 email: "",
                 base_principal: image,
                 base_feed: imagefeed,

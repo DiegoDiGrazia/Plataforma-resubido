@@ -67,11 +67,31 @@ export const obtenerClientes = (token) =>
 
 
 
-export const obtenerNotasDeGeneraciones = (token, cliente = '', desde, hasta, 
-                                            categoria, limit, offset, titulo, pais, vencimiento_desde = '', vencimiento_hasta = '') =>
+// cliente = nombre, id_cliente = id. Se mandan los dos ("" = todos los clientes).
+export const obtenerNotasDeGeneraciones = (token, cliente = '', desde, hasta,
+                                            categoria, limit, offset, titulo, pais, vencimiento_desde = '', vencimiento_hasta = '', id_cliente = '') =>
   fetchData("https://panel.serviciosd.com/app_obtener_noticias_abm", token, {
-    cliente, desde, hasta, categoria, limit, offset, titulo, pais, vencimiento_desde, vencimiento_hasta
+    cliente, id_cliente: id_cliente ?? '', desde, hasta, categoria, limit, offset, titulo, pais, vencimiento_desde, vencimiento_hasta
 });
+
+// Devuelven la respuesta completa ({status, message, item}) para poder detectar "Token Invalido".
+const postPanel = async (endpoint, token, params) => {
+  const response = await axios.post(
+    `https://panel.serviciosd.com/${endpoint}`,
+    { token, ...params },
+    { headers: { "Content-Type": "multipart/form-data" } }
+  );
+  return response.data;
+};
+
+export const obtenerNoticias = (token, { cliente = '', id_cliente = '', ...params }) =>
+  postPanel("app_obtener_noticias", token, { cliente: cliente ?? '', id_cliente: id_cliente ?? '', ...params });
+
+export const obtenerNoticiasAbm = (token, { cliente = '', id_cliente = '', ...params }) =>
+  postPanel("app_obtener_noticias_abm", token, { cliente: cliente ?? '', id_cliente: id_cliente ?? '', ...params });
+
+export const obtenerImagenesPorCliente = (token, cliente, id_cliente) =>
+  postPanel("app_imagenes_por_cliente", token, { cliente: cliente ?? '', id_cliente: id_cliente ?? '' });
 
 
 export const obtenerPlanesMarketing = (token, desde, hasta) =>

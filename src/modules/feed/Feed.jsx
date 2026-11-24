@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import ModalMensaje from '@/shared/components/modales/ModalMensaje';
 import { obtenerClientes, obtenerNotasDeGeneraciones } from '@/api/apisUsuarios';
 import SelectorConBuscador from '@/shared/components/form/SelectorConBuscador';
+import './Feed.css';
 import {
   crearFeed,
   obtenerFeedsPorCliente,
@@ -77,7 +78,7 @@ const AbmFeed = () => {
     setBusquedaNota('');
     setPrioritariasPorNota({});
     setCargandoNotas(true);
-    obtenerNotasDeGeneraciones(TOKEN, clienteSeleccionado.name, '', '', 'PUBLICADO', '150', '0', '', '')
+    obtenerNotasDeGeneraciones(TOKEN, clienteSeleccionado.name, '', '', 'PUBLICADO', '150', '0', '', '', '', '', clienteSeleccionado.id)
       .then(setNotasDisponibles)
       .finally(() => setCargandoNotas(false));
     const modal = new window.bootstrap.Modal(document.getElementById('feedModal'));
@@ -274,7 +275,7 @@ const AbmFeed = () => {
   }, [notasDisponibles, busquedaNota]);
 
   return (
-    <div className="content flex-grow-1 crearNotaGlobal">
+    <div id="pantalla-feed" className="content flex-grow-1 crearNotaGlobal">
       {/* Header */}
       <div className="row miPerfilContainer soporteContainer">
         <div className="col p-0">
@@ -410,7 +411,7 @@ const AbmFeed = () => {
                     {notasDelFeedOrdenadas.length === 0 ? (
                       <p className="text-muted small">Sin notas todavía.</p>
                     ) : (
-                      <ul className="list-group" style={{ maxHeight: 420, overflowY: 'auto' }}>
+                      <ul className="list-group nd-feed__lista">
                         {notasDelFeedOrdenadas.map((nota, idx) => {
                           const esPrimeroDelGrupo = idx === 0 || notasDelFeedOrdenadas[idx - 1].prioritaria !== nota.prioritaria;
                           const esUltimoDelGrupo = idx === notasDelFeedOrdenadas.length - 1 || notasDelFeedOrdenadas[idx + 1].prioritaria !== nota.prioritaria;
@@ -420,15 +421,15 @@ const AbmFeed = () => {
                             className="list-group-item py-2 px-2"
                           >
                             <div className="d-flex justify-content-between align-items-start gap-2">
-                              <div className="d-flex align-items-center gap-2" style={{ minWidth: 0 }}>
+                              <div className="d-flex align-items-center gap-2 nd-feed__contenido">
                                 {nota.imagen_principal && (
                                   <img
                                     src={"https://panel.serviciosd.com/img" + nota.imagen_principal}
                                     alt=""
-                                    style={{ width: 40, height: 40, objectFit: 'cover', flexShrink: 0 }}
+                                    className="nd-feed__miniatura"
                                   />
                                 )}
-                                <div style={{ minWidth: 0 }}>
+                                <div className="nd-feed__contenido">
                                   <div className="small fw-semibold text-truncate" title={nota.titulo}>{nota.titulo || `#${nota.generacion_id}`}</div>
                                   <div className={`small ${nota.publicada ? 'text-success' : 'text-muted'}`}>
                                     {nota.publicada ? 'Publicada' : 'No publicada'}
@@ -492,7 +493,7 @@ const AbmFeed = () => {
                     {cargandoNotas ? (
                       <p className="text-muted small">Cargando notas...</p>
                     ) : (
-                      <ul className="list-group" style={{ maxHeight: 400, overflowY: 'auto' }}>
+                      <ul className="list-group nd-feed__lista nd-feed__lista--disponibles">
                         {notasFiltradas.length === 0 ? (
                           <li className="list-group-item text-muted small">Sin resultados.</li>
                         ) : (
@@ -505,15 +506,15 @@ const AbmFeed = () => {
                                 className={`list-group-item py-2 px-2 ${yaEsta ? 'list-group-item-success' : ''}`}
                               >
                                 <div className="d-flex justify-content-between align-items-start gap-2">
-                                  <div className="d-flex align-items-center gap-2" style={{ minWidth: 0 }}>
+                                  <div className="d-flex align-items-center gap-2 nd-feed__contenido">
                                     {nota.imagen ? (
                                       nota.imagen.includes('wp-content/uploads') ?
-                                        <img src={nota.imagen} alt="" style={{ width: 40, height: 40, objectFit: 'cover', flexShrink: 0 }} /> :
-                                        <img src={'https://noticiasd.com/img' + nota.imagen} alt="" style={{ width: 40, height: 40, objectFit: 'cover', flexShrink: 0 }} />
+                                        <img src={nota.imagen} alt="" className="nd-feed__miniatura" /> :
+                                        <img src={'https://noticiasd.com/img' + nota.imagen} alt="" className="nd-feed__miniatura" />
                                     ) : (
-                                      <img src={"https://panel.serviciosd.com/img/" + nota.imagen_principal} alt="" style={{ width: 40, height: 40, objectFit: 'cover', flexShrink: 0 }} />
+                                      <img src={"https://panel.serviciosd.com/img/" + nota.imagen_principal} alt="" className="nd-feed__miniatura" />
                                     )}
-                                    <div style={{ minWidth: 0 }}>
+                                    <div className="nd-feed__contenido">
                                       <div className="small fw-semibold text-truncate" title={nota.titulo}>
                                         {nota.titulo}
                                       </div>

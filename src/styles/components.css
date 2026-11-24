@@ -411,3 +411,12 @@
 }
 .nd-avatar--sm { width: 32px; height: 32px; }
 .nd-avatar--lg { width: 64px; height: 64px; }
+
+/* ---------- Menú desplegable de formulario (separado del botón, con scroll opcional) ---------- */
+.nd-dropdown-menu {
+  margin-top: var(--nd-space-3);
+}
+.nd-dropdown-menu--scroll {
+  max-height: 170px;
+  overflow-y: auto;
+}

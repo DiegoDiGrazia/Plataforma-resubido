@@ -9,6 +9,7 @@ import { ToastContainer } from 'react-toastify';
 import { toastExito, toastError } from '@/shared/utils/toastify/toastify.jsx';
 import { formatearFecha } from '@/shared/utils/funcionesVarias.js'
 import SelectorConBuscador from '@/shared/components/form/SelectorConBuscador';
+import { idClienteDe, clientePorId } from '@/shared/utils/clientes';
 
 const usuarioVacio = {
   celular_reporte: "",
@@ -428,11 +429,11 @@ const handleInputKeyDown = (e) => {
                       title="Cuenta"
                       alineacionDerecha={true}
                       options={clientes}
-                      selectedOption={clientes.find((c) => c.name === formData.cliente) || (formData.cliente ? { name: formData.cliente } : null)}
+                      selectedOption={clientePorId(clientes, idClienteDe(formData, clientes)) || (formData.cliente ? { name: formData.cliente } : null)}
                       onSelect={(c) =>
                         setFormData((prev) => ({
                           ...prev,
-                          id_cliente: c.name,
+                          id_cliente: c.id,
                           cliente: c.name,
                         }))
                       }
@@ -543,7 +544,7 @@ const handleInputKeyDown = (e) => {
                           : "Seleccionar cuenta..."}
                       </button>
 
-                      <ul className="dropdown-menu w-100" style={{maxHeight: "170px", overflowY: "auto", marginTop: "12px",}}>
+                      <ul className="dropdown-menu w-100 nd-dropdown-menu nd-dropdown-menu--scroll">
                         {perfiles.map((p) => (
                           <li key={p.id}>
                             <button
@@ -577,7 +578,7 @@ const handleInputKeyDown = (e) => {
                       >
                         {formData.reporte_acceso == '0' ? "No" : "Si"}
                       </button>
-                      <ul className="dropdown-menu w-100" style={{marginTop: "12px",}}>
+                      <ul className="dropdown-menu w-100 nd-dropdown-menu">
                         <li>
                           <button
                             type="button"
@@ -617,7 +618,7 @@ const handleInputKeyDown = (e) => {
                       >
                         {formData.reporte_whatsapp == '0' ? "No" : "Si"}
                       </button>
-                      <ul className="dropdown-menu w-100" style={{marginTop: "12px",}}>
+                      <ul className="dropdown-menu w-100 nd-dropdown-menu">
                         <li>
                           <button
                             type="button"

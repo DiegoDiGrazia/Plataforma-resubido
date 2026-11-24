@@ -51,11 +51,11 @@ const SelectorCliente2= () => {
         }, [TOKEN, dispatch]);
 
     const editarCliente =(cliente) =>{
-        dispatch(setClienteNota(cliente.name))
+        dispatch(setClienteNota({ nombre: cliente.name, id: cliente.id }))
     }
 
     const TodosLosClientesParaEditor =() =>{
-        dispatch(setClienteNota(""))
+        dispatch(setClienteNota(null))
     }
 
     const [filtro, setFiltro] = useState(''); // Estado para almacenar el filtro de búsqueda
@@ -79,7 +79,7 @@ const SelectorCliente2= () => {
             >
                 {nombreCliente == "" ? "Nota sin cuenta" : nombreCliente }
             </button>
-            <ul className="dropdown-menu listaClientes" aria-labelledby="dropdownMenuButton1" style={{ maxHeight: '200px', overflowY: 'auto' }}>
+            <ul className="dropdown-menu listaClientes" aria-labelledby="dropdownMenuButton1">
                 {/* Campo de búsqueda */}
 
 
@@ -87,11 +87,11 @@ const SelectorCliente2= () => {
                 <li>
                     <input
                         type="text"
-                        className="form-control dropdown-search"
+                        className="form-control dropdown-search m-2"
                         placeholder="Buscar cuenta..."
                         value={filtro}
                         onChange={(e) => setFiltro(e.target.value)}
-                        style={{ margin: '0.5rem', maxHeight: "250px !important" }}
+                        
                     
                     />
                 </li>

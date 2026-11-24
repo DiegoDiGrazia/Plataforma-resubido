@@ -38,6 +38,7 @@ const BotonEnGenerarVistaPrevia = ({ status }) => {
     const id_att = useSelector((state) => state.crearNota.id_att);
     const clienteDeLaNota = useSelector((state) => state.crearNota.cliente)
     const cliente = clienteDeLaNota;
+    const idClienteDeLaNota = useSelector((state) => state.crearNota.id_cliente);
 
     const provinciaSelector = useSelector((state) => state.crearNota.provincia);
     const municipioSelector = useSelector((state) => state.crearNota.municipio);
@@ -107,6 +108,7 @@ const BotonEnGenerarVistaPrevia = ({ status }) => {
                 pais,
                 id_att,
                 cliente,
+                id_cliente: idClienteDeLaNota,
                 epigrafeImagenPpal,
                 ...atachmentsValidos,
                 setIsLoading,
