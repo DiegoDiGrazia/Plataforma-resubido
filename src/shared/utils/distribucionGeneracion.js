@@ -1,3 +1,18 @@
+// MySQL corre en UTC (NOW() del trigger) y la API devuelve los DATETIME sin zona
+// ("2026-10-29T17:08:32"). Sin la "Z", new Date() los tomaría como hora local.
+export const parsearFechaUTC = (valor) => {
+    if (!valor) return null;
+    if (valor instanceof Date) return valor;
+    const texto = String(valor).trim().replace(' ', 'T');
+    const tieneZona = /(Z|[+-]\d{2}:?\d{2})$/.test(texto);
+    const fecha = new Date(tieneZona || !texto.includes('T') ? texto : `${texto}Z`);
+    return Number.isNaN(fecha.getTime()) ? null : fecha;
+};
+
+// Fecha/hora local elegida por el usuario → DATETIME en UTC, mismo formato que guarda la base
+const aDatetimeUTC = (fecha, hora) =>
+    new Date(`${fecha}T${hora}:00`).toISOString().slice(0, 19);
+
 // Arma el payload para PATCH /distribucion-generaciones/by-generacion/:id
 // a partir de los "valores" que maneja <DistribucionGeneracionFields>.
 // Si está activada la distribución con fecha diferida, agrega "ultima_actualizacion"
@@ -17,7 +32,7 @@ export const armarPayloadDistribucion = (valores) => {
     };
 
     if (valores.diferida && valores.fecha_diferida && valores.hora_diferida) {
-        payload.ultima_actualizacion = `${valores.fecha_diferida}T${valores.hora_diferida}:00`;
+        payload.ultima_actualizacion = aDatetimeUTC(valores.fecha_diferida, valores.hora_diferida);
     }
 
     return payload;
@@ -28,10 +43,8 @@ export const armarPayloadDistribucion = (valores) => {
 // guardada es futura (si ya pasó, es simplemente la última actualización normal de la nota).
 export const extraerDiferidaDesdeUltimaActualizacion = (ultimaActualizacion) => {
     const vacio = { diferida: false, fecha_diferida: '', hora_diferida: '' };
-    if (!ultimaActualizacion) return vacio;
-
-    const fecha = new Date(ultimaActualizacion);
-    if (Number.isNaN(fecha.getTime()) || fecha <= new Date()) return vacio;
+    const fecha = parsearFechaUTC(ultimaActualizacion);
+    if (!fecha || fecha <= new Date()) return vacio;
 
     const pad = (n) => String(n).padStart(2, '0');
     return {

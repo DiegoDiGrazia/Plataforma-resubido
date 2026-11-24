@@ -10,6 +10,7 @@ import CopiarTexto from './CopiarTexto';
 import IconosDistribucionConMonto, { PLATAFORMAS } from './IconosDistribucionConMonto';
 import { Accordion } from 'react-bootstrap';
 import { idClienteDe, mismoId, clientePorId } from '@/shared/utils/clientes';
+import { parsearFechaUTC } from '@/shared/utils/distribucionGeneracion';
 
 // El diccionario de distribución se indexa por id de cliente. Si una nota no se pudo
 // asociar a ningún cliente (nombre desconocido), queda agrupada aparte por su nombre.
@@ -63,11 +64,10 @@ const descargarJpg = async (nota, imagenFeed) => {
   }, "image/jpeg", 0.92);
 };
 
-const formatearFechaHoraLegible = (fecha, restarHoras = 0) => {
+const formatearFechaHoraLegible = (fecha) => {
   if (!fecha) return '';
-  const d = new Date(fecha);
-  if (Number.isNaN(d.getTime())) return fecha;
-  if (restarHoras) d.setHours(d.getHours() - restarHoras);
+  const d = parsearFechaUTC(fecha);
+  if (!d) return fecha;
   const pad = (n) => String(n).padStart(2, '0');
   return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 };
@@ -124,16 +124,19 @@ const filtrarClientesSegunPendientes = (clientesObj, pendientes) => {
   return Object.fromEntries(clientesFiltradosEntries);
 };
 
+// El trigger de distribucion_generaciones solo completa ultima_actualizacion en UPDATE:
+// una nota recién enviada a distribuir (INSERT) la trae vacía, así que se usa fecha_creacion
+const fechaParaOrdenar = (nota) => {
+  const fecha = parsearFechaUTC(nota.ultima_actualizacion || nota.fecha_creacion);
+  return fecha ? fecha.getTime() : 0;
+};
+
 const ordenarNotasPorUltimaActualizacion = (notas) =>
-  [...notas].sort((a, b) => {
-    const fechaA = a.ultima_actualizacion ? new Date(a.ultima_actualizacion).getTime() : 0;
-    const fechaB = b.ultima_actualizacion ? new Date(b.ultima_actualizacion).getTime() : 0;
-    return fechaB - fechaA;
-  });
+  [...notas].sort((a, b) => fechaParaOrdenar(b) - fechaParaOrdenar(a));
 
 const obtenerUltimaActualizacionMasReciente = (notas) => {
   if (!notas || notas.length === 0) return 0;
-  return Math.max(...notas.map(n => n.ultima_actualizacion ? new Date(n.ultima_actualizacion).getTime() : 0));
+  return Math.max(...notas.map(fechaParaOrdenar));
 };
 
 function agregarPlanAlDiccionarioDeNotas(dicNotas, clientes, planes) {
@@ -195,9 +198,8 @@ const completarContratoEnNotas = (notas, contratos) => {
 };
 
 const esDistribucionDiferidaFutura = (nota) => {
-  if (!nota.ultima_actualizacion) return false;
-  const fecha = new Date(nota.ultima_actualizacion);
-  return !Number.isNaN(fecha.getTime()) && fecha > new Date();
+  const fecha = parsearFechaUTC(nota.ultima_actualizacion);
+  return !!fecha && fecha > new Date();
 };
 
 const agruparNotasPorCliente = (notas) => {
