@@ -136,21 +136,10 @@ const obtenerUltimaActualizacionMasReciente = (notas) => {
   return Math.max(...notas.map(n => n.ultima_actualizacion ? new Date(n.ultima_actualizacion).getTime() : 0));
 };
 
-const ordenarClientesPorId = (dicClientes) =>
-  Object.fromEntries(
-    Object.entries(dicClientes).sort(([, a], [, b]) =>
-      obtenerUltimaActualizacionMasReciente(b.notas) - obtenerUltimaActualizacionMasReciente(a.notas)
-    )
-  );
-
 function agregarPlanAlDiccionarioDeNotas(dicNotas, clientes, planes) {
-  const entradasOrdenadas = Object.entries(dicNotas).sort(([, notasA], [, notasB]) =>
-    obtenerUltimaActualizacionMasReciente(notasB) - obtenerUltimaActualizacionMasReciente(notasA)
-  );
-
   const nuevoDic = {};
 
-  for (const [clave, notas] of entradasOrdenadas) {
+  for (const [clave, notas] of Object.entries(dicNotas)) {
     nuevoDic[clave] = armarEntradaCliente(notas, clientes, planes);
   }
 
@@ -454,7 +443,7 @@ useEffect(() => {
         notas: ordenarNotasPorUltimaActualizacion([...datos.notas, ...notasDeVideoPrevias])
       };
     }
-    return ordenarClientesPorId(actualizado);
+    return actualizado;
   });
   })
   .finally(() => setLoading(false));
@@ -485,7 +474,7 @@ useEffect(() => {
           actualizado[clave] = armarEntradaCliente(notasDeVideo, clientes, planes);
         }
       }
-      return ordenarClientesPorId(actualizado);
+      return actualizado;
     });
   });
 
@@ -518,7 +507,10 @@ const idsClientesPermitidos = useMemo(() => {
 
 const filteredClientes = useMemo(() => {
   const dic = notasGeneracionesAgrupadas || {};
-  let allKeys = Object.keys(dic);
+  // Las claves son ids numéricos y el objeto las recorre por id: el orden se arma acá
+  let allKeys = Object.keys(dic).sort((a, b) =>
+    obtenerUltimaActualizacionMasReciente(dic[b].notas) - obtenerUltimaActualizacionMasReciente(dic[a].notas)
+  );
   if (idsClientesPermitidos) {
     allKeys = allKeys.filter((clave) => idsClientesPermitidos.some((id) => mismoId(id, dic[clave].id_cliente)));
   }
