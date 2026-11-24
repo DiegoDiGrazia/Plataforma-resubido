@@ -29,15 +29,18 @@ const MediosMasRelevantesNotas = ({ id_noti, TOKEN, cliente_id, dataLocalNota, p
     const [mediosNota, setMediosNota] = useState([]);
 
     useEffect(() => {
-        obtenerTopMediosNoticia(TOKEN, cliente_id, id_noti, paisFiltro?.pais_id)
-        .then((resultado) => {
+        if (cliente_id && id_noti) {
+
+            obtenerTopMediosNoticia(TOKEN, cliente_id, id_noti, paisFiltro?.pais_id)
+            .then((resultado) => {
             if (resultado) {
                 setMediosNota(dataLocalNota ? dataLocalNota : (resultado[0]?.medios || []));
             }
-        })
-        .catch((error) => {
-            console.error('Error al hacer la solicitud:', error);
-        });
+            })
+            .catch((error) => {
+                console.error('Error al hacer la solicitud:', error);
+            });
+        }
     }, [TOKEN, id_noti, cliente_id, paisFiltro]);
 
     const todosLosMediosSinRepetir = Object.values(reduceByKeyMedios(mediosNota));

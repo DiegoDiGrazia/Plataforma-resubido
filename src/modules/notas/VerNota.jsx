@@ -20,7 +20,7 @@ import { getTipoHistoria, getColorHistoria, getDesplazamientoHistoria, armarPara
 const VerNota = () => {
     const [cargando, setCargando] = useState(true);
     const location = useLocation();
-    const { id } = location.state || {};
+    const { id, notaABM } = location.state || {};
     const [Nota, setNota] = useState({});
     const [FPUB, setFPUB] = useState("");
     const { id_ruta } = useParams();
@@ -37,7 +37,7 @@ const VerNota = () => {
     const [TOKEN] = useState(TOKEN_ESTADO);
     const [CLIENTE, setCLIENTE] = useState("");
     const idClienteSesion = useSelector((state) => state.formulario.id_cliente);
-    const clienteIdNota = Nota.cliente_id || Nota.id_cliente || idClienteSesion;
+    const clienteIdNota = Nota.cliente_id || Nota.id_cliente || notaABM?.id_cliente || idClienteSesion;
     const [tipoHistoria, setTipoHistoria] = useState(1); // desde banner_data.historiaTipo; 1 si es null
     const [colorHistoria, setColorHistoria] = useState(null); // desde banner_data.color; solo aplica a tipo 1, 2 y 3
     const [desplazamientoHistoria, setDesplazamientoHistoria] = useState(null); // desde banner_data.desplazamiento
