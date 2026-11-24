@@ -15,8 +15,10 @@ const aDatetimeUTC = (fecha, hora) =>
 
 // Arma el payload para PATCH /distribucion-generaciones/by-generacion/:id
 // a partir de los "valores" que maneja <DistribucionGeneracionFields>.
-// Si está activada la distribución con fecha diferida, agrega "ultima_actualizacion"
-// combinando la fecha y la hora elegidas por separado.
+// "ultima_actualizacion" se manda siempre:
+//  - diferida: la fecha y hora elegidas. Si no cambiaron, el trigger la respeta por ser futura.
+//  - no diferida: la hora actual. Así destildar "diferida" la cancela, aunque no cambie
+//    ningún otro campo (si se mandara igual a la guardada, el trigger la dejaría).
 export const armarPayloadDistribucion = (valores) => {
     const payload = {
         fecha_vencimiento: valores.fecha_vencimiento,
@@ -33,6 +35,8 @@ export const armarPayloadDistribucion = (valores) => {
 
     if (valores.diferida && valores.fecha_diferida && valores.hora_diferida) {
         payload.ultima_actualizacion = aDatetimeUTC(valores.fecha_diferida, valores.hora_diferida);
+    } else {
+        payload.ultima_actualizacion = new Date().toISOString().slice(0, 19);
     }
 
     return payload;
