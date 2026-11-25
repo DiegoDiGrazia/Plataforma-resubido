@@ -112,7 +112,7 @@ const handleSave = () => {
       nombre: formData.nombre || "",
       email: formData.email || "",
       tipo_usuario: String(formData.tipo),
-      cliente: formData.cliente || "",
+      id_cliente: idClienteDe(formData, clientes),
       id_pais: Number(formData.id_pais) || 0,
       reporte_whatsapp: Number(formData.reporte_whatsapp) || 0,
       reporte_email: Number(formData.reporte_acceso) || 0,
@@ -125,8 +125,9 @@ const handleSave = () => {
 
     const esNuevoUsuario = formData.id === "0";
 
-    const peticion = esNuevoUsuario 
-      ? crearUsuario(TOKEN, payload)
+    // Editar: solo id_cliente. Crear: todavía manda también el nombre (cliente).
+    const peticion = esNuevoUsuario
+      ? crearUsuario(TOKEN, { ...payload, cliente: formData.cliente || "" })
       : editarUsuario(TOKEN, formData.id, payload);
 
     peticion
