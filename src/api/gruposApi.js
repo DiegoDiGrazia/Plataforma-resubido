@@ -58,11 +58,12 @@ export const actualizarGrupo = (token, id_grupo, autores) =>
     body: JSON.stringify({ autores }),
   }).then((res) => res.json());
 
-export const actualizarAutor = (token, id_autores_grupo, clientes) =>
+// id_clientes: array de ids (number) de los clientes asignados al editor
+export const actualizarAutor = (token, id_autores_grupo, id_clientes) =>
   fetch(`${BASE_URL}/grupos/clientes/${id_autores_grupo}`, {
     method: "PATCH",
     headers: jsonHeaders(token),
-    body: JSON.stringify({ clientes }),
+    body: JSON.stringify({ id_clientes }),
   }).then((res) => res.json());
 
 export const eliminarGrupo = (token, id_grupo) =>

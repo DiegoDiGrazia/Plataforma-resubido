@@ -171,8 +171,8 @@ const obtenerContratoMasReciente = (contratosDelCliente) => {
   }, null);
 };
 
-// distribucion-generaciones y los videos todavía no traen id_cliente: se resuelve acá,
-// una sola vez al recibir los datos, y de ahí en más todo compara por id.
+// distribucion-generaciones y los videos traen id_cliente. Si algún registro viejo
+// viene sin él, idClienteDe lo resuelve por nombre. De ahí en más todo compara por id.
 const conIdCliente = (registros, clientes) =>
   (registros || []).map(r => ({ ...r, id_cliente: idClienteDe(r, clientes) }));
 

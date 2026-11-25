@@ -117,8 +117,7 @@ const MonitorEditorial = () => {
             setRelGruposEditores(mapeoGrupos);
         }
 
-        // Editor → [id_cliente]. La relación viene del backend con el nombre del cliente:
-        // se pasa a id acá y se vuelve a nombre solo al guardar (handleEditarAutor).
+        // Editor → [id_cliente]. Se guarda tal cual con PATCH /grupos/clientes (id_clientes).
         if (clientesRelacionados && clientesRelacionados.length > 0 && autores && autores.length > 0 && clientes.length > 0) {
             let mapeoClientes = {};
             clientesRelacionados.forEach(rel => {
@@ -371,14 +370,11 @@ const MonitorEditorial = () => {
         if (!selectedAutor) return;
         setLoading(true);
 
-        // El endpoint guarda la relación por nombre de cliente: se traducen los ids recién acá
-        const clientesStrings = (relEditoresClientes[selectedAutor.autor] || [])
-            .map(idCliente => clientePorId(clientes, idCliente)?.name)
-            .filter(Boolean);
+        const idsClientes = relEditoresClientes[selectedAutor.autor] || [];
 
         const idsDelAutor = autores.filter(a => a.autor === selectedAutor.autor).map(a => a.id);
-        
-        const promesas = idsDelAutor.map(id => actualizarAutor(TOKEN, id, clientesStrings));
+
+        const promesas = idsDelAutor.map(id => actualizarAutor(TOKEN, id, idsClientes));
 
         Promise.all(promesas)
             .then(() => {
