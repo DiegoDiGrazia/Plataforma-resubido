@@ -20,7 +20,9 @@ const DropdownFiltro = ({ label, opciones, valorActual, onChange, mostrarBuscado
         data-bs-toggle="dropdown" 
         aria-expanded="false"
       >
-        <strong className='text-start'>{label}:</strong>&nbsp;{valorActual}
+        <span className="dropdown-filtro-texto">
+          <strong>{label}:</strong> {valorActual}
+        </span>
       </a>
       
       <ul className={`dropdown-menu dropdown-menu-scroll ${alineacionDerecha ? 'dropdown-menu-end' : ''}`}>

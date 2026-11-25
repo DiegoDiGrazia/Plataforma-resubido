@@ -6,19 +6,6 @@
 
 .distribucion {
 
-    .distribucion__fecha {
-        display: flex;
-        align-items: center;
-        gap: var(--nd-space-2);
-        margin: 0;
-        font-size: var(--nd-font-size-base);
-        white-space: nowrap;
-    }
-
-    .distribucion__fecha .form-control {
-        width: 170px;
-    }
-
     .distribucion__cargando {
         min-height: 200px;
     }
@@ -63,6 +50,20 @@
         border-radius: var(--nd-radius-md);
     }
 
+    /* ---------- Notas de la cuenta: cada una es una tarjeta separada ---------- */
+    .distribucion__notas {
+        gap: var(--nd-space-4);
+    }
+
+    .distribucion__notas > .distribucion__nota-item {
+        padding: var(--nd-space-4);
+        background-color: var(--nd-color-bg-surface);
+        border: var(--nd-border-width) solid var(--nd-color-border);
+        border-left: var(--nd-border-width-accent) solid var(--nd-color-primary);
+        border-radius: var(--nd-radius-md);
+        box-shadow: var(--nd-shadow-sm);
+    }
+
     /* ---------- Detalle de cada nota: bloques que bajan si no entran ---------- */
     .distribucion__nota {
         display: grid;
@@ -77,20 +78,87 @@
         padding: 0;
     }
 
+    /* Cada botón va en un .row: sin canaleta, sus márgenes negativos se comían
+       la separación entre columnas y los botones quedaban pegados */
+    .distribucion__nota .row {
+        --bs-gutter-x: 0;
+    }
+
+    /* ≤1440 entran 4 columnas: Presupuestos baja solo a la segunda línea. En vez de
+       dejarlo como una columna angosta, ocupa todo el ancho con las 5 plataformas
+       una al lado de la otra (ícono y nombre arriba, monto abajo).
+       Cada plataforma es un .row de Bootstrap y legacy.css le pone a sus columnas
+       flex-basis 200px (≤1024) y 100% (≤768): los selectores van largos para ganarle. */
+    @media (max-width: 1440px) {
+        .distribucion__nota > .distribucion__presupuestos {
+            display: grid;
+            grid-column: 1 / -1;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            align-content: start;
+            gap: var(--nd-space-2) var(--nd-space-4);
+            padding-top: var(--nd-space-3);
+            border-top: var(--nd-border-width) solid var(--nd-color-border);
+        }
+
+        .distribucion__presupuestos > .distribucion__presupuestos-titulo {
+            grid-column: 1 / -1;
+        }
+
+        .distribucion__nota .distribucion__presupuestos > .distribucion__presupuesto {
+            flex-direction: column;
+            flex-wrap: nowrap;
+            align-items: stretch;
+            justify-content: flex-start;
+            gap: var(--nd-space-1);
+        }
+
+        .distribucion__nota .distribucion__presupuestos > .distribucion__presupuesto > [class*="col"] {
+            flex: none;
+            width: 100%;
+            max-width: 100%;
+            margin-top: 0;
+            padding: 0;
+        }
+    }
+
+    /* Mobile: una plataforma por renglón, nombre a la izquierda y monto a la derecha */
+    @media (max-width: 768px) {
+        .distribucion__nota > .distribucion__presupuestos {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        .distribucion__nota .distribucion__presupuestos > .distribucion__presupuesto {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--nd-space-3);
+        }
+
+        .distribucion__nota .distribucion__presupuestos > .distribucion__presupuesto > [class*="col"] {
+            flex: 1 1 0;
+            width: auto;
+        }
+
+        /* Encabezado de la cuenta: solo ícono + cantidad, las 5 en una fila */
+        .distribucion__plataformas {
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: var(--nd-space-1);
+        }
+
+        .distribucion__plataforma {
+            padding: var(--nd-space-1);
+        }
+
+        .distribucion__plataforma-nombre,
+        .distribucion__plataforma-texto {
+            display: none;
+        }
+    }
+
     @media (max-width: 1024px) {
         .distribucion__resumen {
             grid-template-columns: minmax(0, 1fr);
         }
     }
 
-    @media (max-width: 420px) {
-        .distribucion__plataformas {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
-        .distribucion__fecha {
-            width: 100%;
-            justify-content: space-between;
-        }
-    }
 }

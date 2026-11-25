@@ -247,17 +247,19 @@ const handleInputKeyDown = (e) => {
                     </div>
                     <div className='col-3'>
                       <small>{item.email}</small>
-                      {item.debe_cambiar_clave && (
-                        <span className="badge bg-danger ms-2" title="En su próximo ingreso va a tener que cambiar la contraseña">
-                          Debe cambiar clave
-                        </span>
-                      )}
                     </div>
                     <div className='col-3'>
                       {item.cliente && <em className='cuenta-text'>Cuenta: {item.cliente}</em>}
                     </div>
-                    <div className='col-3'>
+                    <div className='col-2'>
                       <span className="text-muted">Creado: {formatearFecha(item.fecha_creacion)}</span>
+                    </div>
+                    <div className='col-2'>
+                      {item.debe_cambiar_clave && (
+                        <span className="badge bg-danger" title="En su próximo ingreso va a tener que cambiar la contraseña">
+                          Debe cambiar clave
+                        </span>
+                      )}
                     </div>
                   </div>
                 </li>

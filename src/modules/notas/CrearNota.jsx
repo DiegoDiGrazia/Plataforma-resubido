@@ -13,7 +13,6 @@ import TituloNota from '@/modules/notas/componentes/TituloNota';
 import { setContenidoNota, setImagenPrincipal, setIdAtt, setCambiarEstadoActual, insertarContenidoEn } from '@/store/crearNotaSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import ImagenDeParrafo from '@/modules/notas/componentes/ImagenDeParrafo';
-import { Link } from 'react-router-dom';
 import { useNavigate, useParams } from 'react-router-dom';
 import YoutubeNota from '@/modules/notas/componentes/YoutubeNota';
 import Ubicacion from '@/modules/notas/componentes/Ubicacion';
@@ -311,20 +310,6 @@ const CrearNota = () => {
 
                 <div className="content flex-grow-1 crearNotaGlobal editorNota">
                     <div className='row editorNota__encabezado'>
-                        <div className='editorNota__migas'>
-                            <h4 id="nota">
-                                <nav aria-label="breadcrumb">
-                                    <ol className="breadcrumb">
-                                        {esEditor ?
-                                            <li className="breadcrumb-item"><Link to="/notasEditorial" className='breadcrumb-item'>{'< '} Notas</Link></li>
-                                            :
-                                            <li className="breadcrumb-item"><Link to="/notas" className='breadcrumb-item'>{'< '} Notas</Link></li>
-                                        }
-                                        <li className="breadcrumb-item blackActive" aria-current="page">Crear Nota</li>
-                                    </ol>
-                                </nav>
-                            </h4>
-                        </div>
                         <div className='editorNota__acciones'>
                             <BotonEnGenerarVistaPrevia status= {'Preview'}/>
                             <Button onClick={() => navigate(rutaPublicar(clave))} id="botonPublicar" variant="primary">

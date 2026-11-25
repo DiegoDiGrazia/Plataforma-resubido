@@ -144,11 +144,12 @@
 .editorNota {
     padding-inline: var(--nd-page-padding);
 
+    /* Solo quedan las acciones (Vista previa, Publicar): a la derecha */
     .editorNota__encabezado {
         display: flex;
         flex-wrap: wrap;
         align-items: center;
-        justify-content: space-between;
+        justify-content: flex-end;
         gap: var(--nd-space-3);
         margin: 0;
     }
@@ -159,21 +160,64 @@
         padding: 0;
     }
 
-    .editorNota__encabezado > .editorNota__migas {
-        flex: 1 1 auto;
-    }
-
     .editorNota__acciones {
         display: flex;
         align-items: center;
         gap: var(--nd-space-3);
     }
 
+    /* ---------- Columna de la nota: todo alineado al mismo borde izquierdo ----------
+       Antes cada pieza tenía su propio corrimiento (imagen 50px, foto recortada 30px,
+       título y bajada 20px, más las canaletas de Bootstrap) y nada quedaba alineado.
+       Ahora: "Crear nota", imagen, epígrafe, título, bajada y bloques arrancan
+       en el mismo borde y comparten un ancho máximo. */
+    > .row,
+    .columnaNota .row {
+        --bs-gutter-x: 0;
+        margin-inline: 0;
+    }
+
+    .notaTutorial > .editorNota__tutoriales {
+        padding-left: var(--nd-space-8);
+    }
+
+    .columnaNota > * {
+        max-width: 880px;
+    }
+
+    .columnaNota .upload-block,
+    .columnaNota .textAreaComentarios--epigrafe,
+    .columnaNota .imagenRecortadaContenedor {
+        width: 100%;
+        max-width: 100%;
+        margin-left: 0;
+    }
+
+    .columnaNota .textAreaComentarios--epigrafe {
+        margin-top: var(--nd-space-2);
+    }
+
+    .columnaNota .inputTituloNota,
+    .columnaNota textarea.inputTituloNota {
+        width: 100%;
+        margin-left: 0;
+        padding-right: 0;
+    }
+
+    /* Párrafos: el texto arranca en el mismo borde que el título */
+    .columnaNota .parrafoNota__editor .ql-editor {
+        padding-inline: 0;
+    }
+
+    .columnaNota .containerButton {
+        margin-left: 0;
+    }
+
     /* Bajada (copete): editor Quill de un párrafo, con el mismo aspecto que tenía el textarea */
     .quill-editor.notaEditor__copete {
-        width: calc(100% - var(--nd-space-5));
-        margin-left: var(--nd-space-5);
-        padding-right: var(--nd-space-5);
+        width: 100%;
+        margin-left: 0;
+        padding-right: 0;
     }
 
     .notaEditor__copete .ql-container.ql-snow {
@@ -205,8 +249,9 @@
         opacity: 1;
     }
 
+    /* Contador de caracteres alineado al borde derecho del campo */
     .notaEditor__contador {
-        margin-right: 50px;
+        margin-right: 0;
     }
 
     /* ---------- Bloques de contenido (párrafo, imagen, embebido…) ---------- */
@@ -271,6 +316,14 @@
 
         .editorNota__tutoriales {
             margin-top: var(--nd-space-6);
+        }
+
+        .notaTutorial > .editorNota__tutoriales {
+            padding-left: 0;
+        }
+
+        .columnaNota > * {
+            max-width: none;
         }
 
         .notaEditor__contador {

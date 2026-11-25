@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { editarSitio } from '@/api/apisUsuarios';
 import { obtenerSitiosPaises, obtenerSitiosProvincias, eliminarSitioPaises, eliminarSitioProvincias, agregarSitioPaises, agregarSitioProvincias } from '@/api/sitiosApi';
 import { Accordion, AccordionItem } from 'react-bootstrap';
+import { Modal } from 'bootstrap';
 import './AbmSitiosRelevantes.css';
 import { borrarTildes } from '@/shared/utils/funcionesVarias';
 import { ToastContainer } from 'react-toastify';
@@ -133,8 +134,18 @@ const AbmSitiosRelevantes = () => {
     setNuevoSitio(texto);
   };
 
+  // El "+" vive dentro del header del acordeón (que es un <button>): frena el click para que
+  // no abra/cierre el acordeón y abre el modal a mano, sin depender del data-bs-toggle.
+  const abrirModalAgregar = (e, sitio) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setSitioActual(sitio);
+    setNuevoSitio("");
+    Modal.getOrCreateInstance(document.getElementById('modalAgregarSitio')).show();
+  };
+
   return(
-      <div id='abm-sitios-relevantes' className="content flex-grow-1 crearNotaGlobal h-100">
+      <div id='abm-sitios-relevantes' className="content flex-grow-1 crearNotaGlobal">
           <div className='row miPerfilContainer soporteContainer'>
             <div className='col p-0'>
               <h3 id="saludo" className='headerTusNotas ml-0'>
@@ -143,7 +154,7 @@ const AbmSitiosRelevantes = () => {
             </div>
           </div>
           {/* Búsqueda */}
-          <div className='row miPerfilContainer soporteContainer mt-5 p-0 mb-0'>
+          <div className='row miPerfilContainer soporteContainer sitios__buscador p-0'>
             <div className='d-flex'>
               <form className='buscadorNotasForm'>
                 <input
@@ -159,7 +170,7 @@ const AbmSitiosRelevantes = () => {
           {/* LISTADO GEOS */}
           <div className='row miPerfilContainer soporteContainer mt-0 mb-3 p-0'>
             {loading ? (
-          <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '200px' }}>
+          <div className="sitios__cargando">
             <div className="spinner-border text-primary" role="status">
               <span className="visually-hidden">Cargando...</span>
             </div>
@@ -169,7 +180,7 @@ const AbmSitiosRelevantes = () => {
               <li className="list-group-item d-flex justify-content-center">No hay resultados.</li>
             </ul>
           ) : (
-            <Accordion style={{height: '200px'}}>
+            <Accordion>
               {sitiosFiltrados.map((sitio, index) => (
                 <AccordionItem eventKey={index.toString()} key={`Sitio relevante id: ${index}`}>
                   <Accordion.Header>
@@ -177,19 +188,17 @@ const AbmSitiosRelevantes = () => {
                       <strong>{sitio.nombre}</strong>
                     </div>
                     {permisoAlta && (
-                    <button 
-                      className='btn boton-funcion p-0 mt-1 me-2' 
-                      title='Agregar sitio relevante' 
-                      style={{ width: '38px' }} 
-                      data-bs-toggle="modal" 
-                      data-bs-target="#modalAgregarSitio"
-                      onClick={(e) => { e.stopPropagation(); 
-                                        setSitioActual(sitio); 
-                                        setNuevoSitio(""); 
-                                      }}
+                    <span
+                      role="button"
+                      tabIndex={0}
+                      className='nd-icon-btn sitios__agregar'
+                      title='Agregar sitio relevante'
+                      aria-label={`Agregar sitio relevante en ${sitio.nombre}`}
+                      onClick={(e) => abrirModalAgregar(e, sitio)}
+                      onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && abrirModalAgregar(e, sitio)}
                     >
-                      <i className='bi bi-plus-circle me-0'></i>
-                    </button>
+                      <i className='bi bi-plus-lg' aria-hidden='true'></i>
+                    </span>
                     )}
                   </Accordion.Header>
 
@@ -201,33 +210,38 @@ const AbmSitiosRelevantes = () => {
                             <div className='d-flex align-items-center gap-3'>
                               <img 
                                 src={`https://www.google.com/s2/favicons?domain=${medio.sitio}&sz=64`} 
-                                style={{ width: '30px', height: '30px' }} 
+                                className='sitios__favicon'
+                                alt=''
                                 onError={(e) => { e.target.src = "/images/globe-americas-fill.svg"; }}/>
-                              <a /* className='text-decoration-none' */ href={`https://www.${medio.sitio}`} target='_blank' rel="noreferrer">
+                              <a className='sitios__link' href={`https://www.${medio.sitio}`} target='_blank' rel="noreferrer">
                                 {medio.sitio}
                               </a>
                             </div>
-                            <div className='d-flex gap-2'>
+                            <div className='sitios__acciones'>
                               {permisoEdicion && (
-                              <button 
-                                className='boton-funcion btn p-0'
-                                title='Editar Icono'
+                              <button
+                                type='button'
+                                className='nd-icon-btn nd-icon-btn--primary'
+                                title='Editar ícono'
+                                aria-label={`Editar ícono de ${medio.sitio}`}
                                 data-bs-toggle="modal" 
                                 data-bs-target="#modalEditarSitio"
                                 onClick={() => { setSitioActual(medio); setArchivoImagen(null) }}
                               >
-                                <i className='bi bi-pencil-square mt-5'></i>
+                                <i className='bi bi-pencil' aria-hidden='true'></i>
                               </button>
                               )}
                               {permisoBorrado && (
                               <button 
-                                className='boton-funcion btn p-0 mb-1' 
+                                type='button'
+                                className='nd-icon-btn nd-icon-btn--danger'
                                 title='Eliminar sitio relevante'
+                                aria-label={`Eliminar ${medio.sitio}`}
                                 data-bs-toggle="modal" 
                                 data-bs-target="#modalEliminarSitio"
                                 onClick={() => setSitioActual({sitioGeo: sitio, medio})}
                               >
-                                <i className='bi bi-trash3-fill me-0'></i>
+                                <i className='bi bi-trash3' aria-hidden='true'></i>
                               </button>
                               )}
                             </div>
@@ -258,7 +272,7 @@ const AbmSitiosRelevantes = () => {
                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-cerrar-modal-agregar"></button>
               </div>
               <div className="modal-body text-center pb-4 pt-0">
-                <i className="bi bi-plus-circle text-primary mb-2 fs-1" aria-hidden="true"></i>
+                <i className="bi bi-plus-circle sitios__icono-modal" aria-hidden="true"></i>
                 <h5 className="mt-2 fw-bold">Agregar nuevo sitio relevante en "{sitioActual?.nombre}"</h5>
                 <div className="text-start mt-4 px-2">
                   <label className="form-label">Sitio <span className="text-danger">*</span></label>
@@ -288,7 +302,7 @@ const AbmSitiosRelevantes = () => {
                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-cerrar-modal-editar"></button>
               </div>
               <div className="modal-body text-center pb-4 pt-0">
-                <i className="bi bi-image text-primary mb-2 fs-1" aria-hidden="true"></i>
+                <i className="bi bi-image sitios__icono-modal" aria-hidden="true"></i>
                 <h5 className="mt-2 fw-bold">Cambiar imagen</h5>
                 <p className="text-muted nd-text-base">
                   Editando el icono de <strong>{sitioActual?.sitio}</strong>
@@ -328,7 +342,7 @@ const AbmSitiosRelevantes = () => {
                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-cerrar-modal-eliminar"></button>
               </div>
               <div className="modal-body text-center pb-4 pt-0">
-                <i className="bi bi-exclamation-circle text-danger mb-2 fs-1" aria-hidden="true"></i>
+                <i className="bi bi-exclamation-circle sitios__icono-modal sitios__icono-modal--peligro" aria-hidden="true"></i>
                 <h5 className="mt-2 mb-3 fw-bold">¿Estás seguro de que querés eliminar este sitio?</h5>
                 <p className="text-muted nd-text-base">
                   Vas a eliminar <strong>{sitioActual?.medio?.sitio}</strong> de <strong>{sitioActual?.sitioGeo?.nombre}</strong>. Esta acción no se puede deshacer.

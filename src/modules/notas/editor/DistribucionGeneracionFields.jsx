@@ -1,5 +1,6 @@
 import React from 'react';
 import './colEditorial.css';
+import SelectorFecha from '@/shared/components/form/SelectorFecha';
 
 // Campos de "distribucion_generaciones" (META, X, Youtube, Search).
 // valores: { fecha_vencimiento, comentarios, meta_titulo, meta_engagement, x_descripcion,
@@ -15,11 +16,10 @@ const DistribucionGeneracionFields = ({ valores, onChange }) => {
 
             <div className="datosDistribucionCampo">
                 <label>Fecha vencimiento</label>
-                <input
-                    type="date"
-                    className="form-control"
-                    value={valores.fecha_vencimiento || ''}
-                    onChange={dispacharCampo('fecha_vencimiento')}
+                                <SelectorFecha
+                    bloque
+                    valor={valores.fecha_vencimiento || ''}
+                    onChange={(fecha) => onChange('fecha_vencimiento', fecha)}
                 />
             </div>
 
@@ -49,11 +49,10 @@ const DistribucionGeneracionFields = ({ valores, onChange }) => {
                 <div className="datosDistribucionCampo d-flex gap-2">
                     <div className="flex-fill">
                         <label>Fecha</label>
-                        <input
-                            type="date"
-                            className="form-control"
-                            value={valores.fecha_diferida || ''}
-                            onChange={dispacharCampo('fecha_diferida')}
+                                                <SelectorFecha
+                            bloque
+                            valor={valores.fecha_diferida || ''}
+                            onChange={(fecha) => onChange('fecha_diferida', fecha)}
                         />
                     </div>
                     <div className="flex-fill">

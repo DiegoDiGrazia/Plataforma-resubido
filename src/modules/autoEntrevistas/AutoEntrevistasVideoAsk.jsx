@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import './AutoEntrevistas.css';
 
 const videos = [
     { title: "Vecinos", description: "Desde Noticias d queremos conocer más sobre tu historia y saber por qué crees que este anuncio es tan importante para vos y la comunidad ¡Contanos!", src: "https://www.videoask.com/fn8g87lo5" },
@@ -41,20 +42,11 @@ const AutoEntrevistasVideoAsk = () => {
     };
 
     return (
-        <div className="content flex-grow-1 crearNotaGlobal">
+        <div id="pantalla-autoentrevistas" className="content flex-grow-1 crearNotaGlobal">
 
             {/* Cartel de enlace copiado */}
             {copiado && (
-                <div style={{
-                    position: "fixed",
-                    top: "20px",
-                    right: "20px",
-                    padding: "10px 15px",
-                    backgroundColor: "var(--nd-color-success)",
-                    color: "var(--nd-color-text-inverse)",
-                    borderRadius: 'var(--nd-radius-sm)',
-                    zIndex: 9999,
-                }}>
+                <div className="autoentrevistas__aviso" role="status">
                     ¡Enlace copiado al portapapeles!
                 </div>
             )}
@@ -67,7 +59,7 @@ const AutoEntrevistasVideoAsk = () => {
                 </div>
             </div>
 
-            <div className="row miPerfilContainer soporteContainer mt-4 p-0 mb-5">
+            <div className="row miPerfilContainer soporteContainer autoentrevistas__barra mt-4 p-0 mb-5">
                 <div className="col todasLasNotas p-0 pt-2">Todos los contenidos</div>
                 <div className="col buscadorNotas">
                     <form className="buscadorNotasForm">
@@ -82,18 +74,21 @@ const AutoEntrevistasVideoAsk = () => {
                 </div>
             </div>
 
-            <div className="row miPerfilContainer soporteContainer mt-4 p-0">
+            <div className="miPerfilContainer soporteContainer autoentrevistas__grilla mt-4 p-0">
                 {filteredVideos.map((video, index) => (
-                    <div key={index} className="col-6">
+                    <div key={video.src}>
                         <div
-                            className="card"
-                            style={{ width: "auto", height: "400px", position: "relative", cursor: "pointer" }}
+                            className="card autoentrevistas__card"
                             onClick={() => handleFullscreen(index)}
                         >
-                            <div className="card-body" style={{ height: "auto" }}>
+                            <div className="card-body">
                                 <h5 className="card-title">
                                     {video.title}{" "}
                                     <button
+                                        type="button"
+                                        className="btn btn-link autoentrevistas__compartir"
+                                        title="Copiar enlace"
+                                        aria-label={`Copiar enlace de ${video.title}`}
                                         onClick={(e) => {
                                             e.stopPropagation(); // Evita fullscreen
                                             compartirEnlace(video.src);
@@ -117,17 +112,7 @@ const AutoEntrevistasVideoAsk = () => {
                             ></iframe>
 
                             {/* Overlay transparente para capturar clicks dentro del iframe */}
-                            <div
-                                style={{
-                                    position: "absolute",
-                                    top: 0,
-                                    left: 0,
-                                    width: "80%",
-                                    height: "100%",
-                                    zIndex: 10,
-                                    background: "transparent",
-                                }}
-                            ></div>
+                            <div className="autoentrevistas__capa" aria-hidden="true"></div>
                         </div>
                     </div>
                 ))}

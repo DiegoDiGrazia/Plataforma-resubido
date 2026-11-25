@@ -7,12 +7,7 @@
 
 .contenedor-facturas {
 
-    /* ---------- Encabezado + botones (cargar factura, Excel) ---------- */
-    .facturas__encabezado {
-        align-items: flex-end;
-        row-gap: var(--nd-space-4);
-    }
-
+    /* ---------- Botones de la barra (cargar factura, Excel) ---------- */
     .facturas__botones {
         display: flex;
         flex: 0 0 auto;
@@ -30,12 +25,29 @@
         font-size: var(--nd-font-size-xl);
     }
 
-    /* ---------- Filtros ---------- */
+    /* ---------- Filtros (desktop) ----------
+       Línea 1: buscador + vencimiento ··· cargar factura + Excel
+       Línea 2: los demás filtros. En mobile los arma FiltrosMobile. */
     .facturas__filtros {
         display: flex;
+        flex-direction: column;
+        gap: var(--nd-space-3);
+    }
+
+    .facturas__filtros-fila {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--nd-space-3);
+    }
+
+    .facturas__filtros-grupo {
+        display: flex;
+        flex: 1 1 auto;
         flex-wrap: wrap;
         align-items: center;
         gap: var(--nd-space-3);
+        min-width: 0;
     }
 
     .facturas__buscador {
@@ -46,35 +58,10 @@
         margin: 0;
     }
 
-    .facturas__fechas {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: var(--nd-space-3);
-    }
-
-    .facturas__fecha {
-        display: flex;
-        align-items: center;
-        gap: var(--nd-space-2);
-        margin: 0;
-        font-size: var(--nd-font-size-sm);
-        white-space: nowrap;
-    }
-
-    .input-fechas {
-        width: 150px;
-        padding: 2px var(--nd-space-1);
-        font-size: var(--nd-font-size-sm);
-        border: var(--nd-border-width) solid var(--nd-color-border-strong);
-        border-radius: var(--nd-radius-sm);
-    }
-
     .facturas__dropdowns {
         display: flex;
         flex-wrap: wrap;
         gap: var(--nd-space-2);
-        margin-left: auto;
     }
 
     /* ---------- Listado ---------- */
@@ -122,19 +109,69 @@
         gap: var(--nd-space-1);
     }
 
-    .facturas__acciones .facturas__boton-icono {
-        border: none;
+    .facturas__accion {
+        font-size: var(--nd-font-size-lg);
     }
 
-    .facturas__acciones .facturas__boton-icono:hover {
-        background-color: var(--nd-color-bg-muted);
+    .facturas__accion--peligro {
+        color: var(--nd-color-danger);
+    }
+
+    /* Excel: ícono + texto, mismo alto que el botón de cargar factura */
+    .facturas__boton-texto {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--nd-space-1);
+        height: var(--nd-control-height);
+    }
+
+    /* Factura emitida y estado PAGADA: recuadro azul de marca (antes verde) */
+    .facturas__listado > .facturas__item--emitida {
+        border: var(--nd-border-width-thick) solid var(--nd-color-secondary);
+    }
+
+    .facturas__estado--pagada {
+        padding: 0 var(--nd-space-1);
+        border: var(--nd-border-width-thick) solid var(--nd-color-secondary);
+        border-radius: var(--nd-radius-sm);
     }
 
     .form-check-input.flex-shrink-0.mt-0 {
         margin: 0 2px 0 1px;
     }
 
+    /* ≤1440 entran 4 bloques por fila y Comisiones bajaba sola, con mucho blanco al lado.
+       Ahora ocupa todo el ancho en 3 columnas: una fila por comisionista. */
+    @media (max-width: 1440px) {
+        .facturas__datos {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .facturas__comisiones {
+            display: grid;
+            grid-column: 1 / -1;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: var(--nd-space-1) var(--nd-space-5);
+            padding-top: var(--nd-space-2);
+            border-top: var(--nd-border-width) solid var(--nd-color-border);
+        }
+    }
+
+    @media (max-width: 1024px) {
+        .facturas__datos {
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        }
+    }
+
     @media (max-width: 768px) {
+        /* Mobile queda como estaba: comisiones como un bloque más */
+        .facturas__comisiones {
+            display: block;
+            grid-column: auto;
+            padding-top: 0;
+            border-top: 0;
+        }
+
         .facturas__buscador {
             max-width: none;
         }
@@ -159,4 +196,9 @@
             border-top: var(--nd-border-width) solid var(--nd-color-border);
         }
     }
+}
+
+/* Elementos clickeables de los modales (checkbox de facturas a unificar, links de archivos) */
+.facturas__clickeable {
+    cursor: pointer;
 }

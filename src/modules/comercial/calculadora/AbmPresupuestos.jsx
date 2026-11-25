@@ -4,8 +4,10 @@ import { obtenerPresupuestosPorUser, eliminarPresupuesto } from '@/api/presupues
 import { obtenerGeo } from '@/api/geosApi';
 import { obtenerClientes } from '@/api/apis'; 
 import { formatearFecha, formatearMoneda, formatearUsd } from '@/shared/utils/funcionesVarias';
-import SelectorCliente from '@/shared/components/SelectorCliente'; 
 import DropdownFiltro from '@/shared/components/form/DropdownFiltro';
+import SelectorFecha from '@/shared/components/form/SelectorFecha';
+import FiltrosMobile from '@/shared/components/form/FiltrosMobile';
+import useEsMobile from '@/shared/hooks/useEsMobile';
 import { ToastContainer } from 'react-toastify';
 import { toastExito, toastError } from '@/shared/utils/toastify/toastify.jsx';
 import './AbmPresupuestos.css';
@@ -25,7 +27,9 @@ const AbmPresupuestos = ({ onEditar }) => {
     const [eliminando, setEliminando] = useState(false);    
     const TOKEN = useSelector((state) => state.formulario.token);
     const usuario_id = useSelector((state) => state.formulario.usuario?.id);
-    const cliente_id = useSelector((state) => state.formulario.id_cliente); 
+    // Filtro de cuenta propio de esta pantalla (no toca la cuenta global de Redux). "" = todas
+    const [filtroClienteId, setFiltroClienteId] = useState("");
+    const esMobile = useEsMobile();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -118,7 +122,7 @@ const AbmPresupuestos = ({ onEditar }) => {
         String(p.presupuesto_id).includes(textoBusqueda) || 
         (p.descripcion && p.descripcion.toLowerCase().includes(textoBusqueda));
 
-    const coincideCliente = !cliente_id || p.cliente_id === cliente_id;
+    const coincideCliente = !filtroClienteId || String(p.cliente_id) === String(filtroClienteId);
 
     const coincideUsuario = filtroUsuario === "Todos" || String(p.usuario_id) === String(usuario_id);
 
@@ -132,62 +136,91 @@ const AbmPresupuestos = ({ onEditar }) => {
     return coincideBusqueda && coincideCliente && coincideFechas && coincideUsuario;
   });
 
+  // ---------- Filtros: en desktop van en línea; en mobile, en el panel de FiltrosMobile ----------
+  const fechaCorta = (fecha) => fecha ? fecha.split('-').reverse().slice(0, 2).join('/') : '…';
+
+  const clientesOrdenados = [...clientesList].sort((a, b) => String(a.name).localeCompare(String(b.name), 'es'));
+  const nombreClienteFiltro = filtroClienteId
+    ? clientesList.find((c) => String(c.id) === String(filtroClienteId))?.name ?? ''
+    : '';
+
+  // Un chip naranja por cada filtro fuera de su valor por defecto
+  const chipsFiltros = [
+    (fechaDesde || fechaHasta) && { clave: 'fecha', texto: `${fechaCorta(fechaDesde)} → ${fechaCorta(fechaHasta)}`, limpiar: () => { setFechaDesde(''); setFechaHasta(''); } },
+    nombreClienteFiltro && { clave: 'cliente', texto: `Cuenta: ${nombreClienteFiltro}`, limpiar: () => setFiltroClienteId('') },
+    filtroUsuario !== 'Todos' && { clave: 'usuario', texto: filtroUsuario, limpiar: () => setFiltroUsuario('Todos') },
+  ].filter(Boolean);
+
+  const buscador = (
+    <div className="input-group search-input-container">
+      <input
+        type="text"
+        className="form-control border-end-0"
+        placeholder="Buscar ID o nombre..."
+        value={busqueda}
+        onChange={(e) => setBusqueda(e.target.value)}
+      />
+      <span className="input-group-text bg-white border-start-0 text-muted">
+        <i className="bi bi-search" aria-hidden="true"></i>
+      </span>
+    </div>
+  );
+
+  const campoFecha = (
+    <SelectorFecha
+      label="Fecha"
+      desde={fechaDesde}
+      hasta={fechaHasta}
+      onChangeDesde={setFechaDesde}
+      onChangeHasta={setFechaHasta}
+      bloque={esMobile}
+    />
+  );
+
+  const campoCliente = (
+    <div className="selector-cliente-container">
+      <DropdownFiltro
+        label="Cuenta"
+        valorActual={nombreClienteFiltro || 'Todas'}
+        opciones={['Todas', ...clientesOrdenados.map((c) => c.name)]}
+        onChange={(nombre) => setFiltroClienteId(
+          nombre === 'Todas' ? '' : (clientesOrdenados.find((c) => c.name === nombre)?.id ?? '')
+        )}
+        mostrarBuscador={true}
+      />
+    </div>
+  );
+
+  const campoUsuario = (
+    <div className='abmPresupuestos__campo'>
+      <DropdownFiltro
+        label="Usuario"
+        valorActual={filtroUsuario}
+        opciones={["Todos", "Mis Presupuestos"]}
+        onChange={setFiltroUsuario}
+      />
+    </div>
+  );
+
   return (
     <div className="abmPresupuestos nd-px-page pb-4">
 
-      <div className="d-flex flex-wrap justify-content-between align-items-center mb-4 p-3 filtros-container shadow-sm gap-3">
-        
-        {/* FILTROS */}
-        <div className="input-group search-input-container">
-            <input
-                type="text"
-                className="form-control border-end-0"
-                placeholder="Buscar ID o nombre..."
-                value={busqueda}
-                onChange={(e) => setBusqueda(e.target.value)}
-            />
-            <span className="input-group-text bg-white border-start-0 text-muted">
-                <i className="bi bi-search"></i>
-            </span>
+      {esMobile ? (
+        <FiltrosMobile className="mb-4" buscador={buscador} chips={chipsFiltros}>
+          {campoFecha}
+          {campoCliente}
+          {campoUsuario}
+        </FiltrosMobile>
+      ) : (
+        <div className="d-flex flex-wrap justify-content-between align-items-center mb-4 p-3 filtros-container shadow-sm gap-3">
+          {buscador}
+          <div className="d-flex flex-wrap align-items-center gap-3">
+            {campoFecha}
+            {campoCliente}
+            {campoUsuario}
+          </div>
         </div>
-
-        <div className="d-flex flex-wrap align-items-center gap-3">
-            
-            <div className="d-flex align-items-center gap-2">
-                <label className="filter-label">Desde:</label>
-                <input
-                    type="date"
-                    className="filter-date-input"
-                    value={fechaDesde}
-                    onChange={(e) => setFechaDesde(e.target.value)}
-                />
-            </div>
-            
-            <div className="d-flex align-items-center gap-2">
-                <label className="filter-label">Hasta:</label>
-                <input
-                    type="date"
-                    className="filter-date-input"
-                    value={fechaHasta}
-                    onChange={(e) => setFechaHasta(e.target.value)}
-                />
-            </div>
-
-            <div className="selector-cliente-container">
-                <SelectorCliente incluirTodos={true} editorial={false} />
-            </div>
-
-            <div className='abmPresupuestos__campo'>
-                <DropdownFiltro
-                    label="Usuario"
-                    valorActual={filtroUsuario}
-                    opciones={["Todos", "Mis Presupuestos"]}
-                    onChange={setFiltroUsuario}
-                />
-            </div>
-
-        </div>
-      </div>
+      )}
 
       {/* RESULTADOS */}
       {cargando ? (

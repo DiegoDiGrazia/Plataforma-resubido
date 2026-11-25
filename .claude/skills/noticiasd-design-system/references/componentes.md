@@ -113,6 +113,39 @@ Lo usan los hubs de Administración y Comercial.
 Lo usan `InputNumerico`, `SelectorNumerosEnteros` y `SelectorConBuscador`. El ancho del control lo
 fija la pantalla (ej. la Calculadora: `.calculadora__columna .nd-field-row__control { width: 220px }`).
 
+### Fechas: `SelectorFecha` (shared/components/form)
+**Nunca** `<input type="date">` ni `type="month"` sueltos: usar `SelectorFecha`.
+- `modo="dia"` (YYYY-MM-DD, default) o `modo="mes"` (YYYY-MM). Valores como string, igual que el input nativo.
+- Fecha única: `valor` + `onChange(valor)`. Rango: `desde`/`hasta` + `onChangeDesde`/`onChangeHasta`
+  (`etiquetaDesde`/`etiquetaHasta` para renombrar, ej. Inicio/Fin).
+- `label` (va dentro del botón), `bloque` (a todo el ancho, para formularios), `required`, `disabled`,
+  `min`/`max`, `atajos={false}`, `permitirLimpiar`, `alineacionDerecha`.
+- En rangos, si los dos setters escriben el mismo objeto de estado, usar updater funcional:
+  `onChangeDesde={(v) => setForm((f) => ({ ...f, fecha_inicio: v }))}`.
+
+### Filtros en mobile: `FiltrosMobile` (shared/components/form)
+
+En ≤768px, las pantallas con varios filtros (Monitor, Listado de presupuestos) no los muestran en línea:
+usan `<FiltrosMobile>` con buscador + botón **Filtros** (abre un panel inferior con todos los filtros)
+y un chip naranja por cada filtro fuera de su valor por defecto, con × para quitarlo.
+
+```jsx
+const esMobile = useEsMobile(); // @/shared/hooks/useEsMobile
+const chips = [
+  filtro !== 'Todas' && { clave: 'x', texto: filtro, limpiar: () => setFiltro('Todas') },
+  fecha && { clave: 'fecha', texto: fecha, limpiar: …, requerido: true }, // no cuenta ni se limpia con "Limpiar filtros"
+].filter(Boolean);
+
+{esMobile ? (
+  <FiltrosMobile buscador={buscador} acciones={botonExtra} chips={chips}>
+    {campoFecha}{campoX}
+  </FiltrosMobile>
+) : ( /* barra de escritorio */ )}
+```
+
+- Armar cada control una vez (`const campoX = (…)`) y usarlo en las dos ramas.
+- En mobile pasar `bloque` a `SelectorFecha`.
+
 ### Otros
 | Clase | Para |
 |---|---|

@@ -1,0 +1,44 @@
+/* ==========================================================================
+   Ayuda y soporte (#pantalla-soporte)
+   ========================================================================== */
+
+#pantalla-soporte {
+
+    /* ---------- Grilla de tutoriales: 3 por fila, 2 en 1024, 1 en mobile ---------- */
+    .soporte__grilla {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: var(--nd-space-8);
+    }
+
+    /* La separación la da la grilla (legacy.css le pone margen abajo a cada .card) */
+    .soporte__grilla .card {
+        height: 100%;
+        margin: 0;
+    }
+
+    @media (max-width: 1024px) {
+        .soporte__grilla {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: var(--nd-space-6);
+        }
+    }
+
+    @media (max-width: 768px) {
+        /* "Todos los contenidos" arriba y el buscador abajo, a todo el ancho */
+        .soporte__barra {
+            flex-direction: column;
+            gap: var(--nd-space-3);
+        }
+
+        .soporte__barra > .col {
+            flex: 0 0 auto;
+            width: 100%;
+            padding: 0;
+        }
+
+        .soporte__grilla {
+            grid-template-columns: minmax(0, 1fr);
+        }
+    }
+}

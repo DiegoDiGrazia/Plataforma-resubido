@@ -8,6 +8,8 @@ import TablaReadOnly from './TablaReadOnly';
 import InputNumerico from '@/shared/components/form/InputNumerico';
 import { descargarExcel } from '@/shared/utils/creacionCSV';
 import TablasPorPresupuesto from './TablasPorPresupuesto';
+import FiltrosMobile from '@/shared/components/form/FiltrosMobile';
+import useEsMobile from '@/shared/hooks/useEsMobile';
 import SelectorCliente from '@/shared/components/SelectorCliente';
 import { crearPresupuesto, actualizarPresupuesto} from '@/api/presupuestosApi';
 import { ToastContainer } from 'react-toastify';
@@ -26,6 +28,7 @@ const CalculadoraDeVentas = ({ datosEdicion, onGuardadoExitoso }) => {
   const USUARIO_ID = useSelector((state) => state.formulario.usuario?.id);
   const CLIENTE_ID = useSelector((state) => state.formulario.id_cliente);
   const NOMBRE_CLIENTE = useSelector((state) => state.formulario.cliente);
+  const esMobile = useEsMobile();
 
   const [cantidadDeNotas, setCantidadDeNotas] = useState(1);
   const [alcancePorNota, setalcancePorNota] = useState(null);
@@ -422,94 +425,153 @@ const CalculadoraDeVentas = ({ datosEdicion, onGuardadoExitoso }) => {
     setShowExcelModal(false);
   };
 
+  // ---------- Filtros: en desktop van en dos columnas; en mobile, en el panel de FiltrosMobile ----------
+  const nombrePais = typeof pais === 'string' ? pais : pais?.nombre;
+
+  // Chip por cada valor distinto del inicial. La cuenta no va en el panel sino en la barra:
+  // el panel desmonta su contenido al cerrarse y SelectorCliente tiene que estar montado
+  // para aplicar la cuenta del presupuesto que se está editando.
+  const chipsFiltros = [
+    (provincia || (nombrePais && nombrePais !== 'Argentina')) && {
+      clave: 'ubicacion',
+      texto: municipio?.nombre || provincia?.nombre || nombrePais,
+      limpiar: () => { setPais('Argentina'); setProvincia(''); setMunicipio(''); },
+    },
+    cantidadDeNotas > 1 && { clave: 'notas', texto: `${cantidadDeNotas} notas`, limpiar: () => setCantidadDeNotas(1) },
+    alcancePorNota > 1 && { clave: 'alcance', texto: `Alcance: ${Number(alcancePorNota).toLocaleString('es-AR')}`, limpiar: () => setalcancePorNota(null) },
+    rentabilidad != null && Number(rentabilidad) !== 65 && { clave: 'rentabilidad', texto: `Rentabilidad ${rentabilidad}%`, limpiar: () => setRentabilidad(65) },
+    feeAgencia != null && Number(feeAgencia) !== 15 && { clave: 'fee', texto: `Fee ${feeAgencia}%`, limpiar: () => setFeeAgencia(15) },
+  ].filter(Boolean);
+
+  const botonExcel = (
+    <button
+        type='button'
+        id='descargar-excel'
+        className='btn btn-outline-secondary'
+        title="Descargar presupuesto en Excel"
+        onClick={() => setShowExcelModal(true)}
+        >
+        <i className="bi bi-download" aria-hidden="true"></i> Excel
+    </button>
+  );
+
+  const selectorCuenta = (
+    <SelectorCliente 
+        key={datosEdicion ? datosEdicion.cliente_id : 'nuevo'} 
+        incluirTodos={false} 
+        clientePreseleccionado={datosEdicion ? datosEdicion.cliente_id : null}
+    />
+  );
+
+  const campoCuenta = (
+    <div className="nd-field-row mb-3">
+      <span className="nd-field-row__label">Cuenta</span>
+      {selectorCuenta}
+    </div>
+  );
+
+  const campoUbicacion = (
+    <ArbolDistribucion  
+      TOKEN={TOKEN}
+      pais={pais}
+      provincia={provincia}
+      municipio={municipio}
+      onSetPais={(p) => setPais(p)}
+      onSetProvincia={(p) => setProvincia(p)}
+      onSetMunicipio={(m) => setMunicipio(m)}
+    />
+  );
+
+  const poblacion = (
+    <p className='calculadora__poblacion'>Población: <strong>{Number(poblacionEstimada?.poblacion || 0).toLocaleString('es-AR') || 0}</strong></p>
+  );
+
+  const camposCalculo = (
+    <div className="dropdown p-0">
+      <SelectorNumerosEnteros
+        title="Cantidad de notas"
+        start={1}
+        end={20}
+        selectedValue={cantidadDeNotas}
+        onSelect={setCantidadDeNotas}
+        onClear={() => setCantidadDeNotas(1)}
+      /> 
+      <InputNumerico
+        title="Usuarios a alcanzar por nota"
+        selectedValue={alcancePorNota}
+        isPercentual={false}
+        min={1}
+        max={Number(poblacionEstimada?.poblacion || 0)}
+        onSelect={setalcancePorNota}
+        onClear={() => setalcancePorNota(1)}
+        isDecimal={false}
+      />
+      <InputNumerico
+        title="Rentabilidad"
+        selectedValue={rentabilidad}
+        isPercentual ={true}
+        min={0}
+        max={99.9}
+        onSelect={setRentabilidad}
+        onClear={() => setRentabilidad(null)}
+        isDecimal={true}
+      />
+      <InputNumerico
+        title="Fee Agencia"
+        selectedValue={feeAgencia}
+        isPercentual ={true}
+        min={0}
+        max={99.9}
+        onSelect={setFeeAgencia}
+        onClear={() => setFeeAgencia(null)}
+        isDecimal={true}
+      />
+    </div>
+  );
+
   return (
     <div>
       <div className='row miPerfilContainer soporteContainer d-flex align-items-stretch mt-0 pt-0'>
-        <h3 id="saludo" className='headerTusNotas ml-0 mb-3 p-0'>
+        <h3 id="saludo" className='headerTusNotas ml-0 p-0'>
           <i className="bi bi-bag-fill" aria-hidden="true" />
             {" Calculadora de ventas "}
         </h3>
       </div>
       
       {/* FILTROS */}
-      <div className='row miPerfilContainer soporteContainer mt-4 p-0 mb-3 calculadora__filtros'>
-          <div className='calculadora__columna'>
-            <div className="mb-3 d-flex justify-content-between align-items-center">
-              <div className="fw-bold m-0">Cuenta</div>
-              <SelectorCliente 
-                  key={datosEdicion ? datosEdicion.cliente_id : 'nuevo'} 
-                  incluirTodos={false} 
-                  clientePreseleccionado={datosEdicion ? datosEdicion.cliente_id : null}
-              />
+      <div className='row miPerfilContainer soporteContainer mt-2 p-0 mb-3 calculadora__filtros'>
+          {esMobile ? (
+            <div className='calculadora__columna'>
+              <FiltrosMobile
+                buscador={selectorCuenta}
+                chips={chipsFiltros}
+                acciones={botonExcel}
+                panelClassName='calculadora__panel'
+              >
+                {campoUbicacion}
+                {camposCalculo}
+              </FiltrosMobile>
+              {poblacion}
             </div>
-
-            <ArbolDistribucion  
-              TOKEN={TOKEN}
-              pais={pais}
-              provincia={provincia}
-              municipio={municipio}
-              onSetPais={(p) => setPais(p)}
-              onSetProvincia={(p) => setProvincia(p)}
-              onSetMunicipio={(m) => setMunicipio(m)}
-            />
-            <p className='calculadora__poblacion'>Población: <strong>{Number(poblacionEstimada?.poblacion || 0).toLocaleString('es-AR') || 0}</strong></p>
-          </div>
-          <div className='calculadora__columna'>
-              <div className="dropdown p-0">
-                <SelectorNumerosEnteros
-                  title="Cantidad de notas"
-                  start={1}
-                  end={20}
-                  selectedValue={cantidadDeNotas}
-                  onSelect={setCantidadDeNotas}
-                  onClear={() => setCantidadDeNotas(1)}
-                /> 
-                <InputNumerico
-                  title="Usuarios a alcanzar por nota"
-                  selectedValue={alcancePorNota}
-                  isPercentual={false}
-                  min={1}
-                  max={Number(poblacionEstimada?.poblacion || 0)}
-                  onSelect={setalcancePorNota}
-                  onClear={() => setalcancePorNota(1)}
-                  isDecimal={false}
-                />
-                <InputNumerico
-                  title="Rentabilidad"
-                  selectedValue={rentabilidad}
-                  isPercentual ={true}
-                  min={0}
-                  max={99.9}
-                  onSelect={setRentabilidad}
-                  onClear={() => setRentabilidad(null)}
-                  isDecimal={true}
-                />
-                <InputNumerico
-                  title="Fee Agencia"
-                  selectedValue={feeAgencia}
-                  isPercentual ={true}
-                  min={0}
-                  max={99.9}
-                  onSelect={setFeeAgencia}
-                  onClear={() => setFeeAgencia(null)}
-                  isDecimal={true}
-                />
-
+          ) : (
+            <>
+              <div className='calculadora__columna'>
+                {campoCuenta}
+                {campoUbicacion}
+                {poblacion}
               </div>
-              
-            </div>
+              <div className='calculadora__columna'>
+                {camposCalculo}
+              </div>
+            </>
+          )}
         <div className="calculadora__presupuestos">
-          
-          <div className='d-flex flex-row justify-content-end mb-2'>
-            <button 
-                id='descargar-excel' 
-                className='btn btn-outline-secondary'
-                title="Descargar presupuesto en Excel"
-                onClick={() => setShowExcelModal(true)}
-                >
-                <i className="bi bi-filetype-xlsx" aria-hidden="true"></i> Excel
-            </button>
-          </div>
+
+          {!esMobile && (
+            <div className='d-flex flex-row justify-content-end mb-2'>
+              {botonExcel}
+            </div>
+          )}
 
           {/* PRESUPUESTO PRINCIPAL */}
           <TablasPorPresupuesto
@@ -543,8 +605,8 @@ const CalculadoraDeVentas = ({ datosEdicion, onGuardadoExitoso }) => {
           ))}
 
           <div className="mt-4 mb-5 text-center border-bottom pb-4">
-            <button className="btn fw-bold btn-outline-success" onClick={agregarCalculadora}>
-               <i className="bi bi-plus-circle me-2"></i> Agregar Presupuesto Alternativo
+            <button className="btn btn-outline-primary" onClick={agregarCalculadora}>
+               <i className="bi bi-plus-circle" aria-hidden="true"></i> Agregar Presupuesto Alternativo
             </button>
           </div>
 
@@ -637,9 +699,10 @@ const CalculadoraDeVentas = ({ datosEdicion, onGuardadoExitoso }) => {
                 
                 <label className="form-label mb-2 fw-bold mt-2">Seleccione las plataformas a incluir:</label>
                 {rows.slice(0, -1).map((plataforma, index) => (
-                  <div className="form-check d-flex gap-2 p-0" key={index}>
-                    <input 
-                      type="checkbox" 
+                  <div className="form-check calculadora__opcion" key={index}>
+                    <input
+                      type="checkbox"
+                      className="form-check-input calculadora__check"
                       id={`export-check-${index}`}
                       checked={exportPlatforms[index]} 
                       onChange={() => {
@@ -648,44 +711,43 @@ const CalculadoraDeVentas = ({ datosEdicion, onGuardadoExitoso }) => {
                             copy[index] = !copy[index];
                             return copy;
                         });
-                      }} 
-                      style={{ cursor: "pointer" }}
+                      }}
                     />
-                    <label className="form-check-label" htmlFor={`export-check-${index}`} style={{ cursor: "pointer" }}>
+                    <label className="form-check-label" htmlFor={`export-check-${index}`}>
                       {plataforma}
                     </label>
                   </div>
                 ))}
                 
-                <div className="form-check d-flex gap-2 p-0">
-                  <input 
-                    type="checkbox" 
+                <div className="form-check calculadora__opcion">
+                  <input
+                    type="checkbox"
+                    className="form-check-input calculadora__check"
                     id="export-check-search"
                     checked={exportSearch} 
-                    onChange={() => setExportSearch(!exportSearch)} 
-                    style={{ cursor: "pointer" }}
+                    onChange={() => setExportSearch(!exportSearch)}
                   />
-                  <label className="form-check-label" htmlFor="export-check-search" style={{ cursor: "pointer" }}>
+                  <label className="form-check-label" htmlFor="export-check-search">
                     Search
                   </label>
                 </div>
 
-                <div className="form-check d-flex gap-2 p-0 mt-3 border-top pt-3">
-                  <input 
-                    type="checkbox" 
+                <div className="form-check calculadora__opcion mt-3 border-top pt-3">
+                  <input
+                    type="checkbox"
+                    className="form-check-input calculadora__check"
                     id="check-api-export"
                     checked={exportApi} 
-                    onChange={() => setExportApi(!exportApi)} 
-                    style={{ cursor: "pointer" }}
+                    onChange={() => setExportApi(!exportApi)}
                   />
-                  <label className="form-check-label fw-bold" htmlFor="check-api-export" style={{ cursor: "pointer" }}>
+                  <label className="form-check-label fw-bold" htmlFor="check-api-export">
                     Incluir Presupuesto Histórico
                   </label>
                 </div>
               </div>
               <div className="modal-footer">
                 <button className="btn btn-secondary" onClick={() => setShowExcelModal(false)}>Cancelar</button>
-                <button className="btn btn-success" onClick={confirmarDescargaExcel}>Descargar XLSX</button>
+                <button className="btn btn-primary" onClick={confirmarDescargaExcel}>Descargar XLSX</button>
               </div>
             </div>
           </div>

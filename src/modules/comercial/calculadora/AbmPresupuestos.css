@@ -108,7 +108,7 @@
 
     .filtros-container {
       background-color: var(--nd-color-bg-page);
-      border: 1px solid var(--nd-color-border);
+      border: var(--nd-border-width) solid var(--nd-color-border);
       border-radius: var(--nd-radius-md);
     }
 
@@ -119,24 +119,6 @@
 
     .selector-cliente-container {
       min-width: 220px;
-      margin-top: 10px;
-    }
-
-    .filter-date-input {
-      font-size: var(--nd-font-size-base);
-      padding: 0.35rem 0.5rem;
-      border-radius: var(--nd-radius-md);
-      border: 1px solid var(--nd-color-border);
-      color: var(--nd-color-text);
-      outline: none;
-      background-color: var(--nd-color-bg-surface);
-    }
-
-    .filter-label {
-      font-size: var(--nd-font-size-base);
-      color: var(--nd-color-text-secondary);
-      font-weight: var(--nd-font-weight-semibold);
-      margin-bottom: 0;
     }
 
     @media (max-width: 1366px) {
@@ -146,11 +128,15 @@
       .selector-cliente-container {
         min-width: 180px;
       }
-      .filter-date-input {
-        width: 115px;
-      }
       .filtros-container.gap-3 {
         gap: var(--nd-space-2);
+      }
+    }
+
+    /* Mobile: el buscador ocupa lo que sobra al lado del botón Filtros */
+    @media (max-width: 768px) {
+      .nd-filtros-mobile .search-input-container {
+        max-width: none;
       }
     }
 }

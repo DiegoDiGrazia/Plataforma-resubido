@@ -2,18 +2,18 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import ModalMensaje from '@/shared/components/modales/ModalMensaje';
-import { obtenerContratos, obtenerPlanesMarketing, obtenerComisionistas, cargarArchivo } from '@/api/apisUsuarios'; // Importa la función para obtener usuarios
+import { obtenerContratos, obtenerPlanesMarketing, obtenerComisionistas } from '@/api/apisUsuarios'; 
 import { obtenerClientes } from '@/api/apis';
 import './AbmContratos.css';
 import SelectorConBuscador from '@/shared/components/form/SelectorConBuscador';
-import InputFecha from '@/shared/components/form/InputFecha';
+import SelectorFecha from '@/shared/components/form/SelectorFecha';
 import InputNumerico from '@/shared/components/form/InputNumerico';
 import Checkbox from '@/modules/notas/editor/checkbox';
 import FileInput from '@/shared/components/form/FileInput';
-import ModalConListado from '@/shared/components/modales/ModalConListado';
-import { obtenerArchivosDeContrato, obtenerComentariosDeContrato, agregarComentario } from '@/api/facturasApi.js';
-import ModalConInputTexto from '@/shared/components/modales/ModalConInputTexto';
-import ModalConInputFile from '@/shared/components/modales/ModalConInputFile';
+import ModalComentariosContrato from './ModalComentariosContrato';
+import ModalArchivosContrato from './ModalArchivosContrato';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { descargarExcel } from '@/shared/utils/creacionCSV';
 
 const Modalidades = [
@@ -162,14 +162,8 @@ const AbmContratos
     const [comisionistasSeleccionados, setComisionistasSeleccionados] = useState([]);
     const [vendedorSeleccionado, setVendedorSeleccionado] = useState(null);
     const id_usuario = useSelector((state) => state.formulario.usuario.id);
-    const [showModalComentariosDelContrato, setShowModalComentariosDelContrato] = useState(false);
-    const [comentariosContrato, setComentariosDelContrato] = useState([]);
-    const [showModalArchivosDelContrato, setShowModalArchivosDelContrato] = useState(false);
-    const [archivosContrato, setArchivosDelContrato] = useState([]);
-    const [showModalInputTexto, setShowModalInputTexto] = useState(false);
-    const [comentarioAAgregar, setComentarioAAgregar] = useState('');
-    const [showModalInputFile, setShowModalInputFile] = useState(false);
-    const [fileAAgregar, setFileAAgregar] = useState(null);
+    const [contratoComentarios, setContratoComentarios] = useState(null);
+    const [contratoArchivos, setContratoArchivos] = useState(null);
     const [loading, setLoading] = useState(true);
 
     const permisoAlta = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Contratos: Alta") || false);
@@ -535,43 +529,6 @@ const handleSave = () => {
     });
   };
 
-  const verComentariosDelContrato = async (contrato) => {
-    setShowModalComentariosDelContrato(true);
-    const comentarios = await obtenerComentariosDeContrato(TOKEN, contrato.id);
-    setComentariosDelContrato(comentarios || []);
-  }
-  const cargarComentario = (contrato) => {
-    setShowModalInputTexto(true);
-    setContratoSeleccionado(contrato);
-  }
-  const cargarArchivos = (contrato) => {
-    setShowModalInputFile(true);
-    setContratoSeleccionado(contrato);
-  }
-  const clickearEnGuardarUnArchivoContrato = async (contrato, archivo) => {
-    setShowModalInputFile(false);
-    await cargarArchivo(TOKEN, id_usuario, archivo, contratoSeleccionado.id);
-    setMensajeModalExito('El archivo se cargó correctamente.');
-    setShowModal(true);
-  }
-
-  const clickearGuardarComentarioContrato = async (contrato, comentario) => {
-    setShowModalInputTexto(false);
-    try {
-      await agregarComentario(TOKEN, id_usuario, comentario, contratoSeleccionado.id);
-      setMensajeModalExito('El comentario se guardó correctamente.');
-      setShowModal(true);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  const verArchivosDelContrato = async (contrato) => {
-    setShowModalArchivosDelContrato(true);
-    const archivos = await obtenerArchivosDeContrato(TOKEN, contrato.id);
-    setArchivosDelContrato(archivos || []);
-  }
-
   return (
     <div className="content flex-grow-1 crearNotaGlobal contratosPage">
       <div className='row miPerfilContainer soporteContainer'>
@@ -590,22 +547,14 @@ const handleSave = () => {
                 <i className="bi bi-plus-lg" />Crear nuevo contrato
               </button>
             )}
-            <label className="filtroFecha">
-              Vencimiento desde
-              <input
-                type="month"
-                value={fechaDesde}
-                onChange={(e) => setFechaDesde(e.target.value)}
-              />
-            </label>
-            <label className="filtroFecha">
-              Vencimiento hasta
-              <input
-                type="month"
-                value={fechaHasta}
-                onChange={(e) => setFechaHasta(e.target.value)}
-              />
-            </label>
+            <SelectorFecha
+              modo="mes"
+              label="Vencimiento"
+              desde={fechaDesde}
+              hasta={fechaHasta}
+              onChangeDesde={setFechaDesde}
+              onChangeHasta={setFechaHasta}
+            />
             <form className='buscadorNotasForm' onSubmit={(e) => e.preventDefault()}>
               <input
                 className = 'inputBuscadorNotas'
@@ -702,23 +651,11 @@ const handleSave = () => {
                     </div>
                     <div className="accionesContrato">
                       <div className="accionesContrato__grupo">
-                        <span className="contratoLabel">Archivos</span>
-                        <button className="btn btn-outline-secondary btn-sm" onClick={() => cargarArchivos(item)}>
-                          <i className="bi bi-upload" />Cargar
+                        <button className="btn btn-outline-secondary btn-sm" onClick={() => setContratoArchivos(item)}>
+                          <i className="bi bi-folder2-open" aria-hidden="true" />Archivos
                         </button>
-                        <button className="btn btn-outline-secondary btn-sm" disabled={showModalArchivosDelContrato} onClick={() => verArchivosDelContrato(item)}>
-                          <i className="bi bi-folder2-open" />Ver
-                        </button>
-                      </div>
-                      <div className="accionesContrato__grupo">
-                        <span className="contratoLabel">Comentarios</span>
-                        {permisoEdicion && (
-                          <button className="btn btn-outline-secondary btn-sm" onClick={() => cargarComentario(item)}>
-                            <i className="bi bi-chat-left-text" />Ingresar
-                          </button>
-                        )}
-                        <button className="btn btn-outline-secondary btn-sm" disabled={showModalComentariosDelContrato} onClick={() => verComentariosDelContrato(item)}>
-                          <i className="bi bi-chat-square-dots" />Ver
+                        <button className="btn btn-outline-secondary btn-sm" onClick={() => setContratoComentarios(item)}>
+                          <i className="bi bi-chat-left-text" aria-hidden="true" />Comentarios
                         </button>
                       </div>
                       <div className="accionesContrato__grupo">
@@ -854,17 +791,16 @@ const handleSave = () => {
                     </div>
                   )}
 
-                  <InputFecha
-                    label="Fecha inicio:"
-                    name="fecha_inicio"
-                    value={formData.fecha_inicio}
-                    onChange={(e) => setFormData({ ...formData, fecha_inicio: e.target.value })}
-                  />
-                  <InputFecha
-                    label="Fecha fin:"
-                    name="fecha_fin"
-                    value={formData.fecha_fin}
-                    onChange={(e) => setFormData({ ...formData, fecha_fin: e.target.value })}
+                  <SelectorFecha
+                    className="mb-3"
+                    bloque
+                    label="Vigencia"
+                    etiquetaDesde="Inicio"
+                    etiquetaHasta="Fin"
+                    desde={formData.fecha_inicio}
+                    hasta={formData.fecha_fin}
+                    onChangeDesde={(v) => setFormData((f) => ({ ...f, fecha_inicio: v }))}
+                    onChangeHasta={(v) => setFormData((f) => ({ ...f, fecha_fin: v }))}
                   />
                   <SelectorConBuscador 
                     title="Emisor"
@@ -1011,13 +947,13 @@ const handleSave = () => {
                         return (
                           <li
                             key={comisionista.id}
-                            style={{ display: 'flex', alignItems: 'start', gap: '7px' }}
+                            className="contratosPage__comisionista"
                           >
                             <span className="mt-2 nd-text-md">
                               {comisionista.nombre}
                             </span>
 
-                            <span style={{ width: '90px' }}>
+                            <span className="contratosPage__comisionistaPorcentaje">
                               <InputNumerico
                                 selectedValue={formData[campoPorcentaje] || '0'}
                                 isPercentual={true}
@@ -1032,14 +968,8 @@ const handleSave = () => {
                             <button
                               type="button"
                               onClick={() => eliminarComisionista(comisionista.id)}
-                              style={{
-                                border: 'none',
-                                background: 'transparent',
-                                cursor: 'pointer',
-                                color: 'var(--nd-color-danger)',
-                                fontWeight: 'bold',
-                                marginTop: '8px',
-                              }}
+                              className="btn btn-link contratosPage__quitarComisionista"
+                              aria-label="Quitar comisionista"
                             >
                               ✕
                             </button>
@@ -1100,13 +1030,13 @@ const handleSave = () => {
 
                         return (
                           <li 
-                            key={comisionista.id}
-                            style={{ display: 'flex', alignItems: 'start', gap: '7px' }}
+                            key={comisionista.id} 
+                            className="contratosPage__comisionista"
                           >
                             <span className="mt-2 nd-text-md">
                               {comisionista.nombre}
                             </span>
-                            <span style={{ width: '90px' }}>
+                            <span className="contratosPage__comisionistaPorcentaje">
                               <InputNumerico
                                 title=""
                                 selectedValue={formData[porcentajeCampo] || '0'}
@@ -1123,14 +1053,8 @@ const handleSave = () => {
                             <button
                               type="button"
                               onClick={() => eliminarComisionista(comisionista.id)}
-                              style={{
-                                border: 'none',
-                                background: 'transparent',
-                                cursor: 'pointer',
-                                color: 'var(--nd-color-danger)',
-                                fontWeight: 'bold',
-                                marginTop: '8px',
-                              }}
+                              className="btn btn-link contratosPage__quitarComisionista"
+                              aria-label="Quitar comisionista"
                             >
                               ✕
                             </button>
@@ -1289,40 +1213,20 @@ const handleSave = () => {
         mensaje={mensajeModalExito}
         onClose={() => setShowModal(false)}  // 👈 cierra solo con la cruz
       />
-      <ModalConListado
-        show={showModalComentariosDelContrato}
-        titulo="Comentarios del contrato"
-        lista={comentariosContrato.flatMap(a => [a.comentario, 'fecha: ' + a.fecha, 'usuario: ' + a.usuario])}
-        onClose={() => setShowModalComentariosDelContrato(false)}
+      <ModalComentariosContrato
+        contrato={contratoComentarios}
+        onHide={() => setContratoComentarios(null)}
+        token={TOKEN}
+        idUsuario={id_usuario}
+        puedeAgregar={permisoEdicion}
       />
-      <ModalConListado
-        show={showModalArchivosDelContrato}
-        titulo="Archivos del contrato"
-        lista={archivosContrato.flatMap(a => ['nombre archivo: ' + a.nombre_file, 'https://panel.serviciosd.com/contratos/' + a.archivo])}
-        onClose={() => setShowModalArchivosDelContrato(false)}
+      <ModalArchivosContrato
+        contrato={contratoArchivos}
+        onHide={() => setContratoArchivos(null)}
+        token={TOKEN}
+        idUsuario={id_usuario}
       />
-      <ModalConInputTexto
-        show={showModalInputTexto}
-        titulo="Agregar Comentario"
-        actualTexto={comentarioAAgregar}
-        setTexto={setComentarioAAgregar}
-        AlGuardar={() => {
-          clickearGuardarComentarioContrato(contratoSeleccionado, comentarioAAgregar);
-          setShowModalInputTexto(false);
-        }}
-        onClose={() => setShowModalInputTexto(false)}
-      />
-      <ModalConInputFile
-        show={showModalInputFile}
-        titulo="Cargar archivo del contrato"
-        actualFile={fileAAgregar}
-        setFile={setFileAAgregar}
-        AlGuardar={() => {
-          clickearEnGuardarUnArchivoContrato(contratoSeleccionado, fileAAgregar);
-          setShowModalInputFile(false);
-        }}
-        onClose={() => setShowModalInputFile(false)}
-      />
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
 
     </div>
   );

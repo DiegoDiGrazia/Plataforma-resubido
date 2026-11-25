@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import SelectorFecha from '@/shared/components/form/SelectorFecha';
 import 'cropperjs/dist/cropper.css';
 import Etiquetas from './Etiquetas';
 import ArbolDistribucion from '@/shared/components/ArbolDistribucion';
@@ -123,8 +124,8 @@ const ColumnaEditorial = () => {
 
 
     const dispatch = useDispatch();
-    const dispacharfechaPublicacion = (e) => {
-        dispatch(setFechaPublicacion(e.target.value)); 
+        const dispacharfechaPublicacion = (fecha) => {
+        dispatch(setFechaPublicacion(fecha));
     };
     const dispacharUrl = (e) => {
         dispatch(setUrl(normaliarAUrl(e.target.value)));
@@ -226,12 +227,11 @@ const ColumnaEditorial = () => {
                 
                 <div className="colEditorial__fila colEditorial__fila--separada p-0">
                     <label htmlFor="fecha-publicacion" className="colEditorial__label">Fecha Publicacion:</label>
-                    <input
+                                        <SelectorFecha
                         id="fecha-publicacion"
-                        type="date"
-                        className="colEditorial__fecha"
-                        value={fechaPublicacion}
+                        valor={fechaPublicacion}
                         onChange={dispacharfechaPublicacion}
+                        alineacionDerecha
                     />
                 </div>
                 

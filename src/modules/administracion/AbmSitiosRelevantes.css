@@ -1,32 +1,87 @@
 /* ABM Sitios relevantes (#abm-sitios-relevantes) */
 #abm-sitios-relevantes {
 
+    /* Aire entre el buscador y el listado */
+    .sitios__buscador {
+        margin-top: var(--nd-space-12);
+        margin-bottom: var(--nd-space-6);
+        padding-bottom: 0;
+    }
+
     .buscadorNotasForm {
         width: 320px;
         max-width: 100%;
+    }
+
+    .sitios__cargando {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 200px;
     }
 
     .accordion-button::after {
         margin-left: 0;
     }
 
-    a {
+    /* "+" del header de cada país/provincia: naranja de marca */
+    .sitios__agregar {
+        flex-shrink: 0;
+        margin-right: var(--nd-space-2);
         font-size: var(--nd-font-size-md);
+        color: var(--nd-color-primary);
     }
 
-    .bi-plus-circle {
-        color: var(--nd-color-info);
+    .sitios__agregar:hover {
+        color: var(--nd-color-primary-text);
+        background: var(--nd-color-primary-subtle);
     }
 
-    .bi-trash3-fill {
+    .sitios__favicon {
+        flex-shrink: 0;
+        width: 30px;
+        height: 30px;
+    }
+
+    .sitios__link {
+        font-size: var(--nd-font-size-md);
+        overflow-wrap: anywhere;
+    }
+
+    .sitios__acciones {
+        display: flex;
+        flex-shrink: 0;
+        gap: var(--nd-space-1);
+    }
+
+    /* Ícono grande de cabecera en los modales */
+    .sitios__icono-modal {
+        display: inline-block;
+        margin-bottom: var(--nd-space-2);
+        font-size: var(--nd-font-size-4xl);
+        color: var(--nd-color-primary);
+    }
+
+    .sitios__icono-modal--peligro {
         color: var(--nd-color-danger);
     }
 
-    .bi-pencil-square {
-        color: var(--nd-color-text-secondary);
+    /* Mobile: buscador centrado y más pegado al título */
+    @media (max-width: 768px) {
+        .sitios__buscador {
+            margin-top: var(--nd-space-4);
+        }
+
+        .sitios__buscador .buscadorNotasForm {
+            margin-right: auto;
+            margin-left: auto;
+        }
     }
 
-    .boton-funcion {
-        border: none;
+    /* Celulares chicos: nombres de sitio más chicos para que no corten en dos líneas */
+    @media (max-width: 420px) {
+        .sitios__link {
+            font-size: var(--nd-font-size-sm);
+        }
     }
 }

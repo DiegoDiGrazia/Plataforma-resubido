@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import CardTutorial from '@/shared/components/CardTutorial'; // Importa el nuevo componente
+import CardTutorial from '@/shared/components/CardTutorial';
+import './Soporte.css';
 
 // Diccionario de videos
 export const videos = {
@@ -50,7 +51,7 @@ const Soporte = () => {
     return (
 
             <>
-                <div className="content flex-grow-1 crearNotaGlobal">
+                <div id="pantalla-soporte" className="content flex-grow-1 crearNotaGlobal">
                     <div className='row miPerfilContainer soporteContainer'>
                         <div className='col p-0'>
                             <h3 id="saludo" className='headerTusNotas ml-0'>
@@ -59,7 +60,7 @@ const Soporte = () => {
                         </div>
                     </div>
 
-                    <div className='row miPerfilContainer soporteContainer mt-4 p-0 mb-5'>
+                    <div className='row miPerfilContainer soporteContainer soporte__barra mt-4 p-0 mb-5'>
                         <div className='col todasLasNotas p-0 pt-2'>
                             Todos los contenidos
                         </div>
@@ -76,9 +77,9 @@ const Soporte = () => {
                         </div>
                     </div>
 
-                    <div className='row miPerfilContainer soporteContainer mt-4 p-0'>
+                    <div className='miPerfilContainer soporteContainer soporte__grilla mt-4 p-0'>
                         {filteredVideos.map((video, index) => (
-                            <div key={index} className='col-4'>
+                            <div key={index}>
                                 <CardTutorial
                                     title={video.title}
                                     description={video.description}

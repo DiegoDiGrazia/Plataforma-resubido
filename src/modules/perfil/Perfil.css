@@ -1,0 +1,132 @@
+/* ==========================================================================
+   Mi perfil (#pantalla-perfil)
+   Tarjeta de ajustes: cada fila con nombre + descripción a la izquierda y el
+   control a la derecha; en mobile el control baja debajo del texto.
+   ========================================================================== */
+
+#pantalla-perfil {
+
+    .perfil__encabezado {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--nd-space-4);
+        margin-top: var(--nd-space-10);
+        margin-bottom: var(--nd-space-6);
+    }
+
+    .perfil__acciones {
+        display: flex;
+        gap: var(--nd-space-2);
+    }
+
+    .perfil__tarjeta {
+        margin-bottom: var(--nd-space-10);
+        padding: 0 var(--nd-space-6);
+        background-color: var(--nd-color-bg-surface);
+        border: var(--nd-border-width) solid var(--nd-color-border);
+        border-radius: var(--nd-radius-lg);
+        box-shadow: var(--nd-shadow-sm);
+    }
+
+    .perfil__fila {
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+        align-items: center;
+        gap: var(--nd-space-4) var(--nd-space-10);
+        padding: var(--nd-space-5) 0;
+    }
+
+    .perfil__fila + .perfil__fila {
+        border-top: var(--nd-border-width) solid var(--nd-color-border);
+    }
+
+    .perfil__info {
+        display: flex;
+        align-items: center;
+        gap: var(--nd-space-3);
+        min-width: 0;
+    }
+
+    .perfil__titulo {
+        display: block;
+        margin: 0;
+        font-size: var(--nd-font-size-md);
+        font-weight: var(--nd-font-weight-bold);
+        color: var(--nd-color-text);
+    }
+
+    .perfil__descripcion {
+        margin: var(--nd-space-1) 0 0;
+        font-size: var(--nd-font-size-sm);
+        color: var(--nd-color-text-secondary);
+    }
+
+    .perfil__avatar {
+        flex-shrink: 0;
+        width: 44px;
+        height: 44px;
+        border-radius: var(--nd-radius-full);
+    }
+
+    /* Todos los controles alineados en la misma columna, con un ancho máximo */
+    .perfil__control {
+        display: flex;
+        justify-content: flex-start;
+        max-width: 520px;
+    }
+
+    .perfil__control > .form-control {
+        width: 100%;
+    }
+
+    .perfil__control .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--nd-space-2);
+    }
+
+    /* Zona de carga de la foto */
+    .perfil__carga {
+        width: 100%;
+        max-width: none;
+        height: auto;
+        margin: 0;
+        padding: var(--nd-space-6) var(--nd-space-4);
+        gap: var(--nd-space-1);
+        border-color: var(--nd-color-border-strong);
+    }
+
+    .perfil__carga-texto {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: var(--nd-space-1);
+    }
+
+    @media (max-width: 768px) {
+        /* Título centrado arriba (como en el resto de las pantallas) y botones debajo */
+        .perfil__encabezado {
+            flex-direction: column;
+            align-items: stretch;
+            margin-top: var(--nd-space-6);
+        }
+
+        .perfil__acciones {
+            justify-content: center;
+        }
+
+        .perfil__tarjeta {
+            padding: 0 var(--nd-space-4);
+        }
+
+        .perfil__fila {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        .perfil__control {
+            max-width: none;
+        }
+    }
+}

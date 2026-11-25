@@ -74,6 +74,35 @@
     margin: 0;
 }
 
+/* Radio a la izquierda y texto a la derecha, alineado con el título de la opción.
+   (La segunda opción envuelve el input en .inputRadioContainer: display: contents
+   hace que cuente como si no estuviera.) */
+.publicarNotaPage .containerFormCheck .form-check,
+.publicarNotaPage .containerFormCheckActive .form-check {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--nd-space-3);
+    min-height: 0;
+    margin: 0;
+    padding-left: 0;
+}
+.publicarNotaPage .inputRadioContainer {
+    display: contents;
+}
+.publicarNotaPage .containerFormCheck .form-check-input,
+.publicarNotaPage .containerFormCheckActive .form-check-input {
+    flex-shrink: 0;
+    float: none;
+    margin: var(--nd-space-1) 0 0;
+    padding: 0;
+}
+.publicarNotaPage .containerFormCheck .form-check-label,
+.publicarNotaPage .containerFormCheckActive .form-check-label {
+    flex: 1 1 auto;
+    min-width: 0;
+    cursor: pointer;
+}
+
 .publicarNotaPage .datoFaltante {
     color: var(--nd-color-danger);
     margin: 0 0 var(--nd-space-1);
@@ -93,12 +122,9 @@
     margin: 0;
 }
 
-/* Encabezado: el elemento también tiene id="head_dash" (Dashboard.css le pone borde y padding).
-   #id.clase le gana a #id sin necesidad de !important */
-#head_dash.header_dash {
-    border-bottom: none;
-    padding-left: var(--nd-space-5);
-    height: 80px;
+/* Cropper.js le pone ancho en px a su contenedor: que nunca supere la columna */
+.publicarNotaPage .cropper-container {
+    max-width: 100%;
 }
 
 /* Radios y checkboxes de la pantalla (opciones de distribución, columna editorial) */
@@ -120,4 +146,34 @@
     margin-top: 10px;
     background-color: var(--nd-color-bg-muted);
     border-radius: var(--nd-radius-lg);
+}
+
+/* Mobile: las dos columnas (categorías / datos de la nota) una debajo de la otra */
+@media (max-width: 768px) {
+    .publicarNotaPage .notaTutorial > .columnaNota,
+    .publicarNotaPage .notaTutorial > .col_editorial {
+        flex: 0 0 100%;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .publicarNotaPage .notaTutorial > .col_editorial {
+        margin-top: var(--nd-space-6);
+    }
+
+    /* Botones apilados a todo el ancho, del más importante al menos importante */
+    .publicarNotaPage__acciones {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--nd-space-2);
+    }
+
+    .publicarNotaPage__acciones > .btn {
+        width: 100%;
+    }
+
+    .publicarNotaPage__acciones > .publicarNota__boton--publicar { order: 1; }
+    .publicarNotaPage__acciones > .publicarNota__boton--revision { order: 2; }
+    .publicarNotaPage__acciones > .publicarNota__boton--borrador { order: 3; }
+    .publicarNotaPage__acciones > .btn-secondary { order: 4; }
 }

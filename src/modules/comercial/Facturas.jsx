@@ -2,6 +2,9 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { obtenerMesActual } from '@/modules/distribucion/Distribucion.jsx';
 import DropdownFiltro from '@/shared/components/form/DropdownFiltro.jsx';
+import SelectorFecha from '@/shared/components/form/SelectorFecha';
+import FiltrosMobile from '@/shared/components/form/FiltrosMobile';
+import useEsMobile from '@/shared/hooks/useEsMobile';
 import './Facturas.css'
 import { obtenerContratos, cargarArchivo } from '@/api/apisUsuarios.jsx';
 import { obtenerFacturas, editarFactura, unificarFacturas, dividirFactura,
@@ -31,6 +34,7 @@ const Facturas = () =>  {
     const permisoEdicion = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Facturas: Edicion") || false);
     const permisoBorrado = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Facturas: Borrado") || false);
 
+    const esMobile = useEsMobile();
     const [fechaDesde, setFechaDesde] = useState(obtenerMesActual(-3));
     const [fechaHasta, setFechaHasta] = useState(obtenerMesActual(6));
     const [search, setSearch] = useState("");
@@ -131,8 +135,8 @@ const Facturas = () =>  {
     const accionesBotones = [
 
         { nombre: "Editar Factura", 
-          icono: "bi bi-pencil-square",
-          color: "var(--nd-color-danger-hover)",
+          icono: "bi bi-pencil",
+          variante: "primary",
           accion: (f) => {
             setFacturaActual(f); 
             setEstadoSeleccionado(f.estado);
@@ -146,7 +150,7 @@ const Facturas = () =>  {
 
         { nombre: "Unificar Facturas", 
           icono: "bi bi-intersect",
-          color: "var(--nd-color-text)",
+          variante: "primary",
           accion: (f) => {
             setFacturaActual(f);
             setFacturasAUnificar([]);
@@ -164,8 +168,8 @@ const Facturas = () =>  {
         },
           
         { nombre: "Archivos", 
-          icono: "bi bi-folder-fill",
-          color: "var(--nd-color-warning)",
+          icono: "bi bi-folder2-open",
+          variante: "primary",
           accion: (f) => {
             setFacturaActual(f);
             setArchivosContrato([]);
@@ -182,7 +186,7 @@ const Facturas = () =>  {
 
         { nombre: "Dividir Factura", 
           icono: "bi bi-back",
-          color: "var(--nd-color-text)",
+          variante: "primary",
           accion: (f) => {
             setFacturaActual(f);
             setNumeroSeleccionado("2");
@@ -193,8 +197,8 @@ const Facturas = () =>  {
          },
         
         { nombre: "Comentarios", 
-          icono: "bi bi-chat-left-text-fill",
-          color: "rgb(34, 85, 194)",
+          icono: "bi bi-chat-left-text",
+          variante: "primary",
           accion: (f) => {
             setFacturaActual(f);
             setComentariosContrato([]); 
@@ -210,8 +214,8 @@ const Facturas = () =>  {
         },
 
         { nombre: "Eliminar Factura",
-          icono: "bi bi-trash3-fill",
-          color: "var(--nd-color-danger-hover)",
+          icono: "bi bi-trash3",
+          variante: "danger",
           accion: (f) => {
             setFacturaActual(f);
           },
@@ -498,8 +502,118 @@ const Facturas = () =>  {
         return nombreLimpio.replace(/[-_]/g, ' '); 
     };
 
+
+    // ---------- Filtros: piezas que se usan en la barra de desktop y en el panel mobile ----------
+    const fechaDesdeInicial = obtenerMesActual(-3);
+    const fechaHastaInicial = obtenerMesActual(6);
+    const mesCorto = (valor) => valor ? valor.split('-').reverse().join('/') : '…';
+
+    // Un chip naranja por cada filtro fuera de su valor por defecto
+    const chipsFiltros = [
+        (fechaDesde !== fechaDesdeInicial || fechaHasta !== fechaHastaInicial) && {
+            clave: 'vencimiento',
+            texto: `${mesCorto(fechaDesde)} → ${mesCorto(fechaHasta)}`,
+            limpiar: () => { setFechaDesde(fechaDesdeInicial); setFechaHasta(fechaHastaInicial); },
+        },
+        emision !== 'Todas' && { clave: 'emision', texto: emision, limpiar: () => setEmision('Todas') },
+        orden !== 'Todas' && { clave: 'orden', texto: orden, limpiar: () => setOrden('Todas') },
+        deuda !== 'Todas' && { clave: 'deuda', texto: `Deuda: ${deuda}`, limpiar: () => setDeuda('Todas') },
+        empresa !== 'Cualquiera' && { clave: 'empresa', texto: empresa, limpiar: () => setEmpresa('Cualquiera') },
+        certificacion !== 'Cualquiera' && { clave: 'certificacion', texto: `Certificación: ${certificacion}`, limpiar: () => setCertificacion('Cualquiera') },
+    ].filter(Boolean);
+
+    const buscadorFacturas = (
+        <form className='buscadorNotasForm facturas__buscador'>
+            <input
+              className='inputBuscadorNotas pe-0'
+              type="text"
+              title= 'Buscar por cuentas, razón social o N° factura'
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Buscar cuenta, razón social o N° factura"
+            />
+        </form>
+    );
+
+    const campoVencimiento = (
+        <SelectorFecha
+            modo="mes"
+            label="Vencimiento"
+            desde={fechaDesde}
+            hasta={fechaHasta}
+            onChangeDesde={setFechaDesde}
+            onChangeHasta={setFechaHasta}
+            bloque={esMobile}
+        />
+    );
+
+    const filtrosDropdown = (
+        <>
+            <DropdownFiltro
+                className= 'boton-filtro'
+                label= "Emisión"
+                valorActual={emision}
+                opciones= {["Todas", "Emitidas", "No emitidas"]}
+                onChange={setEmision}
+            />
+            <DropdownFiltro
+                className= 'boton-filtro'
+                label= "Orden"
+                valorActual={orden}
+                opciones= {["Todas", "Con Orden", "Sin Orden"]}
+                onChange={setOrden}
+            />
+            <DropdownFiltro 
+                className= 'boton-filtro'
+                label= "Deuda"
+                valorActual={deuda}
+                opciones= {["Todas", "Pagas", "Impagas","Con deuda"]}
+                onChange={setDeuda}
+            />
+            <DropdownFiltro 
+                className= 'boton-filtro'
+                label= "Empresa"
+                valorActual={empresa}
+                opciones= {["Cualquiera", "Adlatam SA", "Guiad SA"]}
+                onChange={setEmpresa}
+            />
+            <DropdownFiltro 
+                className= 'boton-filtro'
+                label= "Certificación"
+                valorActual={certificacion}
+                opciones= {["Cualquiera", "Si", "No"]}
+                onChange={setCertificacion}
+            />
+        </>
+    );
+
+    const botonesFacturas = (
+        <div className='facturas__botones'>
+            {permisoAlta && (
+            <button 
+                id='cargar-factura' 
+                className="btn btn-primary facturas__boton-icono"
+                title='Cargar factura en contrato abierto'
+                onClick={() => abrirModalFacturaAbierta()}
+                data-bs-toggle="modal" 
+                data-bs-target="#modalCargarFactura"
+            > 
+                <i className='bi bi-file-earmark-arrow-up' aria-hidden='true'></i>
+            </button>
+            )}
+            <button 
+                id='descargar-excel' 
+                className='btn btn-outline-secondary facturas__boton-texto'
+                title="Descargar listado en Excel"
+                onClick={() => handleDescargarExcel()}
+            >
+                <i className="bi bi-download" aria-hidden="true"></i> Excel
+            </button>
+        </div>
+    );
+
     return (
-        <div className="contenedor-facturas content flex-grow-1 crearNotaGlobal h-100">
+        <div className="contenedor-facturas content flex-grow-1 crearNotaGlobal">
             <div className='row miPerfilContainer soporteContainer pb-0 facturas__encabezado'>
                 <div className='col p-0'>
                     {/* Saludo */}
@@ -507,106 +621,29 @@ const Facturas = () =>  {
                         <i className="bi bi-bag-fill" aria-hidden="true" /> Administración de Facturas
                     </h3>
                 </div>
-                <div className='facturas__botones'>
-                    {permisoAlta && (
-                    <button 
-                        id='cargar-factura' 
-                        className="btn btn-primary facturas__boton-icono"
-                        title='Cargar factura en contrato abierto'
-                        onClick={() => abrirModalFacturaAbierta()}
-                        data-bs-toggle="modal" 
-                        data-bs-target="#modalCargarFactura"
-                    > 
-                        <i className='bi bi-file-earmark-arrow-up' aria-hidden='true'></i>
-                    </button>
-                    )}
-                    <button 
-                        id='descargar-excel' 
-                        className='btn btn-outline-secondary facturas__boton-icono'
-                        title="Descargar listado en Excel"
-                        onClick={() => handleDescargarExcel()}
-                    >
-                        <i className="bi bi-filetype-xlsx" aria-hidden="true"></i>
-                    </button>
-                </div>
             </div>
-            
-            {/* FILTROS */}
-            
-            <div className='miPerfilContainer soporteContainer mt-4 mb-3 p-0'>
-                <div className='facturas__filtros'>
-                    {/* Buscador cuenta */}
-                    <form className='buscadorNotasForm facturas__buscador'>
-                        <input
-                          className='inputBuscadorNotas pe-0'
-                          type="text"
-                          title= 'Buscar por cuentas, razón social o N° factura'
-                          value={search}
-                          onChange={(e) => setSearch(e.target.value)}
-                          placeholder="Buscar cuenta, razón social o N° factura"
-                        />
-                    </form>                    
-                    {/* Fechas */}
-                    <div className='facturas__fechas' title="Vencimiento">
-                        <label className="facturas__fecha">
-                            <span>Desde:</span>
-                            <input 
-                                type="month" 
-                                className='input-fechas'
-                                value={fechaDesde} 
-                                onChange={(e) => setFechaDesde(e.target.value)} 
-                            />
-                        </label>
-                        <label className="facturas__fecha" title="Vencimiento hasta">
-                            <span>Hasta:</span>
-                            <input 
-                                type="month" 
-                                className='input-fechas'
-                                value={fechaHasta} 
-                                onChange={(e) => setFechaHasta(e.target.value)}
-                            />
-                        </label>
-                    </div>
-                    {/* Filtros dropdown */}
-                    <div id='botones-filtros' className='facturas__dropdowns'>
-                        <DropdownFiltro
-                            className= 'boton-filtro'
-                            label= "Emisión"
-                            valorActual={emision}
-                            opciones= {["Todas", "Emitidas", "No emitidas"]}
-                            onChange={setEmision}
-                        />
-                        <DropdownFiltro
-                            className= 'boton-filtro'
-                            label= "Orden"
-                            valorActual={orden}
-                            opciones= {["Todas", "Con Orden", "Sin Orden"]}
-                            onChange={setOrden}
-                        />
-                        <DropdownFiltro 
-                            className= 'boton-filtro'
-                            label= "Deuda"
-                            valorActual={deuda}
-                            opciones= {["Todas", "Pagas", "Impagas","Con deuda"]}
-                            onChange={setDeuda}
-                        />
-                        <DropdownFiltro 
-                            className= 'boton-filtro'
-                            label= "Empresa"
-                            valorActual={empresa}
-                            opciones= {["Cualquiera", "Adlatam SA", "Guiad SA"]}
-                            onChange={setEmpresa}
-                        />
-                        <DropdownFiltro 
-                            className= 'boton-filtro'
-                            label= "Certificación"
-                            valorActual={certificacion}
-                            opciones= {["Cualquiera", "Si", "No"]}
-                            onChange={setCertificacion}
-                        />
-                    </div>
 
-                </div>
+            {/* FILTROS: desktop en dos líneas; mobile, buscador + panel de FiltrosMobile */}
+            <div className='miPerfilContainer soporteContainer mt-4 mb-3 p-0'>
+                {esMobile ? (
+                    <FiltrosMobile buscador={buscadorFacturas} acciones={botonesFacturas} chips={chipsFiltros}>
+                        {campoVencimiento}
+                        {filtrosDropdown}
+                    </FiltrosMobile>
+                ) : (
+                    <div className='facturas__filtros'>
+                        <div className='facturas__filtros-fila'>
+                            <div className='facturas__filtros-grupo'>
+                                {buscadorFacturas}
+                                {campoVencimiento}
+                            </div>
+                            {botonesFacturas}
+                        </div>
+                        <div id='botones-filtros' className='facturas__dropdowns'>
+                            {filtrosDropdown}
+                        </div>
+                    </div>
+                )}
             </div>
             {/* Listado de Facturas */}
             <ul className='list-group gap-2 nd-mx-page mb-5 facturas__listado'>
@@ -615,7 +652,7 @@ const Facturas = () =>  {
             ) : (
                 facturasFiltradas && facturasFiltradas.length > 0 ?(
                     facturasFiltradas.map((factura) => (
-                        <li className= {`list-group-item py-3 ${factura.numero ? "border border-2 border-success px-1" : ""}`} key= {factura.id}>
+                        <li className= {`list-group-item py-3 ${factura.numero ? "facturas__item--emitida" : ""}`} key= {factura.id}>
                             <div className="facturas__fila">
                                 <div className="facturas__titulo">
                                     <strong>{factura.mes ? `${String(factura.mes).slice(0, 4)}-${String(factura.mes).slice(4)}` : ""}</strong>
@@ -652,7 +689,7 @@ const Facturas = () =>  {
                                 <div>
                                     <strong className="datos-factura d-block">Razón Social: <span className="fw-normal">{factura.razon_social}</span></strong>
                                     <strong className="datos-factura d-block">CUIT: <span className="fw-normal">{factura.cuit}</span></strong>
-                                    <strong className={`datos-factura d-block facturas__estado ${factura.estado === "PAGADA" ? "border border-2 border-success px-1" : ""}`}>
+                                    <strong className={`datos-factura d-block facturas__estado ${factura.estado === "PAGADA" ? "facturas__estado--pagada" : ""}`}>
                                         Estado: <span className="fw-normal">{factura.estado}</span></strong>
                                     <strong className="datos-factura d-block">Empresa: <span className="fw-normal">{factura.empresa}</span></strong>
                                 </div>
@@ -662,7 +699,7 @@ const Facturas = () =>  {
                                     <strong className="datos-factura d-block">Lleva Certificación: <span className="fw-normal">{factura.lleva_certificacion}</span></strong>
                                     <strong className="datos-factura d-block">Generada Como Abierta: <span className="fw-normal">{factura.abierto}</span></strong>
                                 </div>
-                                <div>
+                                <div className="facturas__comisiones">
                                     <strong className="datos-factura d-block">Comisión 1: <span className="fw-normal">${formatearMoneda(factura.comision)}</span></strong>
                                     <strong className="datos-factura d-block">Porcentaje Comisión 1: <span className="fw-normal">{formatearMoneda(factura.porcentaje_comision)}</span></strong>
                                     <strong className="datos-factura d-block">Comisionista 1: <span className="fw-normal">{(factura.com1 || "- -")}</span></strong>
@@ -679,15 +716,16 @@ const Facturas = () =>  {
                                             .map((boton, index) => (
                                             <button 
                                                 key={index}
-                                                className='btn facturas__boton-icono' 
+                                                className={`btn btn-outline-secondary facturas__boton-icono facturas__accion ${boton.variante === 'danger' ? 'facturas__accion--peligro' : ''}`}
                                                 type='button'
                                                 title={boton.nombre}
+                                                aria-label={boton.nombre}
                                                 onClick={() => boton.accion(factura)}
                                                 data-bs-toggle={boton.modalTarget ? "modal" : undefined}
                                                 data-bs-target={boton.modalTarget}
                                                 
                                             >
-                                                <i className={`${boton.icono} botones-accion`} style={{ color: boton.color }} aria-hidden="true"></i>   
+                                                <i className={boton.icono} aria-hidden="true"></i>   
                                             </button>
                                     ))}
 
@@ -737,21 +775,20 @@ const Facturas = () =>  {
                                         </select>
                                     </div>
                                     <div className="mb-3">
-                                        <label className="form-label fw-bold nd-text-base">Periodo</label>
-                                        <input 
-                                            type="month" 
-                                            className="form-control" 
-                                            value={mesSeleccionado}  
-                                            onChange={(e) => setMesSeleccionado(e.target.value)}    
+                                                                                <label className="form-label fw-bold nd-text-base">Periodo</label>
+                                        <SelectorFecha
+                                            modo="mes"
+                                            bloque
+                                            valor={mesSeleccionado}
+                                            onChange={setMesSeleccionado}
                                         />
                                     </div>
                                     <div className="mb-3">
-                                        <label className="form-label fw-bold nd-text-base">Fecha de Pago</label>
-                                        <input 
-                                            type="date" 
-                                            className="form-control" 
-                                            value={fechaPagoSeleccionada} 
-                                            onChange={(e) => setFechaPagoSeleccionada(e.target.value)}
+                                                                                <label className="form-label fw-bold nd-text-base">Fecha de Pago</label>
+                                        <SelectorFecha
+                                            bloque
+                                            valor={fechaPagoSeleccionada}
+                                            onChange={setFechaPagoSeleccionada}
                                             disabled={estadoSeleccionado === "IMPAGA"}
                                             required
                                         />
@@ -825,23 +862,22 @@ const Facturas = () =>  {
                                 </div>
 
                                 <div className="mb-3">
-                                    <label className="form-label fw-bold nd-text-base">Periodo <span className="text-danger">*</span></label>
-                                    <input 
-                                        type="month" 
-                                        className="form-control" 
-                                        value={mesSeleccionado} 
-                                        onChange={(e) => setMesSeleccionado(e.target.value)} 
-                                        required 
+                                                                        <label className="form-label fw-bold nd-text-base">Periodo <span className="text-danger">*</span></label>
+                                    <SelectorFecha
+                                        modo="mes"
+                                        bloque
+                                        valor={mesSeleccionado}
+                                        onChange={setMesSeleccionado}
+                                        required
                                     />
                                 </div>
 
                                 <div className="mb-3">
                                     <label className="form-label fw-bold nd-text-base">Fecha de Pago {estadoSeleccionado === "PAGADA" && <span className="text-danger">*</span>}</label>
-                                    <input 
-                                        type="date" 
-                                        className="form-control" 
-                                        value={fechaPagoSeleccionada} 
-                                        onChange={(e) => setFechaPagoSeleccionada(e.target.value)}
+                                                                        <SelectorFecha
+                                        bloque
+                                        valor={fechaPagoSeleccionada}
+                                        onChange={setFechaPagoSeleccionada}
                                         disabled={estadoSeleccionado === "IMPAGA"}
                                         required={estadoSeleccionado === "PAGADA"}
                                     />
@@ -891,14 +927,13 @@ const Facturas = () =>  {
                                     ) : (
                                         facturasContrato.length > 0 ? (
                                             facturasContrato.map((f) => (
-                                                <label key={f.id} className="list-group-item d-flex gap-3 align-items-center list-group-item-action" style={{cursor: 'pointer'}}>
+                                                <label key={f.id} className="list-group-item d-flex gap-3 align-items-center list-group-item-action facturas__clickeable">
                                                     <input 
-                                                        className="form-check-input flex-shrink-0 mt-0" 
+                                                        className="form-check-input flex-shrink-0 mt-0 facturas__clickeable" 
                                                         type="checkbox" 
                                                         value={f.id} 
                                                         checked={facturasAUnificar.includes(f.id)}
                                                         onChange={() => toggleFacturaUnificar(f.id)}
-                                                        style={{ cursor: 'pointer' }}
                                                     />
                                                     <span className="nd-text-base">
                                                         <strong>Periodo:</strong> {f.mes ? `${String(f.mes).slice(0, 4)}-${String(f.mes).slice(4)} - ` : "-"} 
@@ -957,13 +992,13 @@ const Facturas = () =>  {
                                 </div>
 
                                 <div className="mb-3">
-                                    <label className="form-label fw-bold nd-text-base">Periodo de la primera factura <span className="text-danger">*</span></label>
-                                    <input 
-                                        type="month" 
-                                        className="form-control" 
-                                        value={mesSeleccionado} 
-                                        onChange={(e) => setMesSeleccionado(e.target.value)} 
-                                        required 
+                                                                        <label className="form-label fw-bold nd-text-base">Periodo de la primera factura <span className="text-danger">*</span></label>
+                                    <SelectorFecha
+                                        modo="mes"
+                                        bloque
+                                        valor={mesSeleccionado}
+                                        onChange={setMesSeleccionado}
+                                        required
                                     />
                                 </div>
 
@@ -1009,11 +1044,10 @@ const Facturas = () =>  {
                                                 <tr key={archivo.id}>
                                                     <td>
                                                         <a href={`https://panel.serviciosd.com/contratos/${archivo.archivo}`}
-                                                            className="text-primary text-decoration-underline" 
+                                                            className="text-primary text-decoration-underline facturas__clickeable" 
                                                             download={archivo.nombre_file} 
                                                             target="_blank" 
                                                             rel="noreferrer" 
-                                                            style={{cursor: 'pointer'}}
                                                         >
                                                             {archivo.nombre_file}
                                                         </a>
@@ -1051,8 +1085,7 @@ const Facturas = () =>  {
                             />
                             <label 
                                 htmlFor="input-cargar-archivo" 
-                                className={`btn btn-primary px-4 shadow-sm ${subiendoArchivo ? 'disabled' : ''}`}
-                                style={{cursor: 'pointer'}}
+                                className={`btn btn-primary px-4 shadow-sm ${subiendoArchivo ? 'disabled' : ''} facturas__clickeable`}
                             >
                                 {subiendoArchivo ? (
                                     <><span className="spinner-border spinner-border-sm me-2"></span> Subiendo...</>

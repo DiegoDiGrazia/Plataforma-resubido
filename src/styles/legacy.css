@@ -326,38 +326,6 @@
     margin-right: var(--nd-space-8);
 }
 
-/* ---------- Mi perfil ---------- */
-.informacionCuentaSeccion {
-    margin-top: 0;
-    padding-bottom: var(--nd-space-5);
-}
-.informacionCuentaSeccion .infoCuenta {
-    margin-top: var(--nd-space-4);
-    font-size: var(--nd-font-size-md);
-    color: var(--nd-color-text);
-}
-.informacionCuentaSeccion .textAreaContainer {
-    float: right;
-    padding-left: var(--nd-space-12);
-}
-/* Fila "Foto de perfil": texto a la izquierda, zona de carga a la derecha;
-   si no entran, la zona de carga baja entera (antes aplastaba el texto) */
-.informacionCuentaSeccion {
-    gap: var(--nd-space-4);
-}
-.informacionCuentaSeccion > .col {
-    flex: 1 1 240px;
-}
-.informacionCuentaSeccion .upload-block {
-    flex: 1 1 360px;
-    width: auto;
-    max-width: 613px;
-    margin: 0;
-    border-color: var(--nd-color-border-strong);
-}
-.informacionCuentaSeccion .dropdown-toggle {
-    color: var(--nd-color-text);
-}
 .miPerfilContainer .textAreaComentarios {
     float: right;
     width: 400px;
@@ -438,6 +406,13 @@
         margin-top: var(--nd-space-6);
     }
 
+    /* Título de pantalla (ícono + texto) centrado en mobile */
+    #saludo,
+    .headerTusNotas {
+        justify-content: center;
+        text-align: center;
+    }
+
     .miPerfilContainer .buscadorNotasForm,
     .miPerfilContainer .textAreaComentarios {
         width: 100%;
@@ -449,10 +424,6 @@
         max-width: 100%;
     }
 
-    .informacionCuentaSeccion .textAreaContainer {
-        float: none;
-        padding-left: 0;
-    }
 }
 
 /* ==========================================================================

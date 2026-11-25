@@ -1,0 +1,121 @@
+/* ==========================================================================
+   FiltrosMobile (shared/components/form): barra + chips + panel inferior.
+   El panel (.nd-filtros-mobile__panel) es un Offcanvas que Bootstrap monta al
+   final del body, por eso sus reglas van aparte y no anidadas en la barra.
+   ========================================================================== */
+
+.nd-filtros-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nd-space-2);
+
+    .nd-filtros-mobile__barra {
+        display: flex;
+        align-items: stretch;
+        gap: var(--nd-space-2);
+    }
+
+    .nd-filtros-mobile__buscador {
+        display: flex;
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .nd-filtros-mobile__buscador > * {
+        flex: 1 1 auto;
+        width: auto;
+        max-width: none;
+        min-width: 0;
+    }
+
+    .nd-filtros-mobile__boton {
+        display: inline-flex;
+        flex-shrink: 0;
+        align-items: center;
+        gap: var(--nd-space-1);
+        font-size: var(--nd-font-size-sm);
+    }
+
+    .nd-filtros-mobile__contador {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: var(--nd-space-5);
+        height: var(--nd-space-5);
+        padding: 0 var(--nd-space-1);
+        font-size: var(--nd-font-size-xs);
+        font-weight: var(--nd-font-weight-bold);
+        color: var(--nd-color-text-inverse);
+        background-color: var(--nd-color-primary);
+        border-radius: var(--nd-radius-pill);
+    }
+
+    .nd-filtros-mobile__chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--nd-space-2);
+    }
+
+    .nd-filtros-mobile__chip {
+        max-width: 100%;
+        padding: var(--nd-space-1) var(--nd-space-2) var(--nd-space-1) var(--nd-space-3);
+        font-size: var(--nd-font-size-sm);
+    }
+
+    .nd-filtros-mobile__chip-texto {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .nd-filtros-mobile__chip-cerrar {
+        flex-shrink: 0;
+        font-size: var(--nd-font-size-xs);
+    }
+}
+
+/* ---------- Panel inferior con los filtros ---------- */
+.nd-filtros-mobile__panel {
+    --bs-offcanvas-height: auto;
+    max-height: 85vh;
+    border-top-left-radius: var(--nd-radius-lg);
+    border-top-right-radius: var(--nd-radius-lg);
+
+    .offcanvas-title {
+        font-size: var(--nd-font-size-lg);
+        font-weight: var(--nd-font-weight-bold);
+    }
+
+    .nd-filtros-mobile__cuerpo {
+        display: flex;
+        flex-direction: column;
+        gap: var(--nd-space-3);
+        padding-top: 0;
+    }
+
+    .nd-filtros-mobile__cuerpo .dropdown,
+    .dropdown-filtro-container,
+    .nd-selector-fecha {
+        width: 100%;
+    }
+
+    .nd-filtros-mobile__cuerpo .dropdown > .btn {
+        width: 100%;
+        margin: 0;
+        justify-content: space-between;
+    }
+
+    .nd-filtros-mobile__pie {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--nd-space-3);
+        padding: var(--nd-space-3) var(--nd-space-4);
+        border-top: var(--nd-border-width) solid var(--nd-color-border);
+    }
+
+    .nd-filtros-mobile__pie .btn-link {
+        padding-left: 0;
+        color: var(--nd-color-text-secondary);
+    }
+}

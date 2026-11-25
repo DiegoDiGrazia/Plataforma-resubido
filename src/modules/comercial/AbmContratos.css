@@ -1,40 +1,23 @@
 .contratosPage .filtrosCard {
   background: var(--nd-color-bg-surface);
   border-radius: var(--nd-radius-lg);
-  padding: 16px 20px;
+  padding: var(--nd-space-4) var(--nd-space-5);
   box-shadow: var(--nd-shadow-sm);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 18px;
+  gap: var(--nd-space-5);
 }
 
 /* Colores: los da .btn-primary global (bootstrap-overrides.css) */
 .contratosPage .btnNuevoContrato {
   font-weight: var(--nd-font-weight-semibold);
   border-radius: var(--nd-radius-md);
-  padding: 8px 16px;
+  padding: var(--nd-space-2) var(--nd-space-4);
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  margin: 0 !important;
-}
-
-
-.contratosPage .filtroFecha {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: var(--nd-font-size-sm);
-  color: var(--nd-color-text-secondary);
-  font-weight: var(--nd-font-weight-medium);
-}
-
-.contratosPage .filtroFecha input {
-  border: 1px solid var(--nd-color-border-strong) !important;
-  border-radius: var(--nd-radius-md) !important;
-  padding: 6px 10px !important;
-  font-size: var(--nd-font-size-sm) !important;
+  gap: var(--nd-space-2);
+  margin: 0;
 }
 
 .contratosPage .buscadorNotasForm {
@@ -54,17 +37,17 @@
 .contratosPage .statsRow {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-  gap: 14px;
+  gap: var(--nd-space-4);
 }
 
 .contratosPage .statTile {
   background: var(--nd-color-bg-surface);
   border-radius: var(--nd-radius-lg);
-  padding: 16px 20px;
+  padding: var(--nd-space-4) var(--nd-space-5);
   box-shadow: var(--nd-shadow-sm);
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: var(--nd-space-4);
 }
 
 .contratosPage .statTile .statIcono {
@@ -105,7 +88,7 @@
 .contratosPage .listaContratos {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--nd-space-3);
   list-style: none;
   padding: 0;
   margin: 0;
@@ -114,7 +97,7 @@
 .contratosPage .contratoCard {
   background: var(--nd-color-bg-surface);
   border-radius: var(--nd-radius-lg);
-  padding: 18px 22px;
+  padding: var(--nd-space-5) var(--nd-space-6);
   box-shadow: var(--nd-shadow-sm);
   border: 1px solid var(--nd-color-border);
   transition: box-shadow .15s ease;
@@ -142,7 +125,7 @@
   text-transform: uppercase;
   letter-spacing: .04em;
   margin-bottom: 2px;
-  margin-top: 10px;
+  margin-top: var(--nd-space-3);
 }
 
 .contratosPage .contratoLabel:first-child {
@@ -162,14 +145,14 @@
 
 .contratosPage .badgeEstado {
   display: inline-block;
-  padding: 3px 10px;
+  padding: var(--nd-space-1) var(--nd-space-3);
   border-radius: var(--nd-radius-xl);
   font-size: var(--nd-font-size-xs);
   font-weight: var(--nd-font-weight-semibold);
-  margin-top: 6px;
+  margin-top: var(--nd-space-2);
 }
 
-.contratosPage .badgeEstado.activa { background: var(--nd-color-success-subtle); color: var(--nd-color-success); }
+.contratosPage .badgeEstado.activa { background: var(--nd-color-secondary-subtle); color: var(--nd-color-secondary); }
 .contratosPage .badgeEstado.pausa { background: var(--nd-color-warning-subtle); color: var(--nd-color-warning); }
 .contratosPage .badgeEstado.finalizada { background: var(--nd-color-bg-muted); color: var(--nd-color-text-secondary); }
 .contratosPage .badgeEstado.default { background: var(--nd-color-info-subtle); color: var(--nd-color-secondary); }
@@ -193,6 +176,20 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--nd-space-2);
+}
+
+/* >1366: botones uno debajo del otro, todos del mismo ancho */
+.contratosPage .accionesContrato {
+  align-self: start;
+}
+
+.contratosPage .accionesContrato__grupo {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.contratosPage .accionesContrato__grupo .btn {
+  justify-content: flex-start;
 }
 
 .contratosPage .accionesContrato__grupo .contratoLabel {
@@ -228,8 +225,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 12px;
-  margin-top: 18px;
+  gap: var(--nd-space-3);
+  margin-top: var(--nd-space-5);
   font-size: var(--nd-font-size-base);
   color: var(--nd-color-text-secondary);
 }
@@ -246,7 +243,7 @@
 
 .contratosPage #editModal .modal-header {
   border-bottom: 1px solid var(--nd-color-border);
-  padding: 20px 24px;
+  padding: var(--nd-space-5) var(--nd-space-6);
 }
 
 .contratosPage #editModal .modal-title {
@@ -255,12 +252,12 @@
 }
 
 .contratosPage #editModal .modal-body {
-  padding: 4px 24px 20px;
+  padding: var(--nd-space-1) var(--nd-space-6) var(--nd-space-5);
 }
 
 .contratosPage #editModal .modal-footer {
   border-top: 1px solid var(--nd-color-border);
-  padding: 16px 24px;
+  padding: var(--nd-space-4) var(--nd-space-6);
 }
 
 .contratosPage #editModal .seccionTitulo {
@@ -269,16 +266,15 @@
   text-transform: uppercase;
   letter-spacing: .05em;
   color: var(--nd-color-primary-text);
-  margin-top: 26px;
-  margin-bottom: 14px;
-  padding-bottom: 8px;
+  margin-top: var(--nd-space-6);
+  margin-bottom: var(--nd-space-4);
+  padding-bottom: var(--nd-space-2);
   border-bottom: 1px solid var(--nd-color-border);
 }
 
 .contratosPage #editModal .seccionTitulo:first-of-type {
-  margin-top: 6px;
+  margin-top: var(--nd-space-2);
 }
-
 
 @media (max-width: 1366px) {
   .contratosPage .contratoFila {
@@ -298,6 +294,12 @@
   .contratosPage .accionesContrato__grupo .contratoLabel {
     width: auto;
   }
+
+  /* ≤1366 los botones vuelven a ir en fila */
+  .contratosPage .accionesContrato__grupo {
+    flex-direction: row;
+    align-items: center;
+  }
 }
 
 @media (max-width: 768px) {
@@ -313,5 +315,134 @@
   .contratosPage .filtrosCard {
     flex-direction: column;
     align-items: stretch;
+  }
+}
+
+.contratosPage .contratosPage__comisionista {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--nd-space-2);
+}
+
+.contratosPage .contratosPage__comisionistaPorcentaje {
+  width: 90px;
+}
+
+.contratosPage .contratosPage__quitarComisionista {
+  margin-top: var(--nd-space-2);
+  padding: 0;
+  font-weight: var(--nd-font-weight-bold);
+  color: var(--nd-color-danger);
+  text-decoration: none;
+}
+
+/* ==========================================================================
+   Modales de Comentarios y Archivos del contrato (ModalComentariosContrato,
+   ModalArchivosContrato). react-bootstrap los monta al final del body, fuera de
+   .contratosPage: por eso van con su propia raíz.
+   ========================================================================== */
+.modalContrato {
+
+  .modalContrato__titulo {
+    display: flex;
+    flex-direction: column;
+    font-size: var(--nd-font-size-lg);
+    font-weight: var(--nd-font-weight-bold);
+  }
+
+  .modalContrato__subtitulo {
+    font-size: var(--nd-font-size-sm);
+    font-weight: var(--nd-font-weight-regular);
+    color: var(--nd-color-text-secondary);
+  }
+
+  .modalContrato__vacio {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--nd-space-2);
+    padding: var(--nd-space-6) 0;
+    color: var(--nd-color-text-secondary);
+  }
+
+  .modalContrato__lista {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nd-space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .modalContrato__item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nd-space-1);
+    padding: var(--nd-space-3);
+    background-color: var(--nd-color-bg-page);
+    border: var(--nd-border-width) solid var(--nd-color-border);
+    border-radius: var(--nd-radius-md);
+  }
+
+  .modalContrato__item--archivo {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--nd-space-2);
+  }
+
+  .modalContrato__item--archivo .modalContrato__texto {
+    flex: 1 1 auto;
+  }
+
+  .modalContrato__icono {
+    flex-shrink: 0;
+    font-size: var(--nd-font-size-lg);
+    color: var(--nd-color-primary);
+  }
+
+  .modalContrato__texto {
+    min-width: 0;
+    margin: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .modalContrato__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--nd-space-1) var(--nd-space-2);
+    font-size: var(--nd-font-size-xs);
+    color: var(--nd-color-text-secondary);
+  }
+
+  .modalContrato__item--archivo .btn {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: var(--nd-space-1);
+  }
+
+  /* Pie: formulario para agregar, a todo el ancho */
+  .modalContrato__pie {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--nd-space-2);
+  }
+
+  .modalContrato__pie > * {
+    margin: 0;
+  }
+
+  .modalContrato__label {
+    font-size: var(--nd-font-size-sm);
+    font-weight: var(--nd-font-weight-semibold);
+  }
+
+  .modalContrato__pie .btn {
+    display: inline-flex;
+    align-self: flex-end;
+    align-items: center;
+    gap: var(--nd-space-1);
   }
 }

@@ -3,7 +3,7 @@ import "./nota.css";
 import "./VerNotaPantalla.css";
 import "./VerNota.css";
 import { useSelector } from 'react-redux';
-import { useLocation, useParams, Link } from 'react-router-dom';
+import { useLocation, useParams, useSearchParams, Link } from 'react-router-dom';
 import BarplotNota from '@/shared/components/charts/BarplotNota';
 import MediosMasRelevantesNotas from '@/modules/dashboard/datosRelevantes/MediosMasRelevantesNotas';
 import { formatearFecha } from '@/modules/dashboard/datosRelevantes/InteraccionPorNota';
@@ -20,7 +20,10 @@ import { getTipoHistoria, getColorHistoria, getDesplazamientoHistoria, armarPara
 const VerNota = () => {
     const [cargando, setCargando] = useState(true);
     const location = useLocation();
-    const { id, notaABM } = location.state || {};
+    // La nota llega por state (navegación interna) o por ?id=&cliente= (pestaña nueva, donde no hay state)
+    const [searchParams] = useSearchParams();
+    const { id = searchParams.get('id'), notaABM } = location.state || {};
+    const idClienteUrl = searchParams.get('cliente');
     const [Nota, setNota] = useState({});
     const [FPUB, setFPUB] = useState("");
     const { id_ruta } = useParams();
@@ -37,7 +40,7 @@ const VerNota = () => {
     const [TOKEN] = useState(TOKEN_ESTADO);
     const [CLIENTE, setCLIENTE] = useState("");
     const idClienteSesion = useSelector((state) => state.formulario.id_cliente);
-    const clienteIdNota = Nota.cliente_id || Nota.id_cliente || notaABM?.id_cliente || idClienteSesion;
+    const clienteIdNota = Nota.cliente_id || Nota.id_cliente || notaABM?.id_cliente || idClienteUrl || idClienteSesion;
     const [tipoHistoria, setTipoHistoria] = useState(1); // desde banner_data.historiaTipo; 1 si es null
     const [colorHistoria, setColorHistoria] = useState(null); // desde banner_data.color; solo aplica a tipo 1, 2 y 3
     const [desplazamientoHistoria, setDesplazamientoHistoria] = useState(null); // desde banner_data.desplazamiento

@@ -59,14 +59,51 @@
         font-size: var(--nd-font-size-lg);
     }
 
+    /* Las tablas ocupan todo el ancho (antes quedaban en la primera de las dos
+       columnas de filtros y se cortaban a la mitad) */
     .calculadora__presupuestos {
+        grid-column: 1 / -1;
         min-width: 0;
         padding: var(--nd-space-5) 0;
+    }
+
+    /* Modal "Descargar Presupuesto": checkbox + texto */
+    .calculadora__opcion {
+        display: flex;
+        align-items: center;
+        gap: var(--nd-space-2);
+        margin-bottom: var(--nd-space-1);
+        padding-left: 0;
+    }
+
+    .calculadora__check {
+        flex-shrink: 0;
+        margin: 0;
+        cursor: pointer;
+    }
+
+    .calculadora__opcion .form-check-label {
+        cursor: pointer;
     }
 
     @media (max-width: 1024px) {
         .calculadora__filtros {
             grid-template-columns: minmax(0, 1fr);
+        }
+    }
+
+    /* Mobile: selector de cuenta en la barra de FiltrosMobile, ocupando lo que sobra */
+    @media (max-width: 768px) {
+        .nd-filtros-mobile__buscador .dropdown,
+        .nd-filtros-mobile__buscador .dropdown > .btn {
+            width: 100%;
+            margin: 0;
+        }
+
+        .nd-filtros-mobile__buscador .dropdown > .btn {
+            justify-content: space-between;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     }
 
@@ -77,5 +114,29 @@
             font-size: var(--nd-font-size-base);
             text-align: center;
         }
+    }
+}
+
+/* Panel de filtros mobile de la Calculadora (FiltrosMobile, panelClassName). Se monta
+   al final del body, fuera de .gestionPresupuestos: cada campo en dos renglones,
+   nombre arriba y control abajo a todo el ancho. */
+.calculadora__panel {
+
+    .nd-field-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--nd-space-1);
+    }
+
+    .nd-field-row__control,
+    .nd-field-row > .input-group.nd-field-row__control {
+        flex: none;
+        width: 100%;
+        max-width: none;
+    }
+
+    .nd-field-row__control > .btn {
+        width: 100%;
+        justify-content: space-between;
     }
 }

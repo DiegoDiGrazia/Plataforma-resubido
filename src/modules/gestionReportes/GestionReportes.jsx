@@ -4,6 +4,7 @@ import { Accordion, Modal, Button, Badge, Table, Form, Spinner } from 'react-boo
 import { ToastContainer } from 'react-toastify';
 import { toastExito, toastError } from '@/shared/utils/toastify/toastify.jsx';
 import { obtenerClientes } from '@/api/apis';
+import './GestionReportes.css';
 import {
   obtenerReporteIntegrado,
   obtenerIdNoti,
@@ -59,10 +60,21 @@ const CAMPOS_NUMERICOS = {
 
 const formatearNumero = (n) => (n === null || n === undefined ? '-' : Number(n).toLocaleString('es-AR'));
 
-// URL del reporte publicado. Formato: /reporte-mensual/{id_cliente}/{mes}-{anio}
+// URL del reporte publicado. Formato: /reporte-mensual/{nombre-del-cliente}/{mes}-{anio}
+// El nombre va en minúsculas, sin tildes, con "ñ" → "n" y los espacios como "-"
+// (ej: "Peña Ñandú" → "pena-nandu"). NFD separa cada letra de su tilde y el replace las borra.
 const URL_REPORTES = 'https://reportes-creativos.noticiasd.com/reporte-mensual';
-const urlReportePublico = (periodo) =>
-  periodo ? `${URL_REPORTES}/${periodo.idCliente}/${periodo.mes}-${periodo.anio}` : undefined;
+const nombreClienteEnUrl = (nombre) =>
+  String(nombre)
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/\s+/g, '-');
+const urlReportePublico = (periodo, nombreCliente) =>
+  periodo && nombreCliente
+    ? `${URL_REPORTES}/${encodeURIComponent(nombreClienteEnUrl(nombreCliente))}/${periodo.mes}-${periodo.anio}`
+    : undefined;
 
 const aTexto = (v) => (v === null || v === undefined ? '' : String(v));
 
@@ -364,7 +376,7 @@ const GestionReportes = () => {
 
   const inputNumero = (campo, etiqueta) => (
     <Form.Group className="mb-2" key={campo}>
-      <Form.Label className="mb-0 small">{etiqueta}</Form.Label>
+      <Form.Label className="gestion__label">{etiqueta}</Form.Label>
       <Form.Control
         type="number"
         min={0}
@@ -379,7 +391,7 @@ const GestionReportes = () => {
 
   const inputConclusiones = () => (
     <Form.Group className="mb-2">
-      <Form.Label className="mb-0 small">Conclusiones</Form.Label>
+      <Form.Label className="gestion__label">Conclusiones</Form.Label>
       <Form.Control
         as="textarea"
         rows={4}
@@ -411,7 +423,7 @@ const GestionReportes = () => {
             {mostrarAvanzado ? '▾' : '▸'} Campos avanzados (i_*)
           </Button>
           {mostrarAvanzado && (
-            <div className="row" style={{ maxHeight: '320px', overflowY: 'auto' }}>
+            <div className="row gestion__campos-avanzados">
               {CAMPOS_I.map((c) => <div className="col-md-4" key={c}>{inputNumero(c, c)}</div>)}
             </div>
           )}
@@ -453,7 +465,7 @@ const GestionReportes = () => {
       <>
         {editor.nuevo && (
           <Form.Group className="mb-2">
-            <Form.Label className="mb-0 small">Nombre del medio</Form.Label>
+            <Form.Label className="gestion__label">Nombre del medio</Form.Label>
             <Form.Control
               size="sm"
               value={nombreMedioNuevo}
@@ -485,12 +497,12 @@ const GestionReportes = () => {
       </div>
 
       {/* FILTROS */}
-      <form className='row miPerfilContainer soporteContainer mt-4 p-0 g-2 align-items-end' onSubmit={buscar}>
+      <form className='row miPerfilContainer soporteContainer gestion__filtros mt-4 p-0' onSubmit={buscar}>
         <div className='col-12 col-md-5'>
-          <Form.Label className="mb-0 small">Cliente</Form.Label>
+          <Form.Label className="gestion__label">Cliente</Form.Label>
           <Form.Control
             size="sm"
-            className="mb-1"
+            className="mb-2"
             placeholder="Buscar cliente por nombre o id"
             value={busquedaCliente}
             onChange={(e) => setBusquedaCliente(e.target.value)}
@@ -503,19 +515,19 @@ const GestionReportes = () => {
           </Form.Select>
         </div>
         <div className='col-6 col-md-2'>
-          <Form.Label className="mb-0 small">Año</Form.Label>
+          <Form.Label className="gestion__label">Año</Form.Label>
           <Form.Select size="sm" value={anio} onChange={(e) => setAnio(e.target.value)}>
             {anios.map((a) => <option key={a} value={a}>{a}</option>)}
           </Form.Select>
         </div>
         <div className='col-6 col-md-2'>
-          <Form.Label className="mb-0 small">Mes</Form.Label>
+          <Form.Label className="gestion__label">Mes</Form.Label>
           <Form.Select size="sm" value={mes} onChange={(e) => setMes(e.target.value)}>
             {MESES.map((nombre, i) => <option key={i + 1} value={i + 1}>{nombre}</option>)}
           </Form.Select>
         </div>
         <div className='col-12 col-md-3'>
-          <Button type="submit" className="w-100 boton-funcion" variant="primary" size="sm" disabled={cargando}>
+          <Button type="submit" className="w-100" variant="primary" size="sm" disabled={cargando}>
             {cargando ? <Spinner animation="border" size="sm" /> : 'Buscar reporte'}
           </Button>
         </div>
@@ -524,7 +536,7 @@ const GestionReportes = () => {
       {/* CONTENIDO */}
       <div className='row miPerfilContainer soporteContainer mt-4 mb-5 p-0'>
         {cargando && !reporte ? (
-          <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '200px' }}>
+          <div className="gestion__cargando">
             <Spinner animation="border" variant="primary" />
           </div>
         ) : !reporte ? (
@@ -542,14 +554,17 @@ const GestionReportes = () => {
                 </strong>
                 <Button
                   size="sm"
-                  variant="dark"
-                  href={urlReportePublico(periodoCargado)}
+                  variant="outline-primary"
+                  href={urlReportePublico(
+                    periodoCargado,
+                    reporte.cliente?.nombre || clientes.find((c) => String(c.id) === String(periodoCargado?.idCliente))?.name
+                  )}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   <i className="bi bi-box-arrow-up-right me-1" />Ver reporte
                 </Button>
-                <Button size="sm" variant="outline-dark" onClick={() => abrirEditor({ nivel: 'cliente' })}>
+                <Button size="sm" variant="outline-secondary" onClick={() => abrirEditor({ nivel: 'cliente' })}>
                   <i className="bi bi-pencil-fill me-1" />Editar
                 </Button>
                 {persCliente && (
@@ -566,7 +581,7 @@ const GestionReportes = () => {
                   <div className="col"><div className="small text-muted">Usuarios</div><h5>{formatearNumero(reporte.resumen?.usuarios)}</h5></div>
                 </div>
                 <div className="small text-muted">Conclusiones</div>
-                <div style={{ whiteSpace: 'pre-wrap' }}>{reporte.conclusiones || <em className="text-muted">Sin conclusiones</em>}</div>
+                <div className="gestion__texto-libre">{reporte.conclusiones || <em className="text-muted">Sin conclusiones</em>}</div>
               </div>
             </div>
 
@@ -598,7 +613,7 @@ const GestionReportes = () => {
                       </Accordion.Header>
                       <Accordion.Body>
                         <div className="d-flex flex-wrap gap-2 mb-3">
-                          <Button size="sm" variant="outline-dark" disabled={!idNoti} onClick={() => abrirEditor({ nivel: 'nota', nota })}>
+                          <Button size="sm" variant="outline-secondary" disabled={!idNoti} onClick={() => abrirEditor({ nivel: 'nota', nota })}>
                             <i className="bi bi-pencil-fill me-1" />Editar nota
                           </Button>
                           {notaPers && (
@@ -626,20 +641,20 @@ const GestionReportes = () => {
                         </Table>
 
                         <div className="small text-muted">Conclusiones</div>
-                        <div className="mb-3" style={{ whiteSpace: 'pre-wrap' }}>
+                        <div className="mb-3 gestion__texto-libre">
                           {nota.conclusiones || <em className="text-muted">Sin conclusiones</em>}
                         </div>
 
                         <div className="d-flex align-items-center mb-2">
                           <strong className="me-auto">Medios ({nota.medios?.length || 0})</strong>
-                          <Button size="sm" variant="outline-dark" disabled={!idNoti}
+                          <Button size="sm" variant="outline-secondary" disabled={!idNoti}
                             onClick={() => abrirEditor({ nivel: 'medio', nota, nuevo: true })}>
                             <i className="bi bi-plus-lg me-1" />Agregar medio
                           </Button>
                         </div>
                         <Table size="sm" responsive hover>
                           <thead>
-                            <tr><th>Medio</th><th>Impresiones</th><th>Conclusiones</th><th style={{ width: '1%' }}></th></tr>
+                            <tr><th>Medio</th><th>Impresiones</th><th>Conclusiones</th><th className="gestion__col-acciones"></th></tr>
                           </thead>
                           <tbody>
                             {(nota.medios || []).map((md) => {
@@ -648,7 +663,7 @@ const GestionReportes = () => {
                                 <tr key={md.nombre}>
                                   <td>{md.nombre}{medioPers && <Badge bg="warning" text="dark" className="ms-2">Personalizado</Badge>}</td>
                                   <td>{formatearNumero(md.impresiones)}</td>
-                                  <td className="small" style={{ whiteSpace: 'pre-wrap' }}>{md.conclusiones || '-'}</td>
+                                  <td className="small gestion__texto-libre">{md.conclusiones || '-'}</td>
                                   <td className="text-nowrap">
                                     <Button size="sm" variant="link" title="Editar medio" disabled={!idNoti}
                                       onClick={() => abrirEditor({ nivel: 'medio', nota, medio: md })}>
@@ -706,14 +721,14 @@ const GestionReportes = () => {
             </Button>
           )}
           <Button variant="secondary" onClick={cerrarEditor} disabled={guardando}>Cancelar</Button>
-          <Button variant="dark" onClick={guardar} disabled={guardando || cargandoEditor}>
+          <Button variant="primary" onClick={guardar} disabled={guardando || cargandoEditor}>
             {guardando ? <Spinner animation="border" size="sm" /> : 'Guardar'}
           </Button>
         </Modal.Footer>
       </Modal>
 
       {/* MODAL CONFIRMAR BORRADO */}
-      <Modal show={!!aBorrar} onHide={() => !guardando && setABorrar(null)} centered style={{ zIndex: 1060 }}>
+      <Modal show={!!aBorrar} onHide={() => !guardando && setABorrar(null)} centered className="gestion__modal-borrar">
         <Modal.Header closeButton>
           <Modal.Title className="nd-text-lg">Volver a datos reales</Modal.Title>
         </Modal.Header>

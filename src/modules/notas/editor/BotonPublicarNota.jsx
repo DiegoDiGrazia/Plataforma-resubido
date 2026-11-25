@@ -203,10 +203,11 @@ const BotonPublicarNota = ({ status, isLoading, setIsLoading }) => {
             <Button
                 onClick={() => setShowConfirmModal(true)}
                 id="botonPublicar"
-                variant="none"
+                variant="primary"
+                className={`publicarNota__boton publicarNota__boton--${status === "EN REVISION" ? "revision" : status === "BORRADOR" ? "borrador" : "publicar"}`}
                 disabled={isLoading || !imagefeed || !image || categoriasActivas.length < 1}
             >
-                <img src="/images/send.png" alt="Icono 1" className="icon me-2 icono_tusNotas" />
+                <img src="/images/send.png" alt="" className="icon me-2 icono_tusNotas" />
                 {status === "EN REVISION" ? "Enviar a revisión" : status === "BORRADOR" ? "Guardar borrador" : "Publicar"}
             </Button>
 

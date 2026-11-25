@@ -7,6 +7,19 @@
         white-space: nowrap;
     }
 
+    .dropdown-filtro-texto {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: left;
+    }
+
+    /* El menú mide lo mismo que el botón, con un mínimo para que no se corten las opciones */
+    .dropdown-menu {
+        width: max(100%, 240px);
+        min-width: 0;
+    }
+
     .input-group {
         width: calc(100% - var(--nd-space-2));
         margin-left: var(--nd-space-1);
@@ -23,8 +36,18 @@
     }
 
     @media (max-width: 1366px) {
+        .dropdown-menu {
+            width: max(100%, 220px);
+        }
+
         .dropdown-item {
             font-size: var(--nd-font-size-xs);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .dropdown-menu {
+            width: max(100%, 200px);
         }
     }
 }

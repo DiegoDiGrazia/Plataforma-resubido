@@ -1,5 +1,6 @@
 import './Distribucion.css';
 import React, { useState, useMemo, useEffect } from 'react';
+import SelectorFecha from '@/shared/components/form/SelectorFecha';
 import { useSelector } from 'react-redux';
 import ModalMensaje from '@/shared/components/modales/ModalMensaje';
 import {obtenerPlanesMarketing, obtenerVideosYoutube, obtenerContratos } from '@/api/apisUsuarios';
@@ -559,22 +560,14 @@ useEffect(() => {
       <div className='row miPerfilContainer soporteContainer mt-4 p-0 mb-3'>
         <div className='col buscadorNotas d-flex align-items-center gap-3 justify-content-between'> 
           {/* <button className="mb-2 btn btn-primary" onClick={() => handleEditClick(usuarioVacio)}>Crear nuevo usuario</button> */}
-          <label className="distribucion__fecha">Vencimiento desde:
-            <input
-                type="month"
-                className="form-control form-control-sm"
-                value={fechaDesde}
-                onChange={(e) => setFechaDesde(e.target.value)}
-            />
-          </label>
-          <label className="distribucion__fecha">Vencimiento hasta:
-            <input
-                type="month"
-                className="form-control form-control-sm"
-                value={fechaHasta}
-                onChange={(e) => setFechaHasta(e.target.value)}
-            />
-          </label>
+                    <SelectorFecha
+            modo="mes"
+            label="Vencimiento"
+            desde={fechaDesde}
+            hasta={fechaHasta}
+            onChangeDesde={setFechaDesde}
+            onChangeHasta={setFechaHasta}
+          />
           <div className="dropdown">
             <a className="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               {pendientes}
@@ -634,21 +627,29 @@ useEffect(() => {
                           </div>
                         </div>
                         <div className="distribucion__plataformas">
-                        {PLATAFORMAS.map((plataforma) => (
-                          <div className="distribucion__plataforma" key={plataforma.key}>
+                        {PLATAFORMAS.map((plataforma) => {
+                          const distribuidas = data.notas.filter(n => n[plataforma.campoPrimerDato] != null).length;
+                          return (
+                          <div className="distribucion__plataforma" key={plataforma.key} title={`${plataforma.label}: ${distribuidas} distribuidas`}>
                             <i className={`bi ${plataforma.icono} fs-3 ` + obtenerColorDeEstadoDistribucion(plataforma.campoPrimerDato, data)} aria-hidden="true"></i>
-                            <strong>{plataforma.label}</strong>
-                            <span>Distribuidas: <strong>{data.notas.filter(n => n[plataforma.campoPrimerDato] != null).length}</strong></span>
+                            {/* En mobile solo quedan el ícono y el número (el nombre y "Distribuidas:" se ocultan) */}
+                            <strong className="distribucion__plataforma-nombre">{plataforma.label}</strong>
+                            <span>
+                              <span className="distribucion__plataforma-texto">Distribuidas: </span>
+                              <span className="visually-hidden">{plataforma.label} distribuidas: </span>
+                              <strong>{distribuidas}</strong>
+                            </span>
                           </div>
-                        ))}
+                          );
+                        })}
                         </div>
                       </div>
                     </Accordion.Header>
 
                     <Accordion.Body>
-                      <ul className="list-group">
+                      <ul className="list-group distribucion__notas">
                         {data.notas.map(nota => (
-                          <li key={`${nota.id}-${nota.esNotaDeVideo ? 'video' : 'nota'}`} className="list-group-item">
+                          <li key={`${nota.id}-${nota.esNotaDeVideo ? 'video' : 'nota'}`} className="list-group-item distribucion__nota-item">
                             <div className='distribucion__nota'>
                               {/* Columna 1 */}
                               {!nota.esNotaDeVideo && (

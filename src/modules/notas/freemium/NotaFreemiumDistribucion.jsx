@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import ModalMensaje from '@/shared/components/modales/ModalMensaje';
 import { obtenerPrecioUsuario, setComprarDistribucion, obtenerConsolidacionCliente } from '@/api/apisUsuarios';
 import ArbolConSelectorMultiple from './ArbolConSelectorMultiple';
-import InputFecha from '@/shared/components/form/InputFecha';
+import SelectorFecha from '@/shared/components/form/SelectorFecha';
 import BotonDistribuirNota from './BotonDistribuir';
 import Checkbox from '@/modules/notas/editor/checkbox';
 import { useNavigate } from 'react-router-dom';
@@ -484,10 +484,17 @@ const NotaFreemiumDistribucion = () => {
                 <Checkbox title="Distribuir en Meta"  value={distribuirMeta} onChange={setDistribuirMeta} />
                 <Checkbox title="Distribuir en DV360" value={distribuirDv}   onChange={setDistribuirDv}   />
               </div>
-              <InputFecha label="Fecha inicio:" name="fecha_inicio" value={fecha_inicio}
-                onChange={(e) => setFechaInicio(e.target.value)} />
-              <InputFecha label="Fecha fin:"    name="fecha_fin"    value={fecha_fin}
-                onChange={(e) => setFechaFin(e.target.value)} />
+                            <SelectorFecha
+                className="mb-3"
+                bloque
+                label="Período"
+                etiquetaDesde="Inicio"
+                etiquetaHasta="Fin"
+                desde={fecha_inicio}
+                hasta={fecha_fin}
+                onChangeDesde={setFechaInicio}
+                onChangeHasta={setFechaFin}
+              />
               {(() => {
                 const diff = fecha_inicio && fecha_fin
                   ? (new Date(fecha_fin) - new Date(fecha_inicio)) / (1000 * 60 * 60 * 24)

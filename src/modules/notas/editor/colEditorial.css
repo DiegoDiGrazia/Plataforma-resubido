@@ -1,30 +1,30 @@
 .col_editorial input:not([type="checkbox"]):not([type="radio"]){
-    border: 1px solid var(--nd-color-border);
+    border: var(--nd-border-width) solid var(--nd-color-border);
     border-radius: var(--nd-radius-lg);
 
 }
 .form_editorial{
-    padding-left: 15px;
+    padding-left: var(--nd-space-4);
 }
 .form_editorial .form-check-input{
-    margin: 0px;
-    margin-bottom: 10px;
+    margin: 0;
+    margin-bottom: var(--nd-space-2);
 }
 
 .datosDistribucion {
-    border: 1px solid var(--nd-color-border);
+    border: var(--nd-border-width) solid var(--nd-color-border);
     border-radius: var(--nd-radius-lg);
-    padding: 15px;
-    margin-bottom: 20px;
+    padding: var(--nd-space-4);
+    margin-bottom: var(--nd-space-5);
 }
 
 .datosDistribucion .datosDistribucionTitulo {
     font-size: var(--nd-font-size-lg);
     font-weight: var(--nd-font-weight-bold);
     color: var(--nd-color-text);
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid var(--nd-color-border);
+    margin-bottom: var(--nd-space-4);
+    padding-bottom: var(--nd-space-2);
+    border-bottom: var(--nd-border-width-thick) solid var(--nd-color-border);
     display: block;
 }
 
@@ -34,27 +34,27 @@
     color: var(--nd-color-text-inverse);
     background: var(--nd-gray-600);
     display: inline-block;
-    padding: 3px 12px;
+    padding: 3px var(--nd-space-3);
     border-radius: var(--nd-radius-lg);
     text-transform: uppercase;
     letter-spacing: .04em;
-    margin-top: 18px;
-    margin-bottom: 10px;
+    margin-top: var(--nd-space-4);
+    margin-bottom: var(--nd-space-2);
 }
 
 .datosDistribucion .datosDistribucionCampo.form-check {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-top: 4px;
-    margin-bottom: 18px;
+    gap: var(--nd-space-2);
+    margin-top: var(--nd-space-1);
+    margin-bottom: var(--nd-space-4);
 }
 
 .datosDistribucion .datosDistribucionCampo.form-check .form-check-input {
     width: 1.1em;
     height: 1.1em;
     margin: 0;
-    border: 1px solid var(--nd-color-border-strong);
+    border: var(--nd-border-width) solid var(--nd-color-border-strong);
     border-radius: var(--nd-radius-sm);
     cursor: pointer;
     flex-shrink: 0;
@@ -73,20 +73,20 @@
 }
 
 .datosDistribucion .datosDistribucionCampo {
-    margin-bottom: 10px;
+    margin-bottom: var(--nd-space-2);
 }
 
 .datosDistribucion .datosDistribucionCampo label {
     font-size: var(--nd-font-size-sm);
     color: var(--nd-color-text-secondary);
-    margin-bottom: 4px;
+    margin-bottom: var(--nd-space-1);
     display: block;
 }
 
 .datosDistribucion .datosDistribucionCampo .caracteresRestantes {
     font-size: var(--nd-font-size-xs);
     color: var(--nd-color-text-muted);
-    margin: 4px 0 0;
+    margin: var(--nd-space-1) 0 0;
 }
 /* Filas "etiqueta + control" de la columna editorial */
 .colEditorial__fila {
@@ -108,7 +108,11 @@
     margin: 0;
     padding: 0;
 }
-.colEditorial__fecha {
-    font-size: var(--nd-font-size-xl);
-    font-weight: var(--nd-font-weight-bold);
+
+/* La fila de checkboxes/selectores es un .row de Bootstrap dentro de la columna:
+   sin canaleta, sus márgenes negativos se salían 12px por cada lado (scroll horizontal
+   en mobile) y desalineaban "No home", "Autor", etc. del resto de la columna */
+.col_editorial > .row {
+    --bs-gutter-x: 0;
+    margin-inline: 0;
 }

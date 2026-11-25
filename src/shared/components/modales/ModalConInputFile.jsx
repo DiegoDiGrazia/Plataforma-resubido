@@ -1,7 +1,7 @@
 // ModalConInputFile.jsx
 import React, { useState } from "react";
 import Checkbox from "@/modules/notas/editor/checkbox";
-import InputFecha from "@/shared/components/form/InputFecha";
+import SelectorFecha from "@/shared/components/form/SelectorFecha";
 
 
 export default function ModalConInputFile({ show, titulo, setFile, AlGuardar, onClose, fecha, setFecha }) {
@@ -35,7 +35,7 @@ export default function ModalConInputFile({ show, titulo, setFile, AlGuardar, on
             />
             <Checkbox title={'Distribuir'}  value = {distribuir} onChange={setDistribuir} ></Checkbox>
             {distribuir &&
-            <InputFecha label= {'Vencimiento distribucion'} fecha = {'fecha'} value={fecha} onChange={(e) => setFecha(e.target.value)} ></InputFecha>
+                        <SelectorFecha bloque label="Vencimiento distribución" valor={fecha} onChange={setFecha} />
             }
             </div>
             <button className="btn btn-primary" onClick={() => AlGuardar()}>

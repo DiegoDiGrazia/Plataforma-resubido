@@ -153,10 +153,10 @@ const IconosDistribucionConMonto = ({ nota, token, geo, contratos }) => {
                 </div>
             </div>
         )}
-        <div className="col-3">
-            <div className="row p-1"><strong>Presupuestos plataformas</strong></div>
+        <div className="col-3 distribucion__presupuestos">
+            <div className="row p-1 distribucion__presupuestos-titulo"><strong>Presupuestos plataformas</strong></div>
             {PLATAFORMAS.map((plataforma) => (
-                <div className="row p-1 align-items-center justify-content-between" key={plataforma.key}>
+                <div className="row p-1 align-items-center justify-content-between distribucion__presupuesto" key={plataforma.key}>
                     <div className="col-auto d-flex align-items-center pe-0">
                         <i
                             className={`bi ${plataforma.icono} fs-5 me-1 ` + obtenerColorDeEstadoDistribucionDeNota(primerosDatos[plataforma.key])}

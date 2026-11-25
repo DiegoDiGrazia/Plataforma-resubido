@@ -1,0 +1,113 @@
+/* ==========================================================================
+   SelectorFecha (shared/components/form): botón con el valor + panel con
+   input nativo date/month, atajos y Limpiar. Reemplaza a los input de fecha.
+   ========================================================================== */
+
+.nd-selector-fecha {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+
+    .nd-selector-fecha__boton {
+        max-width: 100%;
+        gap: var(--nd-space-2);
+        white-space: nowrap;
+    }
+
+    .nd-selector-fecha__boton::after {
+        margin-left: auto;
+    }
+
+    .nd-selector-fecha__boton > .bi {
+        flex-shrink: 0;
+        color: var(--nd-color-text-secondary);
+    }
+
+    .nd-selector-fecha__valor {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-weight: var(--nd-font-weight-regular);
+    }
+
+    .nd-selector-fecha__valor--vacio {
+        color: var(--nd-color-text-muted);
+    }
+
+    /* ---------- Panel ---------- */
+    .nd-selector-fecha__menu {
+        display: flex;
+        flex-direction: column;
+        gap: var(--nd-space-3);
+        width: max(100%, 260px);
+        min-width: 0;
+        max-width: calc(100vw - 2 * var(--nd-page-padding));
+        padding: var(--nd-space-3);
+    }
+
+    .nd-selector-fecha__campos {
+        display: flex;
+        flex-direction: column;
+        gap: var(--nd-space-2);
+    }
+
+    .nd-selector-fecha__campo {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--nd-space-3);
+        margin: 0;
+        font-size: var(--nd-font-size-sm);
+        font-weight: var(--nd-font-weight-semibold);
+    }
+
+    .nd-selector-fecha__campo .form-control {
+        width: auto;
+        min-width: 0;
+    }
+
+    .nd-selector-fecha__atajos {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--nd-space-1);
+    }
+
+    .nd-selector-fecha__atajos > .btn {
+        flex: 1 1 auto;
+    }
+
+    .nd-selector-fecha__pie {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .nd-selector-fecha__pie .btn-link {
+        padding: 0;
+        color: var(--nd-color-text-secondary);
+    }
+
+    .nd-selector-fecha__validacion {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        padding: 0;
+        border: 0;
+        opacity: 0;
+        pointer-events: none;
+    }
+}
+
+.nd-selector-fecha--bloque {
+    display: block;
+    width: 100%;
+
+    .nd-selector-fecha__boton {
+        width: 100%;
+    }
+
+    .nd-selector-fecha__menu {
+        width: 100%;
+    }
+}

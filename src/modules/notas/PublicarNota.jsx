@@ -7,7 +7,6 @@ import '@/modules/dashboard/Dashboard.css';
 import './nota.css';
 import './publicarNota.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link} from 'react-router-dom';
 import { setCategoriasActivasEnStore, setImagenRRSS } from '@/store/crearNotaSlice'; // Asegúrate de importar setImagenPrincipal
 import { useNavigate, useParams } from 'react-router-dom';
 import ColumnaEditorial from '@/modules/notas/editor/ColumnaEditorial';
@@ -27,7 +26,6 @@ const PublicarNota = () => {
     const TOKEN = useSelector((state) => state.formulario.token);
     const imageRef = useRef(null);
     const [cropper, setCropper] = useState(null);
-    const es_editor = useSelector((state) => state.formulario.es_editor);
     const image = useSelector((state) => state.crearNota.imagenPrincipal); // Imagen seleccionada
     const imagefeed = useSelector((state) => state.crearNota.imagenRRSS); // Imagen seleccionada  
     const { categorias, categoriasActivas } = useCategorias(TOKEN);
@@ -111,25 +109,6 @@ const PublicarNota = () => {
     return (
                 <>
                 <div className="publicarNotaPage">
-                    <header id="head_dash" className='header_dash'>
-                        <div className='row'>
-                            <div className='col'>
-                                <h4 id="nota">
-                                <nav aria-label="breadcrumb">
-                                    <ol className="breadcrumb">
-                                    <li className="breadcrumb-item">
-                                    <Link to={!es_editor ? "/notas" : "/notasEditorial"} className="breadcrumb-item">
-                                        {'< '} Notas
-                                    </Link>
-                                    </li>
-                                        <li className="breadcrumb-item blackActive" aria-current="page">Nueva Nota</li>
-                                    </ol>
-                                </nav>
-                                </h4>
-                            </div>
-                        </div>
-                        
-                    </header>
                     
                     {/* SECCION NOTA */}
                     <div className='container-fluid publicarNotaPage__cuerpo'>

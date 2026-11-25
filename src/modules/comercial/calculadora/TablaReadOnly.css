@@ -45,9 +45,16 @@
         font-weight: var(--nd-font-weight-bold);
     }
 
+    /* Totales destacados en naranja de marca */
     .tablaCalculadora__total--destacado {
-        color: var(--nd-color-success);
-        background-color: var(--nd-color-success-subtle);
+        color: var(--nd-color-primary-text);
+        background-color: var(--nd-color-primary-subtle);
+    }
+
+    .tablaCalculadora__check {
+        margin: 0 var(--nd-space-2) 0 0;
+        vertical-align: middle;
+        cursor: pointer;
     }
 
     .tablaCalculadora__input {
@@ -59,5 +66,98 @@
 
     .tablaCalculadora__input--ancho {
         width: 105px;
+    }
+
+    .tablaCalculadora__campo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--nd-space-1);
+    }
+}
+
+/* ---------- Mobile: tabla transpuesta (plataformas arriba, datos como filas) ----------
+   Las columnas se miden por su contenido: los números no se parten y los nombres
+   de los datos son los que bajan de línea. Si igual no entra, queda el scroll. */
+.tablaCalculadora--transpuesta {
+
+    .tablaCalculadora__tabla {
+        min-width: 0;
+        font-size: var(--nd-font-size-xs);
+    }
+
+    th,
+    td {
+        padding: var(--nd-space-1);
+    }
+
+    /* Valores: alineados a la derecha y sin cortar */
+    td {
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    .tablaCalculadora__esquina {
+        width: auto;
+    }
+
+    /* Plataformas arriba: checkbox sobre el nombre */
+    thead .tablaCalculadora__fila {
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    thead .tablaCalculadora__check {
+        display: block;
+        margin: 0 auto var(--nd-space-1);
+    }
+
+    /* Nombre de cada dato (CPM, % Inversión…) a la izquierda; puede bajar de línea */
+    .tablaCalculadora__dato {
+        min-width: 70px;
+        font-weight: var(--nd-font-weight-bold);
+        text-align: left;
+        white-space: normal;
+        background-color: var(--nd-color-bg-muted);
+    }
+
+    .tablaCalculadora__campo {
+        justify-content: flex-end;
+    }
+
+    .tablaCalculadora__input,
+    .tablaCalculadora__input--ancho {
+        width: 100%;
+        min-width: 48px;
+        font-size: var(--nd-font-size-xs);
+        text-align: right;
+    }
+
+    /* Una sola plataforma (Search): montos centrados en su columna */
+    &.tablaCalculadora--una-plataforma td,
+    &.tablaCalculadora--una-plataforma .tablaCalculadora__input {
+        text-align: center;
+    }
+
+    &.tablaCalculadora--una-plataforma .tablaCalculadora__campo {
+        justify-content: center;
+    }
+
+    /* Celulares chicos: menos relleno y mínimos más angostos para que entre sin scroll */
+    @media (max-width: 420px) {
+        th,
+        td {
+            padding: 2px;
+        }
+
+        .tablaCalculadora__dato {
+            min-width: 56px;
+        }
+
+        .tablaCalculadora__input,
+        .tablaCalculadora__input--ancho {
+            min-width: 38px;
+            padding: 2px;
+        }
     }
 }

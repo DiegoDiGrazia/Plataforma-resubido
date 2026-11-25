@@ -1,0 +1,78 @@
+#pantalla-autoentrevistas {
+
+    .autoentrevistas__aviso {
+        position: fixed;
+        top: var(--nd-space-5);
+        right: var(--nd-space-5);
+        z-index: var(--nd-z-toast);
+        padding: var(--nd-space-2) var(--nd-space-4);
+        color: var(--nd-color-text-inverse);
+        background-color: var(--nd-color-success);
+        border-radius: var(--nd-radius-sm);
+        box-shadow: var(--nd-shadow-md);
+    }
+
+    .autoentrevistas__grilla {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--nd-space-8);
+    }
+
+    .autoentrevistas__card {
+        position: relative;
+        height: 400px;
+        margin: 0;
+        cursor: pointer;
+    }
+
+    .autoentrevistas__compartir {
+        padding: 0;
+        color: var(--nd-color-text);
+    }
+
+    .autoentrevistas__capa {
+        position: absolute;
+        inset: 0;
+        z-index: var(--nd-z-base);
+    }
+
+    .autoentrevistas__card .card-body {
+        position: relative;
+        z-index: calc(var(--nd-z-base) + 1);
+        flex: 0 0 auto;
+        padding-bottom: var(--nd-space-3);
+    }
+
+    .autoentrevistas__card .iframeTutorial {
+        flex: 1 1 auto;
+        height: auto;
+        min-height: 0;
+    }
+
+    @media (max-width: 1024px) {
+        .autoentrevistas__grilla {
+            gap: var(--nd-space-6);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .autoentrevistas__barra {
+            flex-direction: column;
+            gap: var(--nd-space-3);
+        }
+
+        .autoentrevistas__barra > .col {
+            flex: 0 0 auto;
+            width: 100%;
+            padding: 0;
+        }
+
+        .autoentrevistas__grilla {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        .autoentrevistas__card {
+            height: 480px;
+        }
+    }
+}

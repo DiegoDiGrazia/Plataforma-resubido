@@ -10,6 +10,9 @@ import { obtenerGrupos, obtenerAutores, obtenerGruposClientes, crearGrupo,
 import { obtenerClientes, editarComentarioCliente, obtenerCategorias } from '@/api/apis.js';
 import { obtenerMonitor } from '@/api/monitorApi.js';
 import DropdownFiltro from '@/shared/components/form/DropdownFiltro.jsx';
+import SelectorFecha from '@/shared/components/form/SelectorFecha';
+import FiltrosMobile from '@/shared/components/form/FiltrosMobile';
+import useEsMobile from '@/shared/hooks/useEsMobile';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { toastExito, toastError } from '@/shared/utils/toastify/toastify.jsx';
@@ -58,6 +61,9 @@ const MonitorEditorial = () => {
     const [filtroTag, setFiltroTag] = useState("");
     const [filtroCliente, setFiltroCliente] = useState("Todas");
     const [mostrarGeo, setMostrarGeo] = useState(false);
+    // Modal de gestión: en mobile muestra la lista o el detalle del ítem elegido, no los dos
+    const haySeleccionAbm = activeTab === 'grupos' ? Boolean(selectedGrupo) : Boolean(selectedAutor);
+    const esMobile = useEsMobile();
 
     const toggleEditor = (id) => {
         setEditorAbierto(prev => (prev === id ? null : id));
@@ -469,6 +475,126 @@ const MonitorEditorial = () => {
 
     const formatearFecha = (fecha) => fecha ? fecha.split('-').reverse().join('/') : '';
 
+    const fechaCorta = (fecha) => fecha ? fecha.split('-').reverse().slice(0, 2).join('/') : '…';
+    const nombreCuentaFiltro = filtroCliente === "Todas" ? "Todas" : (clientePorId(clientesUnicos, filtroCliente)?.name ?? "Todas");
+
+    // Filtros fuera de su valor por defecto: en mobile se muestran como chips naranjas con ×
+    const chipsFiltros = [
+        (fechaDesde || fechaHasta) && { clave: 'fecha', requerido: true, texto: `${fechaCorta(fechaDesde)} → ${fechaCorta(fechaHasta)}`, limpiar: () => { setFechaDesde(''); setFechaHasta(''); } },
+        grupoFiltro && { clave: 'grupo', requerido: true, texto: `Grupo: ${grupoFiltro}`, limpiar: () => setGrupoFiltro('') },
+        filtroAmplificadas !== 'Todas' && { clave: 'amplificacion', texto: filtroAmplificadas, limpiar: () => setFiltroAmplificadas('Todas') },
+        filtroCategoria !== 'Todas' && { clave: 'categoria', texto: filtroCategoria, limpiar: () => setFiltroCategoria('Todas') },
+        filtroCrawler !== 'Todas' && { clave: 'crawler', texto: filtroCrawler, limpiar: () => setFiltroCrawler('Todas') },
+        mostrarGeo && { clave: 'geo', texto: 'Con Geos', limpiar: () => setMostrarGeo(false) },
+        nombreCuentaFiltro !== 'Todas' && { clave: 'cuenta', texto: `Cuenta: ${nombreCuentaFiltro}`, limpiar: () => setFiltroCliente('Todas') },
+    ].filter(Boolean);
+
+
+    // Piezas de la barra de filtros: en desktop van en línea y en mobile dentro del panel
+    const botonGestion = (
+        <button
+            type='button' 
+            className='btn btn-secondary monitor__gestion'
+            id='boton-gestion'
+            title='Gestionar grupos y editores'
+            data-bs-toggle="modal" 
+            data-bs-target="#modalGestionABM"
+            >
+            <i className='bi bi-gear-fill' aria-hidden='true'></i>
+        </button>
+    );
+
+    const buscadorTag = (
+        <div id="input-buscar-tag" className="input-group">
+            <input 
+                type="text" 
+                className="form-control border-end-0 pe-0" 
+                id='input-tag'
+                placeholder='Buscar tag...'
+                value={filtroTag}
+                onChange={(e) => setFiltroTag(e.target.value)}
+            />
+            <span className="input-group-text bg-white border-start-0 text-muted" id='buscador-icon'>
+                <i className="bi bi-search"></i>
+            </span>
+        </div>
+    );
+
+    const filtroFecha = (
+        <SelectorFecha
+            label="Fecha"
+            desde={fechaDesde}
+            hasta={fechaHasta}
+            onChangeDesde={setFechaDesde}
+            onChangeHasta={setFechaHasta}
+            bloque={esMobile}
+        />
+    );
+
+    const filtroGrupo = (
+        <DropdownFiltro
+            className='boton-filtro'
+            label= "Grupo"
+            valorActual={grupoFiltro ? grupoFiltro : "- -"}
+            opciones={gruposFiltrados.map(g => g.nombre )}
+            onChange={setGrupoFiltro}
+            mostrarBuscador={true}
+        />
+    );
+
+    const filtrosSecundarios = (
+        <>
+            <DropdownFiltro
+                className='boton-filtro'
+                label= "Amplificación"
+                valorActual={filtroAmplificadas}
+                opciones={["Todas", "Amplificadas", "No Amplificadas"]}
+                onChange={setFiltroAmplificadas}
+            />
+            <DropdownFiltro
+                className='boton-filtro'
+                label= "Categoría"
+                valorActual={filtroCategoria}
+                opciones={["Todas", ...categoriasNombres]}
+                onChange={setFiltroCategoria}
+                mostrarBuscador={true}
+            />
+            <DropdownFiltro
+                className='boton-filtro'
+                label= "Crawler"
+                valorActual={filtroCrawler}
+                opciones={["Todas", "Con Crawler", "Sin Crawler"]}
+                onChange={setFiltroCrawler}
+            />
+            <div className='monitor__pildora' id='switch-geo-container'>
+                <div className="form-check form-switch p-0 mb-0 d-flex align-items-center gap-2">
+                    <input 
+                        className="form-check-input m-0 p-0" 
+                        type="checkbox" 
+                        role="switch" 
+                        id="switchGeo" 
+                        checked={mostrarGeo}
+                        onChange={(e) => setMostrarGeo(e.target.checked)}
+                    />
+                    <label className="form-check-label label-filtro-fecha mb-0" htmlFor="switchGeo">
+                        Geos
+                    </label>
+                </div>
+            </div>
+            <DropdownFiltro
+                className='boton-filtro'
+                label= "Cuenta"
+                valorActual={nombreCuentaFiltro}
+                opciones={["Todas", ...clientesUnicos.map(c => c.name)]}
+                onChange={(nombre) => setFiltroCliente(
+                    nombre === "Todas" ? "Todas" : (clientesUnicos.find(c => c.name === nombre)?.id ?? "Todas")
+                )}
+                mostrarBuscador={true}
+                alineacionDerecha={true}
+            />
+        </>
+    );
+
     return (
         <div className="contenedor-monitorEditorial content flex-grow-1 crearNotaGlobal h-100">
             <div className='row miPerfilContainer soporteContainer pb-0'>
@@ -478,116 +604,31 @@ const MonitorEditorial = () => {
                     </h3>
                 </div>
             </div>
-
-            <div className='d-flex justify-content-end nd-px-page mt-2'>
-                <button 
-                    className='btn btn-secondary' 
-                    id='boton-gestion'
-                    title='Gestionar grupos y editores'
-                    data-bs-toggle="modal" 
-                    data-bs-target="#modalGestionABM"
-                    >
-                    <i className='bi bi-gear-fill' aria-hidden='true'></i>
-                </button>
-            </div>
-         
-            <div className='monitor__filtros nd-mx-page mt-3' id='filtros-container'>
-                <div className='monitor__grupo-filtros'>
-                    <div id="input-buscar-tag" className="input-group">
-                        <input 
-                            type="text" 
-                            className="form-control border-end-0 pe-0" 
-                            id='input-tag'
-                            placeholder='Buscar tag...'
-                            value={filtroTag}
-                            onChange={(e) => setFiltroTag(e.target.value)}
-                        />
-                        <span className="input-group-text bg-white border-start-0 text-muted" id='buscador-icon'>
-                            <i className="bi bi-search"></i>
-                        </span>
+            {esMobile ? (
+                <FiltrosMobile
+                    className='monitor__filtros--mobile nd-mx-page'
+                    panelClassName='monitor__panel-filtros'
+                    buscador={buscadorTag}
+                    acciones={botonGestion}
+                    chips={chipsFiltros}
+                >
+                    {filtroFecha}
+                    {filtroGrupo}
+                    {filtrosSecundarios}
+                </FiltrosMobile>
+            ) : (
+                <div className='monitor__filtros nd-mx-page' id='filtros-container'>
+                    {botonGestion}
+                    <div className='monitor__grupo-filtros monitor__grupo-filtros--principal'>
+                        {buscadorTag}
+                        {filtroFecha}
+                        {filtroGrupo}
                     </div>
-                    <div className='monitor__pildora'>
-                        <label className='label-filtro-fecha' htmlFor='monitor-fecha-desde'>Fecha Desde:</label>
-                        <input 
-                            id='monitor-fecha-desde'
-                            className='input-fecha-custom' 
-                            type="date" 
-                            value={fechaDesde}
-                            onChange={(e) => setFechaDesde(e.target.value)}
-                        />
+                    <div className='monitor__grupo-filtros monitor__grupo-filtros--secundario'>
+                        {filtrosSecundarios}
                     </div>
-                    <div className='monitor__pildora'>
-                        <label className='label-filtro-fecha' htmlFor='monitor-fecha-hasta'>Fecha Hasta:</label>
-                        <input 
-                            id='monitor-fecha-hasta'
-                            className='input-fecha-custom' 
-                            type="date" 
-                            value={fechaHasta}
-                            onChange={(e) => setFechaHasta(e.target.value)}
-                        />
-                    </div>
-                    <DropdownFiltro
-                        className='boton-filtro'
-                        label= "Grupo"
-                        valorActual={grupoFiltro ? grupoFiltro : "- -"}
-                        opciones={gruposFiltrados.map(g => g.nombre )}
-                        onChange={setGrupoFiltro}
-                        mostrarBuscador={true}
-                    />
-
-
                 </div>
-                <div className='monitor__grupo-filtros'>
-                    <DropdownFiltro
-                        className='boton-filtro'
-                        label= "Amplificación"
-                        valorActual={filtroAmplificadas}
-                        opciones={["Todas", "Amplificadas", "No Amplificadas"]}
-                        onChange={setFiltroAmplificadas}
-                    />
-                    <DropdownFiltro
-                        className='boton-filtro'
-                        label= "Categoría"
-                        valorActual={filtroCategoria}
-                        opciones={["Todas", ...categoriasNombres]}
-                        onChange={setFiltroCategoria}
-                        mostrarBuscador={true}
-                    />
-                    <DropdownFiltro
-                        className='boton-filtro'
-                        label= "Crawler"
-                        valorActual={filtroCrawler}
-                        opciones={["Todas", "Con Crawler", "Sin Crawler"]}
-                        onChange={setFiltroCrawler}
-                    />
-                    <div className='monitor__pildora' id='switch-geo-container'>
-                        <div className="form-check form-switch p-0 mb-0 d-flex align-items-center gap-2">
-                            <input 
-                                className="form-check-input m-0 p-0" 
-                                type="checkbox" 
-                                role="switch" 
-                                id="switchGeo" 
-                                checked={mostrarGeo}
-                                onChange={(e) => setMostrarGeo(e.target.checked)}
-                            />
-                            <label className="form-check-label label-filtro-fecha mb-0" htmlFor="switchGeo">
-                                Geos
-                            </label>
-                        </div>
-                    </div>
-                    <DropdownFiltro
-                        className='boton-filtro'
-                        label= "Cuenta"
-                        valorActual={filtroCliente === "Todas" ? "Todas" : (clientePorId(clientesUnicos, filtroCliente)?.name ?? "Todas")}
-                        opciones={["Todas", ...clientesUnicos.map(c => c.name)]}
-                        onChange={(nombre) => setFiltroCliente(
-                            nombre === "Todas" ? "Todas" : (clientesUnicos.find(c => c.name === nombre)?.id ?? "Todas")
-                        )}
-                        mostrarBuscador={true}
-                        alineacionDerecha={true}
-                    />
-                </div>
-            </div>
+            )}
 
             <div className="mt-5 nd-mx-page mb-4">
                 {cargandoMonitor ? (
@@ -624,21 +665,21 @@ const MonitorEditorial = () => {
                     <>
                         <div className="resumen-monitor mb-4 border shadow-sm">
                             <div>
-                                <div className="dato-resumen border-end pe-4">
+                                <div className="dato-resumen monitor__resumen-periodo">
                                     <span className="label">Período</span>
                                     <span className="valor text-brand">{formatearFecha(fechaDesde)} - {formatearFecha(fechaHasta)}</span>
                                 </div>
                             </div>
-                            <div className="d-flex flex-row">
-                                <div className="dato-resumen border-end pe-4 ps-2">
+                            <div className="monitor__resumen-totales">
+                                <div className="dato-resumen monitor__resumen-total">
                                     <span className="label">Total Notas</span>
                                     <span className="valor">{totalNotas}</span>
                                 </div>
-                                <div className="dato-resumen border-end pe-4 ps-2">
+                                <div className="dato-resumen monitor__resumen-total">
                                     <span className="label">Amplificadas</span>
                                     <span className="valor">{totalAmplificadas}</span>
                                 </div>
-                                <div className="dato-resumen ps-2">
+                                <div className="dato-resumen monitor__resumen-total">
                                     <span className="label">Con Crawler</span>
                                     <span className="valor">{totalCrawler}</span>
                                 </div>
@@ -660,9 +701,9 @@ const MonitorEditorial = () => {
                                                 type="button" 
                                                 onClick={() => toggleEditor(indexEditor)}
                                             >
-                                                <i className="bi bi-person-fill text-brand me-2 fs-4"></i>
-                                                {editor.nombre_editor}
-                                                <span className="nd-badge nd-badge--primary ms-2">
+                                                <i className="bi bi-person-fill text-brand monitor__icono-editor" aria-hidden="true"></i>
+                                                <span className="monitor__nombre-editor">{editor.nombre_editor}</span>
+                                                <span className="nd-badge nd-badge--primary monitor__badge-notas">
                                                     {notasDelEditor} {notasDelEditor === 1 ? 'nota' : 'notas'}
                                                 </span>
                                             </button>
@@ -670,7 +711,7 @@ const MonitorEditorial = () => {
 
                                         <div className={`react-collapse ${isOpenEditor ? 'show' : ''}`}>
                                             <div className="react-collapse-inner">
-                                                <div className="accordion-body p-3 bg-white">
+                                                <div className="accordion-body monitor__cuerpo-editor bg-white">
 
                                                     {/* ACORDEÓN SECUNDARIO: CLIENTES/GEOS */}
                                                     <div className="accordion">
@@ -690,11 +731,11 @@ const MonitorEditorial = () => {
                                                                             type="button" 
                                                                             onClick={(e) => toggleCliente(e, idCliente)}
                                                                         >
-                                                                            <div className="d-flex justify-content-between w-100 me-4 align-items-center flex-wrap gap-2">
+                                                                            <div className="monitor__cabecera-cliente">
 
-                                                                                <div className="d-flex flex-column ms-4 text-start contenedor-info-cliente">
+                                                                                <div className="monitor__info-cliente contenedor-info-cliente text-start">
                                                                                     <div className="d-flex align-items-center gap-2">
-                                                                                        <span className="fw-bold fs-6 text-secondary">{cliente.nombre_cliente}</span>
+                                                                                        <span className="monitor__nombre-cliente text-secondary">{cliente.nombre_cliente}</span>
                                                                                         {!esGeo && (
                                                                                         <span 
                                                                                             className="badge bg-light border text-secondary shadow-sm p-2 btn-editar-comentario" 
@@ -721,10 +762,10 @@ const MonitorEditorial = () => {
                                                                                     )}
                                                                                 </div>
 
-                                                                                <div className="d-flex gap-4 small text-muted bg-light px-3 py-1 rounded border">
-                                                                                    <span><i className="bi bi-file-earmark-text me-1 text-secondary"></i>Totales: <strong className="text-dark">{notasTotales}</strong></span>
-                                                                                    <span><i className="bi bi-megaphone me-1 text-brand"></i>Amplificadas: <strong className="text-dark">{notasAmpli}</strong></span>
-                                                                                    <span><i className="bi bi-bullseye me-1 text-secondary"></i>Objetivo: <strong className="text-dark">{cliente.objetivo_contrato}</strong></span>
+                                                                                <div className="monitor__stats-cliente text-muted">
+                                                                                    <span className="monitor__stat"><span className="monitor__stat-label"><i className="bi bi-file-earmark-text text-secondary" aria-hidden="true"></i>Totales</span><strong className="text-dark">{notasTotales}</strong></span>
+                                                                                    <span className="monitor__stat"><span className="monitor__stat-label"><i className="bi bi-megaphone text-brand" aria-hidden="true"></i>Amplificadas</span><strong className="text-dark">{notasAmpli}</strong></span>
+                                                                                    <span className="monitor__stat"><span className="monitor__stat-label"><i className="bi bi-bullseye text-secondary" aria-hidden="true"></i>Objetivo</span><strong className="text-dark">{cliente.objetivo_contrato}</strong></span>
                                                                                 </div>
                                                                             </div>
                                                                         </button>
@@ -737,14 +778,14 @@ const MonitorEditorial = () => {
                                                                                 {/* LISTADO DE NOTAS */}
                                                                                 <ul className="list-group list-group-flush">
                                                                                     {cliente.notas.map((nota, indexNota) => (
-                                                                                        <li className="list-group-item d-flex justify-content-between align-items-center py-3 px-4 bg-light bg-opacity-50 border-bottom" key={`nota-${nota.term_id}-${indexEditor}-${indexCliente}-${indexNota}`}>
+                                                                                        <li className="list-group-item monitor__nota bg-light bg-opacity-50 border-bottom" key={`nota-${nota.term_id}-${indexEditor}-${indexCliente}-${indexNota}`}>
                                                                                             <div className="info-nota-container text-secondary">
                                                                                                 <div className="dato-nota">
                                                                                                     <span className="label">ID</span>
                                                                                                     <span className="valor fw-bold">{nota.term_id}</span>
                                                                                                 </div>
 
-                                                                                                <div className="dato-nota">
+                                                                                                <div className="dato-nota dato-nota--completo">
                                                                                                     <span className="label">Autor</span>
                                                                                                     <span className="valor">{nota.autor_cliente}</span>
                                                                                                 </div>
@@ -785,7 +826,7 @@ const MonitorEditorial = () => {
                                                                                                     </span>
                                                                                                 </div>
                                                                                                     
-                                                                                                <div className="dato-nota dato-nota--ancho-lg">
+                                                                                                <div className="dato-nota dato-nota--ancho-lg dato-nota--completo">
                                                                                                     <span className="label">Tags</span>
                                                                                                     <span className="valor tags-container">
                                                                                                         {renderizarTags(nota.tags)}
@@ -794,7 +835,7 @@ const MonitorEditorial = () => {
                                                                                             </div>
                                                                                                     
                                                                                             {/* BOTONES */}
-                                                                                            <div className="d-flex gap-2">
+                                                                                            <div className="monitor__acciones-nota">
                                                                                                 <a 
                                                                                                     href={`http://noticiasd.com/nota/${nota.term_id}`} 
                                                                                                     title="Ver nota" 
@@ -806,9 +847,11 @@ const MonitorEditorial = () => {
                                                                                                 </a>
                                                                                                 {nota.con_distribucion === 1 && (
                                                                                                 <Link 
-                                                                                                    to={`/verNota`} 
-                                                                                                    state={{ id: nota.term_id, notaABM: nota }} 
+                                                                                                    to={`/verNota?id=${nota.term_id}${esGeo ? '' : `&cliente=${cliente.id_cliente}`}`} 
+                                                                                                    state={{ id: nota.term_id, notaABM: esGeo ? nota : { ...nota, id_cliente: cliente.id_cliente } }} 
                                                                                                     title="Gráfico de Interacciones" 
+                                                                                                    target="_blank"
+                                                                                                    rel="noopener noreferrer"
                                                                                                     className="btn btn-light border shadow-sm"
                                                                                                 >
                                                                                                     <i className="bi bi-bar-chart-line-fill fs-5 text-brand"></i>
@@ -878,7 +921,7 @@ const MonitorEditorial = () => {
 
             {/* MODAL GESTIONAR GRUPOS */}
             <div className="modal fade" id="modalGestionABM" tabIndex="-1" aria-labelledby="modalGestionABMLabel" aria-hidden="true">
-                <div className="modal-dialog modal-xl modal-dialog-centered">
+                <div className="modal-dialog modal-xl modal-dialog-centered modal-fullscreen-md-down">
                     <div className="modal-content">
                         
                         <div className="modal-header border-0 mb-3 pb-0">
@@ -909,7 +952,7 @@ const MonitorEditorial = () => {
 
                             <div className="row p-4">
                                 {/* COLUMNA IZQUIERDA */}
-                                <div className="col-md-4 border-end">
+                                <div className={`col-md-4 monitor__abm-lista ${esMobile && haySeleccionAbm ? 'd-none' : ''}`}>
                                     
                                     <div className="input-group mb-2">
                                         <input 
@@ -924,7 +967,9 @@ const MonitorEditorial = () => {
                                                 }
                                             }}
                                         />
-                                        <button className="btn btn-brand fw-bold fs-5 px-3 py-0" onClick={activeTab === 'grupos' ? handleAgregarGrupo : handleAgregarEditor} disabled={loading}>+</button>
+                                        <button className="btn btn-primary monitor__abm-agregar" title={`Agregar ${activeTab === 'grupos' ? 'grupo' : 'editor'}`} onClick={activeTab === 'grupos' ? handleAgregarGrupo : handleAgregarEditor} disabled={loading}>
+                                            <i className="bi bi-plus-lg" aria-hidden="true"></i>
+                                        </button>
                                     </div>
 
                                     <div className="input-group mb-2">
@@ -967,7 +1012,7 @@ const MonitorEditorial = () => {
                                 </div>
 
                                 {/* COLUMNA DERECHA */}
-                                <div className="col-md-8 px-4 d-flex flex-column">
+                                <div className={`col-md-8 monitor__abm-detalle ${esMobile && !haySeleccionAbm ? 'd-none' : ''}`}>
                                     {(!selectedGrupo && activeTab === 'grupos') || (!selectedAutor && activeTab === 'editores') ? (
                                         <div className="h-100 d-flex flex-column align-items-center justify-content-center text-muted">
                                             <i className="bi bi-gear fs-1 mb-2"></i>
@@ -975,18 +1020,32 @@ const MonitorEditorial = () => {
                                         </div>
                                     ) : (
                                         <>
-                                            <div className="d-flex justify-content-between align-items-center mb-3">
-                                                <h5 className="text-brand fw-bold m-0">
+                                            {esMobile && (
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-link monitor__abm-volver"
+                                                    onClick={() => (activeTab === 'grupos' ? setSelectedGrupo('') : setSelectedAutor(''))}
+                                                >
+                                                    <i className="bi bi-arrow-left" aria-hidden="true"></i>
+                                                    {activeTab === 'grupos' ? 'Grupos' : 'Editores'}
+                                                </button>
+                                            )}
+                                            <div className="monitor__abm-cabecera">
+                                                <h5 className="monitor__abm-titulo">
                                                     Configurar: {activeTab === 'grupos' ? selectedGrupo?.nombre : selectedAutor?.autor}
                                                 </h5>
-                                                <div>
-                                                    <button className="btn border-0" title={`Eliminar ${activeTab === 'grupos' ? 'grupo' : 'editor'}`}>
-                                                        <i className="bi bi-trash3-fill text-danger fs-5" onClick={activeTab === 'grupos' && selectedGrupo ? handleEliminarGrupo : handleEliminarAutor}></i>
-                                                    </button>
-                                                </div>
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-link monitor__abm-eliminar"
+                                                    title={`Eliminar ${activeTab === 'grupos' ? 'grupo' : 'editor'}`}
+                                                    aria-label={`Eliminar ${activeTab === 'grupos' ? 'grupo' : 'editor'}`}
+                                                    onClick={activeTab === 'grupos' && selectedGrupo ? handleEliminarGrupo : handleEliminarAutor}
+                                                >
+                                                    <i className="bi bi-trash3-fill" aria-hidden="true"></i>
+                                                </button>
                                             </div>
                                             
-                                            <p className="text-muted small mb-4">
+                                            <p className="monitor__abm-ayuda">
                                                 Seleccioná qué {activeTab === 'grupos' ? 'editores' : 'cuentas'} están habilitados para operar con este {activeTab === 'grupos' ? 'grupo' : 'editor'}.
                                             </p>
 
@@ -1049,7 +1108,7 @@ const MonitorEditorial = () => {
                                             </div>
 
                                             <button 
-                                                className="btn btn-brand w-100 fw-bold py-2 mt-auto" 
+                                                className="btn btn-primary monitor__abm-guardar" 
                                                 onClick={activeTab === 'grupos' && selectedGrupo ? handleEditarGrupo : handleEditarAutor}
                                                 data-bs-dismiss="modal"
                                             >
