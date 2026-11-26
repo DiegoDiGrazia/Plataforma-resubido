@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { fechaPublicacionParaApi, separarFechaHora } from '@/shared/utils/fechaPublicacion';
 function reemplazarComillasSimplePorDoble(str) {
     if(!str) return str;
     return str
@@ -86,7 +87,8 @@ export const clickearEnPublicarNota = async ({
                 es_home: isCheckedNoHome,
                 no_home: isCheckedNoHome,
                 tipo_contenido: tipoContenido,
-                f_pub: fechaPublicacion,
+                f_pub: separarFechaHora(fechaPublicacion).fecha, // solo la fecha, como siempre
+                h_pub: fechaPublicacionParaApi(fechaPublicacion), // fecha + hora elegidas
                 fecha_vencimiento: fecha,
                 etiquetas: itemsEtiquetas,
                 engagement: reemplazarComillasSimplePorDoble(engagementText),
