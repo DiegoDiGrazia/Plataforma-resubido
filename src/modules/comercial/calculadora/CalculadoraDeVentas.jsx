@@ -546,7 +546,6 @@ const CalculadoraDeVentas = ({ datosEdicion, onGuardadoExitoso }) => {
                 buscador={selectorCuenta}
                 chips={chipsFiltros}
                 acciones={botonExcel}
-                panelClassName='calculadora__panel'
               >
                 {campoUbicacion}
                 {camposCalculo}

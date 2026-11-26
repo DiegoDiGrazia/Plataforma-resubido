@@ -145,6 +145,13 @@ const chips = [
 
 - Armar cada control una vez (`const campoX = (…)`) y usarlo en las dos ramas.
 - En mobile pasar `bloque` a `SelectorFecha`.
+- Dentro del panel, los selectores con etiqueta (`.nd-field-row`: `SelectorConBuscador`, `InputNumerico`…)
+  se apilan solos: etiqueta arriba y control a todo el ancho. No hace falta CSS por pantalla.
+- Filtros de selección múltiple (ej. categorías): un chip por valor elegido, cada uno con su ×.
+- Chip sin `limpiar` = informativo (sin ×). Ojo: el panel desmonta su contenido al cerrarse; un
+  control que tiene que estar siempre montado (ej. `SelectorCliente` con `clientePreseleccionado`)
+  va en `buscador`, no dentro del panel.
+- Toda llamada nueva a la API: `toastExito` / `toastError` (`@/shared/utils/toastify/toastify.jsx`).
 
 ### Otros
 | Clase | Para |

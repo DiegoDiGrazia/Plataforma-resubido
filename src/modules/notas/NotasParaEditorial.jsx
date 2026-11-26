@@ -25,6 +25,8 @@ import BorradoresLocales from './BorradoresLocales';
 import ArbolDistribucion from '@/shared/components/ArbolDistribucion';
 import SelectorConBuscador from '@/shared/components/form/SelectorConBuscador';
 import { obtenerCategorias } from '@/api/apis';
+import FiltrosMobile from '@/shared/components/form/FiltrosMobile';
+import useEsMobile from '@/shared/hooks/useEsMobile';
 
   function obtenerFechaDeManana() {
     const hoy = new Date();
@@ -391,6 +393,61 @@ const NotasParaEditorial = () => {
         setMostrarMensaje(true);
     };
 
+
+    const esMobile = useEsMobile();
+
+    const chipsFiltros = [
+        ...categoriasFiltro.map((categoria) => ({
+            clave: `categoria-${categoria.id}`,
+            texto: categoria.nombre || categoria.name,
+            limpiar: () => setCategoriasFiltro((actuales) => actuales.filter((c) => c.id !== categoria.id)),
+        })),
+        !nombrePaisUsuario && paisFiltro && { clave: 'pais', texto: paisFiltro.nombre, limpiar: () => cambiarPaisFiltro(null) },
+        provinciaFiltro && { clave: 'provincia', texto: provinciaFiltro.nombre, limpiar: () => cambiarProvinciaFiltro(null) },
+        municipioFiltro && { clave: 'municipio', texto: municipioFiltro.nombre, limpiar: () => setMunicipioFiltro(null) },
+    ].filter(Boolean);
+
+    const buscadorNotas = (
+        <form onSubmit={handleSearch} className='buscadorNotasForm gap-2'>
+            <input
+                className='inputBuscadorNotas'
+                type="text"
+                value={searchQuery}
+                onChange={handleInputChange}
+                placeholder="Buscar por título de la nota o id..."
+            />
+            <Button type="submit" variant="secondary">
+                Buscar
+            </Button>
+        </form>
+    );
+
+    const filtroCategorias = (
+        <SelectorConBuscador
+            title="Categoría"
+            multiple
+            sinMargen
+            options={categoriasDisponibles}
+            selectedOptions={categoriasFiltro}
+            onSelect={setCategoriasFiltro}
+            onClear={() => setCategoriasFiltro([])}
+        />
+    );
+
+    const filtroGeo = (enFila) => (
+        <ArbolDistribucion
+            TOKEN={TOKEN}
+            enFila={enFila}
+            ocultarPais={!!nombrePaisUsuario}
+            pais={paisElegido}
+            provincia={provinciaFiltro}
+            municipio={municipioFiltro}
+            onSetPais={cambiarPaisFiltro}
+            onSetProvincia={cambiarProvinciaFiltro}
+            onSetMunicipio={setMunicipioFiltro}
+        />
+    );
+
     return (
         <div id='pantalla-notasParaEditorial'>
             <div className="content flex-grow-1 nd-px-page pt-4 pb-5">
@@ -431,42 +488,24 @@ const NotasParaEditorial = () => {
                         <div className='todasLasNotas'>
                             Todas Las Notas
                         </div>
-                        <form onSubmit={handleSearch} className='buscadorNotasForm gap-2'>
-                            <input
-                                className='inputBuscadorNotas'
-                                type="text"
-                                value={searchQuery}
-                                onChange={handleInputChange}
-                                placeholder="Buscar por título de la nota o id..."
-                            />
-                            <Button type="submit" variant="secondary">
-                                Buscar
-                            </Button>
-                        </form>
+                        {!esMobile && buscadorNotas}
                     </div>
 
-                    <div className='notasListado__filtros'>
-                        <SelectorConBuscador
-                            title="Categoría"
-                            multiple
-                            sinMargen
-                            options={categoriasDisponibles}
-                            selectedOptions={categoriasFiltro}
-                            onSelect={setCategoriasFiltro}
-                            onClear={() => setCategoriasFiltro([])}
-                        />
-                        <ArbolDistribucion
-                            TOKEN={TOKEN}
-                            enFila
-                            ocultarPais={!!nombrePaisUsuario}
-                            pais={paisElegido}
-                            provincia={provinciaFiltro}
-                            municipio={municipioFiltro}
-                            onSetPais={cambiarPaisFiltro}
-                            onSetProvincia={cambiarProvinciaFiltro}
-                            onSetMunicipio={setMunicipioFiltro}
-                        />
-                    </div>
+                    {esMobile ? (
+                        <FiltrosMobile
+                            className='notasListado__filtros-mobile'
+                            buscador={buscadorNotas}
+                            chips={chipsFiltros}
+                        >
+                            {filtroCategorias}
+                            {filtroGeo(false)}
+                        </FiltrosMobile>
+                    ) : (
+                        <div className='notasListado__filtros'>
+                            {filtroCategorias}
+                            {filtroGeo(true)}
+                        </div>
+                    )}
 
                     <div className='notasListado__fila notasListado__fila--encabezado' id='headerListadoNotas'>
                         <div className='notasListado__imagen'></div>
@@ -541,6 +580,8 @@ const NotasParaEditorial = () => {
 
                                 {permisoEdicion && (
                                     <>
+                                        {/* Botón "Video de YouTube" oculto: hoy no se usa. Para volver a
+                                            mostrarlo, descomentar este bloque (el modal y subirVideo siguen abajo).
                                         <button className="notasListado__botonIcono" title="Video de YouTube"
                                             onClick={() => {
                                                 setMostrarModalYoutube(true);
@@ -549,6 +590,7 @@ const NotasParaEditorial = () => {
                                             >
                                             <i className="bi bi-youtube" aria-hidden="true"></i>
                                         </button>
+                                        */}
 
                                         <button className="notasListado__botonIcono" title="Duplicar nota"
                                             onClick={() => editarNota(nota, true)}

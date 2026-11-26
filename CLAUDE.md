@@ -36,6 +36,22 @@ src/
 - El nombre del import debe coincidir exacto en mayúsculas con el archivo (el deploy corre en Linux).
 - Un componente nuevo va en su módulo; pasa a `shared/` recién cuando lo usa un segundo módulo.
 - Llamadas a la API van en `api/`, nunca dentro de componentes ni de `modules/`.
+- **Feedback de endpoints:** toda llamada nueva a la API (alta, edición, borrado, carga) muestra el
+  resultado con `toastExito(mensaje)` / `toastError(mensaje)` de `@/shared/utils/toastify/toastify.jsx`,
+  y la pantalla incluye `<ToastContainer />` de `react-toastify` si todavía no lo tiene. Nada de
+  `alert()` ni modales de "se guardó correctamente".
+
+## Pantallas nuevas
+
+- **Responsive desde el primer día.** Probar en `380 · 440 · 768 · 1024 · 1240 · 1366 · 1440 · 1660 · 1920px`
+  (440 y 1240 son anchos de prueba: caen en los breakpoints ≤768 y ≤1366, no llevan `@media` propio).
+  Sin scroll horizontal en ningún ancho.
+- **Filtros en mobile (≤768):** si la pantalla tiene más de un filtro, en mobile van dentro de
+  `<FiltrosMobile>` (`@/shared/components/form/FiltrosMobile`): buscador visible, botón **Filtros** que
+  abre un panel con todos los filtros y un chip naranja con × por cada filtro fuera de su valor por
+  defecto. Detectar mobile con `useEsMobile()` (`@/shared/hooks/useEsMobile`). Ejemplos: Monitor,
+  listado de Notas, Facturas, Presupuestos. Detalle en `references/componentes.md` de la skill.
+- **Listados:** cada tarjeta / fila / ítem de acordeón lleva `nd-hover-elevate` (sombra al hover).
 
 ## Editor de notas
 

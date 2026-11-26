@@ -116,27 +116,3 @@
         }
     }
 }
-
-/* Panel de filtros mobile de la Calculadora (FiltrosMobile, panelClassName). Se monta
-   al final del body, fuera de .gestionPresupuestos: cada campo en dos renglones,
-   nombre arriba y control abajo a todo el ancho. */
-.calculadora__panel {
-
-    .nd-field-row {
-        flex-direction: column;
-        align-items: stretch;
-        gap: var(--nd-space-1);
-    }
-
-    .nd-field-row__control,
-    .nd-field-row > .input-group.nd-field-row__control {
-        flex: none;
-        width: 100%;
-        max-width: none;
-    }
-
-    .nd-field-row__control > .btn {
-        width: 100%;
-        justify-content: space-between;
-    }
-}
