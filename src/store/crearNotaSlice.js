@@ -27,6 +27,9 @@ function extraerTagImg(texto) {
 export async function convertirImagenBase64(url, maxWidth = 1600) {
   try {
     url = url.replace("https://panel.serviciosd.com/img/", "https://noticiasd.com/wp-content/img/");
+    if (process.env.NODE_ENV !== "production") {
+      url = url.replace("https://static.noticiasd.com", "/static-img");
+    }
     const response = await fetch(url);
 
     if (!response.ok) {

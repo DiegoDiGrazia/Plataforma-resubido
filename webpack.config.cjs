@@ -77,6 +77,14 @@ module.exports = {
         changeOrigin: true,
         pathRewrite: { '^/feed': '' },
       },
+      // Imágenes de las notas (portada, RRSS): en local static.noticiasd.com no permite
+      // fetch desde localhost (CORS). Solo dev; en producción se usa la URL directa.
+      {
+        context: ['/static-img'],
+        target: 'https://static.noticiasd.com',
+        changeOrigin: true,
+        pathRewrite: { '^/static-img': '' },
+      },
       {
         context: [
           '/api',

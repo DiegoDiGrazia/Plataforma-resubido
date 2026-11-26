@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
+import useUbicacionNota from './useUbicacionNota';
 import { clickearEnPublicarNota } from '@/shared/utils/publicarNotaHelper';
 import { editarDistribucionGeneracion } from '@/api/apis';
 import { armarPayloadDistribucion } from '@/shared/utils/distribucionGeneracion';
@@ -67,14 +68,8 @@ const BotonPublicarNota = ({ status, isLoading, setIsLoading }) => {
     const idClienteDeLaNota = useSelector((state) => state.crearNota.id_cliente)
     const demo = useSelector((state) => state.crearNota.demo.nombre)
     const cliente = clienteDeLaNota;
-    const provinciaSelector = useSelector((state) => state.crearNota.provincia);
-    const municipioSelector = useSelector((state) => state.crearNota.municipio);
-    const provinciaDelUsuario = useSelector((state) => state.formulario.provinciaUsuario);
-    const municipioDelUsuario = useSelector((state) => state.formulario.municipioUsuario);
+    const { provincia, municipio } = useUbicacionNota();
     const url = useSelector((state) => state.crearNota.url);
-
-    const provincia =  provinciaSelector || provinciaDelUsuario
-    const municipio = municipioSelector || municipioDelUsuario 
 
     // Filtrar los attachments para obtener solo los válidos 
     const attachments = useSelector((state) => state.crearNota.atachments);

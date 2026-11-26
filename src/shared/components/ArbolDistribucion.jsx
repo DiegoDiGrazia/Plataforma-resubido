@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react';
 import SelectorConBuscador from '@/shared/components/form/SelectorConBuscador';
 import { useSelector } from 'react-redux';
 import { obtenerMunicipios } from '@/api/geosApi';
+import { borrarTildes } from '@/shared/utils/funcionesVarias';
+
+const mismoNombre = (a, b) =>
+  !!a && !!b && borrarTildes(String(a).trim().toLowerCase()) === borrarTildes(String(b).trim().toLowerCase());
 
 const ArbolDistribucion = ({
   TOKEN,
@@ -25,25 +29,32 @@ const ArbolDistribucion = ({
 
 
 
+  const idPais = pais?.pais_id
+    || geo?.find((p) => mismoNombre(p.nombre, pais?.nombre))?.pais_id
+    || 1; /// default pais argentina
+
   // Obtener provincias
   useEffect(() => {
     if (!Paises || !pais) return;
     const ProvinciasDelPais = geo
-      .find((p) => String(p.pais_id) === String(pais?.pais_id || 1)) /// default pais argentina
+      .find((p) => String(p.pais_id) === String(idPais))
       ?.provincias?.map((prov) => ({ nombre: prov.nombre, provincia_id: prov.provincia_id })) || [];
     setProvincias(ProvinciasDelPais);
 
-  }, [TOKEN, pais]);
+  }, [TOKEN, pais, idPais]);
+
+  const idProvincia = provincia?.provincia_id
+    || provincias.find((p) => mismoNombre(p.nombre, provincia?.nombre))?.provincia_id;
 
   // Obtener municipios cuando cambia la provincia
   useEffect(() => {
-    if (!provincia?.provincia_id) return;
+    if (!idProvincia) return;
 
-    obtenerMunicipios(provincia.provincia_id).then((response) => {
+    obtenerMunicipios(idProvincia).then((response) => {
       setMunicipios(Array.isArray(response) ? response : []);
     })
     .catch((error) => console.error('Error al obtener municipios:', error));
-  }, [TOKEN, provincia]);
+  }, [TOKEN, idProvincia]);
 
   return (
     <div className={enFila ? 'd-flex flex-wrap align-items-center gap-3 p-0' : 'dropdown p-0'}>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
+import useUbicacionNota from './useUbicacionNota';
 import { clickearEnPublicarNota } from '@/shared/utils/publicarNotaHelper';
 import { useNavigate } from 'react-router-dom';
 
@@ -40,12 +41,7 @@ const BotonEnGenerarVistaPrevia = ({ status, disabled = false }) => {
     const cliente = clienteDeLaNota;
     const idClienteDeLaNota = useSelector((state) => state.crearNota.id_cliente);
 
-    const provinciaSelector = useSelector((state) => state.crearNota.provincia);
-    const municipioSelector = useSelector((state) => state.crearNota.municipio);
-    const provinciaDelUsuario = useSelector((state) => state.formulario.provinciaUsuario);
-    const municipioDelUsuario = useSelector((state) => state.formulario.municipioUsuario);
-    const provincia = provinciaDelUsuario || provinciaSelector;
-    const municipio = municipioDelUsuario || municipioSelector;
+    const { provincia, municipio } = useUbicacionNota();
     
 
 
