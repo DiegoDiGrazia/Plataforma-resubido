@@ -38,12 +38,12 @@ const AbmComisionistas
 const handleEliminarComisionista = (id) => {
   eliminarComisionista(TOKEN, id)
     .then(() => {
-      toastExito('¡El agente comercial se eliminó exitosamente!');
+      toastExito('¡El Comisionista se eliminó exitosamente!');
       cargarComisionistas();
     })
     .catch((err) => {
-      console.error("Error al eliminar el agente comercial:", err);
-      toastError("Error al eliminar el agente comercial");
+      console.error("Error al eliminar el comisionista:", err);
+      toastError("Error al eliminar el comisionista");
     });
 };
 
@@ -114,7 +114,7 @@ const handleSave = () => {
       <div className='row miPerfilContainer soporteContainer'>
         <div className='col p-0'>
           <h3 id="saludo" className='headerTusNotas ml-0'>
-            <i className="bi bi-bag-fill" aria-hidden="true" /> ABM Agentes Comerciales
+            <i className="bi bi-bag-fill" aria-hidden="true" /> ABM Comisionistas
           </h3>
         </div>
       </div>
@@ -122,7 +122,7 @@ const handleSave = () => {
       <div className='row miPerfilContainer soporteContainer mt-4 p-0 mb-3'>
         <div className='col buscadorNotas'> 
           {permisoAlta && (
-            <button className="mb-2 btn btn-primary" onClick={() => handleEditClick(comisionistaVacio)}>Crear nuevo Agente Comercial</button>
+            <button className="mb-2 btn btn-primary" onClick={() => handleEditClick(comisionistaVacio)}>Crear nuevo Comisionista</button>
           )}
           <form className='buscadorNotasForm'>
             <input
@@ -144,7 +144,7 @@ const handleSave = () => {
               <li className="list-group-item">No hay resultados.</li>
             ) : (
               pagedItems.map((item) => (
-                <li key={item.id} className="list-group-item">
+                <li key={item.id} className="list-group-item nd-hover-elevate">
                   <div className='row pt-0'>
                     <div className='col-2'>
                       <button
@@ -194,7 +194,7 @@ const handleSave = () => {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title">
-                {selectedComisionista ? "Editar Agente Comercial" : "Nuevo Agente Comercial"}
+                {selectedComisionista ? "Editar Comisionista" : "Nuevo Comisionista"}
               </h5>
               <button
                 type="button"

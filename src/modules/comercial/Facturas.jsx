@@ -652,7 +652,7 @@ const Facturas = () =>  {
             ) : (
                 facturasFiltradas && facturasFiltradas.length > 0 ?(
                     facturasFiltradas.map((factura) => (
-                        <li className= {`list-group-item py-3 ${factura.numero ? "facturas__item--emitida" : ""}`} key= {factura.id}>
+                        <li className= {`list-group-item nd-hover-elevate py-3 ${factura.numero ? "facturas__item--emitida" : ""}`} key= {factura.id}>
                             <div className="facturas__fila">
                                 <div className="facturas__titulo">
                                     <strong>{factura.mes ? `${String(factura.mes).slice(0, 4)}-${String(factura.mes).slice(4)}` : ""}</strong>

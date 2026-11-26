@@ -287,6 +287,30 @@
 .nd-icon-btn--danger:hover { background: var(--nd-color-danger-subtle); color: var(--nd-color-danger); }
 .nd-icon-btn--primary:hover { background: var(--nd-color-primary-subtle); color: var(--nd-color-primary-text); }
 
+/* ---------- Ítem / tarjeta de listado que se eleva al pasar el mouse ----------
+   Sumarla a cada tarjeta o fila de un listado (contratos, facturas, ABMs, acordeones…).
+   La sombra va en un ::after aparte: no pisa el box-shadow, borde ni fondo propios
+   de cada pantalla (ni utilidades como .shadow-sm, que llevan !important). */
+.nd-hover-elevate {
+  position: relative;
+}
+.nd-hover-elevate::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: var(--nd-shadow-md);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--nd-duration-fast) var(--nd-easing);
+}
+.nd-hover-elevate:hover {
+  z-index: var(--nd-z-base);
+}
+.nd-hover-elevate:hover::after {
+  opacity: 1;
+}
+
 /* ---------- Badges de estado ---------- */
 .nd-badge {
   display: inline-flex;

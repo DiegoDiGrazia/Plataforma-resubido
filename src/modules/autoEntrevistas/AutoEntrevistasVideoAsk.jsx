@@ -78,7 +78,7 @@ const AutoEntrevistasVideoAsk = () => {
                 {filteredVideos.map((video, index) => (
                     <div key={video.src}>
                         <div
-                            className="card autoentrevistas__card"
+                            className="card autoentrevistas__card nd-hover-elevate"
                             onClick={() => handleFullscreen(index)}
                         >
                             <div className="card-body">

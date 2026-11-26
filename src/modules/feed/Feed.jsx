@@ -288,7 +288,7 @@ const AbmFeed = () => {
       {!esClienteConFeed ? (
         /* Selector de cliente */
         <div className="row miPerfilContainer soporteContainer mt-4 p-0 mb-3">
-          <div className="col-2">
+          <div className="col feed__cuenta">
             <SelectorConBuscador
               title="Cuenta"
               options={clientes}
@@ -323,7 +323,7 @@ const AbmFeed = () => {
             ) : (
               <ul className="list-group">
                 {feeds.map((feed) => (
-                  <li key={feed.feed_id} className="list-group-item">
+                  <li key={feed.feed_id} className="list-group-item nd-hover-elevate">
                     <div className="d-flex justify-content-between align-items-center">
                       <div>
                         <strong>{feed.name}</strong>

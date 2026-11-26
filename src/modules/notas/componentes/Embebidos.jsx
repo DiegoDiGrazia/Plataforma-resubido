@@ -92,15 +92,7 @@ const Embebido = ({ indice }) => {
 
       <div className="centradoContenido align-item-center" ref={containerRef}>
         {embebido && (
-            <div
-              dangerouslySetInnerHTML={{ __html: embebido }}
-              style={{
-                width: '100%',
-                height: '100%', // Ajusta automáticamente la altura al contenido
-                minHeight: '600px', // Altura mínima para el iframe
-                maxHeight: '100%',
-              }}
-            ></div>
+            <div className="notaBloque__embebido" dangerouslySetInnerHTML={{ __html: embebido }}></div>
         )}
       </div>
     </span>

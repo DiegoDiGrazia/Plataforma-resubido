@@ -182,7 +182,7 @@ const AbmSitiosRelevantes = () => {
           ) : (
             <Accordion>
               {sitiosFiltrados.map((sitio, index) => (
-                <AccordionItem eventKey={index.toString()} key={`Sitio relevante id: ${index}`}>
+                <AccordionItem eventKey={index.toString()} key={`Sitio relevante id: ${index}`} className="nd-hover-elevate">
                   <Accordion.Header>
                     <div className='me-auto'>
                       <strong>{sitio.nombre}</strong>

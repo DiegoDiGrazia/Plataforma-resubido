@@ -539,7 +539,7 @@ const handleSave = () => {
         </div>
       </div>
       {/* Búsqueda */}
-      <div className='row miPerfilContainer soporteContainer mt-4 p-0 mb-3'>
+      <div className='row miPerfilContainer soporteContainer contratosPage__barra p-0 mb-3'>
         <div className='col'>
           <div className="filtrosCard">
             {permisoAlta && (
@@ -616,7 +616,7 @@ const handleSave = () => {
           ) : (
             <ul className="listaContratos">
               {pagedItems.map((item) => (
-                <li key={item.id} className="contratoCard">
+                <li key={item.id} className="contratoCard nd-hover-elevate">
                   <div className='contratoFila'>
                     <div>
                       <button
@@ -932,7 +932,7 @@ const handleSave = () => {
                   )}
 
                   <SelectorConBuscador
-                    title="Agentes comerciales (Máx 3)"
+                    title="Comisionistas (Máx 3)"
                     options={comisionistas}
                     selectedOption={''}
                     onSelect={(option) => { seleccionarComisionista(option)}}
@@ -1016,7 +1016,7 @@ const handleSave = () => {
                     />
                   )}
                   <SelectorConBuscador
-                    title="Agentes comerciales (Máx 3)"
+                    title="Comisionistas (Máx 3)"
                     options={comisionistas}
                     selectedOption={''}
                     onSelect={(option) => { seleccionarComisionista(option)}}

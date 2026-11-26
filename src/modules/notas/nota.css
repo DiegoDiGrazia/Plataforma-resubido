@@ -177,7 +177,12 @@
         margin-inline: 0;
     }
 
+    /* Columna de tutoriales (sin d-flex de Bootstrap: su !important impedía
+       ocultarla en mobile) */
     .notaTutorial > .editorNota__tutoriales {
+        display: flex;
+        flex-direction: column;
+        gap: var(--nd-space-6);
         padding-left: var(--nd-space-8);
     }
 
@@ -328,6 +333,13 @@
 
         .notaEditor__contador {
             margin-right: 0;
+        }
+    }
+
+    /* Mobile: sin la columna de tutoriales (quedan solo en desktop / notebooks) */
+    @media (max-width: 768px) {
+        .notaTutorial > .editorNota__tutoriales {
+            display: none;
         }
     }
 
@@ -527,16 +539,110 @@ textarea.inputTituloNota {
     font-weight: var(--nd-font-weight-medium);
 }
 
-.botonEliminarContenido {
-    padding: 0;
-}
-
+/* ---------- Bloques del cuerpo (imagen, video, PDF, YouTube, embebido) ----------
+   Botonera (eliminar · bajar · subir) a la izquierda y el contenido al lado, que
+   nunca pasa el ancho de la columna. En mobile la botonera va arriba y el
+   contenido debajo, a todo el ancho. */
 .spanContainer {
     display: flex;
     align-items: center;
+    gap: var(--nd-space-2);
     width: 100%;
-    padding-left: 0;
-    padding-right: 10px;
+    min-width: 0;
+    padding: 0;
+}
+
+.botoneraContenido {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 2px;
+}
+
+.spanContainer > img,
+.spanContainer > video,
+.spanContainer > iframe,
+.spanContainer > .centradoContenido {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.videoNotaContenido {
+    width: 100%;
+    max-height: 600px;
+    margin: var(--nd-space-5) 0;
+    background-color: var(--nd-gray-900);
+    border-radius: var(--nd-radius-xl);
+}
+
+.archivoPDFListaNotaContenido {
+    flex: 0 1 40%;
+    min-width: 280px;
+    height: 300px;
+    border: var(--nd-border-width) solid var(--nd-color-border);
+    border-radius: var(--nd-radius-md);
+}
+
+/* YouTube: hasta 750px de ancho, siempre 16:9 */
+.youtubeNota {
+    max-width: 750px;
+}
+
+.youtubeNota > iframe {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+}
+
+.notaBloque__embebido {
+    width: 100%;
+    min-height: 600px;
+}
+
+/* Epígrafe de una imagen del cuerpo: una línea, alineado con la imagen */
+.textAreaComentarios.notaBloque__epigrafe {
+    width: calc(100% - 50px);
+    height: 30px;
+    min-height: 0;
+    margin-left: 50px;
+    padding: 0 var(--nd-space-3);
+}
+
+@media (max-width: 768px) {
+    .spanContainer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .botoneraContenido {
+        align-self: flex-start;
+    }
+
+    .imagenNotaContenido,
+    .videoNotaContenido {
+        margin: var(--nd-space-2) 0;
+    }
+
+    .archivoPDFListaNotaContenido {
+        flex: none;
+        width: 100%;
+        min-width: 0;
+        height: 420px;
+    }
+
+    .youtubeNota {
+        max-width: none;
+    }
+
+    .notaBloque__embebido {
+        min-height: 0;
+    }
+
+    .textAreaComentarios.notaBloque__epigrafe {
+        width: 100%;
+        margin-left: 0;
+    }
 }
 
 /* Embebidos (YouTube, Twitter, iframes de franquicias) */

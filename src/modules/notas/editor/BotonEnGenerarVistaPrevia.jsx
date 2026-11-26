@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { clickearEnPublicarNota } from '@/shared/utils/publicarNotaHelper';
 import { useNavigate } from 'react-router-dom';
 
-const BotonEnGenerarVistaPrevia = ({ status }) => {
+const BotonEnGenerarVistaPrevia = ({ status, disabled = false }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
@@ -135,6 +135,7 @@ const BotonEnGenerarVistaPrevia = ({ status }) => {
         <>
             <Button
                 onClick={clickear_en_publicar_nota}
+                disabled={disabled}
                 className='icono_vistaPrevia' variant="link">
                 <img src="/images/iconoOjo.png" alt="" className="icon" />{" Vista previa"}
             </Button>

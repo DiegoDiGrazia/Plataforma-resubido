@@ -4,6 +4,32 @@
 
 #pantalla-feed {
 
+    /* Selector de cuenta: ancho propio (antes col-2 = 1/6 de la fila, en mobile se cortaba).
+       Etiqueta arriba y desplegable a todo el ancho de esta caja. */
+    .feed__cuenta {
+        flex: 0 0 auto;
+        width: 100%;
+        max-width: 420px;
+    }
+
+    .feed__cuenta .nd-field-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--nd-space-1);
+    }
+
+    .feed__cuenta .nd-field-row__control,
+    .feed__cuenta .nd-field-row__control > .btn {
+        width: 100%;
+    }
+
+    .feed__cuenta .nd-field-row__control > .btn {
+        justify-content: space-between;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+
     /* Listas del modal (notas en el feed / notas disponibles) con scroll propio */
     .nd-feed__lista {
         max-height: 420px;

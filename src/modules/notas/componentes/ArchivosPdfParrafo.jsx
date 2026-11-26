@@ -70,7 +70,6 @@ const ArchivoPDFListaParrafo = ({ indice }) => {
               src={archivoPDFLista[5] || archivoPDFLista[1]} // Usa el blobUrl si está disponible, sino el contenido original
               alt="archivoPDFLista de parrafo"
               className="archivoPDFListaRecortada archivoPDFListaNotaContenido"
-              style={{ width: '40%', height: '300px' }}
           />
         </span>
         </>

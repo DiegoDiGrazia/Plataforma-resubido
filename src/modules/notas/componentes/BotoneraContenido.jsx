@@ -3,7 +3,6 @@ import 'cropperjs/dist/cropper.css';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { BajarContenidoPorIndice, setAttachmentArchivoToNull, setAttachmentToNull, SubirContenidoPorIndice } from '@/store/crearNotaSlice';
-import { Button } from 'react-bootstrap';
 import { DeleteContenidoPorIndice } from '@/store/crearNotaSlice';
 
 const  BotoneraContenido= ({indice, tipo, cantidad}) => {
@@ -43,16 +42,16 @@ const  BotoneraContenido= ({indice, tipo, cantidad}) => {
 
     return (
 
-      <span style={{ display: 'flex', alignItems: 'center' }}>
-            <Button variant="none" onClick={() => eliminarContenido(indice)} className='botonEliminarContenido'>
-            <i className="bi bi-trash"></i>
-            </Button>
-            <Button variant="none" onClick={() => SubirUnaPosicionContenido(indice)} className='botonEliminarContenido'>
-            <i className="bi bi-arrow-down-short"></i>
-            </Button>
-            <Button variant="none" onClick={() => BajarUnaPosicionContenido(indice)} className='botonEliminarContenido'>
-            <i className="bi bi-arrow-up-short"></i>
-            </Button>
+      <span className="botoneraContenido">
+            <button type="button" onClick={() => eliminarContenido(indice)} className="nd-icon-btn nd-icon-btn--danger" title="Eliminar bloque" aria-label="Eliminar bloque">
+              <i className="bi bi-trash" aria-hidden="true"></i>
+            </button>
+            <button type="button" onClick={() => SubirUnaPosicionContenido(indice)} className="nd-icon-btn" title="Bajar bloque" aria-label="Bajar bloque">
+              <i className="bi bi-arrow-down-short" aria-hidden="true"></i>
+            </button>
+            <button type="button" onClick={() => BajarUnaPosicionContenido(indice)} className="nd-icon-btn" title="Subir bloque" aria-label="Subir bloque">
+              <i className="bi bi-arrow-up-short" aria-hidden="true"></i>
+            </button>
       </span>
     );
   };

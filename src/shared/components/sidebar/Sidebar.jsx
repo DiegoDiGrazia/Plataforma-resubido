@@ -155,7 +155,7 @@ const Sidebar = () => {
       >
         <div className="sidebar__header">
           <img src={LOGO} alt="Noticias (d)" className="sidebar__logo" />
-          {/* Misma hamburguesa y misma posición que en la barra superior: abre y cierra */}
+          {/* Misma posición que la hamburguesa de la barra superior; con el menú abierto es una X */}
           <button
             type="button"
             className="sidebar__cerrar"
@@ -163,7 +163,7 @@ const Sidebar = () => {
             aria-expanded={menuMobileVisible}
             onClick={cerrarMenuMobile}
           >
-            <i className="bi bi-list" aria-hidden="true"></i>
+            <i className="bi bi-x-lg" aria-hidden="true"></i>
           </button>
         </div>
 

@@ -277,7 +277,7 @@ const AbmPresupuestos = ({ onEditar }) => {
                 });
 
                 return (
-                <div className="card shadow-sm border-0 rounded-3 hover-panel" key={p.presupuesto_id}>
+                <div className="card shadow-sm border-0 rounded-3 nd-hover-elevate" key={p.presupuesto_id}>
                     
                     <div className="card-body p-4">
                         <div className="row align-items-center">

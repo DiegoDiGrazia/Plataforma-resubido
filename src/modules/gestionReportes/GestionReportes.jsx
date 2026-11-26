@@ -4,6 +4,7 @@ import { Accordion, Modal, Button, Badge, Table, Form, Spinner } from 'react-boo
 import { ToastContainer } from 'react-toastify';
 import { toastExito, toastError } from '@/shared/utils/toastify/toastify.jsx';
 import { obtenerClientes } from '@/api/apis';
+import DropdownFiltro from '@/shared/components/form/DropdownFiltro';
 import './GestionReportes.css';
 import {
   obtenerReporteIntegrado,
@@ -114,7 +115,6 @@ const GestionReportes = () => {
 
   const hoy = new Date();
   const [clientes, setClientes] = useState([]);
-  const [busquedaCliente, setBusquedaCliente] = useState('');
   const [idCliente, setIdCliente] = useState('');
   const [anio, setAnio] = useState(hoy.getFullYear());
   const [mes, setMes] = useState(hoy.getMonth() + 1);
@@ -147,12 +147,13 @@ const GestionReportes = () => {
       .catch(() => setClientes([]));
   }, [token]);
 
-  const clientesFiltrados = useMemo(() => {
-    const q = busquedaCliente.trim().toLowerCase();
-    const lista = [...clientes].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-    if (!q) return lista;
-    return lista.filter((c) => (c.name || '').toLowerCase().includes(q) || String(c.id) === q);
-  }, [clientes, busquedaCliente]);
+  // Opciones del selector de cliente: "Nombre (id)", así el buscador encuentra por nombre o por id
+  const etiquetaCliente = (c) => `${c.name} (${c.id})`;
+  const clientesOrdenados = useMemo(
+    () => [...clientes].sort((a, b) => (a.name || '').localeCompare(b.name || '')),
+    [clientes]
+  );
+  const clienteSeleccionado = clientes.find((c) => String(c.id) === String(idCliente));
 
   // ---------------- CARGA DEL REPORTE ----------------
 
@@ -499,35 +500,35 @@ const GestionReportes = () => {
       {/* FILTROS */}
       <form className='row miPerfilContainer soporteContainer gestion__filtros mt-4 p-0' onSubmit={buscar}>
         <div className='col-12 col-md-5'>
-          <Form.Label className="gestion__label">Cliente</Form.Label>
-          <Form.Control
-            size="sm"
-            className="mb-2"
-            placeholder="Buscar cliente por nombre o id"
-            value={busquedaCliente}
-            onChange={(e) => setBusquedaCliente(e.target.value)}
+          <DropdownFiltro
+            label="Cliente"
+            valorActual={clienteSeleccionado ? etiquetaCliente(clienteSeleccionado) : 'Seleccioná un cliente'}
+            opciones={clientesOrdenados.map(etiquetaCliente)}
+            onChange={(opcion) => {
+              const cliente = clientesOrdenados.find((c) => etiquetaCliente(c) === opcion);
+              setIdCliente(cliente ? String(cliente.id) : '');
+            }}
+            mostrarBuscador={true}
           />
-          <Form.Select size="sm" value={idCliente} onChange={(e) => setIdCliente(e.target.value)}>
-            <option value="">Seleccioná un cliente</option>
-            {clientesFiltrados.map((c) => (
-              <option key={c.id} value={c.id}>{c.name} ({c.id})</option>
-            ))}
-          </Form.Select>
         </div>
         <div className='col-6 col-md-2'>
-          <Form.Label className="gestion__label">Año</Form.Label>
-          <Form.Select size="sm" value={anio} onChange={(e) => setAnio(e.target.value)}>
-            {anios.map((a) => <option key={a} value={a}>{a}</option>)}
-          </Form.Select>
+          <DropdownFiltro
+            label="Año"
+            valorActual={String(anio)}
+            opciones={anios.map(String)}
+            onChange={(a) => setAnio(a)}
+          />
         </div>
         <div className='col-6 col-md-2'>
-          <Form.Label className="gestion__label">Mes</Form.Label>
-          <Form.Select size="sm" value={mes} onChange={(e) => setMes(e.target.value)}>
-            {MESES.map((nombre, i) => <option key={i + 1} value={i + 1}>{nombre}</option>)}
-          </Form.Select>
+          <DropdownFiltro
+            label="Mes"
+            valorActual={MESES[Number(mes) - 1]}
+            opciones={MESES}
+            onChange={(nombre) => setMes(MESES.indexOf(nombre) + 1)}
+          />
         </div>
         <div className='col-12 col-md-3'>
-          <Button type="submit" className="w-100" variant="primary" size="sm" disabled={cargando}>
+          <Button type="submit" className="w-100" variant="primary" disabled={cargando}>
             {cargando ? <Spinner animation="border" size="sm" /> : 'Buscar reporte'}
           </Button>
         </div>
@@ -601,7 +602,7 @@ const GestionReportes = () => {
                   const idNoti = idNotis[nota.idGeneracion];
                   const notaPers = idNoti ? persNotas[idNoti] : null;
                   return (
-                    <Accordion.Item eventKey={index.toString()} key={nota.idGeneracion}>
+                    <Accordion.Item eventKey={index.toString()} key={nota.idGeneracion} className="nd-hover-elevate">
                       <Accordion.Header>
                         <div className="me-auto">
                           <strong>{nota.titulo}</strong>

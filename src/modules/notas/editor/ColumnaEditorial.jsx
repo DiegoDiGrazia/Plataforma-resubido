@@ -253,6 +253,7 @@ const ColumnaEditorial = () => {
                             hora_diferida: distribucionHoraDiferida,
                         }}
                         onChange={dispacharCampoDistribucion}
+                        ocultarFechaVencimiento
                     />
                 )}
                 {/* <TextareaWithCounter/> */}

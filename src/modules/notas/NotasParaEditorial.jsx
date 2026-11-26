@@ -365,10 +365,7 @@ const NotasParaEditorial = () => {
                             <SelectorCliente/>
                         )}
                     </div>
-                    <BotonCrearNota
-                        onClick={ClickearEnCrearNota}
-                        cliente={CLIENTE}
-                    />
+                    <BotonCrearNota onClick={ClickearEnCrearNota} />
                 </header>
 
                 <BorradoresLocales />
@@ -420,7 +417,7 @@ const NotasParaEditorial = () => {
                     {notasEnPaginaActual.map((nota, index) => (
                         <div
                             key={nota.id_noti || nota.term_id || `nota-${index}`}
-                            className={`notasListado__fila borderNotas ${nota.editable == '1' ? '' : 'notaNoEditable'}`}
+                            className={`notasListado__fila nd-hover-elevate borderNotas ${nota.editable == '1' ? '' : 'notaNoEditable'}`}
                         >
                             <div className='notasListado__imagen'>
                                 {nota.imagen  ? (

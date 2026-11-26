@@ -611,7 +611,7 @@ useEffect(() => {
                 if (!data) return null;
 
                 return (
-                  <Accordion.Item eventKey={index.toString()} key={cliente}>
+                  <Accordion.Item eventKey={index.toString()} key={cliente} className="nd-hover-elevate">
                     <Accordion.Header>
                       <div className="distribucion__resumen">
                         <div className="distribucion__cliente">
@@ -649,7 +649,7 @@ useEffect(() => {
                     <Accordion.Body>
                       <ul className="list-group distribucion__notas">
                         {data.notas.map(nota => (
-                          <li key={`${nota.id}-${nota.esNotaDeVideo ? 'video' : 'nota'}`} className="list-group-item distribucion__nota-item">
+                          <li key={`${nota.id}-${nota.esNotaDeVideo ? 'video' : 'nota'}`} className="list-group-item nd-hover-elevate distribucion__nota-item">
                             <div className='distribucion__nota'>
                               {/* Columna 1 */}
                               {!nota.esNotaDeVideo && (

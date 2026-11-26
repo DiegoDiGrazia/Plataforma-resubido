@@ -211,7 +211,7 @@ const handleSave = async () => {
               <li className="list-group-item">No hay resultados.</li>
             ) : (
               pagedItems.map((item) => (
-                <li key={item.id} className="list-group-item">
+                <li key={item.id} className="list-group-item nd-hover-elevate">
                   <div className='row pt-0'>
                     <div className='col-4'>
                       <button

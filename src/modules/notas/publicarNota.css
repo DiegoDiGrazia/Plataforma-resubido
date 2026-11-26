@@ -25,35 +25,37 @@
     margin: 0 0 var(--nd-space-3);
 }
 
-/* Categorías: pills seleccionables */
-.publicarNotaPage .filaCategorias {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--nd-space-2);
+.publicarNotaPage .publicarNotaPage__volver {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--nd-space-1);
+    margin-bottom: var(--nd-space-4);
+    padding: 0;
+    font-weight: var(--nd-font-weight-semibold);
+    color: var(--nd-color-text-secondary);
+    text-decoration: none;
 }
-.publicarNotaPage .categorias,
-.publicarNotaPage .categoriaActiva {
-    padding: var(--nd-space-2) var(--nd-space-4);
-    border: none;
-    border-radius: var(--nd-radius-pill);
-    font-size: var(--nd-font-size-md);
-    font-weight: var(--nd-font-weight-bold);
-}
-.publicarNotaPage .categorias {
-    background-color: var(--nd-color-bg-muted);
+.publicarNotaPage .publicarNotaPage__volver:hover {
     color: var(--nd-color-text);
-}
-.publicarNotaPage .categorias:hover {
-    background-color: var(--nd-gray-200);
-    color: var(--nd-color-text);
-}
-.publicarNotaPage .categoriaActiva,
-.publicarNotaPage .categoriaActiva:hover {
-    background-color: var(--nd-color-primary-subtle);
-    color: var(--nd-color-primary-text);
 }
 
-/* Opciones de distribución (radio en tarjeta) */
+.publicarNotaPage .publicarNotaPage__seccion .dropdown-filtro-container {
+    max-width: 420px;
+}
+
+.publicarNotaPage .publicarNotaPage__vencimiento {
+    display: flex;
+    flex-direction: column;
+    gap: var(--nd-space-1);
+    max-width: 320px;
+    margin-top: var(--nd-space-3);
+    padding-left: calc(1em + var(--nd-space-3));
+}
+.publicarNotaPage .publicarNotaPage__vencimiento-label {
+    font-size: var(--nd-font-size-sm);
+    font-weight: var(--nd-font-weight-semibold);
+}
+
 .publicarNotaPage .containerFormCheck,
 .publicarNotaPage .containerFormCheckActive {
     border: var(--nd-border-width) solid var(--nd-color-border);
@@ -74,9 +76,6 @@
     margin: 0;
 }
 
-/* Radio a la izquierda y texto a la derecha, alineado con el título de la opción.
-   (La segunda opción envuelve el input en .inputRadioContainer: display: contents
-   hace que cuente como si no estuviera.) */
 .publicarNotaPage .containerFormCheck .form-check,
 .publicarNotaPage .containerFormCheckActive .form-check {
     display: flex;
@@ -148,7 +147,6 @@
     border-radius: var(--nd-radius-lg);
 }
 
-/* Mobile: las dos columnas (categorías / datos de la nota) una debajo de la otra */
 @media (max-width: 768px) {
     .publicarNotaPage .notaTutorial > .columnaNota,
     .publicarNotaPage .notaTutorial > .col_editorial {
@@ -161,7 +159,13 @@
         margin-top: var(--nd-space-6);
     }
 
-    /* Botones apilados a todo el ancho, del más importante al menos importante */
+    .publicarNotaPage .notaTutorial > .publicarNotaPage__final {
+        flex: 0 0 100%;
+        width: 100%;
+        max-width: 100%;
+        margin-top: var(--nd-space-6);
+    }
+
     .publicarNotaPage__acciones {
         flex-direction: column;
         align-items: stretch;

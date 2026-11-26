@@ -99,13 +99,10 @@
   border-radius: var(--nd-radius-lg);
   padding: var(--nd-space-5) var(--nd-space-6);
   box-shadow: var(--nd-shadow-sm);
-  border: 1px solid var(--nd-color-border);
-  transition: box-shadow .15s ease;
+  border: var(--nd-border-width) solid var(--nd-color-border);
+  transition: box-shadow var(--nd-duration-fast) var(--nd-easing);
 }
 
-.contratosPage .contratoCard:hover {
-  box-shadow: var(--nd-shadow-md);
-}
 
 .contratosPage .contratoCliente {
   font-size: var(--nd-font-size-md);
@@ -242,7 +239,7 @@
 }
 
 .contratosPage #editModal .modal-header {
-  border-bottom: 1px solid var(--nd-color-border);
+  border-bottom: var(--nd-border-width) solid var(--nd-color-border);
   padding: var(--nd-space-5) var(--nd-space-6);
 }
 
@@ -256,7 +253,7 @@
 }
 
 .contratosPage #editModal .modal-footer {
-  border-top: 1px solid var(--nd-color-border);
+  border-top: var(--nd-border-width) solid var(--nd-color-border);
   padding: var(--nd-space-4) var(--nd-space-6);
 }
 
@@ -269,7 +266,7 @@
   margin-top: var(--nd-space-6);
   margin-bottom: var(--nd-space-4);
   padding-bottom: var(--nd-space-2);
-  border-bottom: 1px solid var(--nd-color-border);
+  border-bottom: var(--nd-border-width) solid var(--nd-color-border);
 }
 
 .contratosPage #editModal .seccionTitulo:first-of-type {
@@ -302,9 +299,75 @@
   }
 }
 
+/* Barra de búsqueda / crear (antes mt-4) */
+.contratosPage .contratosPage__barra {
+  margin-top: var(--nd-space-6);
+}
+
 @media (max-width: 768px) {
+  /* Menos aire entre el título y el botón de crear */
+  .contratosPage .contratosPage__barra {
+    margin-top: var(--nd-space-2);
+  }
+
+  /* Tarjeta compacta: cliente arriba, montos | vigencia en dos columnas, botones abajo */
   .contratosPage .contratoFila {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--nd-space-3) var(--nd-space-4);
+  }
+
+  .contratosPage .contratoFila > :first-child,
+  .contratosPage .contratoFila > .accionesContrato {
+    grid-column: 1 / -1;
+  }
+
+  /* Cabecera de la tarjeta: nombre + estado en la primera línea y los datos del
+     cliente repartidos en dos columnas (ID·CUIT | empresa, modalidad) */
+  .contratosPage .contratoFila > :first-child {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: center;
+    gap: var(--nd-space-1) var(--nd-space-4);
+  }
+
+  .contratosPage .contratoFila > :first-child > .contratoCliente {
+    grid-column: 1;
+    grid-row: 1;
+    text-align: left;
+  }
+
+  .contratosPage .contratoFila > :first-child > .badgeEstado {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    margin-top: 0;
+  }
+
+  .contratosPage .contratoFila > :first-child > .contratoMeta {
+    margin-top: 0;
+  }
+
+  .contratosPage .contratoLabel {
+    margin-top: var(--nd-space-2);
+  }
+
+  /* Botones: Archivos | Comentarios y Duplicar debajo, todos parejos */
+  .contratosPage .accionesContrato {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--nd-space-2);
+  }
+
+  .contratosPage .accionesContrato__grupo {
+    display: contents;
+  }
+
+  .contratosPage .accionesContrato .btn {
+    justify-content: center;
+  }
+
+  .contratosPage .accionesContrato__grupo:last-child > .btn {
+    grid-column: 1 / -1;
   }
 
   .contratosPage .buscadorNotasForm {

@@ -205,7 +205,7 @@ const BotonPublicarNota = ({ status, isLoading, setIsLoading }) => {
                 id="botonPublicar"
                 variant="primary"
                 className={`publicarNota__boton publicarNota__boton--${status === "EN REVISION" ? "revision" : status === "BORRADOR" ? "borrador" : "publicar"}`}
-                disabled={isLoading || !imagefeed || !image || categoriasActivas.length < 1}
+                disabled={isLoading || !imagefeed || !image || categoriasActivas.length < 1 || (selectedOptionDistribucion == 1 && !distribucionFechaVencimiento)}
             >
                 <img src="/images/send.png" alt="" className="icon me-2 icono_tusNotas" />
                 {status === "EN REVISION" ? "Enviar a revisión" : status === "BORRADOR" ? "Guardar borrador" : "Publicar"}

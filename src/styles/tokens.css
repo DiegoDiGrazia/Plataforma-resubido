@@ -218,7 +218,7 @@
   /* ------------------------------------------------------------------ */
   --nd-sidebar-width:           250px;
   --nd-sidebar-width-collapsed: 55px;
-  --nd-topbar-height:           44px; /* barra superior fija en mobile (≤768) */
+  --nd-topbar-height:           56px; /* header fijo en mobile (≤768), de borde a borde */
   --nd-content-max-width:       1440px;
   --nd-page-padding:            var(--nd-space-10); /* margen lateral de cada pantalla */
   --nd-control-height:          38px; /* botones e inputs default */

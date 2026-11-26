@@ -196,32 +196,34 @@
 
 /* ---------- Mobile ---------- */
 @media (max-width: 768px) {
-    /* Barra superior y cabecera del menú abierto comparten geometría:
-       logo centrado y hamburguesa a la derecha, en el mismo lugar. */
+    /* Header de la app en mobile: barra fija de borde a borde (antes era una
+       "pastilla" flotante con margen, esquinas redondeadas y sombra).
+       La cabecera del menú abierto tiene la misma geometría: logo centrado y
+       hamburguesa / cerrar a la derecha, en el mismo lugar. */
     .sidebar-topbar,
     .sidebar__header {
         position: relative;
         height: var(--nd-topbar-height);
         display: flex;
         align-items: center;
-        justify-content: center;
-        padding: 0 var(--nd-space-2);
-        border-radius: var(--nd-radius-lg);
+        /* Logo a la izquierda, alineado con los íconos del menú (padding del nav + del ítem) */
+        justify-content: flex-start;
+        padding: 0 var(--nd-space-4) 0 calc(var(--nd-space-4) + var(--nd-space-3));
+        background-color: var(--nd-color-bg-surface);
+        border-bottom: var(--nd-border-width) solid var(--nd-color-border);
     }
 
     .sidebar-topbar {
         position: fixed;
-        top: var(--nd-space-2);
-        left: var(--nd-space-2);
-        right: var(--nd-space-2);
+        top: 0;
+        left: 0;
+        right: 0;
         z-index: var(--nd-z-sticky);
-        background-color: var(--nd-color-bg-surface);
-        box-shadow: var(--nd-shadow-sm);
     }
 
     .sidebar__header {
         flex-shrink: 0;
-        margin: var(--nd-space-2) var(--nd-space-2) var(--nd-space-2);
+        margin: 0 0 var(--nd-space-2);
     }
 
     .sidebar-topbar__logo,
@@ -234,7 +236,7 @@
     .sidebar__cerrar {
         position: absolute;
         top: 50%;
-        right: var(--nd-space-1);
+        right: var(--nd-space-3);
         transform: translateY(-50%);
         width: 36px;
         height: 36px;
@@ -283,40 +285,39 @@
         padding-right: var(--nd-space-4);
     }
 
-    /* Ítems en una columna centrada: todos los íconos arrancan en la misma
-       vertical. --sidebar-columna es el ancho del ítem más largo
-       ("Monitor Contenido" / "Administración ⌄"); el resto se reparte como
-       margen a cada lado. El fondo del ítem activo sigue ocupando todo el ancho. */
-    .sidebar {
-        --sidebar-columna: 200px; /* menor que el ítem más largo: corre la columna a la derecha */
-        --sidebar-inicio: max(var(--nd-space-3), calc((100% - var(--sidebar-columna)) / 2));
+    /* Ítems pegados a la izquierda, compactos, con la flechita de los
+       desplegables al extremo derecho */
+    .sidebar__lista {
+        gap: 2px;
     }
 
     .sidebar__link {
-        height: 52px;
-        padding-left: var(--sidebar-inicio);
+        height: 44px;
+        gap: var(--nd-space-2);
+        padding: 0 var(--nd-space-3);
         font-size: var(--nd-font-size-lg);
     }
 
     .sidebar__icono {
-        width: 28px;
-        font-size: var(--nd-font-size-2xl);
+        width: 24px;
+        font-size: var(--nd-font-size-xl);
     }
 
     .sidebar__chevron {
-        margin-left: 0;
+        margin-left: auto;
     }
 
-    /* Sub-ítems alineados con el texto del grupo (inicio + ícono + gap) */
+    /* Sub-ítems colgados de la misma guía vertical que en desktop (centro del
+       ícono del grupo); el texto queda alineado con el del grupo */
     .sidebar__sublista {
-        margin: 0 0 var(--nd-space-2);
-        padding: 0;
-        border-left: none;
+        margin: 0 0 var(--nd-space-1) calc(var(--nd-space-3) + 12px);
+        padding-left: var(--nd-space-2);
+        border-left: var(--nd-border-width) solid var(--nd-color-border);
     }
 
     .sidebar__item--sub > .sidebar__link {
-        height: 44px;
-        padding-left: calc(var(--sidebar-inicio) + 28px + var(--nd-space-3));
+        height: 38px;
+        padding: 0 var(--nd-space-3);
         font-size: var(--nd-font-size-md);
     }
 
@@ -329,12 +330,12 @@
 /* Celulares chicos (iPhone SE, 380): ítems un poco más bajos para que entre todo */
 @media (max-width: 420px) {
     .sidebar__link {
-        height: 48px;
+        height: 40px;
         font-size: var(--nd-font-size-md);
     }
 
     .sidebar__item--sub > .sidebar__link {
-        height: 40px;
+        height: 36px;
         font-size: var(--nd-font-size-base);
     }
 }

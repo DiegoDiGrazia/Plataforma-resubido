@@ -64,15 +64,6 @@
       margin-bottom: 0.2rem;
     }
 
-    .hover-panel {
-      transition: transform var(--nd-duration-fast) var(--nd-easing), box-shadow var(--nd-duration-fast) var(--nd-easing);
-    }
-
-    .hover-panel:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--nd-shadow-md);
-    }
-
     .btn-icon-only {
       width: 32px;
       height: 32px;

@@ -42,7 +42,7 @@ const CrearNota = () => {
     const dispatch = useDispatch();
     const [image, setImage] = useState(null);
     const navigate = useNavigate();
-    const imagenppal = useSelector((state) => state.crearNota);
+    const imagenppal = useSelector((state) => state.crearNota.imagenPrincipal);
     const [cropper, setCropper] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const imageRef = useRef(null);
@@ -310,9 +310,12 @@ const CrearNota = () => {
 
                 <div className="content flex-grow-1 crearNotaGlobal editorNota">
                     <div className='row editorNota__encabezado'>
-                        <div className='editorNota__acciones'>
-                            <BotonEnGenerarVistaPrevia status= {'Preview'}/>
-                            <Button onClick={() => navigate(rutaPublicar(clave))} id="botonPublicar" variant="primary">
+                        <div
+                            className='editorNota__acciones'
+                            title={!imagenppal ? 'Cargá la imagen de portada para continuar' : undefined}
+                        >
+                            <BotonEnGenerarVistaPrevia status= {'Preview'} disabled={!imagenppal}/>
+                            <Button onClick={() => navigate(rutaPublicar(clave))} id="botonPublicar" variant="primary" disabled={!imagenppal}>
                                 <img src="/images/send.png" alt="" className="icon icono_tusNotas" />{" Publicar"}
                             </Button>
                         </div>
@@ -377,7 +380,7 @@ const CrearNota = () => {
                         </div>
 
                         {/* Seccion columna izquierda del tutorial: en Crear nota se ve siempre */}
-                        <div className='col-4 d-flex flex-column gap-4 editorNota__tutoriales'>
+                        <div className='col-4 editorNota__tutoriales'>
                             {!imagenppal ? <CardTutorial title = {videos.portada.title} description = {videos.portada.description} src = {videos.portada.src} /> :
                             <CardTutorial title = {videos.fotoCuerpoNota.title} description = {videos.fotoCuerpoNota.description} src = {videos.fotoCuerpoNota.src}/>}
                             <CardTutorial title = {videos.tituloYBajada.title} description = {videos.tituloYBajada.description} src = {videos.tituloYBajada.src}/>

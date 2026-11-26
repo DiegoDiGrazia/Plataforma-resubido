@@ -251,27 +251,47 @@
     }
 
     @media (max-width: 768px) {
-        /* Encabezado apilado, igual en todos los celulares:
-           Tus Notas / selector de cuenta / botón Crear nota, a todo el ancho */
-        .notasListado__encabezado {
-            flex-direction: column;
-            align-items: stretch;
-            gap: var(--nd-space-3);
-        }
 
-        .notasListado__titulo .dropdown,
-        .notasListado__titulo .dropdown .btn,
-        .notasListado__encabezado > .btn {
-            width: 100%;
+        .notasListado__encabezado {
+            flex-wrap: wrap;
+            align-items: stretch;
+            gap: var(--nd-space-3) var(--nd-space-2);
         }
 
         .notasListado__titulo .headerTusNotas {
-            flex-basis: auto;
+            flex-basis: 100%;
         }
 
-        /* Flechita del selector al extremo derecho */
+        .notasListado__titulo .dropdown {
+            flex: 1 1 0;
+            min-width: 0;
+        }
+
+        .notasListado__titulo .dropdown .btn {
+            width: 100%;
+        }
+
+        .notasListado__encabezado > .btn {
+            flex: 0 0 auto;
+            white-space: nowrap;
+        }
+
         .notasListado__titulo .dropdown .boton_cliente {
-            justify-content: space-between;
+            position: relative;
+            display: block;
+            padding-right: var(--nd-space-8);
+            overflow: hidden;
+            white-space: nowrap;
+            text-align: left;
+            text-overflow: ellipsis;
+        }
+
+        .notasListado__titulo .dropdown .boton_cliente::after {
+            position: absolute;
+            top: 50%;
+            right: var(--nd-space-3);
+            margin: 0;
+            transform: translateY(-50%);
         }
 
         .notasListado__titulo .listaClientes {
@@ -283,8 +303,6 @@
             white-space: normal;
         }
 
-        /* Categoría y cuenta en el mismo renglón: la categoría toma su ancho
-           (hasta la mitad) y el nombre de la cuenta usa el resto, cortando línea */
         .notasListado__fila {
             grid-template-columns: 56px fit-content(50%) minmax(0, 1fr);
         }

@@ -103,7 +103,7 @@ Line-height: `tight 1.2` títulos · `snug 1.35` UI densa · `normal 1.5` párra
 - Radios: `sm 4` · `md 8` · `lg 12` · `xl 16` · `pill 999` · `full 50%`.
 - Sombras: `sm` cards · `md` hover y dropdowns · `lg` modales · `focus` anillo naranja 3px.
 - z-index: dropdown 1000 · sticky 1020 · sidebar 1030 · overlay 1040 · modal 1055 · popover 1070 · toast 1090.
-- Layout: `--nd-sidebar-width` 250 / colapsado 55 · `--nd-topbar-height` 44 (barra mobile) ·
+- Layout: `--nd-sidebar-width` 250 / colapsado 55 · `--nd-topbar-height` 56 (header mobile, de borde a borde) ·
   `--nd-page-padding` 40 (se achica por breakpoint) · `--nd-control-height` 38 / sm 32.
 - Breakpoints (literal en `@media (max-width: …)`, base = 1920): 1660 · 1440 · 1366 · 1024 ·
   **768** (layout mobile: sidebar se oculta) · 420 · 380. En JS: `breakpoints` de `tokens.js`.

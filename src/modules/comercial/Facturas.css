@@ -125,14 +125,14 @@
         height: var(--nd-control-height);
     }
 
-    /* Factura emitida y estado PAGADA: recuadro azul de marca (antes verde) */
+    /* Factura emitida y estado PAGADA: recuadro naranja de marca */
     .facturas__listado > .facturas__item--emitida {
-        border: var(--nd-border-width-thick) solid var(--nd-color-secondary);
+        border: var(--nd-border-width-thick) solid var(--nd-color-primary);
     }
 
     .facturas__estado--pagada {
         padding: 0 var(--nd-space-1);
-        border: var(--nd-border-width-thick) solid var(--nd-color-secondary);
+        border: var(--nd-border-width-thick) solid var(--nd-color-primary);
         border-radius: var(--nd-radius-sm);
     }
 

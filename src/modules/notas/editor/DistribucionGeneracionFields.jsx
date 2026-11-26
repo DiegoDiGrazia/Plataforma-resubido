@@ -7,21 +7,24 @@ import SelectorFecha from '@/shared/components/form/SelectorFecha';
 //            youtube_titulo, youtube_descripcion, youtube_link_video, search_titulo, search_descripcion,
 //            diferida, fecha_diferida, hora_diferida }
 // onChange(campo, valor)
-const DistribucionGeneracionFields = ({ valores, onChange }) => {
+// ocultarFechaVencimiento: en Publicar nota la fecha se pide junto a la opción "Distribuir nota"
+const DistribucionGeneracionFields = ({ valores, onChange, ocultarFechaVencimiento = false }) => {
     const dispacharCampo = (campo) => (e) => onChange(campo, e.target.value);
 
     return (
         <div className="datosDistribucion">
             <span className="datosDistribucionTitulo">Datos distribución</span>
 
+            {!ocultarFechaVencimiento && (
             <div className="datosDistribucionCampo">
                 <label>Fecha vencimiento</label>
-                                <SelectorFecha
+                <SelectorFecha
                     bloque
                     valor={valores.fecha_vencimiento || ''}
                     onChange={(fecha) => onChange('fecha_vencimiento', fecha)}
                 />
             </div>
+            )}
 
             <div className="datosDistribucionCampo">
                 <label>Comentarios</label>

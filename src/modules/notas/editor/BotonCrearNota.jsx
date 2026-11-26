@@ -1,10 +1,9 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
 
-const BotonCrearNota = ({ onClick, cliente }) => (
+const BotonCrearNota = ({ onClick }) => (
     <Button onClick={onClick} id="botonPublicar" variant="primary">
-        {"Crear nota "}
-        {cliente ? "de " + cliente : "sin cuenta"}
+        <i className="bi bi-plus-lg" aria-hidden="true" /> Crear Nota
     </Button>
 );
 

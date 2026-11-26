@@ -689,7 +689,7 @@ const MonitorEditorial = () => {
                                 const notasDelEditor = editor.clientes.reduce((total, cliente) => total + cliente.notas.length, 0);
 
                                 return (
-                                    <div className="accordion-item mb-3 border-0 shadow-sm rounded" key={`editor-${indexEditor}`}>
+                                    <div className="accordion-item nd-hover-elevate mb-3 border-0 shadow-sm rounded" key={`editor-${indexEditor}`}>
 
                                         <h2 className="accordion-header ms-3">
                                             <button 
@@ -719,7 +719,7 @@ const MonitorEditorial = () => {
                                                             const esGeo = String(cliente.id_cliente).startsWith('geo-');
 
                                                             return (
-                                                                <div className="accordion-item border mb-2 rounded" key={`cliente-${idCliente}`}>
+                                                                <div className="accordion-item nd-hover-elevate border mb-2 rounded" key={`cliente-${idCliente}`}>
                                                                     {/* HEADER */}
                                                                     <h2 className="accordion-header mt-0">
                                                                         <button 
@@ -774,7 +774,7 @@ const MonitorEditorial = () => {
                                                                                 {/* LISTADO DE NOTAS */}
                                                                                 <ul className="list-group list-group-flush">
                                                                                     {cliente.notas.map((nota, indexNota) => (
-                                                                                        <li className="list-group-item monitor__nota bg-light bg-opacity-50 border-bottom" key={`nota-${nota.term_id}-${indexEditor}-${indexCliente}-${indexNota}`}>
+                                                                                        <li className="list-group-item nd-hover-elevate monitor__nota bg-light bg-opacity-50 border-bottom" key={`nota-${nota.term_id}-${indexEditor}-${indexCliente}-${indexNota}`}>
                                                                                             <div className="info-nota-container text-secondary">
                                                                                                 <div className="dato-nota">
                                                                                                     <span className="label">ID</span>

@@ -154,6 +154,7 @@ const chips = [
 | `.nd-list` + `.nd-list__item(--active)` | listas seleccionables de ABMs (reemplaza `.list-group-item.active-brand`) |
 | `.nd-table-wrap` | envoltorio con borde y radio para `<Table>` |
 | `.nd-icon-btn(--danger|--primary)` | editar/borrar en filas |
+| `.nd-hover-elevate` | **toda** tarjeta / fila / acordeón de un listado: sombra al pasar el mouse (en un `::after`, no pisa la sombra ni el borde propios) |
 | `.nd-empty` + `__icon`, `__title` | "No hay resultados" |
 | `.nd-loading-overlay` | loader a pantalla completa (reemplaza los `rgba(0,0,0,0.5)` sueltos) |
 | `.nd-avatar(--sm|--lg)` | fotos de perfil |

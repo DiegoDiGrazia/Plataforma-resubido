@@ -36,9 +36,9 @@
 }
 
 @media (max-width: 768px) {
-    /* Barra superior fija: su alto + el margen de arriba y abajo */
+    /* Header fijo de borde a borde: el contenido arranca debajo, con un poco de aire */
     .app-layout__contenido {
-        padding-top: calc(var(--nd-topbar-height) + var(--nd-space-4));
+        padding-top: calc(var(--nd-topbar-height) + var(--nd-space-2));
     }
 }
 

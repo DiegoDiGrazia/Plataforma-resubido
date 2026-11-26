@@ -164,7 +164,7 @@ const Dashboard = () => {
                                 <SelectorConBuscador title="Filtro pais:" options={paises} selectedOption={paisFiltro} onSelect={setPaisFiltro} onClear={() => setPaisFiltro(null)} sinMargen />
                                 <div className="dropdown">
                                     <button className="btn custom-dropdown-button dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <img src="/images/calendarIcon.png" alt="Icono 1" className="icon me-2" /> {FiltroActual}
+                                        <img src="/images/calendarIcon.png" alt="Icono 1" className="icon" /> {FiltroActual}
                                     </button>
                                     <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                         <li key="opcion1a">
@@ -180,7 +180,7 @@ const Dashboard = () => {
                                 </div>
                                 <div className="dropdown">
                                     <button className="btn custom-dropdown-button dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <img src="/images/share_icon.png" alt="Icono 1" className="icon me-2" />
+                                        <img src="/images/share_icon.png" alt="Icono 1" className="icon" />
                                         Compartir
                                     </button>
                                     <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton2">

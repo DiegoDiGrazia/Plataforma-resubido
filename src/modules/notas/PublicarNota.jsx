@@ -17,6 +17,10 @@ import CardTutorial from '@/shared/components/CardTutorial';
 import { setComentario } from '@/store/crearNotaSlice';
 import { setSelectedOptionDistribucion } from '@/store/crearNotaSlice';
 import { rutaEditor } from './navegacionEditor';
+import DropdownFiltro from '@/shared/components/form/DropdownFiltro';
+import SelectorFecha from '@/shared/components/form/SelectorFecha';
+import useEsMobile from '@/shared/hooks/useEsMobile';
+import { setDistribucionFechaVencimiento } from '@/store/distribucionNotaSlice';
 
 const PublicarNota = () => {
     const navigate = useNavigate()
@@ -33,6 +37,8 @@ const PublicarNota = () => {
     const comentario = useSelector((state) => state.crearNota.comentarios); // Comentario de la nota
     const con_distribucion = useSelector((state) => state.crearNota.con_distribucion); // Comentario de la nota
     const [isLoading, setIsLoading] = useState(false);
+    const esMobile = useEsMobile();
+    const fechaVencimientoDistribucion = useSelector((state) => state.distribucionNota.fecha_vencimiento);
 
     const permisoPublicarNota = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Editorial: Publicacion") || false);
     const permisoBorrador = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Editorial: Borrador") || false);
@@ -84,17 +90,6 @@ const PublicarNota = () => {
     }
     }, []); 
 
-    const actualizarCategoriasActivas = (categoria) => {
-
-        if (categoriasActivas.includes(categoria.id)) {
-            // setCategoriasActivas(categoriasActivas.filter(item => item !== categoria.id));
-            dispatch(setCategoriasActivasEnStore(categoriasActivas.filter(item => item !== categoria.id)));
-        } else if (categoriasActivas.length < 3) {
-            // setCategoriasActivas([categoria.id]);
-            dispatch(setCategoriasActivasEnStore([categoria.id]));
-        }
-
-    };
     const selectedOptionDistribucion = con_distribucion == "1" ? "normal" : "ninguna";
 
     // Función para manejar el cambio de opción seleccionada4
@@ -106,30 +101,79 @@ const PublicarNota = () => {
         }
     };
 
+
+    const categoriaActiva = (Array.isArray(categorias) ? categorias : []).find((c) => categoriasActivas.includes(c.id));
+    const faltaVencimiento = con_distribucion == 1 && !fechaVencimientoDistribucion;
+
+    const avisosYAcciones = (
+        <>
+        {categoriasActivas.length < 1 && (
+            <p className='datoFaltante'>-Seleccione una categoria para poder publicar</p>
+        )}
+        {!imagefeed && (
+            <p className='datoFaltante'>-Seleccione una imagen de portada y su recorte</p>
+        )}
+        {faltaVencimiento && (
+            <p className='datoFaltante'>-Elegí la fecha de vencimiento de la distribución</p>
+        )}
+        
+        <div className='publicarNotaPage__acciones'>
+            {permisoBorrador && (
+                <BotonPublicarNota status="EN REVISION" isLoading={isLoading} setIsLoading={setIsLoading} />
+            )}
+
+            {permisoBorrador && (
+                <BotonPublicarNota status="BORRADOR" isLoading={isLoading} setIsLoading={setIsLoading} />
+            )}
+
+            {permisoPublicarNota && 
+                <BotonPublicarNota 
+                    status="PUBLICADO" 
+                    isLoading={isLoading} 
+                    setIsLoading={setIsLoading} 
+                />
+            }
+
+            <Button
+                onClick={() => navigate(rutaEditor(clave))}
+                variant="secondary"
+                size="lg"
+            >
+                Volver
+            </Button>
+
+        </div>
+        </>
+    );
+
     return (
                 <>
                 <div className="publicarNotaPage">
                     
                     {/* SECCION NOTA */}
                     <div className='container-fluid publicarNotaPage__cuerpo'>
+                    <button
+                        type="button"
+                        className="btn btn-link publicarNotaPage__volver"
+                        onClick={() => navigate(rutaEditor(clave))}
+                    >
+                        <i className="bi bi-arrow-left" aria-hidden="true" /> Volver a la nota
+                    </button>
                     <div className='row notaTutorial'>
                         <div className='col-8 columnaNota'>
                             <section className='publicarNotaPage__seccion'>
                                 <h2 className='headerPublicarNota'>Agregar categorias a tu Nota</h2>
                                 <p className='abajoDeAgregarCategoria'>Seleccione una categoria clave para tu contenido</p>
-                                <div className='filaCategorias'>
-                                    {Array.isArray(categorias) && categorias.map((categoria, index) => (
-                                        <button
-                                            type="button"
-                                            key={index}
-                                            onClick={() => actualizarCategoriasActivas(categoria)}
-                                            className={categoriasActivas.includes(categoria.id) ? 'categoriaActiva' : 'categorias'}
-                                            aria-pressed={categoriasActivas.includes(categoria.id)}
-                                        >
-                                            {categoria.unidad}
-                                        </button>
-                                    ))}
-                                </div>
+                                <DropdownFiltro
+                                    label="Categoría"
+                                    valorActual={categoriaActiva ? categoriaActiva.unidad : 'Seleccioná una categoría'}
+                                    opciones={(Array.isArray(categorias) ? categorias : []).map((categoria) => categoria.unidad)}
+                                    onChange={(nombre) => {
+                                        const categoria = categorias.find((c) => c.unidad === nombre);
+                                        if (categoria) dispatch(setCategoriasActivasEnStore([categoria.id]));
+                                    }}
+                                    mostrarBuscador={true}
+                                />
                             </section>
 
                             <div className='seccionImagenRecorteRRSS'>
@@ -197,9 +241,22 @@ const PublicarNota = () => {
                                             <label className="form-check-label" htmlFor="normal">
                                                 <p className='distribuirNotaP'><strong>Distribuir nota</strong> {}</p>
                                                 <p className='abajoDeAgregarCategoria'>La distribucion de tu nota amplifica el impactoy la llegada a mas usuarios</p>
-                                                
+
                                             </label>
                                         </div>
+                                        {selectedOptionDistribucion === 'normal' && (
+                                            <div className='publicarNotaPage__vencimiento'>
+                                                <span className='publicarNotaPage__vencimiento-label'>
+                                                    Fecha de vencimiento de la distribución <span className='text-danger'>*</span>
+                                                </span>
+                                                <SelectorFecha
+                                                    bloque
+                                                    required
+                                                    valor={fechaVencimientoDistribucion || ''}
+                                                    onChange={(fecha) => dispatch(setDistribucionFechaVencimiento(fecha))}
+                                                />
+                                            </div>
+                                        )}
                                     </div>
                                     <div className={selectedOptionDistribucion === 'ninguna' ? 'containerFormCheckActive' : 'containerFormCheck'}>
                                         <div className="form-check">
@@ -235,40 +292,7 @@ const PublicarNota = () => {
                                     onChange={manejarCambioComentarios}
                                 />
                                 <p className='abajoDeAgregarCategoria' >Max 300 caracteres</p>
-                                {categoriasActivas.length < 1 && (
-                                    <p className='datoFaltante'>-Seleccione una categoria para poder publicar</p>
-                                )}
-                                {!imagefeed && (
-                                    <p className='datoFaltante'>-Seleccione una imagen de portada y su recorte</p>
-
-                                )}
-                                
-                                <div className='publicarNotaPage__acciones'>
-                                    {permisoBorrador && (
-                                        <BotonPublicarNota status="EN REVISION" isLoading={isLoading} setIsLoading={setIsLoading} />
-                                    )}
-
-                                    {permisoBorrador && (
-                                        <BotonPublicarNota status="BORRADOR" isLoading={isLoading} setIsLoading={setIsLoading} />
-                                    )}
-
-                                    {permisoPublicarNota && 
-                                        <BotonPublicarNota 
-                                            status="PUBLICADO" 
-                                            isLoading={isLoading} 
-                                            setIsLoading={setIsLoading} 
-                                        />
-                                    }
-
-                                    <Button
-                                        onClick={() => navigate(rutaEditor(clave))}
-                                        variant="secondary"
-                                        size="lg"
-                                    >
-                                        Volver
-                                    </Button>
-
-                                </div>
+                                {!esMobile && avisosYAcciones}
                             </div>
                             
 
@@ -276,6 +300,12 @@ const PublicarNota = () => {
 
                         {permisoDatosCreacion && (
                             <ColumnaEditorial/>  
+                        )}
+
+                        {esMobile && (
+                            <div className='publicarNotaPage__final'>
+                                {avisosYAcciones}
+                            </div>
                         )}
 
                         {/* Quien edita cómo se publica la nota (columna editorial) no ve los videos tutoriales */}

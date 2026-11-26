@@ -14,11 +14,9 @@ const YoutubeNota= ({ indice }) => {
     }
 
     return (
-           <span className="spanContainer mt-3" style={{height: "400px", width: "750px"}}>
+           <span className="spanContainer youtubeNota mt-3">
              <BotoneraContenido indice = {indice} className= 'pr-2'/>
              <iframe
-             width={"705px"}
-             height={"400"}
                 src="https://www.youtube.com/embed/fuW6FLuIJMo"
                 title="Video de YouTube"
                 frameBorder="0"

@@ -61,7 +61,7 @@ return (
           <>
             <ul className="list-group">
               {notasGeneracionesAgrupadas && notasGeneracionesAgrupadas.map(nota => (
-                <li key={nota.id} className="list-group-item">
+                <li key={nota.id} className="list-group-item nd-hover-elevate">
                   <div className="row p-0">
                     {/* Columna 1 */}
                     <div className="col-3">
