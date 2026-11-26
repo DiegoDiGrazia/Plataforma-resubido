@@ -98,6 +98,15 @@
         margin: 0;
     }
 
+    /* Categoría + País / Provincia / Municipio debajo del buscador */
+    .notasListado__filtros {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--nd-space-3);
+        padding: 0 var(--nd-space-4) var(--nd-space-4);
+    }
+
     /* ---------- Filas ---------- */
     .notasListado__fila {
         display: grid;

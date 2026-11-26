@@ -1,15 +1,52 @@
 import React, { useState } from 'react';
 import { borrarTildes } from '@/shared/utils/funcionesVarias';
 
-const SelectorConBuscador = ({ title, options = [], selectedOption, onSelect, onClear, alineacionDerecha = false, sinMargen = false }) => {
+const nombreDe = (option) => option?.nombre ?? option?.name ?? '';
+const mismaOpcion = (a, b) => a === b || (a?.id != null && b?.id != null && String(a.id) === String(b.id));
+
+/**
+ * Dropdown con buscador.
+ * Simple:   selectedOption={obj}       onSelect(obj)
+ * Múltiple: multiple selectedOptions={[obj]} onSelect([obj, ...]) — el menú queda abierto para tildar varias.
+ */
+const SelectorConBuscador = ({
+    title,
+    options = [],
+    selectedOption,
+    onSelect,
+    onClear,
+    alineacionDerecha = false,
+    sinMargen = false,
+    multiple = false,
+    selectedOptions = [],
+}) => {
     const [searchQuery, setSearchQuery] = useState(''); // Estado para el texto del buscador
 
     // Filtrar las opciones según el texto ingresado
-    
-    const filteredOptions = (options || []).filter(option => {
-        const text = option?.nombre ?? option?.name ?? '';
-        return borrarTildes(text.toLowerCase()).includes(borrarTildes(searchQuery.toLowerCase()));
-    });
+    const filteredOptions = (options || []).filter(option =>
+        borrarTildes(nombreDe(option).toLowerCase()).includes(borrarTildes(searchQuery.toLowerCase()))
+    );
+
+    const estaElegida = (option) => selectedOptions.some((s) => mismaOpcion(s, option));
+
+    const textoBoton = multiple
+        ? selectedOptions.length === 0
+            ? "Ninguno"
+            : selectedOptions.length === 1
+                ? nombreDe(selectedOptions[0])
+                : `${nombreDe(selectedOptions[0])} +${selectedOptions.length - 1}`
+        : nombreDe(selectedOption) || "Ninguno";
+
+    const elegir = (option) => {
+        if (multiple) {
+            onSelect(estaElegida(option)
+                ? selectedOptions.filter((s) => !mismaOpcion(s, option))
+                : [...selectedOptions, option]);
+            return; // se mantiene el texto buscado para seguir tildando
+        }
+        onSelect(option);
+        setSearchQuery('');
+    };
 
     return (
         // sinMargen: para ponerlo en una fila de filtros alineado con otros botones
@@ -19,16 +56,17 @@ const SelectorConBuscador = ({ title, options = [], selectedOption, onSelect, on
                 <span className="nd-field-row__label">{title}</span>
 
                 <div className="dropdown nd-field-row__control">
-                    <button 
-                        className="btn custom-dropdown-button dropdown-toggle boton_cliente" 
-                        type="button" 
+                    <button
+                        className="btn custom-dropdown-button dropdown-toggle boton_cliente"
+                        type="button"
                         data-bs-toggle="dropdown"
+                        data-bs-auto-close={multiple ? 'outside' : undefined}
                     >
-                        {selectedOption?.nombre || selectedOption?.name || "Ninguno"}
+                        {textoBoton}
                     </button>
 
                     <ul className={`dropdown-menu listaClientes p-2 ${alineacionDerecha ? 'dropdown-menu-end' : ''}`}>
-                        
+
                         {/* Buscador */}
                         <li className="mb-2">
                             <input
@@ -42,14 +80,14 @@ const SelectorConBuscador = ({ title, options = [], selectedOption, onSelect, on
 
                         {/* Opción para limpiar */}
                         <li>
-                            <button 
+                            <button
                                 className="dropdown-item"
                                 onClick={() => {
                                     onClear();
                                     setSearchQuery('');
                                 }}
                             >
-                                Ninguno
+                                {multiple ? "Limpiar selección" : "Ninguno"}
                             </button>
                         </li>
 
@@ -57,15 +95,14 @@ const SelectorConBuscador = ({ title, options = [], selectedOption, onSelect, on
 
                         {/* Opciones filtradas */}
                         {filteredOptions.map((option, index) => (
-                            <li key={index}>
-                                <button 
-                                    className="dropdown-item"
-                                    onClick={() => {
-                                        onSelect(option);
-                                        setSearchQuery('');
-                                    }}
+                            <li key={option?.id ?? index}>
+                                <button
+                                    className="dropdown-item d-flex justify-content-between align-items-center gap-2"
+                                    aria-pressed={multiple ? estaElegida(option) : undefined}
+                                    onClick={() => elegir(option)}
                                 >
-                                    {option.nombre || option.name}
+                                    {nombreDe(option)}
+                                    {multiple && estaElegida(option) && <i className="bi bi-check2 text-primary" aria-hidden="true" />}
                                 </button>
                             </li>
                         ))}
