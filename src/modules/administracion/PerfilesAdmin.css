@@ -1,0 +1,161 @@
+/* ==========================================================================
+   ABM Perfiles (.perfilesAdmin) — modal de edición con el selector de páginas
+   (SelectorPaginasPerfil). El modal es de Bootstrap (data-api): queda dentro de
+   .perfilesAdmin, así que las reglas van anidadas.
+   ========================================================================== */
+
+.perfilesAdmin {
+
+    .perfilesAdmin__paginas-cabecera {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--nd-space-2);
+        margin-bottom: var(--nd-space-2);
+    }
+
+    .perfilesAdmin__paginas-resumen {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--nd-space-2);
+        font-size: var(--nd-font-size-sm);
+        color: var(--nd-color-text-secondary);
+    }
+
+    /* ---------- Selector de páginas ---------- */
+    .perfilesPaginas {
+        display: flex;
+        flex-direction: column;
+        gap: var(--nd-space-3);
+    }
+
+    .perfilesPaginas__herramientas {
+        display: flex;
+        flex-direction: column;
+        gap: var(--nd-space-2);
+    }
+
+    .perfilesPaginas__acciones {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--nd-space-2);
+        font-size: var(--nd-font-size-sm);
+    }
+
+    .perfilesPaginas__masivas {
+        display: flex;
+        gap: var(--nd-space-3);
+    }
+
+    .perfilesPaginas__masivas .btn-link {
+        padding: 0;
+    }
+
+    .perfilesPaginas__grupos {
+        display: flex;
+        flex-direction: column;
+        gap: var(--nd-space-2);
+    }
+
+    .perfilesPaginas__grupo {
+        margin: 0;
+        padding: var(--nd-space-3);
+        border: var(--nd-border-width) solid var(--nd-color-border);
+        border-radius: var(--nd-radius-md);
+    }
+
+    .perfilesPaginas__grupo-cabecera {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--nd-space-2);
+        padding-bottom: var(--nd-space-2);
+        margin-bottom: var(--nd-space-2);
+        border-bottom: var(--nd-border-width) solid var(--nd-color-border);
+    }
+
+    .perfilesPaginas__grupo-titulo {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--nd-space-2);
+        margin: 0;
+        font-weight: var(--nd-font-weight-bold);
+        cursor: pointer;
+    }
+
+    .perfilesPaginas__contador {
+        font-size: var(--nd-font-size-xs);
+        color: var(--nd-color-text-secondary);
+    }
+
+    /* Páginas del grupo en dos columnas; una en mobile */
+    .perfilesPaginas__lista {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--nd-space-1) var(--nd-space-4);
+    }
+
+    .perfilesPaginas__pagina {
+        display: flex;
+        align-items: center;
+        gap: var(--nd-space-2);
+        min-width: 0;
+        margin: 0;
+        padding: var(--nd-space-1) 0;
+        font-size: var(--nd-font-size-sm);
+        cursor: pointer;
+    }
+
+    .perfilesPaginas__pagina > span {
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .perfilesPaginas .form-check-input {
+        flex-shrink: 0;
+        margin: 0;
+    }
+
+    /* "Solo las asignadas": interruptor alineado y separado de su texto, bolita naranja */
+    .perfilesPaginas__switch {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--nd-space-2);
+        min-height: 0;
+        margin: 0;
+        padding-left: 0;
+    }
+
+    .perfilesPaginas__switch .form-check-input {
+        float: none;
+        width: 2em;
+        cursor: pointer;
+        border-color: var(--nd-color-border-strong);
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23EE4C01'/%3e%3c/svg%3e");
+    }
+
+    .perfilesPaginas__switch .form-check-input:checked {
+        background-color: var(--nd-color-primary);
+        border-color: var(--nd-color-primary);
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+    }
+
+    .perfilesPaginas__switch .form-check-label {
+        cursor: pointer;
+    }
+
+    .perfilesPaginas__vacio {
+        padding: var(--nd-space-6) 0;
+        text-align: center;
+        color: var(--nd-color-text-secondary);
+    }
+
+    @media (max-width: 768px) {
+        .perfilesPaginas__lista {
+            grid-template-columns: minmax(0, 1fr);
+        }
+    }
+}

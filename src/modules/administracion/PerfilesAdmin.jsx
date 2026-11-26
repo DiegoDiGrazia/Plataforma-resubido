@@ -1,7 +1,9 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { obtenerPerfiles, crearPerfil, editarPerfil, eliminarPerfilPorId } from '@/api/perfilesApi.js';
-import { obtenerPaginas, crearAcceso, eliminarAccesosId } from '@/api/paginasApi.js';
+import { obtenerPerfiles, crearPerfil, editarPerfil, eliminarPerfilPorId, sincronizarPaginasPerfil } from '@/api/perfilesApi.js';
+import { obtenerPaginas } from '@/api/paginasApi.js';
+import SelectorPaginasPerfil from './SelectorPaginasPerfil';
+import './PerfilesAdmin.css';
 import { ToastContainer } from 'react-toastify';
 import { toastExito, toastError } from '@/shared/utils/toastify/toastify.jsx';
 import 'react-toastify/dist/ReactToastify.css';
@@ -13,9 +15,12 @@ const perfilVacio = {
 };
 
 const PerfilesAdmin = () => {
-  const [paginasPerfil, setPaginasPerfil] = useState([]);
-  const [paginasFaltantes, setPaginasFaltantes] = useState([]);
   const [paginasTodas, setPaginasTodas] = useState([]);
+  // Páginas del perfil abierto: lo que se ve marcado (seleccionadas) y lo que estaba guardado
+  // (seleccionOriginal). Solo se mandan a la API al tocar Guardar, en un único PUT.
+  const [seleccionadas, setSeleccionadas] = useState(new Set());
+  const [seleccionOriginal, setSeleccionOriginal] = useState(new Set());
+  const [cargandoPaginas, setCargandoPaginas] = useState(false);
   const [perfiles, setPerfiles] = useState([]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -66,22 +71,39 @@ const PerfilesAdmin = () => {
     setPage(1);
   }, [search]);
 
-  // Abrir modal con datos
+  // Abrir modal con datos: trae las páginas que ya tiene el perfil y las deja marcadas
   const handleEditClick = (perfil) => {
     setSelectedPerfil(perfil);
-    setFormData({ ...perfil} ); 
-    obtenerPaginas(TOKEN, perfil.id).then((data) => setPaginasPerfil(data || []));
+    setFormData({ ...perfil });
+    setSeleccionadas(new Set());
+    setSeleccionOriginal(new Set());
+
+    if (perfil.id !== '0') {
+      setCargandoPaginas(true);
+      obtenerPaginas(TOKEN, perfil.id)
+        .then((data) => {
+          const ids = new Set((data || []).map((pagina) => pagina.id));
+          setSeleccionadas(ids);
+          setSeleccionOriginal(new Set(ids));
+        })
+        .catch((error) => {
+          console.error('Error al obtener las páginas del perfil:', error);
+          toastError('No se pudieron cargar las páginas del perfil.');
+        })
+        .finally(() => setCargandoPaginas(false));
+    }
 
     const modal = new window.bootstrap.Modal(document.getElementById('editModal'));
     modal.show();
   };
 
-  useEffect(() => {
-    const Paginasfaltantes = paginasTodas.filter(
-      item => !paginasPerfil.some(p => p.id === item.id)
-    );
-    setPaginasFaltantes(Paginasfaltantes);
-  }, [paginasPerfil, paginasTodas]);
+  // Cuántas páginas cambiaron respecto de lo guardado (agregadas + quitadas)
+  const cambiosPaginas = useMemo(() => {
+    let cambios = 0;
+    seleccionadas.forEach((id) => { if (!seleccionOriginal.has(id)) cambios += 1; });
+    seleccionOriginal.forEach((id) => { if (!seleccionadas.has(id)) cambios += 1; });
+    return cambios;
+  }, [seleccionadas, seleccionOriginal]);
 
   const cerrarModal = () => {
     const modalEl = document.getElementById('editModal');
@@ -89,25 +111,34 @@ const PerfilesAdmin = () => {
     if (modal) modal.hide();
   };
 
-  // Guardar o Crear Perfil
+  // Guardar o Crear Perfil: datos del perfil (POST/PATCH) + páginas en un solo PUT
   const handleSave = async () => {
     setGuardando(true);
     try {
       const payload = {
         nombre: formData.nombre,
         descripcion: formData.descripcion,
-        plataforma: formData.plataforma || null, 
+        plataforma: formData.plataforma || null,
       };
 
-      if (formData.id === "0") {
-        await crearPerfil(TOKEN, payload);
-        toastExito('¡El perfil fue creado exitosamente!');
+      const esNuevo = formData.id === "0";
+      let idPerfil = formData.id;
+      if (esNuevo) {
+        const creado = await crearPerfil(TOKEN, payload);
+        idPerfil = creado?.id ?? creado?.perfil?.id;
       } else {
         await editarPerfil(TOKEN, formData.id, payload);
-        toastExito('¡Los cambios se guardaron correctamente!');
       }
 
-      await fetchPerfiles(); 
+      const hayQueSincronizar = esNuevo ? seleccionadas.size > 0 : cambiosPaginas > 0;
+      if (hayQueSincronizar) {
+        if (!idPerfil) throw new Error('La API no devolvió el id del perfil creado');
+        await sincronizarPaginasPerfil(TOKEN, idPerfil, [...seleccionadas]);
+        setSeleccionOriginal(new Set(seleccionadas));
+      }
+
+      toastExito(esNuevo ? '¡El perfil fue creado exitosamente!' : '¡Los cambios se guardaron correctamente!');
+      await fetchPerfiles();
       cerrarModal();
 
     } catch (error) {
@@ -129,36 +160,8 @@ const PerfilesAdmin = () => {
     }
   };
 
-  const handleEliminarPaginaDelPerfil = async (id_perfil, id_pagina) => {
-    try {
-      await eliminarAccesosId(TOKEN, id_perfil, id_pagina);
-      toastExito("¡Acceso eliminado correctamente!");
-      const dataActualizada = await obtenerPaginas(TOKEN, id_perfil);
-      setPaginasPerfil(dataActualizada || []);
-    } catch (error) {
-      console.error(error);
-      toastError("Ocurrió un error al eliminar el acceso.");
-    }
-  };
-
-  const handleAgregarPaginaDelPerfil = async (id_perfil, id_pagina) => {
-    try {
-      const payload = {
-        id_perfil: Number(id_perfil),
-        id_pagina: Number(id_pagina)
-      };
-      await crearAcceso(TOKEN, payload);
-      toastExito("¡Acceso agregado correctamente!");
-      const dataActualizada = await obtenerPaginas(TOKEN, id_perfil);
-      setPaginasPerfil(dataActualizada || []);
-    } catch (error) {
-      console.error(error);
-      toastError("Ocurrió un error al agregar el acceso.");
-    }
-  };
-
   return (
-    <div className="content flex-grow-1 crearNotaGlobal">
+    <div className="content flex-grow-1 crearNotaGlobal perfilesAdmin">
       <div className='row miPerfilContainer soporteContainer'>
         <div className='col p-0'>
           <h3 id="saludo" className='headerTusNotas ml-0'>
@@ -236,7 +239,7 @@ const PerfilesAdmin = () => {
 
       {/* Modal Edición / Creación */}
       <div className="modal fade" id="editModal" tabIndex="-1" aria-hidden="true">
-        <div className="modal-dialog">
+        <div className="modal-dialog modal-lg modal-dialog-scrollable">
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title">
@@ -279,57 +282,24 @@ const PerfilesAdmin = () => {
                   </div>
 
 
-                  {/* Páginas del perfil */}
-                  {formData.id !== "0" && (
-                  <div className="mb-3">
-                    <label className="form-label">Acceso a:</label>
-                    
-                      <ul className="list-unstyled d-flex flex-wrap gap-2">
-                        {paginasPerfil.map((c) => (
-                          <li
-                            key={c.id}
-                            className="d-flex align-items-center border rounded px-2 py-1"
-                          >
-                              {c.nombre}
-
-                            {/* Botón con cruz para eliminar */}
-                            <button
-                              type="button"
-                              className="btn-close ms-2"
-                              aria-label="Eliminar"
-                              onClick={() => {handleEliminarPaginaDelPerfil(formData.id, c.id)}}
-                            />
-                          </li>
-                        ))}
-                      </ul>
+                  {/* Páginas del perfil: se marcan/desmarcan y se guardan todas juntas */}
+                  <div className="mb-1">
+                    <div className="perfilesAdmin__paginas-cabecera">
+                      <span className="form-label m-0">Páginas del perfil</span>
+                      <span className="perfilesAdmin__paginas-resumen">
+                        {seleccionadas.size} seleccionadas
+                        {cambiosPaginas > 0 && (
+                          <span className="nd-badge nd-badge--primary">{cambiosPaginas} sin guardar</span>
+                        )}
+                      </span>
                     </div>
-                    )}
-
-                  {/* Páginas disponibles para agregar */}
-                  {formData.id !== "0" && (
-                  <div className="mb-3">
-                    <label className="form-label">Páginas disponibles para agregar</label>
-                    
-                      <ul className="list-unstyled d-flex flex-wrap gap-2">
-                        {paginasFaltantes.map((c) => (
-                          <li
-                            key={c.id}
-                            className="d-flex align-items-center border rounded px-2 py-1"
-                          >
-                              {c.nombre}
-
-                            <button
-                              type="button"
-                              className="btn btn-sm btn-outline-primary ms-2"
-                              onClick={() => {handleAgregarPaginaDelPerfil(formData.id, c.id)}}
-                            >
-                              +
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    )}
+                    <SelectorPaginasPerfil
+                      paginas={paginasTodas}
+                      seleccionadas={seleccionadas}
+                      onChange={setSeleccionadas}
+                      cargando={cargandoPaginas}
+                    />
+                  </div>
                 </>
               )}
             </div>

@@ -38,6 +38,18 @@ export const editarPerfil = async (token, perfil_id, payload) => {
   return res.json();
 };
 
+// Reemplaza todas las páginas (accesos) del perfil por la lista enviada, en un solo request.
+// Body: { paginas: [id_pagina, …] }. Devuelve los accesos resultantes ({ id, id_perfil, id_pagina }).
+export const sincronizarPaginasPerfil = async (token, perfil_id, paginas) => {
+  const res = await fetch(`${BASE_URL}/perfiles/${perfil_id}`, {
+    method: "PUT",
+    headers: jsonHeaders(token),
+    body: JSON.stringify({ paginas: paginas.map(Number) }),
+  });
+  if (!res.ok) throw new Error("Error al guardar las páginas del perfil");
+  return res.json();
+};
+
 export const eliminarPerfilPorId = async (token, perfil_id) => {
   const res = await fetch(`${BASE_URL}/perfiles/${perfil_id}`, {
     method: "DELETE",
