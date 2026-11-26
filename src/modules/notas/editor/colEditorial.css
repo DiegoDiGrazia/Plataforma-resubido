@@ -101,6 +101,15 @@
 .colEditorial__fila--separada {
     margin-bottom: var(--nd-space-5);
 }
+/* Fecha + hora de publicación en la misma línea */
+.colEditorial__fechaHora {
+    display: flex;
+    align-items: center;
+    gap: var(--nd-space-2);
+}
+.colEditorial__hora {
+    width: auto;
+}
 .colEditorial__label {
     font-size: var(--nd-font-size-xl);
     font-weight: var(--nd-font-weight-bold);

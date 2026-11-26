@@ -22,6 +22,9 @@ import ModalMensaje from '@/shared/components/modales/ModalMensaje';
 import { obtenerNotaCompletaConIa, obtenerFuenteBot, obtenerNoticias, obtenerNoticiasAbm } from '@/api/apisUsuarios';
 import { abrirEditorNota } from '@/modules/notas/navegacionEditor';
 import BorradoresLocales from './BorradoresLocales';
+import ArbolDistribucion from '@/shared/components/ArbolDistribucion';
+import SelectorConBuscador from '@/shared/components/form/SelectorConBuscador';
+import { obtenerCategorias } from '@/api/apis';
 
   function obtenerFechaDeManana() {
     const hoy = new Date();
@@ -146,6 +149,39 @@ const NotasParaEditorial = () => {
     const id_pais = useSelector((state) => state.formulario.usuario.id_pais);
     const paises = useSelector((state) =>state.formulario.geo);
     const nombrePaisUsuario = paises.find(pais => pais.pais_id === id_pais)?.nombre || null;
+
+    // Filtros geográficos ({ nombre, *_id }). A la API van los nombres.
+    // Un usuario limitado a un país tiene ese país fijo y solo elige provincia/municipio.
+    const [paisFiltro, setPaisFiltro] = useState(null);
+    const [provinciaFiltro, setProvinciaFiltro] = useState(null);
+    const [municipioFiltro, setMunicipioFiltro] = useState(null);
+    const paisElegido = nombrePaisUsuario ? { nombre: nombrePaisUsuario, pais_id: id_pais } : paisFiltro;
+    const filtroPais = paisElegido?.nombre || "";
+    const filtroProvincia = provinciaFiltro?.nombre || "";
+    const filtroMunicipio = municipioFiltro?.nombre || "";
+
+    const cambiarPaisFiltro = (pais) => {
+        setPaisFiltro(pais);
+        setProvinciaFiltro(null);
+        setMunicipioFiltro(null);
+    };
+    const cambiarProvinciaFiltro = (provincia) => {
+        setProvinciaFiltro(provincia);
+        setMunicipioFiltro(null);
+    };
+
+    // Filtro de categorías (ids de n_categorias). A la API va id_categoria="5,8".
+    const [categoriasDisponibles, setCategoriasDisponibles] = useState([]);
+    const [categoriasFiltro, setCategoriasFiltro] = useState([]);
+    const filtroIdCategoria = categoriasFiltro.map((c) => c.id).join(',');
+
+    useEffect(() => {
+        obtenerCategorias(TOKEN, 'categorias')
+            .then((data) => setCategoriasDisponibles(
+                (Array.isArray(data) ? data : []).map((c) => ({ id: c.id, nombre: c.unidad }))
+            ))
+            .catch((error) => console.error('Error al obtener categorías:', error));
+    }, [TOKEN]);
     const perfilUsuario = useSelector((state) => state.formulario.usuario.perfil);
     
     const permisoSelectorClientes = useSelector((state) => state.formulario.paginasDelUsuario?.some(permiso => permiso.nombre === "Editorial: Selector clientes") || false);
@@ -249,7 +285,10 @@ const NotasParaEditorial = () => {
             limit: limite,
             offset: verMas ? nuevoOffset : 0,  // este es el valor real que irá a la API
             titulo: isNaN(searchQuery) ? searchQuery : "",
-            pais: nombrePaisUsuario || "",
+            pais: filtroPais,
+            provincia: filtroProvincia,
+            municipio: filtroMunicipio,
+            id_categoria: filtroIdCategoria,
             full: "1",
             term_id: !isNaN(searchQuery) ? searchQuery : "",
         })
@@ -271,7 +310,7 @@ const NotasParaEditorial = () => {
         .finally(() => {
             setCargandoNotas(false);
         });
-    }, [ID_CLIENTE, TOKEN, categorias, verMasUltimo, verMasCantidadPaginacion, nombrePaisUsuario]);
+    }, [ID_CLIENTE, TOKEN, categorias, verMasUltimo, verMasCantidadPaginacion, searchQuery, filtroPais, filtroProvincia, filtroMunicipio, filtroIdCategoria]);
 
 
     const ClickearEnCrearNota = () => {
@@ -337,7 +376,7 @@ const NotasParaEditorial = () => {
         } else {
             handleFiltroClick_todasLasNotas(filtroSeleccionado); // Llama a la función específica para el caso de id = 1
         }
-    }, [filtroSeleccionado, ID_CLIENTE]);
+    }, [filtroSeleccionado, ID_CLIENTE, filtroPais, filtroProvincia, filtroMunicipio, filtroIdCategoria]);
 
     const mostrarFuenteNota = async (term_id) => {
         const link = await obtenerFuenteBot(TOKEN, term_id);
@@ -404,6 +443,29 @@ const NotasParaEditorial = () => {
                                 Buscar
                             </Button>
                         </form>
+                    </div>
+
+                    <div className='notasListado__filtros'>
+                        <SelectorConBuscador
+                            title="Categoría"
+                            multiple
+                            sinMargen
+                            options={categoriasDisponibles}
+                            selectedOptions={categoriasFiltro}
+                            onSelect={setCategoriasFiltro}
+                            onClear={() => setCategoriasFiltro([])}
+                        />
+                        <ArbolDistribucion
+                            TOKEN={TOKEN}
+                            enFila
+                            ocultarPais={!!nombrePaisUsuario}
+                            pais={paisElegido}
+                            provincia={provinciaFiltro}
+                            municipio={municipioFiltro}
+                            onSetPais={cambiarPaisFiltro}
+                            onSetProvincia={cambiarProvinciaFiltro}
+                            onSetMunicipio={setMunicipioFiltro}
+                        />
                     </div>
 
                     <div className='notasListado__fila notasListado__fila--encabezado' id='headerListadoNotas'>

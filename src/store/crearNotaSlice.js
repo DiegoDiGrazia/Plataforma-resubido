@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { comprimirImagen } from '@/modules/notas/componentes/ImagenPrincipal.jsx';
 import { htmlATextoPlano } from '@/shared/utils/textoPlano';
+import { separarFechaHora, unirFechaHora } from '@/shared/utils/fechaPublicacion';
 
 // Id estable por bloque de contenido (contenidoIds, paralelo a contenidoNota). Se usa como key
 // de React: con key={index}, al insertar/borrar/mover un bloque React le pasaba el componente
@@ -259,7 +260,8 @@ const crearNotaSlice = createSlice({
       state.id_noti = nota.id;
       state.etiquetas = nota.etiquetas?.split(",") || [];
       state.f_vence = nota.fecha_vencimiento;
-      state.f_pub = nota.f_pub;
+      // f_pub en el store = "YYYY-MM-DD HH:mm:ss": la fecha sale de f_pub y la hora de h_pub (si viene)
+      state.f_pub = unirFechaHora(separarFechaHora(nota.f_pub).fecha, separarFechaHora(nota.h_pub).hora);
       state.autor = nota.autor;
       state.pais = {'nombre': nota.pais };
       state.provincia = {'nombre': nota.provincia };

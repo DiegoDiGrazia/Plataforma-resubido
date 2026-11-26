@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import SelectorFecha from '@/shared/components/form/SelectorFecha';
+import { separarFechaHora, unirFechaHora, horaActual, hoy } from '@/shared/utils/fechaPublicacion';
 import 'cropperjs/dist/cropper.css';
 import Etiquetas from './Etiquetas';
 import ArbolDistribucion from '@/shared/components/ArbolDistribucion';
@@ -124,8 +125,13 @@ const ColumnaEditorial = () => {
 
 
     const dispatch = useDispatch();
-        const dispacharfechaPublicacion = (fecha) => {
-        dispatch(setFechaPublicacion(fecha));
+    // f_pub = "YYYY-MM-DD HH:mm:ss": fecha y hora se editan por separado
+    const { fecha: fechaPub, hora: horaPub } = separarFechaHora(fechaPublicacion);
+    const cambiarFechaPublicacion = (fecha) => {
+        dispatch(setFechaPublicacion(unirFechaHora(fecha, horaPub || horaActual())));
+    };
+    const cambiarHoraPublicacion = (e) => {
+        dispatch(setFechaPublicacion(unirFechaHora(fechaPub || hoy(), e.target.value)));
     };
     const dispacharUrl = (e) => {
         dispatch(setUrl(normaliarAUrl(e.target.value)));
@@ -227,12 +233,22 @@ const ColumnaEditorial = () => {
                 
                 <div className="colEditorial__fila colEditorial__fila--separada p-0">
                     <label htmlFor="fecha-publicacion" className="colEditorial__label">Fecha Publicacion:</label>
-                                        <SelectorFecha
-                        id="fecha-publicacion"
-                        valor={fechaPublicacion}
-                        onChange={dispacharfechaPublicacion}
-                        alineacionDerecha
-                    />
+                    <div className="colEditorial__fechaHora">
+                        <SelectorFecha
+                            id="fecha-publicacion"
+                            valor={fechaPub}
+                            onChange={cambiarFechaPublicacion}
+                            alineacionDerecha
+                        />
+                        <input
+                            id="hora-publicacion"
+                            type="time"
+                            className="form-control form-control-sm colEditorial__hora"
+                            aria-label="Hora de publicación"
+                            value={horaPub}
+                            onChange={cambiarHoraPublicacion}
+                        />
+                    </div>
                 </div>
                 
                 {nota.con_distribucion == 1 && (

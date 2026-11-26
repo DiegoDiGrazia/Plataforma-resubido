@@ -12,8 +12,11 @@ const ArbolDistribucion = ({
   municipio,
   onSetPais,
   onSetProvincia,
-  onSetMunicipio
-
+  onSetMunicipio,
+  // enFila: selectores uno al lado del otro (filtros de un listado)
+  enFila = false,
+  // ocultarPais: el país viene fijo (usuario limitado a un país); solo se eligen provincia y municipio
+  ocultarPais = false,
 }) => {
   const [provincias, setProvincias] = useState([]);
   const [municipios, setMunicipios] = useState([]);
@@ -43,8 +46,8 @@ const ArbolDistribucion = ({
   }, [TOKEN, provincia]);
 
   return (
-    <div className="dropdown p-0">
-      {(esGestion && jurisdiccion == 'PAIS') && 
+    <div className={enFila ? 'd-flex flex-wrap align-items-center gap-3 p-0' : 'dropdown p-0'}>
+      {(esGestion && jurisdiccion == 'PAIS') &&
       <SelectorConBuscador
         title="Pais"
         options={Paises}
@@ -77,13 +80,16 @@ const ArbolDistribucion = ({
     }
     {!jurisdiccion && (
     <>
+        {!ocultarPais && (
         <SelectorConBuscador
         title="Pais"
         options={Paises}
         selectedOption={pais}
         onSelect={onSetPais}
         onClear={() => onSetPais(null)}
+        sinMargen={enFila}
         />
+        )}
         <SelectorConBuscador
         title="Provincia"
         options={provincias}
@@ -94,6 +100,7 @@ const ArbolDistribucion = ({
             setMunicipios([]);
             onSetMunicipio(null);
         }}
+        sinMargen={enFila}
         />
 
         <SelectorConBuscador
@@ -102,6 +109,7 @@ const ArbolDistribucion = ({
         selectedOption={municipio}
         onSelect={onSetMunicipio}
         onClear={() => onSetMunicipio(null)}
+        sinMargen={enFila}
         />
     </>
     )}
